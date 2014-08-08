@@ -7,7 +7,7 @@ angular.module('commonHeader', [
     function($modal) {
       return {
         restrict: 'E',
-        templateUrl: 'components/common-header/common-header.html',
+        templateUrl: 'components/common-header/src/common-header.html',
         scope: {
           authStatus: '=',
           companyLoaded: '=',
@@ -65,9 +65,6 @@ angular.module('commonHeader', [
           // If nav options not provided use defaults
           if (!scope.navOptions)
             scope.navOptions = [{
-              title: 'Home',
-              link: '#/'
-            }, {
               title: 'Store',
               link: ''
             }, {
