@@ -6,6 +6,37 @@ Rise Vision Common Header
 *Use of this software is governed by the GPLv3 license (available in the LICENSE file).*
 
 ## Documentation
+
+### bower.json
+``` js
+"dependencies": {
+  "common-header": "https://github.com/Rise-Vision/common-header.git"
+}
+```
+
+### html
+Be sure to load angular first.  Then....
+``` html
+    <!-- build:js script/common-header.min.js -->
+    <script src="components/common-header/dist/common-header.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:jsdev nothing-->
+    <script src="components/common-header/src/common-header.js"></script>
+    <!-- endbuild -->
+```
+
+### gulpfile.js
+For the build output, process the html file with gulp-usemin, ensuring the js
+target is included and the jsdev target is ignored so that it gets removed from the html file.
+...
+``` js
+.pipe(usemin({
+  js: [uglify({mangle:false, outSourceMap: true})]
+})
+.pipe(gulp.dest(dist/");
+```
+
 If you have any questions or problems please don't hesitate to join our lively and responsive community at http://community.risevision.com.
 
 If you are looking for user documentation on Rise Vision please see http://www.risevision.com/help/users/
