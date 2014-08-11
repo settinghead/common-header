@@ -7,101 +7,6 @@ angular.module("risevision.common.header")
         function ($scope, $rootScope, $sce, apiAuth, apiStore, $modal, companyService,
             commonService, shoppingCart, cache, usSpinnerService, $loading, $interval, $q, storeAPILoader, oauthAPILoader, $window, $location) {
 
-        var AUTH_STATUS_UNDEFINED = -1;
-        var AUTH_STATUS_NOT_AUTHENTICATED = 0;
-        var AUTH_STATUS_AUTHENTICATED = 1;
-        var DEFAULT_PROFILE_PICTURE = "img/user-icon.png";
-        $rootScope.user = {
-            profile: {
-                name: "",
-                email: "",
-                picture: DEFAULT_PROFILE_PICTURE
-            }
-        };
-        $rootScope.authStatus = AUTH_STATUS_UNDEFINED;     //-1=unknown, 0=not authenticated, 1=authenticated
-        $rootScope.isAuthed = false;    //true if authenticated
-
-        $rootScope.isRiseAdmin = false; //Rise Vision Billing Administrator
-        $rootScope.isRiseUser = false;
-
-        $scope.thAutoRefresh = null;
-        $rootScope.authDeffered = $q.defer();
-
-        $scope.updateAuth = function (authResult) {
-          if (authResult && !authResult.error) {
-              $interval.cancel($scope.thAutoRefresh);
-              $scope.thAutoRefresh = $interval(function(){
-                $interval.cancel($scope.thAutoRefresh);
-                apiAuth.checkAuth(true);
-              }, 55 * 60 * 1000); //refresh every 55 minutes
-
-              $rootScope.authStatus = AUTH_STATUS_AUTHENTICATED;
-              $rootScope.isAuthed = true;
-              console.log("user is authenticated");
-              oauthAPILoader.get();
-              storeAPILoader.get();
-              var companiesDeferred = $q.defer();
-              apiAuth.getUserCompanies().then(function (resp) {
-                if (resp.items && resp.items.length > 0) {
-                    var company = resp.items[0];
-                    $rootScope.user.company = company;
-                    $rootScope.isRiseAdmin = company.userRoles && company.userRoles.indexOf("ba") > -1;
-                    //release 1 simpification - everyone is Purchaser ("pu" role)
-                    $rootScope.isRiseUser = true;
-                    companyService.loadSelectedCompany($rootScope.selectedCompanyIdParam, $rootScope.user.company).then(function(loadedCompany) {
-                        $rootScope.setSelectedCompany(loadedCompany);
-                        $rootScope.setSelectedCompanyIdParam(loadedCompany.id);
-                        $rootScope.$broadcast("userCompany.loaded");
-                        companiesDeferred.resolve();
-                    });
-                } else {
-                    $rootScope.isRiseAdmin = false;
-                    $rootScope.isRiseUser = false;
-                    $rootScope.$broadcast("userCompany.none");
-                    companiesDeferred.resolve();
-                }
-              });
-              var profileDeferred = $q.defer();
-              apiAuth.getProfile().then(function (resp) {
-                $rootScope.user.profile.name = resp.name;
-                $rootScope.user.profile.email = resp.email;
-                $rootScope.user.profile.picture = resp.picture;
-                profileDeferred.resolve();
-                $rootScope.$broadcast("profile.loaded");
-              });
-
-              // this promise is for both the company and profile load, so it signifies complete auth.
-              $q.all([profileDeferred.promise, companiesDeferred.promise]).then(function () { $rootScope.authDeffered.resolve(); });
-          } else {
-            $rootScope.authDeffered.resolve();
-            $scope.clearUser();
-            console.log("user is not authenticated");
-          }
-        };
-
-        // initial auth check (silent)
-        apiAuth.checkAuth(true).then($scope.updateAuth);
-
-        $rootScope.authStatus = apiAuth.AUTH_STATUS_UNDEFINED; //this value is linked to the UI
-        $rootScope.selectedCompany = {};
-        $rootScope.isCAD = false;
-        $scope.user.profile.picture = apiAuth.DEFAULT_PROFILE_PICTURE;
-        $scope.messages = [];
-        $scope.defaultSpinnerOptions = $loading.getDefaultSpinnerOptions();
-        $scope.companyLoaded = false;
-
-        $scope.shoppingCartItemCount = shoppingCart.getItemCount();
-        $scope.$on("cartChanged", function() {
-            console.log("Cart Changed!");
-            $scope.shoppingCartItemCount = shoppingCart.getItemCount();
-        });
-
-
-        $scope.login = function () {
-            apiAuth.checkAuth().then(function () {
-                $window.location.reload();
-            });
-        };
 
         $scope.logout = function () {
             /* jshint ignore:start */
@@ -172,36 +77,9 @@ angular.module("risevision.common.header")
             });
         };
 
-        $rootScope.setSelectedCompany = function (company) {
-            if (company.id !== $rootScope.selectedCompany.id) {
-                angular.copy(company, $rootScope.selectedCompany);
-                $rootScope.$broadcast("selectedCompany.changed");
-            }
-        };
-
-        $rootScope.resetSelectedCompany = function () {
-            $rootScope.setSelectedCompany($rootScope.user.company);
-            $rootScope.setSelectedCompanyIdParam($rootScope.user.company.id);
-        };
-
-        $rootScope.setSelectedCompanyIdParam = function (companyId) {
-            $rootScope.selectedCompanyIdParam = companyId;
-            $location.search("cid", companyId);
-        };
-
         $scope.isHomeCompany = function () {
             return $rootScope.isRiseUser && ($rootScope.user.company.id === $rootScope.selectedCompany.id);
         };
 
-        $scope.$on("user.signout", function () {
-            $scope.companyLoaded = false;
-            if (!$scope.$state.is("product_with_name") && !$scope.$state.is("product")) {
-                $scope.$state.go("products");
-            }
-        });
 
-        $scope.$on("userCompany.loaded", function () {
-            $scope.companyLoaded = true;
-            $scope.getSystemMessages();
-        });
     }]);
