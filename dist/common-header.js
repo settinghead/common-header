@@ -7,7 +7,7 @@ angular.module('commonHeader', [
     function($modal) {
       return {
         restrict: 'E',
-        templateUrl: 'components/common-header/src/common-header.html',
+        templateUrl: 'common-header.html',
         scope: {
           authStatus: '=',
           companyLoaded: '=',
