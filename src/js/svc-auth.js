@@ -2,12 +2,12 @@
   "use strict";
 
   angular.module("risevison.common.auth",
-    ["risevision.common.gapi", "risevison.common.localstorage"])
+    ["rvLoading", "risevision.common.gapi", "risevison.common.localstorage"])
     .service("apiAuth", ["$interval", "$rootScope", "$q", "$http",
-      "gapiLoader", "storeAPILoader", "oauthAPILoader", "CLIENT_ID",
+      "gapiLoader", "oauthAPILoader", "CLIENT_ID",
       "$log", "localStorageService", "$timeout",
       function apiAuthConstructor($interval, $rootScope, $q, $http,
-        gapiLoader, storeAPILoader, oauthAPILoader, CLIENT_ID, $log,
+        gapiLoader, oauthAPILoader, CLIENT_ID, $log,
         localStorageService, $timeout) {
 
         var SCOPES = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
@@ -29,13 +29,15 @@
         };
 
         this.getUserCompanies = function () {
+          //TODO
             var deferred = $q.defer();
-            storeAPILoader.get().then(function (storeClient) {
-              var request = storeClient.usercompanies.get({});
-              request.execute(function (resp) {
-                deferred.resolve(resp);
-              });
-            });
+            // storeAPILoader.get().then(function (storeClient) {
+            //   var request = storeClient.usercompanies.get({});
+            //   request.execute(function (resp) {
+            //     deferred.resolve(resp);
+            //   });
+            // });
+            deferred.resolve({items: []});
             return deferred.promise;
         };
 
@@ -164,20 +166,18 @@
     .factory("authLoader", ["$rootScope", "$sce", "apiAuth", "storeDataService",
       "$modal", "companyService", "commonService", "shoppingCartService",
       "cacheService", "usSpinnerService", "$loading", "$interval", "$q",
-      "storeAPILoader", "oauthAPILoader", "$window", "$location", "$timeout",
+      "oauthAPILoader", "$window", "$location", "$timeout",
       "localStorageService", "$log", "clearUser", "DEFAULT_PROFILE_PICTURE",
       "updateAuth",
       function ($rootScope, $sce, apiAuth, apiStore, $modal, companyService,
         commonService, shoppingCart, cacheService, usSpinnerService, $loading, $interval,
-        $q, storeAPILoader, oauthAPILoader, $window, $location, $timeout,
+        $q, oauthAPILoader, $window, $location, $timeout,
         localStorageService, $log, clearUser, DEFAULT_PROFILE_PICTURE, updateAuth) {
         return function () {
           if(!$rootScope.authDeffered) {
             // This object is intended to hold anything that should be flushed
             // on login/logout.
             $rootScope.userState = {};
-
-
 
             // a flag signifying the app is being loaded within an iframe in RVA
             $rootScope.userState.inRVAFrame = angular.isDefined($location.search().inRVA);

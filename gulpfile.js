@@ -18,7 +18,11 @@ var gulp = require('gulp'),
     ],
     htmlFiles = [
       "src/*.html"
-    ];
+    ],
+    factory = require("widget-tester").gulpTaskFactory,
+    runSequence = require("run-sequence"),
+    html2js = require("gulp-html2js"),
+    concat = require("gulp-concat");
 
 gulp.task("build", function () {
   return gulp.src(jsFiles)
@@ -26,6 +30,26 @@ gulp.task("build", function () {
   .pipe(gulp.dest("dist/"))
   .pipe(gulp.src(htmlFiles))
   .pipe(gulp.dest("dist/"));
+});
+
+
+gulp.task('html2js', function() {
+  gulp.src('src/templates/*.html')
+    .pipe(html2js({
+      outputModuleName: 'risevision.common.header.templates',
+      useStrict: true,
+      base: "src/templates"
+    }))
+    .pipe(concat('templates.js'))
+    .pipe(gulp.dest('./src/'));
+});
+gulp.task("test:e2e:server", ["html2js"], factory.testServer());
+gulp.task("test:e2e:server:close", factory.testServerClose());
+gulp.task("test:webdrive_update", factory.webdriveUpdate());
+gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular());
+gulp.task("test:e2e", function (cb) {
+  return runSequence(
+    "test:e2e:server", "test:e2e:core", "test:e2e:server:close", cb);
 });
 
 
