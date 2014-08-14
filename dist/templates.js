@@ -207,7 +207,7 @@ app.run(["$templateCache", function($templateCache) {
     "					</li>\n" +
     "					<li class=\"divider\"></li>\n" +
     "					<li>\n" +
-    "						<a href=\"\" ng-click=\"logout()\">\n" +
+    "						<a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
     "							<i class=\"glyphicons log_out\"></i>\n" +
     "							<span class=\"item-name\">Sign Out</span>\n" +
     "						</a>\n" +
@@ -249,7 +249,7 @@ app.run(["$templateCache", function($templateCache) {
     "	<div class=\"modal-body authorization-modal\">\n" +
     "		<img ng-src=\"{{userState.user.profile.picture}}\" class=\"profile-img\">\n" +
     "		<p>Please authorize your Google Account to register with Rise Vision.</p>\n" +
-    "		<button type=\"button\" class=\"btn btn-success btn-lg btn-block\" ng-click=\"login(); closeModal();\">Authorize</button>\n" +
+    "		<button type=\"button\" class=\"btn btn-success btn-lg btn-block authorize-button\" ng-click=\"login(); closeModal();\">Authorize</button>\n" +
     "	</div>\n" +
     "</script>\n" +
     "\n" +
