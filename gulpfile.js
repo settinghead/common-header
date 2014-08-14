@@ -52,8 +52,9 @@ gulp.task("test:e2e", function (cb) {
     "test:e2e:server", "test:e2e:core", "test:e2e:server:close", cb);
   });
 
+gulp.task("metrics", factory.metrics());
 gulp.task("test", function (cb) {
-  runSequence("test:e2e", cb);
+  runSequence("test:e2e", "metrics", cb);
 });
 
 gulp.task("default", [], function () {
