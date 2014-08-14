@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("risevison.common.localstorage", ["ngStorage"])
+angular.module("risevision.common.localstorage", ["ngStorage"])
   .factory("localStorageService", ["$localStorage", "$sessionStorage", function ($localStorage, $sessionStorage) {
 
     var storageImpl = localStorage ? localStorage : sessionStorage;

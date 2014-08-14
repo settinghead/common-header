@@ -32,9 +32,8 @@ gulp.task("build", function () {
   .pipe(gulp.dest("dist/"));
 });
 
-
 gulp.task('html2js', function() {
-  gulp.src('src/templates/*.html')
+  return gulp.src('src/templates/*.html')
     .pipe(html2js({
       outputModuleName: 'risevision.common.header.templates',
       useStrict: true,
@@ -43,15 +42,19 @@ gulp.task('html2js', function() {
     .pipe(concat('templates.js'))
     .pipe(gulp.dest('./src/'));
 });
+
 gulp.task("test:e2e:server", ["html2js"], factory.testServer());
 gulp.task("test:e2e:server:close", factory.testServerClose());
 gulp.task("test:webdrive_update", factory.webdriveUpdate());
 gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular());
 gulp.task("test:e2e", function (cb) {
-  return runSequence(
+  runSequence(
     "test:e2e:server", "test:e2e:core", "test:e2e:server:close", cb);
-});
+  });
 
+gulp.task("test", function (cb) {
+  runSequence("test:e2e", cb);
+});
 
 gulp.task("default", [], function () {
   console.log("\n***********************");

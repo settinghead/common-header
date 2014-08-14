@@ -3,7 +3,9 @@
 
 angular.module("risevision.common.cache", [])
 
-  .service("cacheService", [ function () {
+  .value("rvStorage", sessionStorage)
+
+  .service("cacheService", ["rvStorage", function (rvStorage) {
     var products = [];
 
     this.clear = function () {

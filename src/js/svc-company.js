@@ -1,7 +1,8 @@
 "use strict";
 
 angular.module("risevision.common.company", ["risevision.common.gapi"])
-  .service("companyService", [ "gapiLoader", "$q", function (gapiLoader, $q) {
+  .service("companyService", [ "gapiLoader", "$q", "$log",
+    function (gapiLoader, $q, $log) {
 
     this.getCompany = function (companyId) {
       var deferred = $q.defer();
@@ -11,7 +12,7 @@ angular.module("risevision.common.company", ["risevision.common.gapi"])
       gapiLoader.get().then(function (gApi) {
         var request = gApi.client.store.company.get(obj);
         request.execute(function (resp) {
-            console.log(resp);
+            $log.debug("getCompany resp", resp);
             deferred.resolve(resp);
         });
       });
@@ -19,21 +20,21 @@ angular.module("risevision.common.company", ["risevision.common.gapi"])
     };
 
     this.getSubCompanies = function (companyId, search, cursor, count, sort) {
-        var deferred = $q.defer();
-        var obj = {
-            "companyId": companyId,
-            "search": search,
-            "cursor": cursor,
-            "count": count,
-            "sort": sort
-        };
-        gapiLoader.get().then(function (gApi) {
-          var request = gApi.client.store.subcompanies.get(obj);
-          request.execute(function (resp) {
-              deferred.resolve(resp);
-          });
+      var deferred = $q.defer();
+      var obj = {
+        "companyId": companyId,
+        "search": search,
+        "cursor": cursor,
+        "count": count,
+        "sort": sort
+      };
+      gapiLoader.get().then(function (gApi) {
+        var request = gApi.client.store.subcompanies.get(obj);
+        request.execute(function (resp) {
+            deferred.resolve(resp);
         });
-        return deferred.promise;
+      });
+      return deferred.promise;
     };
 
     this.loadSelectedCompany = function (selectedCompanyId, userCompany) {
