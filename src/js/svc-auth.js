@@ -2,7 +2,7 @@
   "use strict";
 
   angular.module("risevision.common.auth",
-    ["rvLoading", "risevision.common.gapi",
+    ["risevision.common.loading", "risevision.common.gapi",
     "risevision.common.localstorage",
     "risevision.common.systemmessages",
     "risevision.common.util"])
