@@ -1,13 +1,16 @@
 (function(angular) {
   "use strict";
 
-  angular.module("risevison.common.auth",
-    ["risevision.common.gapi", "risevison.common.localstorage"])
+  angular.module("risevision.common.auth",
+    ["rvLoading", "risevision.common.gapi",
+    "risevision.common.localstorage",
+    "risevision.common.systemmessages",
+    "risevision.common.util"])
     .service("apiAuth", ["$interval", "$rootScope", "$q", "$http",
-      "gapiLoader", "storeAPILoader", "oauthAPILoader", "CLIENT_ID",
+      "gapiLoader", "oauthAPILoader", "CLIENT_ID",
       "$log", "localStorageService", "$timeout",
       function apiAuthConstructor($interval, $rootScope, $q, $http,
-        gapiLoader, storeAPILoader, oauthAPILoader, CLIENT_ID, $log,
+        gapiLoader, oauthAPILoader, CLIENT_ID, $log,
         localStorageService, $timeout) {
 
         var SCOPES = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
@@ -29,13 +32,15 @@
         };
 
         this.getUserCompanies = function () {
+          //TODO
             var deferred = $q.defer();
-            storeAPILoader.get().then(function (storeClient) {
-              var request = storeClient.usercompanies.get({});
-              request.execute(function (resp) {
-                deferred.resolve(resp);
-              });
-            });
+            // storeAPILoader.get().then(function (storeClient) {
+            //   var request = storeClient.usercompanies.get({});
+            //   request.execute(function (resp) {
+            //     deferred.resolve(resp);
+            //   });
+            // });
+            deferred.resolve({items: []});
             return deferred.promise;
         };
 
@@ -78,24 +83,35 @@
               localStorageService.setItemImmediate("userAuthed", true);
               delete $rootScope.authDeffered;
               updateAuth(authResult);
-              $timeout(function() {
-                $rootScope.resetUserContextAndReturnToThisState();
-              });
+              if($rootScope.$state) {
+                $timeout(function() {
+                  $rootScope.resetUserContextAndReturnToThisState();
+                });
+              }
             }
           });
         };
     }])
 
+    .value("REDIRECT_TO_STATE_KEY", "REDIRECT_TO_STATE")
+
     .factory("logout", ["localStorageService", "$rootScope", "cacheService",
-      function (localStorageService, $rootScope, cacheService) {
+      "REDIRECT_TO_STATE_KEY", "authLoader",
+      function (localStorageService, $rootScope, cacheService,
+        REDIRECT_TO_STATE_KEY, authLoader) {
         return function () {
           localStorageService.removeItemImmediate("userAuthed");
           cacheService.clear();
-          localStorageService.setItemImmediate(REDIRECT_TO_STATE_KEY, JSON.stringify({
-            name: "root.common.products",
-            params: {}
-          }));
-          $rootScope.$state.go("root.reset");
+          if($rootScope.$state) {
+            localStorageService.setItemImmediate(REDIRECT_TO_STATE_KEY, JSON.stringify({
+              name: "root.common.products",
+              params: {}
+            }));
+            $rootScope.$state.go("root.reset");
+          }
+          else {
+            authLoader();
+          }
         };
     }])
 
@@ -148,7 +164,12 @@
             });
 
             // this promise is for both the company and profile load, so it signifies complete auth.
-            $q.all([profileDeferred.promise, companiesDeferred.promise]).then(function () { $rootScope.authDeffered.resolve(); });
+            $q.all([profileDeferred.promise, companiesDeferred.promise]).then(
+              function () {
+                if($rootScope.authDeferred) {
+                  $rootScope.authDeffered.resolve();
+                }
+              });
         } else {
           if ($rootScope.authDeffered) {
             $rootScope.authDeffered.resolve();
@@ -161,23 +182,22 @@
       return handler;
     }])
 
-    .factory("authLoader", ["$rootScope", "$sce", "apiAuth", "storeDataService",
-      "$modal", "companyService", "commonService", "shoppingCartService",
+    .factory("authLoader", ["$rootScope", "$sce", "apiAuth", "systemMessages",
+      "$modal", "companyService", "dateIsInRange",
       "cacheService", "usSpinnerService", "$loading", "$interval", "$q",
-      "storeAPILoader", "oauthAPILoader", "$window", "$location", "$timeout",
+      "oauthAPILoader", "$window", "$location", "$timeout",
       "localStorageService", "$log", "clearUser", "DEFAULT_PROFILE_PICTURE",
-      "updateAuth",
-      function ($rootScope, $sce, apiAuth, apiStore, $modal, companyService,
-        commonService, shoppingCart, cacheService, usSpinnerService, $loading, $interval,
-        $q, storeAPILoader, oauthAPILoader, $window, $location, $timeout,
-        localStorageService, $log, clearUser, DEFAULT_PROFILE_PICTURE, updateAuth) {
+      "updateAuth", "REDIRECT_TO_STATE_KEY",
+      function ($rootScope, $sce, apiAuth, systemMessages, $modal, companyService,
+        dateIsInRange, cacheService, usSpinnerService, $loading, $interval,
+        $q, oauthAPILoader, $window, $location, $timeout,
+        localStorageService, $log, clearUser, DEFAULT_PROFILE_PICTURE, updateAuth,
+        REDIRECT_TO_STATE_KEY) {
         return function () {
           if(!$rootScope.authDeffered) {
             // This object is intended to hold anything that should be flushed
             // on login/logout.
             $rootScope.userState = {};
-
-
 
             // a flag signifying the app is being loaded within an iframe in RVA
             $rootScope.userState.inRVAFrame = angular.isDefined($location.search().inRVA);
@@ -228,7 +248,7 @@
             $rootScope.getSystemMessages = function () {
                 if (!$rootScope.userState.inRVAFrame) {
                     if ($rootScope.userState.isAuthed && $rootScope.userState.user.company) {
-                        apiStore.getSystemMessages($rootScope.userState.user.company.id).then(function (result) { $rootScope.renderSystemMessages(result); });
+                        systemMessages.getSystemMessages($rootScope.userState.user.company.id).then(function (result) { $rootScope.renderSystemMessages(result); });
                     }
                 }
             };
@@ -239,7 +259,7 @@
               dt.setHours(0,0,0,0);
               if (items) {
                   for (var i = 0; i < items.length; i++) {
-                      if (commonService.dateIsInRange(dt, items[i].startDate, items[i].endDate)) {
+                      if (dateIsInRange(dt, items[i].startDate, items[i].endDate)) {
                           messages.push($sce.trustAsHtml(items[i].text));
                       }
                   }
@@ -261,14 +281,18 @@
               modalInstance.result.then(function (company) {
                 $loading.startContentBackgroundSpinner();
                 $rootScope.userState.selectedCompanyIdParam = company.id;
-                $rootScope.resetUserContextAndReturnToThisState();
+                if($rootScope.$state) {
+                  $rootScope.resetUserContextAndReturnToThisState();
+                }
               });
             };
 
             $rootScope.resetSelectedCompany = function () {
               $loading.startContentBackgroundSpinner();
               $rootScope.userState.selectedCompanyIdParam = $rootScope.userState.user.company.id;
-              $rootScope.resetUserContextAndReturnToThisState();
+              if($rootScope.$state) {
+                $rootScope.resetUserContextAndReturnToThisState();
+              }
             };
 
             $rootScope.setSelectedCompany = function (company) {
@@ -308,12 +332,6 @@
             $rootScope.messages = [];
             $rootScope.defaultSpinnerOptions = $loading.getDefaultSpinnerOptions();
             $rootScope.userState.companyLoaded = false;
-
-            $rootScope.shoppingCartItemCount = shoppingCart.getItemCount();
-            $rootScope.$on("cartChanged", function() {
-              $log.info("Cart Changed!");
-              $rootScope.shoppingCartItemCount = shoppingCart.getItemCount();
-            });
 
             $rootScope.$on("userCompany.loaded", function () {
               $rootScope.companyLoaded = true;

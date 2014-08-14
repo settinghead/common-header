@@ -1,20 +1,21 @@
 angular.module("risevision.common.header", [
   "risevision.common.config",
-  "risevison.common.auth",
+  "risevision.common.auth",
   "risevision.common.gapi",
   "risevision.common.cache",
   "risevision.common.company",
-  "risevison.common.localstorage",
+  "risevision.common.localstorage",
+  "risevision.common.header.templates",
+  "rvLoading",
   'ui.bootstrap'
 ])
 .directive('commonHeader', ['$modal', '$rootScope', '$q', 'apiAuth', '$loading',
-  'shoppingCartService', '$interval', 'oauthAPILoader', 'storeAPILoader', 'cacheService',
-  '$log', "logout",
-  function($modal, $rootScope, $q, apiAuth, $loading, shoppingCart, $interval,
-    oauthAPILoader, storeAPILoader, cacheService, $log, logout) {
+  '$interval', 'oauthAPILoader', 'cacheService', '$log', "logout", "$templateCache",
+  function($modal, $rootScope, $q, apiAuth, $loading, $interval,
+    oauthAPILoader, cacheService, $log, logout, $templateCache) {
     return {
       restrict: 'E',
-      templateUrl: 'components/rise-vision-common-header/src/templates/common-header.html',
+      template: $templateCache.get("common-header.html"),
       scope: false,
       link: function(scope, iElement, iAttrs) {
         scope.navCollapsed = true;

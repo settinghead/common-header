@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app="test-app">
+  <head>
+    <link href="../../components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="../../components/rv-style-guide/dist/css/rise.min.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body ng-controller="mainController">
+
+    <common-header
+    	nav-options="navOptions"
+    	auth-status="0"
+    	is-admin="true"
+    	sub-company-selected="true"
+    	company-loaded="true"
+    	selected-company-name="'Rise Vision'"
+    	user-profile-picture="'http://api.randomuser.me/portraits/med/men/33.jpg'"
+    	user-profile-name="'Alfredo Sanchez'"
+    	user-profile-email="'alfredo.sanchez90@example.com'"
+    	messages="messages"
+    ></common-header>
+
+    <script type="text/javascript" src="../../components/jQuery/dist/jquery.js"></script>
+    <script type="text/javascript" src="../../components/angular/angular.js"></script>
+    <script type="text/javascript" src="../../components/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script type="text/javascript" src="../../components/ngstorage/ngStorage.js"></script>
+    <script type="text/javascript" src="../../components/angular-spinner/angular-spinner.js"></script>
+    <script type="text/javascript" src="../../components/rv-loading/loading.js"></script>
+    <script type="text/javascript" src="../../src/templates.js"></script>
+    <script type="text/javascript" src="../../src/js/common-header.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-util.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-auth.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-cache.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-company.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-config.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-gapi.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-localstorage.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-system-messages.js"></script>
+    <script type="text/javascript" src="../gapi-mock.js"></script>
+
+    <script type="text/javascript">
+      angular.module("test-app", ["risevision.common.header"])
+      .controller("mainController", function($scope, authLoader) {
+        $scope.navOptions = [{
+          title: 'Home',
+          link: '#/'
+        }, {
+          title: 'Store',
+          link: ''
+        }, {
+          title: 'Account',
+          link: ''
+        }, {
+          title: 'Sellers',
+          link: ''
+        }, {
+          title: 'Platform',
+          link: 'http://rva.risevision.com/',
+          target: '_blank'
+        }];
+
+        $scope.messages = [
+          '\<li class="system-message">Lorem ipsum dolor sit amet\</li>',
+          '\<li class="system-message">Consectetur adipiscing elit\</li>',
+          '\<li class="system-message">Suspendisse convallis leo sed\</li>'
+        ];
+
+        authLoader();
+      });
+    </script>
+
+  </body>
+</html>
