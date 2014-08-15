@@ -1,6 +1,6 @@
 angular.module("risevision.common.header", [
   "risevision.common.config",
-  "risevision.common.auth",
+  "risevison.common.auth",
   "risevision.common.gapi",
   "risevision.common.cache",
   "risevision.common.company",
@@ -19,10 +19,19 @@ angular.module("risevision.common.header", [
     dependencies) {
     return {
       restrict: 'E',
-      template: $templateCache.get("common-header.html"),
+      templateUrl: 'view/common-header.html',
       scope: false,
       link: function(scope, iElement, iAttrs) {
         scope.navCollapsed = true;
+
+        $rootScope.$on("rvAuth.$authenticate", function(data) {
+          scope.userState = apiAuth.getUserState();
+        });
+
+        $rootScope.$on("rvAuth.$signOut", function () {
+          scope.userState = apiAuth.getUserState();
+        });
+
         // Login Modal
         scope.loginModal = function(size) {
           var modalInstance = $modal.open({
@@ -33,7 +42,7 @@ angular.module("risevision.common.header", [
         };
 
         scope.logout = function () {
-          return logout();
+          apiAuth.$signOut();
         };
 
         // Show Add Sub-Company Modal
@@ -100,14 +109,14 @@ angular.module("risevision.common.header", [
   }
 ])
 .controller('AuthModalCtrl', ['$scope', '$modalInstance', '$window',
-  'apiAuth', 'login',
-  function($scope, $modalInstance, $window, apiAuth, login) {
-    $scope.closeModal = function() {
-      $modalInstance.dismiss('cancel');
+  'apiAuth',
+  function($scope, $modalInstance, $window, apiAuth) {
+
+    $scope.authenticate = function() {
+      apiAuth.$authenticate(true);
+      $modalInstance.dismiss();
     };
-    $scope.login = function () {
-      return login();
-    };
+
   }
 ])
 .controller('SubCompanyModalCtrl', ['$scope', '$modalInstance', '$modal',
