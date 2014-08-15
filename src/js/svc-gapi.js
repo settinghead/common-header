@@ -53,4 +53,33 @@ angular.module("risevision.common.gapi", [])
         return deferred.promise;
       }
     };
+  }])
+  .factory("companyAPILoader", ["gapiLoader", "$q", "CORE_URL",
+    "$location", "$log",
+    function (gapiLoader, $q, CORE_URL, $location, $log) {
+    var deferred = $q.defer();
+    var baseUrl = $location.search().store_api_base_url ? $location.search().store_api_base_url + "/_ah/api": CORE_URL;
+    var promise;
+    var factory = {
+      get: function () {
+        if (!promise) {
+          promise = deferred.promise;
+          gapiLoader.get().then(function (gApi) {
+            gApi.client.load("store", "v0.01", function () {
+              if (gApi.client.store) {
+                $log.info("Store API Loaded");
+                deferred.resolve(gApi.client.store);
+              } else {
+                var errMsg = "Store API Load Failed";
+                $log.error(errMsg);
+                deferred.reject(errMsg);
+              }
+            }, baseUrl);
+          });
+        }
+        return promise;
+      }
+    };
+    return factory;
+
   }]);

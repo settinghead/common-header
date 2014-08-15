@@ -12,14 +12,6 @@ angular.module("risevision.common.cache", [])
         rvStorage.clear();
     };
 
-    this.getProducts = function () {
-        return products;
-    };
-
-    this.setProducts = function (value) {
-        products = value;
-    };
-
     this.getProduct = function (productId) {
         if (products && products.length > 0) {
             for (var i = 0; i < products.length; i++) {

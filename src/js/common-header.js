@@ -7,12 +7,16 @@ angular.module("risevision.common.header", [
   "risevision.common.localstorage",
   "risevision.common.header.templates",
   "risevision.common.loading",
+  "risevision.common.registration",
   'ui.bootstrap'
 ])
-.directive('commonHeader', ['$modal', '$rootScope', '$q', 'apiAuth', '$loading',
-  '$interval', 'oauthAPILoader', 'cacheService', '$log', "logout", "$templateCache",
+.directive('commonHeader',
+  ['$modal', '$rootScope', '$q', 'apiAuth', '$loading',
+   '$interval', 'oauthAPILoader', 'cacheService', '$log',
+   "logout", "$templateCache", "userStatusDependencies",
   function($modal, $rootScope, $q, apiAuth, $loading, $interval,
-    oauthAPILoader, cacheService, $log, logout, $templateCache) {
+    oauthAPILoader, cacheService, $log, logout, $templateCache,
+    dependencies) {
     return {
       restrict: 'E',
       template: $templateCache.get("common-header.html"),
@@ -84,6 +88,13 @@ angular.module("risevision.common.header", [
             link: 'http://rva.risevision.com/',
             target: '_blank'
           }];
+
+        $rootScope.userState = {};
+
+        $rootScope.$watch("userState.status", function (){
+          checkUserStatus();
+        });
+
       }
     };
   }

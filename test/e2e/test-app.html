@@ -41,7 +41,7 @@
 
     <script type="text/javascript">
       angular.module("test-app", ["risevision.common.header"])
-      .controller("mainController", function($scope, authLoader) {
+      .controller("mainController", function($scope, checkUserStatus) {
         $scope.navOptions = [{
           title: 'Home',
           link: '#/'
@@ -66,7 +66,6 @@
           '\<li class="system-message">Suspendisse convallis leo sed\</li>'
         ];
 
-        authLoader();
       });
     </script>
 

@@ -27,6 +27,7 @@
     "bootstrap": "~3.2.0",
     "jQuery": "1.11.0",
     "rv-style-guide": "https://github.com/Rise-Vision/style-guide.git",
-    "rv-loading": "https://github.com/Rise-Vision/rv-loading.git"
+    "rv-loading": "https://github.com/Rise-Vision/rv-loading.git",
+    "q": "~2.0.0"
   }
 }

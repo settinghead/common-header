@@ -197,7 +197,7 @@
           if(!$rootScope.authDeffered) {
             // This object is intended to hold anything that should be flushed
             // on login/logout.
-            $rootScope.userState = {};
+            $rootScope.userState = $rootScope.userState || {};
 
             // a flag signifying the app is being loaded within an iframe in RVA
             $rootScope.userState.inRVAFrame = angular.isDefined($location.search().inRVA);
