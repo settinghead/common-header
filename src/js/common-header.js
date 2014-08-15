@@ -6,7 +6,7 @@ angular.module("risevision.common.header", [
   "risevision.common.company",
   "risevision.common.localstorage",
   "risevision.common.header.templates",
-  "rvLoading",
+  "risevision.common.loading",
   'ui.bootstrap'
 ])
 .directive('commonHeader', ['$modal', '$rootScope', '$q', 'apiAuth', '$loading',
