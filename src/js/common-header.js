@@ -1,6 +1,6 @@
 angular.module("risevision.common.header", [
   "risevision.common.config",
-  "risevison.common.auth",
+  "risevision.common.auth",
   "risevision.common.gapi",
   "risevision.common.cache",
   "risevision.common.company",

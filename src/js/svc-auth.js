@@ -1,8 +1,8 @@
 (function(angular) {
   "use strict";
 
-  angular.module("risevison.common.auth",
-    ["risevision.common.gapi", "risevison.common.localstorage"])
+  angular.module("risevision.common.auth",
+    ["risevision.common.gapi", "risevision.common.localstorage"])
 
     // Some constants
     .value("DEFAULT_PROFILE_PICTURE", "img/user-icon.png")
