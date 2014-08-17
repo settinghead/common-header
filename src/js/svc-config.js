@@ -1,5 +1,7 @@
 "use strict";
 
-angular.module("risevision.common.config", [], function () {
+try { angular.module("risevision.common.config"); }
+catch(err) { angular.module("risevision.common.config", []); }
 
-}).value("CLIENT_ID", "614513768474.apps.googleusercontent.com");
+angular.module("risevision.common.config")
+  .value("CLIENT_ID", "614513768474.apps.googleusercontent.com");

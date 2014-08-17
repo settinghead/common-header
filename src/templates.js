@@ -47,7 +47,7 @@ app.run(["$templateCache", function($templateCache) {
     "		</div>\n" +
     "\n" +
     "		<!-- If User Authenticated -->\n" +
-    "		<ul class=\"nav navbar-nav navbar-right actions-nav\" ng-show=\"userState.authStatus == 1\">\n" +
+    "		<ul class=\"nav navbar-nav navbar-right actions-nav\" ng-show=\"userState.authStatus === 1\">\n" +
     "			<!-- Notifications -->\n" +
     "			<li class=\"dropdown\" ng-if=\"userState.selectedCompanyId\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\">\n" +
@@ -207,7 +207,7 @@ app.run(["$templateCache", function($templateCache) {
     "					</li>\n" +
     "					<li class=\"divider\"></li>\n" +
     "					<li>\n" +
-    "						<a href=\"\" ng-click=\"logout()\">\n" +
+    "						<a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
     "							<i class=\"glyphicons log_out\"></i>\n" +
     "							<span class=\"item-name\">Sign Out</span>\n" +
     "						</a>\n" +
@@ -245,7 +245,7 @@ app.run(["$templateCache", function($templateCache) {
     "	<div class=\"modal-body authorization-modal\">\n" +
     "		<img src=\"img/avatar_2x.jpg\" class=\"profile-img\">\n" +
     "		<p>Please authorize your Google Account to register with Rise Vision.</p>\n" +
-    "		<button type=\"button\" ng-click=\"authenticate(true)\" class=\"btn btn-success btn-lg btn-block\">Authorize</button>\n" +
+    "		<button type=\"button\" ng-click=\"authenticate(true)\" class=\"btn btn-success btn-lg btn-block authorize-button\">Authorize</button>\n" +
     "	</div>\n" +
     "</script>\n" +
     "\n" +

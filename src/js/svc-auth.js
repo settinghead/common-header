@@ -9,15 +9,15 @@
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
-      "gapiLoader", "storeAPILoader", "oauthAPILoader", "CLIENT_ID",
+      "gapiLoader", "companyAPILoader", "oauthAPILoader", "CLIENT_ID",
       "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService", "$location",
-      function($interval, $rootScope, $q, $http, gapiLoader, storeAPILoader,
+      function($interval, $rootScope, $q, $http, gapiLoader, companyAPILoader,
         oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
         localStorageService, $location) {
 
         var that = this;
         var factory = {};
-        var userState = {};
+        var userState;
 
         var AUTH_STATUS_NOT_AUTHENTICATED = 0;
         var AUTH_STATUS_AUTHENTICATED = 1;
@@ -40,6 +40,8 @@
             authStatus: AUTH_STATUS_NOT_AUTHENTICATED
           };
         };
+
+        that.resetUserState();
 
         /**
         * The entry point for an app.
@@ -162,8 +164,8 @@
 
         this.getUserCompanies = function () {
             var deferred = $q.defer();
-            storeAPILoader.get().then(function (storeClient) {
-              var request = storeClient.usercompanies.get({});
+            companyAPILoader.get().then(function (client) {
+              var request = client.usercompanies.get({});
               request.execute(function (resp) {
                 deferred.resolve(resp);
               });

@@ -41,7 +41,7 @@
 		</div>
 
 		<!-- If User Authenticated -->
-		<ul class="nav navbar-nav navbar-right actions-nav" ng-show="userState.authStatus == 1">
+		<ul class="nav navbar-nav navbar-right actions-nav" ng-show="userState.authStatus === 1">
 			<!-- Notifications -->
 			<li class="dropdown" ng-if="userState.selectedCompanyId">
 				<a href="" class="dropdown-toggle">
@@ -201,7 +201,7 @@
 					</li>
 					<li class="divider"></li>
 					<li>
-						<a href="" ng-click="logout()">
+						<a href="" ng-click="logout()" class="sign-out-button">
 							<i class="glyphicons log_out"></i>
 							<span class="item-name">Sign Out</span>
 						</a>
@@ -239,7 +239,7 @@
 	<div class="modal-body authorization-modal">
 		<img src="img/avatar_2x.jpg" class="profile-img">
 		<p>Please authorize your Google Account to register with Rise Vision.</p>
-		<button type="button" ng-click="authenticate(true)" class="btn btn-success btn-lg btn-block">Authorize</button>
+		<button type="button" ng-click="authenticate(true)" class="btn btn-success btn-lg btn-block authorize-button">Authorize</button>
 	</div>
 </script>
 

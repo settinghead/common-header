@@ -1,6 +1,10 @@
 "use strict";
 
-angular.module("risevision.common.company", ["risevision.common.gapi"])
+angular.module("risevision.common.company",
+  [
+    "risevision.common.config",
+    "risevision.common.gapi"
+  ])
   .service("companyService", [ "gapiLoader", "$q", "$log",
     function (gapiLoader, $q, $log) {
 

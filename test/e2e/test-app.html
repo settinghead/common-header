@@ -31,8 +31,10 @@
     <script type="text/javascript" src="../../src/js/common-header.js"></script>
     <script type="text/javascript" src="../../src/js/svc-util.js"></script>
     <script type="text/javascript" src="../../src/js/svc-auth.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-registration.js"></script>
     <script type="text/javascript" src="../../src/js/svc-cache.js"></script>
     <script type="text/javascript" src="../../src/js/svc-company.js"></script>
+    <script type="text/javascript" src="../../src/js/config/config.js"></script>
     <script type="text/javascript" src="../../src/js/svc-config.js"></script>
     <script type="text/javascript" src="../../src/js/svc-gapi.js"></script>
     <script type="text/javascript" src="../../src/js/svc-localstorage.js"></script>
@@ -41,7 +43,7 @@
 
     <script type="text/javascript">
       angular.module("test-app", ["risevision.common.header"])
-      .controller("mainController", function($scope, checkUserStatus) {
+      .controller("mainController", function($scope, $rootScope, apiAuth) {
         $scope.navOptions = [{
           title: 'Home',
           link: '#/'
@@ -65,8 +67,10 @@
           '\<li class="system-message">Consectetur adipiscing elit\</li>',
           '\<li class="system-message">Suspendisse convallis leo sed\</li>'
         ];
-
+        $rootScope.userState = apiAuth.getUserState();
       });
+
+
     </script>
 
   </body>
