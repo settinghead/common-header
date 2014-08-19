@@ -14,7 +14,7 @@ angular.module("risevision.common.company",
           "id": companyId
       };
       gapiLoader.get().then(function (gApi) {
-        var request = gApi.client.store.company.get(obj);
+        var request = gApi.client.core.company.get(obj);
         request.execute(function (resp) {
             $log.debug("getCompany resp", resp);
             deferred.resolve(resp);
@@ -33,7 +33,7 @@ angular.module("risevision.common.company",
         "sort": sort
       };
       gapiLoader.get().then(function (gApi) {
-        var request = gApi.client.store.subcompanies.get(obj);
+        var request = gApi.client.core.subcompanies.get(obj);
         request.execute(function (resp) {
             deferred.resolve(resp);
         });
@@ -92,7 +92,7 @@ angular.module("risevision.common.company",
             "validate": validationRequired
         };
         gapiLoader.get().then(function (gApi) {
-          var request = gApi.client.store.company.updateAddress(obj);
+          var request = gApi.client.core.company.updateAddress(obj);
           request.execute(function (resp) {
               deferred.resolve(resp);
           });
@@ -112,7 +112,7 @@ angular.module("risevision.common.company",
             "province": company.province,
         };
         gapiLoader.get().then(function (gApi) {
-          var request = gApi.client.store.company.validateAddress(obj);
+          var request = gApi.client.core.company.validateAddress(obj);
           request.execute(function (resp) {
               deferred.resolve(resp);
           });

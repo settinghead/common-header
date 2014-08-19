@@ -54,23 +54,23 @@ angular.module("risevision.common.gapi", [])
       }
     };
   }])
-  .factory("companyAPILoader", ["gapiLoader", "$q", "CORE_URL",
+  .factory("coreAPILoader", ["gapiLoader", "$q", "CORE_URL",
     "$location", "$log",
     function (gapiLoader, $q, CORE_URL, $location, $log) {
     var deferred = $q.defer();
-    var baseUrl = $location.search().store_api_base_url ? $location.search().store_api_base_url + "/_ah/api": CORE_URL;
+    var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
     var promise;
     var factory = {
       get: function () {
         if (!promise) {
           promise = deferred.promise;
           gapiLoader.get().then(function (gApi) {
-            gApi.client.load("store", "v0.01", function () {
-              if (gApi.client.store) {
-                $log.info("Store API Loaded");
-                deferred.resolve(gApi.client.store);
+            gApi.client.load("core", "v0", function () {
+              if (gApi.client.core) {
+                $log.info("Core API Loaded");
+                deferred.resolve(gApi.client.core);
               } else {
-                var errMsg = "Store API Load Failed";
+                var errMsg = "Core API Load Failed";
                 $log.error(errMsg);
                 deferred.reject(errMsg);
               }

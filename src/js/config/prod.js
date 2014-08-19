@@ -11,5 +11,5 @@
  */
 
 angular.module("risevision.common.config", [])
-    .value("CORE_URL", "https://store-dot-rvaserver2.appspot.com/_ah/api")
+    .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
 ;

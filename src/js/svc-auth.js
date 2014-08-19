@@ -9,9 +9,9 @@
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
-      "gapiLoader", "companyAPILoader", "oauthAPILoader", "CLIENT_ID",
+      "gapiLoader", "coreAPILoader", "oauthAPILoader", "CLIENT_ID",
       "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService", "$location",
-      function($interval, $rootScope, $q, $http, gapiLoader, companyAPILoader,
+      function($interval, $rootScope, $q, $http, gapiLoader, coreAPILoader,
         oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
         localStorageService, $location) {
 
@@ -82,6 +82,8 @@
                 $q.all([profilePromise, companiesPromise]).then(function(result) {
                   var profileResult = result[0];
                   var companiesResult = result[1];
+
+                  $log.debug("companiesResult", companiesResult);
 
                   if (companiesResult.items && companiesResult.items.length > 0) {
                     var c = companiesResult.items[0];
@@ -164,8 +166,8 @@
 
         this.getUserCompanies = function () {
             var deferred = $q.defer();
-            companyAPILoader.get().then(function (client) {
-              var request = client.usercompanies.get({});
+            coreAPILoader.get().then(function (client) {
+              var request = client.company.list({});
               request.execute(function (resp) {
                 deferred.resolve(resp);
               });
@@ -176,7 +178,7 @@
         this.getProfile = function () {
           var deferred = $q.defer();
           oauthAPILoader.get().then(function (gApi) {
-            var request = gApi.client.oauth2.userinfo.get({});
+            var request = gApi.client.core.user.get({});
             request.execute(function (resp) {
               deferred.resolve(resp);
             });
