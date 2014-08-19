@@ -5,7 +5,7 @@
 
   window.gapi = {};
 
-  var testCompany = {
+  window.testCompany = {
     "id": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
     "name": "Rise Vision Test Co.",
     "creationDate": "2012-04-03T20:52:05.000Z",
@@ -124,6 +124,39 @@
     "adsInterested": false,
     "changedBy": "steve.sherrie@risevision.com",
     "changeDate": "2014-05-23T20:03:01.635Z"
+  };
+
+  window.currentUser = {
+    "result": true,
+    "code": 200,
+    "message": "OK",
+    "item": {
+      "id": "c173f77e-7069-45bb-9d08-99bd2db7faf8",
+      "companyId": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
+      "username": "michael.sanchez@awesome.io",
+      "creationDate": "2014-05-12T15:45:20.289Z",
+      "firstName": "Michael",
+      "lastName": "Sanchez",
+      "email": "michael.sanchez@awesome.io",
+      "lastLogin": "2014-08-18T12:03:40.000Z",
+      "status": 1,
+      "roles": [
+      "ce",
+      "cp",
+      "da",
+      "ua",
+      "pu",
+      "ba",
+      "sa"
+      ],
+      "termsAcceptanceDate": "2014-06-19T18:01:33.000Z",
+      "showTutorial": false,
+      "mailSyncEnabled": false,
+      "changedBy": "bloosbrock@gmail.com",
+      "changeDate": "2014-07-18T11:38:24.668Z"
+    },
+    "kind": "core#userItem",
+    "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
   };
 
   var companies = [{
@@ -927,7 +960,7 @@
                 });
               }
               else {
-                company = testCompany;
+                company = window.testCompany;
               }
               return cb({
                 "result": true,
@@ -1060,38 +1093,7 @@
       get: function () {
         return {
           execute: function (cb) {
-            return cb({
-              "result": true,
-              "code": 200,
-              "message": "OK",
-              "item": {
-                "id": "c173f77e-7069-45bb-9d08-99bd2db7faf8",
-                "companyId": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
-                "username": "michael.sanchez@awesome.io",
-                "creationDate": "2014-05-12T15:45:20.289Z",
-                "firstName": "Michael",
-                "lastName": "Sanchez",
-                "email": "michael.sanchez@awesome.io",
-                "lastLogin": "2014-08-18T12:03:40.000Z",
-                "status": 1,
-                "roles": [
-                "ce",
-                "cp",
-                "da",
-                "ua",
-                "pu",
-                "ba",
-                "sa"
-                ],
-                "termsAcceptanceDate": "2014-06-19T18:01:33.000Z",
-                "showTutorial": false,
-                "mailSyncEnabled": false,
-                "changedBy": "bloosbrock@gmail.com",
-                "changeDate": "2014-07-18T11:38:24.668Z"
-              },
-              "kind": "core#userItem",
-              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
-            });
+            return cb(window.currentUser);
           }
         };
       }
