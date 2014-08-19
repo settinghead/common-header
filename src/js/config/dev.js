@@ -1,5 +1,3 @@
-"use strict";
-
 /*
  * App Configuration File
  * Put environment-specific global variables in this file.
@@ -9,7 +7,9 @@
  * dev.js, stage.js & prod.js
  *
  */
-
-angular.module("risevision.common.config", [])
+(function (angular){
+  "use strict";
+  angular.module("risevision.common.config", [])
     .value("CORE_URL", "https://rvacore-test.appspot.com/_ah/api")
-;
+  ;
+})(angular);

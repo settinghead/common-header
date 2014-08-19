@@ -18,7 +18,7 @@
         var deferred = $q.defer();
         var dependency = userStatusDependencies[status];
         if(dependency) {
-          achieveStatus(dependency).then(function (){
+          attemptStatus(dependency).then(function (){
             $injector.get(status)().then(
               deferred.resolve,
               deferred.reject
@@ -54,8 +54,10 @@
     };
   }])
 
-  .factory("termsConditionsAccepted", ["$q", function ($q) {
-    return function (userState) {
+  .factory("termsConditionsAccepted", ["$q", "coreAPILoader", "$log",
+   function ($q, coreAPILoader, $log) {
+    return function () {
+      var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
         var request = coreApi.user.get({});
         request.execute(function (resp) {
@@ -72,7 +74,8 @@
     };
   }])
 
-  .factory("profileCreated", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
+  .factory("profileCreated", ["$q", "coreAPILoader", "$log",
+  function ($q, coreAPILoader, $log) {
     return function () {
       var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
@@ -92,8 +95,9 @@
     };
   }])
 
-  .factory("updateProfile", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
-    return function () {
+  .factory("updateProfile", ["$q", "coreAPILoader", "$log",
+  function ($q, coreAPILoader, $log) {
+    return function (profile) {
       var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
         //TODO: consult Alxey
@@ -112,8 +116,10 @@
     };
   }])
 
-  .factory("signedInWithGoogle", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
-    return function (userState) {
+  .factory("signedInWithGoogle", ["$q", "coreAPILoader", "$log",
+  function ($q, coreAPILoader, $log) {
+    return function () {
+      var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
         var request = coreApi.user.get();
         request.execute(function (resp) {
@@ -130,8 +136,10 @@
     };
   }])
 
-  .factory("companyCreated", ["$q", function ($q) {
-    return function (userState) {
+  .factory("companyCreated", ["$q", "coreAPILoader", "$log",
+  function ($q, coreAPILoader, $log) {
+    return function () {
+      var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
         var request = coreApi.company.get();
         request.execute(function (resp) {

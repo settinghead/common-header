@@ -1,7 +1,7 @@
 (function (_, window, handleClientJSLoad) {
   "use strict";
 
-  /*global gapi,handleClientJSLoad: false */
+  /*global _,gapi,handleClientJSLoad: false */
 
   window.gapi = {};
 
@@ -1057,7 +1057,17 @@
              "result": true,
              "code": 200,
              "message": "OK",
-             "cursor": "false:Cq8ECpgCCvsBvJeNloyLkI-Xmo27mpyUv5iSnpaT0ZyQktiM37yQko-ekYb_AP7__vcKlehA__r_14yBjYmenJCNmtKLmoyL_wB0baCgmYuMoKD_AF2ej4-akZiWkZr_AHN0bZaRm5qH_wBdm5aNmpyLkI2G0YyKnZyQko-ekZaajJ3Lzcedy5rH0pzHncbSy86bytLHns7P0p3LzsbMnMjHxsvLzP8Ac3Rtm5CcoJab_wBdmc3Om5qansjSzczGy9LLyZ3M0sfJm53Sm8-dx8nPz8jMm8ed_wBzf5nNzpuamp7I0s3MxsvSy8mdzNLHyZud0pvPncfJz8_IzJvHnf8A__4QMiFMcw71s9sZvFAAWgsJVe1Ieq0Kl_oQARINRG9jdW1lbnRJbmRleBqzAShBTkQgKElTICJjdXN0b21lcl9uYW1lIiAiYXBwZW5naW5lIikgKElTICJncm91cF9uYW1lIiAic35ydmFjb3JlLXRlc3QiKSAoSVMgIm5hbWVzcGFjZSIgIiIpIChJUyAiaW5kZXhfbmFtZSIgImRpcmVjdG9yeS5zdWJjb21wYW5pZXNiNDI4YjRlOC1jOGI5LTQxZDUtOGExMC1iNDE5M2M3ODk0NDMiKSAoVFJVRSkpOhQKDihUIHN0ZXh0X25hbWUpEAAiAEocCAA6FXN0OmJ0aV9nZW5lcmljX3Njb3JlckDoB1IZCgwoTiBvcmRlcl9pZCkQARkAAAAAAADw_w",
+             "cursor": "false:Cq8ECpgCCvsBvJeNloyLkI-Xmo27mpyUv5iSnpaT0ZyQktiM37yQko" +
+               "-ekYb_AP7__vcKlehA__r_14yBjYmenJCNmtKLmoyL_wB0baCgmYuMoKD_AF2ej4-" +
+               "akZiWkZr_AHN0bZaRm5qH_wBdm5aNmpyLkI2G0YyKnZyQko-" +
+               "ekZaajJ3Lzcedy5rH0pzHncbSy86bytLHns7P0p3LzsbMnMjHxsvLzP8Ac3Rtm5CcoJab" +
+               "_wBdmc3Om5qansjSzczGy9LLyZ3M0sfJm53Sm8-dx8nPz8jMm8ed_wBzf5nNzpuamp7" +
+               "I0s3MxsvSy8mdzNLHyZud0pvPncfJz8_IzJvHnf8A__" +
+               "4QMiFMcw71s9sZvFAAWgsJVe1Ieq0Kl_oQARINRG9jdW1lbnRJbmRleBqzAShBTk" +
+               "QgKElTICJjdXN0b21lcl9uYW1lIiAiYXBwZW5naW5lIikgKElTICJncm91cF9uYW1lIi" +
+               "Aic35ydmFjb3JlLXRlc3QiKSAoSVMgIm5hbWVzcGFjZSIgIiIpIChJUyAiaW5kZXhfb" +
+               "mFtZSIgImRpcmVjdG9yeS5zdWJjb21wYW5pZXNiNDI4YjRlOC1jOGI5LTQxZDUtOGE" +
+               "xMC1iNDE5M2M3ODk0NDMiKSAoVFJVRSkpOhQKDihUIHN0ZXh0X25hbWUpEAAiAEocCAA6FXN0OmJ0aV9nZW5lcmljX3Njb3JlckDoB1IZCgwoTiBvcmRlcl9pZCkQARkAAAAAAADw_w",
              "items": companies,
              "kind": "core#company",
              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/aU3KWpXBGvssoqWVjsHR5ngSZlU\""
@@ -1076,7 +1086,9 @@
               "message": "OK",
               "items": [
               {
-                "text": "We have updated our <a href=\"http://www.risevision.com/terms-service-privacy/\" target=_blank>Service Agreement</a> with you. Please <a href=\"http://www.risevision.com/terms-service-privacy/\" target=_blank>CLICK HERE</a> here to review. Thank You.",
+                "text": "We have updated our" +
+                " <a href=\"http://www.risevision.com/terms-service-privacy/\" "+
+                "target=_blank>Service Agreement</a> with you. Please <a href=\"http://www.risevision.com/terms-service-privacy/\" target=_blank>CLICK HERE</a> here to review. Thank You.",
                 "startDate": "2001-01-01T00:00:00.000Z",
                 "endDate": "2014-05-13T00:00:00.000Z",
                 "kind": "core#systemmessageItem"

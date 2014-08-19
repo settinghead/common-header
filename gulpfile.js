@@ -13,6 +13,7 @@
 var env = process.env.NODE_ENV || "dev",
     gulp = require('gulp'),
     replace = require("gulp-replace"),
+    jshint = require("gulp-jshint"),
 
     jsFiles = [
       "src/*.js",
@@ -32,6 +33,19 @@ gulp.task("build", function () {
   .pipe(gulp.dest("dist/"))
   .pipe(gulp.src(htmlFiles))
   .pipe(gulp.dest("dist/"));
+});
+
+gulp.task("lint", ["config"], function() {
+  return gulp.src([
+      "src/js/**/*.js",
+      "test/**/*.js"
+    ])
+    .pipe(jshint())
+    .pipe(jshint.reporter("jshint-stylish"))
+    .pipe(jshint.reporter("fail"))
+    .on("error", function () {
+      process.exit(1);
+    });
 });
 
 gulp.task('html2js', function() {
@@ -77,7 +91,7 @@ gulp.task("test:e2e", function (cb) {
   });
 
 gulp.task("metrics", factory.metrics());
-gulp.task("test", function (cb) {
+gulp.task("test", ["lint"], function (cb) {
   runSequence("test:unit", "test:e2e", "metrics", cb);
 });
 

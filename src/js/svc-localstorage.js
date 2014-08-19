@@ -1,29 +1,33 @@
-"use strict";
+(function (angular){
 
-angular.module("risevision.common.localstorage", ["ngStorage"])
-  .factory("localStorageService", ["$localStorage", "$sessionStorage", function ($localStorage, $sessionStorage) {
+  "use strict";
 
-    var storageImpl = localStorage ? localStorage : sessionStorage;
-    var storageImplWrapper = localStorage ? $localStorage : $sessionStorage;
+  angular.module("risevision.common.localstorage", ["ngStorage"])
+    .factory("localStorageService", ["$localStorage", "$sessionStorage", function ($localStorage, $sessionStorage) {
 
-    var factory = {};
+      var storageImpl = localStorage ? localStorage : sessionStorage;
+      var storageImplWrapper = localStorage ? $localStorage : $sessionStorage;
 
-    factory.getStorage = function() {
-      return storageImplWrapper;
-    };
+      var factory = {};
 
-    factory.setItemImmediate = function(key, value) {
-      storageImpl.setItem(key, value);
-    };
+      factory.getStorage = function() {
+        return storageImplWrapper;
+      };
 
-    factory.removeItemImmediate = function(key) {
-      storageImpl.removeItem(key);
-    };
+      factory.setItemImmediate = function(key, value) {
+        storageImpl.setItem(key, value);
+      };
 
-    factory.getItem = function(key) {
-      return storageImpl.getItem(key);
-    };
+      factory.removeItemImmediate = function(key) {
+        storageImpl.removeItem(key);
+      };
 
-    return factory;
+      factory.getItem = function(key) {
+        return storageImpl.getItem(key);
+      };
 
-  }]);
+      return factory;
+
+    }]);
+
+})(angular);
