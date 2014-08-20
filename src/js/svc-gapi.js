@@ -13,7 +13,8 @@ function handleClientJSLoad() {
 /* jshint ignore:end */
 
 angular.module("risevision.common.gapi", [])
-  .factory("oauthAPILoader", ["gapiLoader", "$q", function (gapiLoader, $q) {
+  .factory("oauthAPILoader", ["gapiLoader", "$q", "$log",
+   function (gapiLoader, $q, $log) {
     var deferred = $q.defer();
     var promise;
 
@@ -23,7 +24,7 @@ angular.module("risevision.common.gapi", [])
           promise = deferred.promise;
           gapiLoader.get().then(function (gApi) {
             gApi.client.load("oauth2", "v2", function () {
-                console.log("OAuth2 API is loaded");
+                $log.info("OAuth2 API is loaded");
                 deferred.resolve(gApi);
             });
           });

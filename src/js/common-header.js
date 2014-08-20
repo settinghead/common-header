@@ -24,11 +24,11 @@ angular.module("risevision.common.header", [
         scope.navCollapsed = true;
 
         $rootScope.$on("rvAuth.$authenticate", function() {
-          scope.userState = apiAuth.getUserState();
+          $rootScope.userState = apiAuth.getUserState();
         });
 
         $rootScope.$on("rvAuth.$signOut", function () {
-          scope.userState = apiAuth.getUserState();
+          $rootScope.userState = apiAuth.getUserState();
         });
 
         // Login Modal
@@ -105,6 +105,12 @@ angular.module("risevision.common.header", [
 
         $rootScope.$watch("userState.status", function (){
           checkUserStatus();
+        });
+
+        $rootScope.$watch("userState.authStatus", function (newVal) {
+          if(newVal === -1) {
+            apiAuth.$authenticate(false);
+          }
         });
 
       }

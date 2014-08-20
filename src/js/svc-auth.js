@@ -3,29 +3,33 @@
 
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
-      "risevision.common.config"
+      "risevision.common.config", "risevision.common.company",
+      "ngBiscuit"
     ])
 
     // Some constants
-    .value("DEFAULT_PROFILE_PICTURE", "img/user-icon.png")
+    .value("DEFAULT_PROFILE_PICTURE", "http://rise-vision.github.io/style-guide/img/user-icon.png")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
       "gapiLoader", "coreAPILoader", "oauthAPILoader", "CLIENT_ID",
-      "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService", "$location",
+      "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService",
+      "$location", "companyService", "cookieStore",
       function($interval, $rootScope, $q, $http, gapiLoader, coreAPILoader,
         oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
-        localStorageService, $location) {
+        localStorageService, $location, companyService, cookieStore) {
 
         var that = this;
         var factory = {};
-        var userState;
+        var userState = {};
 
         var AUTH_STATUS_NOT_AUTHENTICATED = 0;
         var AUTH_STATUS_AUTHENTICATED = 1;
+        var AUTH_STAUS_LOADING = -1;
 
         this.resetUserState = function() {
-          userState = {
+
+          angular.extend(userState, {
             user: {
               profile: {
                   name: "",
@@ -39,11 +43,20 @@
             isRiseAdmin: false,
             isRiseUser: false,
             isAuthed: false,
-            authStatus: AUTH_STATUS_NOT_AUTHENTICATED
-          };
+            authStatus: AUTH_STAUS_LOADING
+          });
+
         };
 
         that.resetUserState();
+
+        var accessToken = cookieStore.get("rv-token");
+
+        if(accessToken) {
+          accessToken = JSON.parse(accessToken);
+        }
+
+        $log.debug("Access token", accessToken);
 
         /**
         * The entry point for an app.
@@ -73,12 +86,15 @@
           });
 
           // This flag indicates a potentially authenticated user.
-          var userAuthed = localStorageService.getItem("rvAuth.userAuthed");
-          if (forceAuth || userAuthed === "true") {
-            that.authorize(userAuthed === "true" && !forceAuth).then(function(authResult) {
+          // var userAuthed = localStorageService.getItem("rvAuth.userAuthed");
+          var userAuthed = (angular.isDefined(accessToken) && accessToken !== null);
+          $log.debug("userAuthed", userAuthed);
+
+          if (forceAuth || userAuthed === true) {
+            that.authorize(userAuthed === true && !forceAuth).then(function(authResult) {
               if (authResult && ! authResult.error) {
                 var profilePromise = that.getProfile();
-                var companiesPromise = that.getUserCompanies();
+                var companiesPromise = companyService.getUserCompanies();
 
                 // Block until profile and companies are loaded.
                 $q.all([profilePromise, companiesPromise]).then(function(result) {
@@ -127,6 +143,7 @@
           else {
             var msg = "user is not authenticated";
             $log.info(msg);
+            userState.authStatus = AUTH_STATUS_NOT_AUTHENTICATED;
             authenticateDeferred.reject(msg);
           }
 
@@ -155,7 +172,12 @@
 
           oauthAPILoader.get().then(function (gApi) {
             gApi.auth.authorize(opts, function (authResult) {
+              $log.debug("authResult", authResult);
               if (authResult && !authResult.error) {
+                accessToken = authResult;
+                if(typeof accessToken === "object") {
+                  cookieStore.put("rv-token", JSON.stringify(accessToken));
+                }
                 authorizeDeferred.resolve(authResult);
               }
               else {
@@ -164,17 +186,6 @@
             });
           });
           return authorizeDeferred.promise;
-        };
-
-        this.getUserCompanies = function () {
-            var deferred = $q.defer();
-            coreAPILoader.get().then(function (client) {
-              var request = client.company.list({});
-              request.execute(function (resp) {
-                deferred.resolve(resp);
-              });
-            });
-            return deferred.promise;
         };
 
         this.getProfile = function () {
@@ -209,8 +220,9 @@
 
           // The flag the indicates a user is potentially
           // authenticated already, must be destroyed.
-          localStorageService.removeItemImmediate("rvAuth.userAuthed");
-
+          // localStorageService.removeItemImmediate("rvAuth.userAuthed");
+          cookieStore.remove("rv-token");
+          accessToken = undefined;
           // The majority of state is in here
           that.resetUserState();
 
@@ -218,6 +230,16 @@
         };
 
         that.resetUserState();
+
+
+        if(accessToken) {
+          gapiLoader.get().then(function (gApi) {
+            gApi.auth.setToken(accessToken, null);
+            // factory.$authenticate(false);
+            userState.authStatus = AUTH_STAUS_LOADING;
+          });
+        }
+
         return factory;
 
       }]);

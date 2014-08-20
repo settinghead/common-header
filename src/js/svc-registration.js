@@ -123,7 +123,7 @@
       coreAPILoader.get().then(function (coreApi) {
         var request = coreApi.user.get();
         request.execute(function (resp) {
-            $log.debug("updateProfile resp", resp);
+            $log.debug("user.get() resp", resp);
             if(resp.result === true) {
               deferred.resolve(resp);
             }

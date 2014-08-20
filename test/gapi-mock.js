@@ -1306,16 +1306,22 @@
 gapi.auth = {
   authorize: function(options, cb) {
     cb({
-      "methods":{
-        "oauth2.tokeninfo":{
-          "id":"oauth2.tokeninfo"
-        },
-        "oauth2.userinfo.get":{
-          "id":"oauth2.userinfo.get"
-        },
-        "oauth2.userinfo.v2.me.get":{
-          "id":"oauth2.userinfo.v2.me.get"
-        }
+      "state": "",
+      "access_token": "ya29.ZwAgQsgKffXb9iIAAACywIxIBmnB3GZZy-8ZF2nVT37cniK5PzKHxzWu6DQh8uyoRYpIjLYdneCEgYZb2U8",
+      "token_type": "Bearer",
+      "expires_in": "3600",
+      "scope": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+      "client_id": "614513768474.apps.googleusercontent.com",
+      "g_user_cookie_policy": "http://localhost:8099",
+      "cookie_policy": "http://localhost:8099",
+      "response_type": "token",
+      "issued_at": "1408530459",
+      "expires_at": "1408534059",
+      "g-oauth-window": {},
+      "status": {
+        "google_logged_in": false,
+        "signed_in": true,
+        "method": "PROMPT"
       }
     });
   }
