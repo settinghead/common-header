@@ -1,6 +1,10 @@
 "use strict";
 
-angular.module("risevision.common.company", ["risevision.common.gapi"])
+angular.module("risevision.common.company",
+  [
+    "risevision.common.config",
+    "risevision.common.gapi"
+  ])
   .service("companyService", [ "gapiLoader", "$q", "$log",
     function (gapiLoader, $q, $log) {
 
@@ -10,7 +14,7 @@ angular.module("risevision.common.company", ["risevision.common.gapi"])
           "id": companyId
       };
       gapiLoader.get().then(function (gApi) {
-        var request = gApi.client.store.company.get(obj);
+        var request = gApi.client.core.company.get(obj);
         request.execute(function (resp) {
             $log.debug("getCompany resp", resp);
             deferred.resolve(resp);
@@ -29,7 +33,7 @@ angular.module("risevision.common.company", ["risevision.common.gapi"])
         "sort": sort
       };
       gapiLoader.get().then(function (gApi) {
-        var request = gApi.client.store.subcompanies.get(obj);
+        var request = gApi.client.core.subcompanies.get(obj);
         request.execute(function (resp) {
             deferred.resolve(resp);
         });
@@ -88,7 +92,7 @@ angular.module("risevision.common.company", ["risevision.common.gapi"])
             "validate": validationRequired
         };
         gapiLoader.get().then(function (gApi) {
-          var request = gApi.client.store.company.updateAddress(obj);
+          var request = gApi.client.core.company.updateAddress(obj);
           request.execute(function (resp) {
               deferred.resolve(resp);
           });
@@ -108,7 +112,7 @@ angular.module("risevision.common.company", ["risevision.common.gapi"])
             "province": company.province,
         };
         gapiLoader.get().then(function (gApi) {
-          var request = gApi.client.store.company.validateAddress(obj);
+          var request = gApi.client.core.company.validateAddress(obj);
           request.execute(function (resp) {
               deferred.resolve(resp);
           });

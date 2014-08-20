@@ -9,7 +9,10 @@
     "gulp": "~3.8.6",
     "gulp-concat": "^2.3.4",
     "gulp-html2js": "^0.1.0",
+    "gulp-jshint": "^1.8.4",
+    "gulp-rename": "^1.2.0",
     "gulp-replace": "~0.3.0",
+    "jshint-stylish": "^0.4.0",
     "run-sequence": "^0.3.6",
     "widget-tester": "git://github.com/Rise-Vision/widget-tester.git"
   },

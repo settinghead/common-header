@@ -1,13 +1,11 @@
 (function (angular) {
 
   "use strict";
-  /*global gapi: false */
 
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
-    .service("systemMessages", ["gapiLoader", "$q", "$log", "$interval",
-    function (gapiLoader, $q, $log, $interval) {
-      var self = this;
+    .service("systemMessages", ["gapiLoader", "$q", "$log",
+    function (gapiLoader, $q, $log) {
 
       this.getSystemMessages = function (companyId) {
           var deferred = $q.defer();
