@@ -9,6 +9,10 @@
  */
 (function (angular){
   "use strict";
+
+  try { angular.module("risevision.common.config"); }
+  catch(err) { angular.module("risevision.common.config", []); }
+
   angular.module("risevision.common.config", [])
     .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
   ;

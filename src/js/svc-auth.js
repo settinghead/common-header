@@ -2,7 +2,9 @@
   "use strict";
 
   angular.module("risevision.common.auth",
-    ["risevision.common.gapi", "risevision.common.localstorage"])
+    ["risevision.common.gapi", "risevision.common.localstorage",
+      "risevision.common.config"
+    ])
 
     // Some constants
     .value("DEFAULT_PROFILE_PICTURE", "img/user-icon.png")
@@ -177,10 +179,12 @@
 
         this.getProfile = function () {
           var deferred = $q.defer();
-          oauthAPILoader.get().then(function (gApi) {
-            var request = gApi.client.core.user.get({});
-            request.execute(function (resp) {
-              deferred.resolve(resp);
+          oauthAPILoader.get().then(function () {
+            coreAPILoader.get().then(function (coreApi) {
+              var request = coreApi.user.get({});
+              request.execute(function (resp) {
+                deferred.resolve(resp);
+              });
             });
           });
           return deferred.promise;
