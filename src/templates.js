@@ -59,7 +59,9 @@ app.run(["$templateCache", function($templateCache) {
     "						System Message\n" +
     "					</li>\n" +
     "					<li class=\"divider\"></li>\n" +
-    "					<li class=\"system-message\" ng-repeat=\"message in messages\" ng-bind-html=\"message\"></li>\n" +
+    "					<li class=\"system-message\" ng-repeat=\"message in messages\">\n" +
+    "					{{message}}\n" +
+    "					</li>\n" +
     "				</ul>\n" +
     "			</li>\n" +
     "			<!-- Shopping Cart -->\n" +
@@ -226,6 +228,13 @@ app.run(["$templateCache", function($templateCache) {
     "				</a>\n" +
     "			</li>\n" +
     "		</ul>\n" +
+    "\n" +
+    "		<ul class=\"nav navbar-nav navbar-right\" ng-show=\"userState.authStatus === -1\">\n" +
+    "			<li>\n" +
+    "				Loading...\n" +
+    "			</li>\n" +
+    "		</ul>\n" +
+    "\n" +
     "	</div>\n" +
     "	<div ng-if=\"subCompanySelected\" class=\"sub-company-alert\">\n" +
     "		You’re in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}\n" +
@@ -243,7 +252,7 @@ app.run(["$templateCache", function($templateCache) {
     "		<button type=\"button\" ng-click=\"closeModal()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
     "	</div>\n" +
     "	<div class=\"modal-body authorization-modal\">\n" +
-    "		<img src=\"img/avatar_2x.jpg\" class=\"profile-img\">\n" +
+    "		<img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\" class=\"profile-img\">\n" +
     "		<p>Please authorize your Google Account to register with Rise Vision.</p>\n" +
     "		<button type=\"button\" ng-click=\"authenticate(true)\" class=\"btn btn-success btn-lg btn-block authorize-button\">Authorize</button>\n" +
     "	</div>\n" +
@@ -384,6 +393,16 @@ app.run(["$templateCache", function($templateCache) {
     "		<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
     "			Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "		</button>\n" +
+    "	</div>\n" +
+    "</script>\n" +
+    "\n" +
+    "<script type=\"text/ng-template\" id=\"terms-and-conditions.html\">\n" +
+    "	<div class=\"modal-header\">\n" +
+    "		<button type=\"button\" ng-click=\"closeModal()\" class=\"close\">\n" +
+    "		<span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "	</div>\n" +
+    "	<div class=\"modal-body authorization-modal\">\n" +
+    "	  <h3>Terms and Conditions Goes Here</h3>\n" +
     "	</div>\n" +
     "</script>\n" +
     "\n" +

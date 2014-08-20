@@ -24,11 +24,11 @@ angular.module("risevision.common.header", [
         scope.navCollapsed = true;
 
         $rootScope.$on("rvAuth.$authenticate", function() {
-          scope.userState = apiAuth.getUserState();
+          $rootScope.userState = apiAuth.getUserState();
         });
 
         $rootScope.$on("rvAuth.$signOut", function () {
-          scope.userState = apiAuth.getUserState();
+          $rootScope.userState = apiAuth.getUserState();
         });
 
         // Login Modal
@@ -82,6 +82,14 @@ angular.module("risevision.common.header", [
           });
         };
 
+        scope.termsAndConditions = function (size) {
+          $modal.open({
+            templateUrl: "terms-and-conditions.html",
+            controller: "TermsConditionsModalCtrl",
+            size: size
+          });
+        };
+
         // If nav options not provided use defaults
         if (!scope.navOptions) {
           scope.navOptions = [{
@@ -103,8 +111,23 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $rootScope.$watch("userState.status", function (){
-          checkUserStatus();
+        $rootScope.$watch("userState.status", function (newStatus, oldStatus){
+          $log.debug("statusChange from", oldStatus, "to", newStatus);
+          if(newStatus) {
+            if(newStatus === "termsConditionsAccepted") {
+              scope.termsAndConditions();
+            }
+            else {
+              checkUserStatus($rootScope.userState);
+            }
+
+          }
+        });
+
+        $rootScope.$watch("userState.authStatus", function (newVal) {
+          if(newVal === -1) {
+            apiAuth.$authenticate(false);
+          }
         });
 
       }
@@ -135,6 +158,13 @@ angular.module("risevision.common.header", [
         controller: "MoveCompanyModalCtrl",
         size: size
       });
+    };
+  }
+])
+.controller("TermsConditionsModalCtrl", ["$scope", "$modalInstance",
+  function($scope, $modalInstance) {
+    $scope.closeModal = function() {
+      $modalInstance.dismiss("cancel");
     };
   }
 ])

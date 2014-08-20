@@ -53,7 +53,9 @@
 						System Message
 					</li>
 					<li class="divider"></li>
-					<li class="system-message" ng-repeat="message in messages" ng-bind-html="message"></li>
+					<li class="system-message" ng-repeat="message in messages">
+					{{message}}
+					</li>
 				</ul>
 			</li>
 			<!-- Shopping Cart -->
@@ -220,6 +222,13 @@
 				</a>
 			</li>
 		</ul>
+
+		<ul class="nav navbar-nav navbar-right" ng-show="userState.authStatus === -1">
+			<li>
+				Loading...
+			</li>
+		</ul>
+
 	</div>
 	<div ng-if="subCompanySelected" class="sub-company-alert">
 		You’re in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}
@@ -237,7 +246,7 @@
 		<button type="button" ng-click="closeModal()" class="close"><span>&times;</span><span class="sr-only">Close</span></button>
 	</div>
 	<div class="modal-body authorization-modal">
-		<img src="img/avatar_2x.jpg" class="profile-img">
+		<img src="http://rise-vision.github.io/style-guide/img/avatar_2x.jpg" class="profile-img">
 		<p>Please authorize your Google Account to register with Rise Vision.</p>
 		<button type="button" ng-click="authenticate(true)" class="btn btn-success btn-lg btn-block authorize-button">Authorize</button>
 	</div>
@@ -378,6 +387,16 @@
 		<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="closeModal()">
 			Cancel <i class="glyphicons white remove_2 icon-right"></i>
 		</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="terms-and-conditions.html">
+	<div class="modal-header">
+		<button type="button" ng-click="closeModal()" class="close">
+		<span>&times;</span><span class="sr-only">Close</span></button>
+	</div>
+	<div class="modal-body authorization-modal">
+	  <h3>Terms and Conditions Goes Here</h3>
 	</div>
 </script>
 

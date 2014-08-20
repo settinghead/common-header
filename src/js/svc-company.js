@@ -5,16 +5,16 @@ angular.module("risevision.common.company",
     "risevision.common.config",
     "risevision.common.gapi"
   ])
-  .service("companyService", [ "gapiLoader", "$q", "$log",
-    function (gapiLoader, $q, $log) {
+  .service("companyService", [ "coreAPILoader", "$q", "$log",
+    function (coreAPILoader, $q, $log) {
 
     this.getCompany = function (companyId) {
       var deferred = $q.defer();
       var obj = {
           "id": companyId
       };
-      gapiLoader.get().then(function (gApi) {
-        var request = gApi.client.core.company.get(obj);
+      coreAPILoader.get().then(function (coreApi) {
+        var request = coreApi.company.get(obj);
         request.execute(function (resp) {
             $log.debug("getCompany resp", resp);
             deferred.resolve(resp);
@@ -32,13 +32,24 @@ angular.module("risevision.common.company",
         "count": count,
         "sort": sort
       };
-      gapiLoader.get().then(function (gApi) {
-        var request = gApi.client.core.subcompanies.get(obj);
+      coreAPILoader.get().then(function (coreApi) {
+        var request = coreApi.subcompanies.get(obj);
         request.execute(function (resp) {
             deferred.resolve(resp);
         });
       });
       return deferred.promise;
+    };
+
+    this.getUserCompanies = function () {
+        var deferred = $q.defer();
+        coreAPILoader.get().then(function (client) {
+          var request = client.company.list({});
+          request.execute(function (resp) {
+            deferred.resolve(resp);
+          });
+        });
+        return deferred.promise;
     };
 
     this.loadSelectedCompany = function (selectedCompanyId, userCompany) {
@@ -79,26 +90,39 @@ angular.module("risevision.common.company",
     };
 
 
-    this.updateAddress = function (company, validationRequired) {
+    this.updateCompany = function (fields, validationRequired) {
         var deferred = $q.defer();
-        var obj = {
-            "id": company.id,
-            "street": company.street,
-            "unit": company.unit,
-            "city": company.city,
-            "country": company.country,
-            "postalCode": company.postalCode,
-            "province": company.province,
-            "validate": validationRequired
-        };
-        gapiLoader.get().then(function (gApi) {
-          var request = gApi.client.core.company.updateAddress(obj);
+        // var obj = {
+        //     "id": company.id,
+        //     "street": company.street,
+        //     "unit": company.unit,
+        //     "city": company.city,
+        //     "country": company.country,
+        //     "postalCode": company.postalCode,
+        //     "province": company.province,
+        //     "validate": validationRequired
+        // };
+        fields.validate = validationRequired || false;
+        coreAPILoader.get().then(function (coreApi) {
+          var request = coreApi.company.update(fields);
           request.execute(function (resp) {
               deferred.resolve(resp);
           });
         });
 
         return deferred.promise;
+    };
+
+    this.createCompany = function (company) {
+      var deferred = $q.defer();
+      company.validate = true;
+      coreAPILoader.get().then(function (coreApi) {
+        var request = coreApi.company.add(company);
+        request.execute(function (resp) {
+            deferred.resolve(resp);
+        });
+      });
+      return deferred.promise;
     };
 
     this.validateAddress = function (company) {
@@ -111,8 +135,8 @@ angular.module("risevision.common.company",
             "postalCode": company.postalCode,
             "province": company.province,
         };
-        gapiLoader.get().then(function (gApi) {
-          var request = gApi.client.core.company.validateAddress(obj);
+        coreAPILoader.get().then(function (coreApi) {
+          var request = coreApi.company.validateAddress(obj);
           request.execute(function (resp) {
               deferred.resolve(resp);
           });
