@@ -14,12 +14,12 @@
     "userStatusDependencies", "$injector", "$q",
     function (userStatusDependencies, $injector, $q) {
 
-      var attemptStatus = function(status){
+      var attemptStatus = function(status, userState){
         var deferred = $q.defer();
         var dependency = userStatusDependencies[status];
         if(dependency) {
-          attemptStatus(dependency).then(function (){
-            $injector.get(status)().then(
+          attemptStatus(dependency, userState).then(function (){
+            $injector.get(status)(userState).then(
               deferred.resolve,
               deferred.reject
             );
@@ -27,7 +27,7 @@
         }
         else {
           //terminal
-          $injector.get(status)().then(
+          $injector.get(status)(userState).then(
             deferred.resolve,
             deferred.reject
           );
@@ -36,7 +36,7 @@
       };
 
       return function (userState) {
-        return attemptStatus("registrationComplete",
+        return attemptStatus("registrationComplete", userState).then(
           function () {},
           function (status) {
             // if rejected at any given step,
@@ -61,12 +61,12 @@
       coreAPILoader.get().then(function (coreApi) {
         var request = coreApi.user.get({});
         request.execute(function (resp) {
-            $log.debug("core.user.get() resp", resp);
-            if(resp.result === true && resp.termsAcceptanceDate) {
+            $log.debug("termsConditionsAccepted core.user.get() resp", resp);
+            if(resp.result === true && resp.item.termsAcceptanceDate) {
               deferred.resolve(resp);
             }
             else {
-              deferred.reject(resp);
+              deferred.reject("termsConditionsAccepted");
             }
         });
       });
@@ -82,12 +82,12 @@
         //TODO
         var request = coreApi.user.get({});
         request.execute(function (resp) {
-            $log.debug("core.user.get() resp", resp);
-            if(resp.result === true && resp.email) {
+            $log.debug("profileCreated core.user.get() resp", resp);
+            if(resp.result === true && resp.item.email) {
               deferred.resolve(resp);
             }
             else {
-              deferred.reject(resp);
+              deferred.reject("profileCreated");
             }
         });
       });
@@ -108,7 +108,7 @@
               deferred.resolve(resp);
             }
             else {
-              deferred.reject(resp);
+              deferred.reject("updateProfile");
             }
         });
       });
@@ -116,24 +116,18 @@
     };
   }])
 
-  .factory("signedInWithGoogle", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
-    return function () {
-      var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
-        var request = coreApi.user.get();
-        request.execute(function (resp) {
-            $log.debug("user.get() resp", resp);
-            if(resp.result === true) {
-              deferred.resolve(resp);
-            }
-            else {
-              deferred.reject(resp);
-            }
-        });
-      });
-      return deferred.promise;
-    };
+  .factory("signedInWithGoogle", ["$q",
+    function ($q) {
+      return function (userState) {
+        var deferred = $q.defer();
+        if(userState.authStatus === 1) {
+          deferred.resolve();
+        }
+        else{
+          deferred.reject("signedInWithGoogle");
+        }
+        return deferred.promise;
+      };
   }])
 
   .factory("companyCreated", ["$q", "coreAPILoader", "$log",
@@ -143,12 +137,12 @@
       coreAPILoader.get().then(function (coreApi) {
         var request = coreApi.company.get();
         request.execute(function (resp) {
-            $log.debug("core.company.get() resp", resp);
+            $log.debug("companyCreated core.company.get() resp", resp);
             if(resp.result === true) {
               deferred.resolve(resp);
             }
             else {
-              deferred.reject(resp);
+              deferred.reject("companyCreated");
             }
         });
       });

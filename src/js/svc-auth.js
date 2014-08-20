@@ -111,6 +111,7 @@
                     * This is the only successful authentication case.
                     */
                     userState.authStatus = AUTH_STATUS_AUTHENTICATED;
+                    userState.status = "pendingCheck";
                     userState.isAuthed = true;
                     userState.user.company = c;
 
@@ -144,6 +145,7 @@
             var msg = "user is not authenticated";
             $log.info(msg);
             userState.authStatus = AUTH_STATUS_NOT_AUTHENTICATED;
+            userState.status = "pendingCheck";
             authenticateDeferred.reject(msg);
           }
 
@@ -227,6 +229,10 @@
           that.resetUserState();
 
           $rootScope.$broadcast("rvAuth.$signOut");
+        };
+
+        factory.getAccessToken = function () {
+          return accessToken;
         };
 
         that.resetUserState();

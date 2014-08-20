@@ -396,6 +396,16 @@ app.run(["$templateCache", function($templateCache) {
     "	</div>\n" +
     "</script>\n" +
     "\n" +
+    "<script type=\"text/ng-template\" id=\"terms-and-conditions.html\">\n" +
+    "	<div class=\"modal-header\">\n" +
+    "		<button type=\"button\" ng-click=\"closeModal()\" class=\"close\">\n" +
+    "		<span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "	</div>\n" +
+    "	<div class=\"modal-body authorization-modal\">\n" +
+    "	  <h3>Terms and Conditions Goes Here</h3>\n" +
+    "	</div>\n" +
+    "</script>\n" +
+    "\n" +
     "<!-- Company Settings Modal -->\n" +
     "<script type=\"text/ng-template\" id=\"company-settings-modal.html\">\n" +
     "	<div class=\"modal-header\">\n" +
