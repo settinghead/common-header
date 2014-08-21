@@ -42,15 +42,9 @@
         //auth dialog should disappear
         expect(element(by.css(".authorization-modal")).isPresent()).to.eventually.equal(false);
 
-        browser.takeScreenshot().then(function(png) {
-        var stream = fs.createWriteStream("/tmp/screenshot.png");
-          stream.write(new Buffer(png, "base64"));
-          stream.end();
-        });
-
       });
 
-      xit("should log out", function() {
+      it("should log out", function() {
 
         // browser.takeScreenshot().then(function(png) {
         // var stream = fs.createWriteStream("/tmp/screenshot.png");
