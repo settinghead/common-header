@@ -37,7 +37,9 @@
 
       return function (userState) {
         return attemptStatus("registrationComplete", userState).then(
-          function () {},
+          function () {
+            userState.status = "registrationComplete";
+          },
           function (status) {
             // if rejected at any given step,
             // show the dialog of that relevant step
@@ -74,6 +76,14 @@
     };
   }])
 
+  .factory("acceptTermsAndConditions", ["updateProfile", function (updateProfile) {
+    return function () {
+      return updateProfile({
+        termsAcceptanceDate: (new Date()).toISOString()
+      });
+    };
+  }])
+
   .factory("profileCreated", ["$q", "coreAPILoader", "$log",
   function ($q, coreAPILoader, $log) {
     return function () {
@@ -101,7 +111,7 @@
       var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
         //TODO: consult Alxey
-        var request = coreApi.user.updateProfile(profile);
+        var request = coreApi.user.update(profile);
         request.execute(function (resp) {
             $log.debug("updateProfile resp", resp);
             if(resp.result === true) {
@@ -135,10 +145,10 @@
     return function () {
       var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
-        var request = coreApi.company.get();
+        var request = coreApi.user.get();
         request.execute(function (resp) {
-            $log.debug("companyCreated core.company.get() resp", resp);
-            if(resp.result === true) {
+            $log.debug("companyCreated core.user.get() resp", resp);
+            if(resp.result === true && resp.item.companyId) {
               deferred.resolve(resp);
             }
             else {

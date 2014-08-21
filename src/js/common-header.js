@@ -55,12 +55,15 @@ angular.module("risevision.common.header", [
           });
         };
         // Show Company Settings Modal
-        scope.companySettings = function(size) {
+        scope.companySettings = function(companyId, size) {
           // var modalInstance =
           $modal.open({
             templateUrl: "company-settings-modal.html",
             controller: "CompanySettingsModalCtrl",
-            size: size
+            size: size,
+            resolve: {
+              companyId: function () {return companyId; }
+            }
           });
         };
         // Show User Settings Modal
@@ -90,6 +93,14 @@ angular.module("risevision.common.header", [
           });
         };
 
+        scope.createProfile = function (size) {
+          $modal.open({
+            templateUrl: "create-profile.html",
+            controller: "CreateProfileModalCtrl",
+            size: size
+          });
+        };
+
         // If nav options not provided use defaults
         if (!scope.navOptions) {
           scope.navOptions = [{
@@ -112,15 +123,22 @@ angular.module("risevision.common.header", [
         }
 
         $rootScope.$watch("userState.status", function (newStatus, oldStatus){
-          $log.debug("statusChange from", oldStatus, "to", newStatus);
-          if(newStatus) {
+          if(newStatus && newStatus !== oldStatus) {
+            $log.debug("statusChange from", oldStatus, "to", newStatus);
+
             if(newStatus === "termsConditionsAccepted") {
               scope.termsAndConditions();
             }
-            else {
+            else if (newStatus === "profileCreated") {
+              scope.createProfile();
+            }
+            else if (newStatus === "companyCreated") {
+              //no company id
+              scope.companySettings(null);
+            }
+            else if(newStatus !== "registrationComplete") {
               checkUserStatus($rootScope.userState);
             }
-
           }
         });
 
@@ -161,10 +179,36 @@ angular.module("risevision.common.header", [
     };
   }
 ])
-.controller("TermsConditionsModalCtrl", ["$scope", "$modalInstance",
-  function($scope, $modalInstance) {
+.controller("TermsConditionsModalCtrl", [
+  "$scope", "$modalInstance", "$rootScope", "acceptTermsAndConditions",
+  function($scope, $modalInstance, $rootScope, acceptTermsAndConditions) {
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
+      $rootScope.userState.status = "pendingCheck";
+    };
+    $scope.agree = function () {
+      acceptTermsAndConditions().then(function () {
+        $modalInstance.close("success");
+        $rootScope.userState.status = "pendingCheck";
+      });
+    };
+  }
+])
+.controller("CreateProfileModalCtrl", [
+  "$scope", "$modalInstance", "$rootScope", "updateProfile",
+  function($scope, $modalInstance, $rootScope, updateProfile) {
+
+    $scope.profile = {};
+
+    $scope.closeModal = function() {
+      $modalInstance.dismiss("cancel");
+      $rootScope.userState.status = "pendingCheck";
+    };
+    $scope.continue = function () {
+      updateProfile($scope.profile).then(function () {
+        $modalInstance.close("success");
+        $rootScope.userState.status = "pendingCheck";
+      });
     };
   }
 ])
@@ -176,9 +220,20 @@ angular.module("risevision.common.header", [
   }
 ])
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
-  function($scope, $modalInstance) {
+  "companyService", "companyId",
+  function($scope, $modalInstance, companyService, companyId) {
+    $scope.company = {id: companyId};
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
+    };
+    $scope.save = function () {
+      companyService.createOrUpdateCompany($scope.company).then(
+        function () {
+          $modalInstance.close("success");
+        },
+      function (error) {
+        alert("Error", error);
+      });
     };
   }
 ])

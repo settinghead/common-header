@@ -4,6 +4,9 @@
     <link href="//s3.amazonaws.com/rise-common-test/styles/glyphicons/glyphicons.min.css" rel="stylesheet" type="text/css">
     <link href="../../components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="../../components/rv-common-style/dist/css/rise.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="../../components/JSONedit/css/styles.css" rel="stylesheet" type="text/css" />
+
   </head>
   <body ng-controller="mainController">
 
@@ -41,13 +44,28 @@
     <script type="text/javascript" src="../../src/js/svc-gapi.js"></script>
     <script type="text/javascript" src="../../src/js/svc-localstorage.js"></script>
     <script type="text/javascript" src="../../src/js/svc-system-messages.js"></script>
-    <script type="text/javascript" src="../../components/lodash/dist/lodash.js"></script>
 
-  	<script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientJSLoad"></script>
+  	<!-- // <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientJSLoad"></script> -->
+
+    <script type="text/javascript" src="../../components/lodash/dist/lodash.js"></script>
+    <script type="text/javascript" src="../../components/angular-ui-sortable/sortable.js"></script>
+    <script type="text/javascript" src="../../components/jquery-ui/ui/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="../../components/JSONEdit/js/JSONEdit.js"></script>
     <script type="text/javascript" src="../gapi-mock.js"></script>
 
+    <style>
+
+    .jsonView .deleteKeyBtn, .jsonView .moveArrayItemBtn {
+      z-index: 800;
+    }
+
+    .inline {
+      display: inline-block;
+    }
+    </style>
     <script type="text/javascript">
-      angular.module("test-app", ["risevision.common.header"])
+      angular.module("test-app", ["risevision.common.header", "JSONedit"])
       .controller("mainController", function($scope, $rootScope, apiAuth) {
         $scope.navOptions = [{
           title: 'Home',
@@ -73,6 +91,12 @@
           'Suspendisse convallis leo sed'
         ];
         $rootScope.userState = apiAuth.getUserState();
+
+        $scope.db = window.gapi._fakeDb;
+
+        $scope.$watch("db", function (newVal) {
+          localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal));
+        }, true);
       });
 
 
@@ -82,5 +106,25 @@
 
     This app was built for the sole purpose of testing & demoing common header.
 
+
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="jsonView col-md-5" defocus>
+        <h3 class="inline">User in Fake Google DB</h3>
+        <button class="btn">Delete</button>
+        <button class="btn">Reset</button>
+
+        <div><json child="db.currentUser.item" default-collapsed="false" type="'object'">
+        </json></div>
+      </div>
+      <div class="col-md-5 jsonView" defocus>
+        <h3 class="inline">All Companies in Fake Google DB</h3>
+        <button class="btn">Delete</button>
+        <button class="btn">Reset</button>
+        <div><json child="db.companies" default-collapsed="false" type="'array'">
+        </json></div>
+      </div>
+      <div class="col-md-1"></div>
+    </div>
   </body>
 </html>

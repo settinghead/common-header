@@ -142,7 +142,7 @@ app.run(["$templateCache", function($templateCache) {
     "						<i ng-if=\"!subCompanySelected\" class=\"glyphicons home\"></i>\n" +
     "						<!-- warning -->\n" +
     "						<i ng-if=\"subCompanySelected\" class=\"glyphicons warning_sign glyphicon-danger\"></i>\n" +
-    "						{{selectedCompanyName}}\n" +
+    "						{{userState.selectedCompanyName}}\n" +
     "						<div ng-if=\"subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "					</li>\n" +
     "					<li ng-if=\"subCompanySelected\" class=\"divider\"></li>\n" +
@@ -237,7 +237,7 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	</div>\n" +
     "	<div ng-if=\"subCompanySelected\" class=\"sub-company-alert\">\n" +
-    "		You’re in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}\n" +
+    "		You’re in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}\n" +
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
@@ -403,6 +403,29 @@ app.run(["$templateCache", function($templateCache) {
     "	</div>\n" +
     "	<div class=\"modal-body authorization-modal\">\n" +
     "	  <h3>Terms and Conditions Goes Here</h3>\n" +
+    "		<div>You agree bro?</div>\n" +
+    "		<button type=\"button\" class=\"btn btn-primary\" ng-click=\"agree()\">Accept</button>\n" +
+    "		<button type=\"button\" class=\"btn\" ng-click=\"closeModal()\">Decline</button>\n" +
+    "	</div>\n" +
+    "</script>\n" +
+    "\n" +
+    "<script type=\"text/ng-template\" id=\"create-profile.html\">\n" +
+    "	<div class=\"modal-header\">\n" +
+    "		<button type=\"button\" ng-click=\"closeModal()\" class=\"close\">\n" +
+    "		<span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "	</div>\n" +
+    "	<div class=\"modal-body authorization-modal\">\n" +
+    "		<form class=\"form-horizontal\">\n" +
+    "			<h3>Create Your Profile</h3>\n" +
+    "			<div class=\"form-group\">\n" +
+    "		    <label for=\"exampleInputEmail1\">Email address</label>\n" +
+    "		    <input type=\"email\" class=\"form-control\" ng-model=\"profile.email\" placeholder=\"Enter email\">\n" +
+    "		  </div>\n" +
+    "			<div class=\"checkbox\"><label>\n" +
+    "			<input type=\"checkbox\" checked ng-model=\"profile.newsletter\"/>Subscribe me to Rise Vision newsletters.</label>\n" +
+    "			</div>\n" +
+    "			<button type=\"button\" class=\"btn btn-primary\" ng-click=\"continue()\">Continue</button>\n" +
+    "		</form>\n" +
     "	</div>\n" +
     "</script>\n" +
     "\n" +

@@ -119,7 +119,9 @@
                     userState.isRiseUser = true;
                     userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
 
-                    userState.selectedCompany = c;
+                    $log.debug("selectedCompany", c);
+
+                    userState.selectedCompanyName = c.name;
                     userState.selectedCompanyId = c.id;
 
                     userState.user.profile.name = profileResult.name;

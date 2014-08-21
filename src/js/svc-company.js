@@ -8,6 +8,7 @@ angular.module("risevision.common.company",
   .service("companyService", [ "coreAPILoader", "$q", "$log",
     function (coreAPILoader, $q, $log) {
 
+    var that = this;
     this.getCompany = function (companyId) {
       var deferred = $q.defer();
       var obj = {
@@ -123,6 +124,15 @@ angular.module("risevision.common.company",
         });
       });
       return deferred.promise;
+    };
+
+    this.createOrUpdateCompany = function (company) {
+      if(company.id) {
+        return that.createCompany(company);
+      }
+      else{
+        return that.updateCompany(company);
+      }
     };
 
     this.validateAddress = function (company) {

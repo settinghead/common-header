@@ -136,7 +136,7 @@
 						<i ng-if="!subCompanySelected" class="glyphicons home"></i>
 						<!-- warning -->
 						<i ng-if="subCompanySelected" class="glyphicons warning_sign glyphicon-danger"></i>
-						{{selectedCompanyName}}
+						{{userState.selectedCompanyName}}
 						<div ng-if="subCompanySelected" class="danger">This is a Sub-Company of your Company.</div>
 					</li>
 					<li ng-if="subCompanySelected" class="divider"></li>
@@ -231,7 +231,7 @@
 
 	</div>
 	<div ng-if="subCompanySelected" class="sub-company-alert">
-		You’re in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}
+		You’re in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}
 	</div>
 </nav>
 <!-- END Common Header Navbar -->
@@ -397,6 +397,29 @@
 	</div>
 	<div class="modal-body authorization-modal">
 	  <h3>Terms and Conditions Goes Here</h3>
+		<div>You agree bro?</div>
+		<button type="button" class="btn btn-primary" ng-click="agree()">Accept</button>
+		<button type="button" class="btn" ng-click="closeModal()">Decline</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="create-profile.html">
+	<div class="modal-header">
+		<button type="button" ng-click="closeModal()" class="close">
+		<span>&times;</span><span class="sr-only">Close</span></button>
+	</div>
+	<div class="modal-body authorization-modal">
+		<form class="form-horizontal">
+			<h3>Create Your Profile</h3>
+			<div class="form-group">
+		    <label for="exampleInputEmail1">Email address</label>
+		    <input type="email" class="form-control" ng-model="profile.email" placeholder="Enter email">
+		  </div>
+			<div class="checkbox"><label>
+			<input type="checkbox" checked ng-model="profile.newsletter"/>Subscribe me to Rise Vision newsletters.</label>
+			</div>
+			<button type="button" class="btn btn-primary" ng-click="continue()">Continue</button>
+		</form>
 	</div>
 </script>
 
