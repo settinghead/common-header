@@ -30,7 +30,7 @@ var env = process.env.NODE_ENV || "dev",
 
 
 gulp.task("html", ["lint"], function () {
-  return gulp.src("test/e2e/test-app.html")
+  return gulp.src("test/e2e/index.html")
     .pipe(usemin({
     js: [] //disable mangle just for $routeProvider in controllers.js
   }))

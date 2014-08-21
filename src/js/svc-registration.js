@@ -77,10 +77,10 @@
   }])
 
   .factory("acceptTermsAndConditions", ["updateProfile", function (updateProfile) {
-    return function () {
-      return updateProfile({
+    return function (profile) {
+      return updateProfile(angular.extend({
         termsAcceptanceDate: (new Date()).toISOString()
-      });
+      }, profile));
     };
   }])
 
@@ -108,6 +108,7 @@
   .factory("updateProfile", ["$q", "coreAPILoader", "$log",
   function ($q, coreAPILoader, $log) {
     return function (profile) {
+      $log.debug("updateProfile", profile);
       var deferred = $q.defer();
       coreAPILoader.get().then(function (coreApi) {
         //TODO: consult Alxey

@@ -425,14 +425,11 @@ app.run(["$templateCache", function($templateCache) {
     "			<h3>Create Profile</h3>\n" +
     "			<div class=\"form-group\">\n" +
     "		    <label for=\"firstName\">First Name</label>\n" +
-    "		    <input type=\"email\" class=\"form-control\" id=\"firstName\" ng-model=\"profile.firstName\" placeholder=\"e.g. Michael\">\n" +
+    "		    <input type=\"text\" class=\"form-control\" id=\"firstName\" ng-model=\"profile.firstName\" placeholder=\"e.g. Michael\" />\n" +
     "		  </div>\n" +
     "			<div class=\"form-group\">\n" +
     "				<label for=\"firstName\">Last Name</label>\n" +
-    "				<input type=\"email\" class=\"form-control\" id=\"lastName\" ng-model=\"profile.lastName\" placeholder=\"e.g. Sanchez\">\n" +
-    "			</div>\n" +
-    "			<div class=\"checkbox\"><label>\n" +
-    "			<input type=\"checkbox\" checked ng-model=\"profile.newsletter\"/>Subscribe me to Rise Vision newsletters.</label>\n" +
+    "				<input type=\"text\" class=\"form-control\" id=\"lastName\" ng-model=\"profile.lastName\" placeholder=\"e.g. Sanchez\" />\n" +
     "			</div>\n" +
     "			<button type=\"button\" class=\"btn btn-primary\" ng-click=\"continue()\">Continue</button>\n" +
     "		</form>\n" +

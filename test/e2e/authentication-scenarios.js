@@ -21,7 +21,7 @@
       before(function() {
         ptor = protractor.getInstance();
         ptor.manage().deleteAllCookies();
-        browser.get("/test/e2e/test-app.html");
+        browser.get("/test/e2e/index.html");
 
         //clear local storage
         browser.executeScript("localStorage.clear();");

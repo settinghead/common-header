@@ -1082,6 +1082,7 @@
           execute: function (cb) {
             if(!window.gapi._fakeDb.currentUser) {
               window.gapi.resetUser();
+              window.gapi._fakeDb.currentUser.item = _.clone(obj);
             }
             _.extend(window.gapi._fakeDb.currentUser.item, obj);
             return cb(window.gapi._fakeDb.currentUser);

@@ -419,14 +419,11 @@
 			<h3>Create Profile</h3>
 			<div class="form-group">
 		    <label for="firstName">First Name</label>
-		    <input type="email" class="form-control" id="firstName" ng-model="profile.firstName" placeholder="e.g. Michael">
+		    <input type="text" class="form-control" id="firstName" ng-model="profile.firstName" placeholder="e.g. Michael" />
 		  </div>
 			<div class="form-group">
 				<label for="firstName">Last Name</label>
-				<input type="email" class="form-control" id="lastName" ng-model="profile.lastName" placeholder="e.g. Sanchez">
-			</div>
-			<div class="checkbox"><label>
-			<input type="checkbox" checked ng-model="profile.newsletter"/>Subscribe me to Rise Vision newsletters.</label>
+				<input type="text" class="form-control" id="lastName" ng-model="profile.lastName" placeholder="e.g. Sanchez" />
 			</div>
 			<button type="button" class="btn btn-primary" ng-click="continue()">Continue</button>
 		</form>

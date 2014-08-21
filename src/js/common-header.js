@@ -182,12 +182,13 @@ angular.module("risevision.common.header", [
 .controller("TermsConditionsModalCtrl", [
   "$scope", "$modalInstance", "$rootScope", "acceptTermsAndConditions",
   function($scope, $modalInstance, $rootScope, acceptTermsAndConditions) {
+    $scope.profile = {};
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
       $rootScope.userState.status = "pendingCheck";
     };
     $scope.agree = function () {
-      acceptTermsAndConditions().then(function () {
+      acceptTermsAndConditions($scope.profile).then(function () {
         $modalInstance.close("success");
         $rootScope.userState.status = "pendingCheck";
       });
@@ -220,11 +221,14 @@ angular.module("risevision.common.header", [
   }
 ])
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
-  "companyService", "companyId",
-  function($scope, $modalInstance, companyService, companyId) {
+  "companyService", "companyId", "$rootScope",
+  function($scope, $modalInstance, companyService, companyId, $rootScope) {
     $scope.company = {id: companyId};
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
+      if(!companyId) {
+        $rootScope.userState.status = "pendingCheck";
+      }
     };
     $scope.save = function () {
       companyService.createOrUpdateCompany($scope.company).then(
