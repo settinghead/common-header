@@ -5,24 +5,25 @@
 
   window.gapi = {};
 
-  window.testCompany = {
-    "id": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
-    "name": "Rise Vision Test Co.",
+  window.gapi.resetDb = function () {
+    if(!window.gapi._fakeDb) {
+      window.gapi._fakeDb = {};
+    }
+    window.gapi._fakeDb.companies = _.clone(companies);
+    window.gapi._fakeDb.currentUser = _.clone(currentUser);
+  };
+
+  window.gapi.resetUser = function () {
+    window.gapi._fakeDb.currentUser = _.clone(currentUser);
+  };
+
+  window.gapi.resetCompanies = function () {
+    window.gapi._fakeDb.companies = _.clone(companies);
+  };
+
+  window.gapi.companyRespSkeleton = {
     "creationDate": "2012-04-03T20:52:05.000Z",
-    "street": "302 The East Mall",
-    "unit": "Suite 301",
-    "city": "Etobicoke",
-    "province": "ON",
-    "country": "CA",
-    "postalCode": "M9B 6C7",
     "timeZoneOffset": -300,
-    "telephone": "416-538-1291",
-    "latitude": 43.6371538,
-    "longitude": -79.5570762,
-    "networkOperatorStatus": 1,
-    "networkOperatorStatusChangeDate": "2010-05-13T20:15:01.000Z",
-    "companyStatus": 1,
-    "companyStatusChangeDate": "2010-05-13T20:15:01.000Z",
     "authKey": "testKey",
     "settings": {
       "supportEmail": "http://community.risevision.com/rise_vision_inc",
@@ -122,11 +123,9 @@
     "viewsPerDisplay": "20",
     "adsEarn": false,
     "adsInterested": false,
-    "changedBy": "steve.sherrie@risevision.com",
-    "changeDate": "2014-05-23T20:03:01.635Z"
   };
 
-  window.currentUser = {
+  var currentUser = {
     "result": true,
     "code": 200,
     "message": "OK",
@@ -155,11 +154,30 @@
       "changedBy": "bloosbrock@gmail.com",
       "changeDate": "2014-07-18T11:38:24.668Z"
     },
-    "kind": "core#userItem",
     "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
   };
 
   var companies = [{
+    "id": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
+    "name": "Rise Vision Test Co.",
+    "street": "302 The East Mall",
+    "unit": "Suite 301",
+    "city": "Etobicoke",
+    "province": "ON",
+    "country": "CA",
+    "postalCode": "M9B 6C7",
+    "telephone": "416-538-1291",
+    "latitude": 43.6371538,
+    "longitude": -79.5570762,
+    "networkOperatorStatus": 1,
+    "networkOperatorStatusChangeDate": "2010-05-13T20:15:01.000Z",
+    "companyStatus": 1,
+    "companyStatusChangeDate": "2010-05-13T20:15:01.000Z",
+    "changedBy": "steve.sherrie@risevision.com",
+    "changeDate": "2014-05-23T20:03:01.635Z",
+    "kind": "core#userItem"
+  },
+  {
    "id": "5129927f-44dc-44ea-9f1e-83f6e86d8aa4",
    "name": "0ThrasherBeer0@gmail.com's Company",
    "street": "15 Toronto St",
@@ -944,6 +962,13 @@
   }
  ];
 
+ if(localStorage.getItem("fakeGoogleDb")) {
+   window.gapi._fakeDb = JSON.parse(localStorage.getItem("fakeGoogleDb"));
+ }
+ else {
+   window.gapi.resetDb();
+ }
+
   gapi.client = {
     load: function(path, version, cb) {
       cb();
@@ -955,98 +980,32 @@
             execute: function (cb) {
               var company;
               if(obj && obj.id) {
-                company = _.find(companies, function (company) {
+                company = _.find(window.gapi._fakeDb.companies, function (company) {
                   return company.id === obj.id;
                 });
               }
-              else {
-                company = window.testCompany;
+              else if (window.gapi._fakeDb.currentUser.item.companyId){
+                company =
+                _.find(window.gapi._fakeDb.companies, function (company) {
+                  return company.id === window.gapi._fakeDb.currentUser.item.companyId;
+                });
               }
-              return cb({
-                "result": true,
-                "code": 200,
-                "message": "OK",
-                "item": _.extend({
-                  "mailSyncEnabled": false,
-                  "alertKey": "b0ed8df4-b49f-431b-a52e-e53ac2635c74",
-                  "alertSettings": {
-                    "enabled": true,
-                    "allowedStatuses": [
-                    "Actual",
-                    "Exercise",
-                    "System",
-                    "Test",
-                    "Draft"
-                    ],
-                    "allowedCategories": [
-                    "Geo",
-                    "Met",
-                    "Safety",
-                    "Security",
-                    "Rescue",
-                    "Fire",
-                    "Health",
-                    "Env",
-                    "Transport",
-                    "Infra",
-                    "CBRNE",
-                    "Other"
-                    ],
-                    "allowedUrgencies": [
-                    "Immediate",
-                    "Expected",
-                    "Future",
-                    "Past",
-                    "Unknown"
-                    ],
-                    "allowedSeverities": [
-                    "Extreme",
-                    "Severe",
-                    "Moderate",
-                    "Minor",
-                    "Unknown"
-                    ],
-                    "allowedCertainties": [
-                    "Observed",
-                    "Likely",
-                    "Possible",
-                    "Unlikely",
-                    "Unknown"
-                    ],
-                    "textFields": [
-                    "headline"
-                    ],
-                    "presentationId": "932a85ed-ddb4-4ac0-bd3c-431804c659a0",
-                    "defaultExpiry": 60
-                  },
-                  "claimId": "ZAK8JYTSAFZ5",
-                  "companyType": "serviceProvider",
-                  "servicesProvided": [
-                  "support",
-                  "Digital Signage"
-                  ],
-                  "marketSegments": [
-                  "education",
-                  "financial",
-                  "healthCare",
-                  "hospitality",
-                  "manufacturing",
-                  "technology",
-                  "nonprofit",
-                  "religious",
-                  "quickServe",
-                  "retail",
-                  "service"
-                  ],
-                  "viewsPerDisplay": "20",
-                  "adsEarn": false,
-                  "adsInterested": false,
-                  "changedBy": "steve.sherrie@risevision.com",
-                  "changeDate": "2014-05-23T20:03:01.635Z"
-                }, company),
-              "kind": "core#companyItem",
-              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
-            });
+              if(!company){
+                cb({
+                  "result": false,
+                  "code": 404,
+                  "message": "NOT FOUND"
+                });
+              } else {
+                cb({
+                  "result": true,
+                  "code": 200,
+                  "message": "OK",
+                  "item": _.extend(_.clone(window.gapi.companyRespSkeleton), company),
+                "kind": "core#companyItem",
+                "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
+                });
+              }
           }
         };
       },
@@ -1068,7 +1027,7 @@
                "Aic35ydmFjb3JlLXRlc3QiKSAoSVMgIm5hbWVzcGFjZSIgIiIpIChJUyAiaW5kZXhfb" +
                "mFtZSIgImRpcmVjdG9yeS5zdWJjb21wYW5pZXNiNDI4YjRlOC1jOGI5LTQxZDUtOGE" +
                "xMC1iNDE5M2M3ODk0NDMiKSAoVFJVRSkpOhQKDihUIHN0ZXh0X25hbWUpEAAiAEocCAA6FXN0OmJ0aV9nZW5lcmljX3Njb3JlckDoB1IZCgwoTiBvcmRlcl9pZCkQARkAAAAAAADw_w",
-             "items": companies,
+             "items": window.gapi._fakeDb.companies,
              "kind": "core#company",
              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/aU3KWpXBGvssoqWVjsHR5ngSZlU\""
             });
@@ -1105,7 +1064,28 @@
       get: function () {
         return {
           execute: function (cb) {
-            return cb(window.currentUser);
+            if(window.gapi._fakeDb.currentUser) {
+              cb(window.gapi._fakeDb.currentUser);
+            }
+            else {
+              cb({
+                "result": false,
+                "code": 404,
+                "message": "NOT FOUND"
+              });
+            }
+          }
+        };
+      },
+      update: function (obj) {
+        return {
+          execute: function (cb) {
+            if(!window.gapi._fakeDb.currentUser) {
+              window.gapi.resetUser();
+              window.gapi._fakeDb.currentUser.item = _.clone(obj);
+            }
+            _.extend(window.gapi._fakeDb.currentUser.item, obj);
+            return cb(window.gapi._fakeDb.currentUser);
           }
         };
       }
@@ -1324,6 +1304,12 @@ gapi.auth = {
         "method": "PROMPT"
       }
     });
+  },
+  setToken: function () {
+    //TODO
+  },
+  getToken: function () {
+    //TODO
   }
 };
 

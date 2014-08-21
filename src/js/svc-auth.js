@@ -8,7 +8,7 @@
     ])
 
     // Some constants
-    .value("DEFAULT_PROFILE_PICTURE", "http://rise-vision.github.io/style-guide/img/user-icon.png")
+    .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
@@ -119,7 +119,9 @@
                     userState.isRiseUser = true;
                     userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
 
-                    userState.selectedCompany = c;
+                    $log.debug("selectedCompany", c);
+
+                    userState.selectedCompanyName = c.name;
                     userState.selectedCompanyId = c.id;
 
                     userState.user.profile.name = profileResult.name;
@@ -152,6 +154,22 @@
           return authenticateDeferred.promise;
         };
 
+        function getBaseDomain() {
+          var result;
+          var hostname = $location.host();
+          var port = $location.port() ? ":" + $location.port() : "";
+          var parts = hostname.split(".");
+          if(parts.length > 1) {
+            //localhost
+            result = parts.slice(parts.length -2).join(".") + port;
+          }
+          else {
+            result = hostname + port;
+          }
+          $log.debug("baseDomain", result);
+          return result;
+        }
+
         /*
         * Responsible for triggering the Google OAuth process.
         *
@@ -162,7 +180,8 @@
           var opts = {
             client_id: CLIENT_ID,
             scope: SCOPES,
-            cookie_policy: $location.protocol() + "://" + $location.host() + ($location.port() ? ":" + $location.port() : "")
+            cookie_policy: $location.protocol() + "://" + "." +
+              getBaseDomain()
           };
 
           if (attemptImmediate) {
@@ -178,7 +197,12 @@
               if (authResult && !authResult.error) {
                 accessToken = authResult;
                 if(typeof accessToken === "object") {
-                  cookieStore.put("rv-token", JSON.stringify(accessToken));
+                  cookieStore.put(
+                    "rv-token", JSON.stringify(accessToken),
+                    {domain: "." + getBaseDomain()}
+                    );
+                  cookieStore.put(
+                    "rv-token", JSON.stringify(accessToken));
                 }
                 authorizeDeferred.resolve(authResult);
               }
@@ -223,7 +247,12 @@
           // The flag the indicates a user is potentially
           // authenticated already, must be destroyed.
           // localStorageService.removeItemImmediate("rvAuth.userAuthed");
+          cookieStore.remove("rv-token",
+            {domain: "." + getBaseDomain()});
           cookieStore.remove("rv-token");
+          gapiLoader.get().then(function (gApi) {
+            gApi.auth.setToken();
+          });
           accessToken = undefined;
           // The majority of state is in here
           that.resetUserState();
