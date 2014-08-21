@@ -5,8 +5,8 @@
 
   .value("userStatusDependencies", {
     "termsConditionsAccepted" : "signedInWithGoogle",
-    "profileCreated": "termsConditionsAccepted",
-    "companyCreated": "profileCreated",
+    "profileUpdated": "termsConditionsAccepted",
+    "companyCreated": "profileUpdated",
     "registrationComplete": "companyCreated"
   })
 
@@ -84,7 +84,7 @@
     };
   }])
 
-  .factory("profileCreated", ["$q", "coreAPILoader", "$log",
+  .factory("profileUpdated", ["$q", "coreAPILoader", "$log",
   function ($q, coreAPILoader, $log) {
     return function () {
       var deferred = $q.defer();
@@ -92,12 +92,12 @@
         //TODO
         var request = coreApi.user.get({});
         request.execute(function (resp) {
-            $log.debug("profileCreated core.user.get() resp", resp);
-            if(resp.result === true && resp.item.email) {
+            $log.debug("profileUpdated core.user.get() resp", resp);
+            if(resp.result === true && resp.item.firstName) {
               deferred.resolve(resp);
             }
             else {
-              deferred.reject("profileCreated");
+              deferred.reject("profileUpdated");
             }
         });
       });

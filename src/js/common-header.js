@@ -93,7 +93,7 @@ angular.module("risevision.common.header", [
           });
         };
 
-        scope.createProfile = function (size) {
+        scope.updateProfile = function (size) {
           $modal.open({
             templateUrl: "create-profile.html",
             controller: "CreateProfileModalCtrl",
@@ -129,8 +129,8 @@ angular.module("risevision.common.header", [
             if(newStatus === "termsConditionsAccepted") {
               scope.termsAndConditions();
             }
-            else if (newStatus === "profileCreated") {
-              scope.createProfile();
+            else if (newStatus === "profileUpdated") {
+              scope.updateProfile();
             }
             else if (newStatus === "companyCreated") {
               //no company id

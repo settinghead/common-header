@@ -401,11 +401,17 @@ app.run(["$templateCache", function($templateCache) {
     "		<button type=\"button\" ng-click=\"closeModal()\" class=\"close\">\n" +
     "		<span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
     "	</div>\n" +
-    "	<div class=\"modal-body authorization-modal\">\n" +
-    "	  <h3>Terms and Conditions Goes Here</h3>\n" +
-    "		<div>You agree bro?</div>\n" +
-    "		<button type=\"button\" class=\"btn btn-primary\" ng-click=\"agree()\">Accept</button>\n" +
-    "		<button type=\"button\" class=\"btn\" ng-click=\"closeModal()\">Decline</button>\n" +
+    "	<div class=\"modal-body\">\n" +
+    "		<form class=\"form-horizontal\">\n" +
+    "			<h3>Terms and Conditions Goes Here</h3>\n" +
+    "			<div>You agree bro?</div>\n" +
+    "			<div class=\"form-group\">\n" +
+    "				<label for=\"exampleInputEmail1\">Email address</label>\n" +
+    "				<input type=\"email\" class=\"form-control\" ng-model=\"profile.email\" placeholder=\"Enter email\">\n" +
+    "			</div>\n" +
+    "			<button type=\"button\" class=\"btn btn-primary\" ng-click=\"agree()\">Accept</button>\n" +
+    "			<button type=\"button\" class=\"btn\" ng-click=\"closeModal()\">Decline</button>\n" +
+    "		</form>\n" +
     "	</div>\n" +
     "</script>\n" +
     "\n" +
@@ -414,13 +420,17 @@ app.run(["$templateCache", function($templateCache) {
     "		<button type=\"button\" ng-click=\"closeModal()\" class=\"close\">\n" +
     "		<span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
     "	</div>\n" +
-    "	<div class=\"modal-body authorization-modal\">\n" +
+    "	<div class=\"modal-body\">\n" +
     "		<form class=\"form-horizontal\">\n" +
-    "			<h3>Create Your Profile</h3>\n" +
+    "			<h3>Create Profile</h3>\n" +
     "			<div class=\"form-group\">\n" +
-    "		    <label for=\"exampleInputEmail1\">Email address</label>\n" +
-    "		    <input type=\"email\" class=\"form-control\" ng-model=\"profile.email\" placeholder=\"Enter email\">\n" +
+    "		    <label for=\"firstName\">First Name</label>\n" +
+    "		    <input type=\"email\" class=\"form-control\" id=\"firstName\" ng-model=\"profile.firstName\" placeholder=\"e.g. Michael\">\n" +
     "		  </div>\n" +
+    "			<div class=\"form-group\">\n" +
+    "				<label for=\"firstName\">Last Name</label>\n" +
+    "				<input type=\"email\" class=\"form-control\" id=\"lastName\" ng-model=\"profile.lastName\" placeholder=\"e.g. Sanchez\">\n" +
+    "			</div>\n" +
     "			<div class=\"checkbox\"><label>\n" +
     "			<input type=\"checkbox\" checked ng-model=\"profile.newsletter\"/>Subscribe me to Rise Vision newsletters.</label>\n" +
     "			</div>\n" +

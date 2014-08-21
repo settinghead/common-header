@@ -25,15 +25,20 @@ var env = process.env.NODE_ENV || "dev",
     runSequence = require("run-sequence"),
     html2js = require("gulp-html2js"),
     concat = require("gulp-concat"),
-    rename = require("gulp-rename");
+    rename = require("gulp-rename"),
+    usemin = require("gulp-usemin");
 
-gulp.task("build", function () {
-  return gulp.src(jsFiles)
-  .pipe(replace('components/common-header/src/common-header.html', 'common-header.html'))
-  .pipe(gulp.dest("dist/"))
-  .pipe(gulp.src(htmlFiles))
+
+gulp.task("html", ["lint"], function () {
+  return gulp.src("test/e2e/test-app.html")
+    .pipe(usemin({
+    js: [] //disable mangle just for $routeProvider in controllers.js
+  }))
   .pipe(gulp.dest("dist/"));
 });
+
+
+gulp.task("build", ["html"]);
 
 gulp.task("lint", ["config"], function() {
   return gulp.src([

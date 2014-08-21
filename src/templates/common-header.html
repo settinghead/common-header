@@ -395,11 +395,17 @@
 		<button type="button" ng-click="closeModal()" class="close">
 		<span>&times;</span><span class="sr-only">Close</span></button>
 	</div>
-	<div class="modal-body authorization-modal">
-	  <h3>Terms and Conditions Goes Here</h3>
-		<div>You agree bro?</div>
-		<button type="button" class="btn btn-primary" ng-click="agree()">Accept</button>
-		<button type="button" class="btn" ng-click="closeModal()">Decline</button>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<h3>Terms and Conditions Goes Here</h3>
+			<div>You agree bro?</div>
+			<div class="form-group">
+				<label for="exampleInputEmail1">Email address</label>
+				<input type="email" class="form-control" ng-model="profile.email" placeholder="Enter email">
+			</div>
+			<button type="button" class="btn btn-primary" ng-click="agree()">Accept</button>
+			<button type="button" class="btn" ng-click="closeModal()">Decline</button>
+		</form>
 	</div>
 </script>
 
@@ -408,13 +414,17 @@
 		<button type="button" ng-click="closeModal()" class="close">
 		<span>&times;</span><span class="sr-only">Close</span></button>
 	</div>
-	<div class="modal-body authorization-modal">
+	<div class="modal-body">
 		<form class="form-horizontal">
-			<h3>Create Your Profile</h3>
+			<h3>Create Profile</h3>
 			<div class="form-group">
-		    <label for="exampleInputEmail1">Email address</label>
-		    <input type="email" class="form-control" ng-model="profile.email" placeholder="Enter email">
+		    <label for="firstName">First Name</label>
+		    <input type="email" class="form-control" id="firstName" ng-model="profile.firstName" placeholder="e.g. Michael">
 		  </div>
+			<div class="form-group">
+				<label for="firstName">Last Name</label>
+				<input type="email" class="form-control" id="lastName" ng-model="profile.lastName" placeholder="e.g. Sanchez">
+			</div>
 			<div class="checkbox"><label>
 			<input type="checkbox" checked ng-model="profile.newsletter"/>Subscribe me to Rise Vision newsletters.</label>
 			</div>

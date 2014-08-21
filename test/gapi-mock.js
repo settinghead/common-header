@@ -3,7 +3,23 @@
 
   /*global _,gapi,handleClientJSLoad: false */
 
-  window.gapi = {_fakeDb: JSON.parse(localStorage.getItem("fakeGoogleDb")) || {}};
+  window.gapi = {};
+
+  window.gapi.resetDb = function () {
+    if(!window.gapi._fakeDb) {
+      window.gapi._fakeDb = {};
+    }
+    window.gapi._fakeDb.companies = _.clone(companies);
+    window.gapi._fakeDb.currentUser = _.clone(currentUser);
+  };
+
+  window.gapi.resetUser = function () {
+    window.gapi._fakeDb.currentUser = _.clone(currentUser);
+  };
+
+  window.gapi.resetCompanies = function () {
+    window.gapi._fakeDb.companies = _.clone(companies);
+  };
 
   window.gapi.companyRespSkeleton = {
     "creationDate": "2012-04-03T20:52:05.000Z",
@@ -109,7 +125,7 @@
     "adsInterested": false,
   };
 
-  window.gapi._fakeDb.currentUser = window.gapi._fakeDb.currentUser || {
+  var currentUser = {
     "result": true,
     "code": 200,
     "message": "OK",
@@ -141,7 +157,7 @@
     "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
   };
 
-  window.gapi._fakeDb.companies = window.gapi._fakeDb.companies || [{
+  var companies = [{
     "id": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
     "name": "Rise Vision Test Co.",
     "street": "302 The East Mall",
@@ -946,6 +962,13 @@
   }
  ];
 
+ if(localStorage.getItem("fakeGoogleDb")) {
+   window.gapi._fakeDb = JSON.parse(localStorage.getItem("fakeGoogleDb"));
+ }
+ else {
+   window.gapi.resetDb();
+ }
+
   gapi.client = {
     load: function(path, version, cb) {
       cb();
@@ -1041,13 +1064,25 @@
       get: function () {
         return {
           execute: function (cb) {
-            return cb(window.gapi._fakeDb.currentUser);
+            if(window.gapi._fakeDb.currentUser) {
+              cb(window.gapi._fakeDb.currentUser);
+            }
+            else {
+              cb({
+                "result": false,
+                "code": 404,
+                "message": "NOT FOUND"
+              });
+            }
           }
         };
       },
       update: function (obj) {
         return {
           execute: function (cb) {
+            if(!window.gapi._fakeDb.currentUser) {
+              window.gapi.resetUser();
+            }
             _.extend(window.gapi._fakeDb.currentUser.item, obj);
             return cb(window.gapi._fakeDb.currentUser);
           }

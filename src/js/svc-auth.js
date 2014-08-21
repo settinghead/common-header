@@ -8,7 +8,7 @@
     ])
 
     // Some constants
-    .value("DEFAULT_PROFILE_PICTURE", "http://rise-vision.github.io/style-guide/img/user-icon.png")
+    .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
