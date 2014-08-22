@@ -5,7 +5,43 @@ angular.module("risevision.common.company",
     "risevision.common.config",
     "risevision.common.gapi"
   ])
-  .service("companyService", [ "coreAPILoader", "$q", "$log",
+
+  .factory("getUserCompanies", [
+  "coreAPILoader", "$q", "$log", "userState",
+  function (coreAPILoader, $q, $log, userState){
+      return function () {
+          var deferred = $q.defer();
+          var AUTH_STATUS_AUTHENTICATED = 1;
+
+          coreAPILoader.get().then(function (client) {
+            var request = client.company.list({});
+            request.execute(function (resp) {
+              if(resp.result === true) {
+                deferred.resolve(resp);
+                //update user state if supplied
+                if (resp.items && resp.items.length > 0) {
+                  var c = resp.items[0];
+                  $log.debug("selectedCompany", c);
+                  userState.user.company = c;
+                  userState.authStatus = AUTH_STATUS_AUTHENTICATED;
+                  userState.isAuthed = true;
+                  userState.user.company = c;
+
+                  //release 1 simpification - everyone is Purchaser ("pu" role)
+                  userState.isRiseUser = true;
+                  userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
+
+                  userState.selectedCompanyName = c.name;
+                  userState.selectedCompanyId = c.id;
+                }
+              }
+            });
+          });
+          return deferred.promise;
+      };
+  }])
+
+  .service("companyService", ["coreAPILoader", "$q", "$log",
     function (coreAPILoader, $q, $log) {
 
     var that = this;
@@ -40,17 +76,6 @@ angular.module("risevision.common.company",
         });
       });
       return deferred.promise;
-    };
-
-    this.getUserCompanies = function () {
-        var deferred = $q.defer();
-        coreAPILoader.get().then(function (client) {
-          var request = client.company.list({});
-          request.execute(function (resp) {
-            deferred.resolve(resp);
-          });
-        });
-        return deferred.promise;
     };
 
     this.loadSelectedCompany = function (selectedCompanyId, userCompany) {

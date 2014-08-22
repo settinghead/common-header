@@ -3,7 +3,7 @@
 
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
-      "risevision.common.config", "risevision.common.company",
+      "risevision.common.config",
       "ngBiscuit"
     ])
 
@@ -11,31 +11,27 @@
     .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
+    .constant("userState", {
+      user: {}
+    })
+
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
       "gapiLoader", "coreAPILoader", "oauthAPILoader", "CLIENT_ID",
       "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService",
-      "$location", "companyService", "cookieStore",
+      "$location", "cookieStore", "userState",
       function($interval, $rootScope, $q, $http, gapiLoader, coreAPILoader,
         oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
-        localStorageService, $location, companyService, cookieStore) {
+        localStorageService, $location, cookieStore, userState) {
 
         var that = this;
         var factory = {};
-        var userState = {};
 
         var AUTH_STATUS_NOT_AUTHENTICATED = 0;
-        var AUTH_STATUS_AUTHENTICATED = 1;
         var AUTH_STAUS_LOADING = -1;
 
         this.resetUserState = function() {
-
           angular.extend(userState, {
             user: {
-              profile: {
-                  name: "",
-                  email: "",
-                  picture: DEFAULT_PROFILE_PICTURE
-              },
               company: null
             },
             selectedCompanyId: null,
@@ -43,12 +39,10 @@
             isRiseAdmin: false,
             isRiseUser: false,
             isAuthed: false,
-            authStatus: AUTH_STAUS_LOADING
+            authStatus: AUTH_STAUS_LOADING,
           });
-
+          $log.debug("User state has been reset.");
         };
-
-        that.resetUserState();
 
         var accessToken = cookieStore.get("rv-token");
 
@@ -67,6 +61,7 @@
         * setup an already existinguser "session".
         */
         factory.$authenticate = function(forceAuth) {
+          $log.debug("$authentication called");
           var authenticateDeferred = $q.defer();
           that.resetUserState();
 
@@ -86,57 +81,14 @@
           });
 
           // This flag indicates a potentially authenticated user.
-          // var userAuthed = localStorageService.getItem("rvAuth.userAuthed");
           var userAuthed = (angular.isDefined(accessToken) && accessToken !== null);
           $log.debug("userAuthed", userAuthed);
 
           if (forceAuth || userAuthed === true) {
-            that.authorize(userAuthed === true && !forceAuth).then(function(authResult) {
+            that.authorize(userAuthed === true && !forceAuth)
+            .then(function(authResult) {
               if (authResult && ! authResult.error) {
-                var profilePromise = that.getProfile();
-                var companiesPromise = companyService.getUserCompanies();
-
-                // Block until profile and companies are loaded.
-                $q.all([profilePromise, companiesPromise]).then(function(result) {
-                  var profileResult = result[0];
-                  var companiesResult = result[1];
-
-                  $log.debug("companiesResult", companiesResult);
-
-                  if (companiesResult.items && companiesResult.items.length > 0) {
-                    var c = companiesResult.items[0];
-                    localStorageService.setItemImmediate("rvAuth.userAuthed", "true");
-
-                    /**
-                    * This is the only successful authentication case.
-                    */
-                    userState.authStatus = AUTH_STATUS_AUTHENTICATED;
-                    userState.status = "pendingCheck";
-                    userState.isAuthed = true;
-                    userState.user.company = c;
-
-                    //release 1 simpification - everyone is Purchaser ("pu" role)
-                    userState.isRiseUser = true;
-                    userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
-
-                    $log.debug("selectedCompany", c);
-
-                    userState.selectedCompanyName = c.name;
-                    userState.selectedCompanyId = c.id;
-
-                    userState.user.profile.name = profileResult.name;
-                    userState.user.profile.email = profileResult.email;
-                    userState.user.profile.picture = profileResult.picture;
-
-                    authenticateDeferred.resolve();
-
-                  }
-                  else {
-                    authenticateDeferred.reject("User has no companies!");
-                  }
-                }, function() {
-                  authenticateDeferred.reject("Failure loading profile and/or companies.");
-                });
+                authenticateDeferred.resolve();
               }
               else {
                 authenticateDeferred.reject("Authentication Error: " + authResult.error);
@@ -147,7 +99,6 @@
             var msg = "user is not authenticated";
             $log.info(msg);
             userState.authStatus = AUTH_STATUS_NOT_AUTHENTICATED;
-            userState.status = "pendingCheck";
             authenticateDeferred.reject(msg);
           }
 
@@ -214,19 +165,6 @@
           return authorizeDeferred.promise;
         };
 
-        this.getProfile = function () {
-          var deferred = $q.defer();
-          oauthAPILoader.get().then(function () {
-            coreAPILoader.get().then(function (coreApi) {
-              var request = coreApi.user.get({});
-              request.execute(function (resp) {
-                deferred.resolve(resp);
-              });
-            });
-          });
-          return deferred.promise;
-        };
-
         /**
         * A Convenience method for the app to
         * get the userState object.
@@ -243,29 +181,27 @@
         * an event that the header or app uses to update itself.
         */
         factory.$signOut = function() {
-
-          // The flag the indicates a user is potentially
-          // authenticated already, must be destroyed.
-          // localStorageService.removeItemImmediate("rvAuth.userAuthed");
-          cookieStore.remove("rv-token",
-            {domain: "." + getBaseDomain()});
-          cookieStore.remove("rv-token");
+          var deferred = $q.defer();
           gapiLoader.get().then(function (gApi) {
+            // The flag the indicates a user is potentially
+            // authenticated already, must be destroyed.
+            cookieStore.remove("rv-token",
+              {domain: "." + getBaseDomain()});
+            cookieStore.remove("rv-token");
+            //clear auth token
             gApi.auth.setToken();
-          });
-          accessToken = undefined;
-          // The majority of state is in here
-          that.resetUserState();
-
-          $rootScope.$broadcast("rvAuth.$signOut");
+            accessToken = undefined;
+            // The majority of state is in here
+            that.resetUserState();
+            deferred.resolve();
+            $rootScope.$broadcast("rvAuth.$signOut");
+          }, deferred.reject);
+          return deferred.promise;
         };
 
         factory.getAccessToken = function () {
           return accessToken;
         };
-
-        that.resetUserState();
-
 
         if(accessToken) {
           gapiLoader.get().then(function (gApi) {
@@ -274,6 +210,8 @@
             userState.authStatus = AUTH_STAUS_LOADING;
           });
         }
+
+        that.resetUserState();
 
         return factory;
 

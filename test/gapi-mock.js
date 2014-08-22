@@ -5,20 +5,30 @@
 
   window.gapi = {};
 
+  var delayed = function () {
+    if(arguments) {
+      var cb = arguments[0];
+      var restArgs = Array.prototype.slice.call(arguments, 1);
+      setTimeout(function (){
+        cb.apply(null, restArgs);
+      }, window.gapi._fakeDb.serverDelay || 0);
+    }
+  };
+
   window.gapi.resetDb = function () {
     if(!window.gapi._fakeDb) {
-      window.gapi._fakeDb = {};
+      window.gapi._fakeDb = {serverDelay: 0};
     }
-    window.gapi._fakeDb.companies = _.clone(companies);
-    window.gapi._fakeDb.currentUser = _.clone(currentUser);
+    window.gapi._fakeDb.companies = _.cloneDeep(companies);
+    window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
   };
 
   window.gapi.resetUser = function () {
-    window.gapi._fakeDb.currentUser = _.clone(currentUser);
+    window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
   };
 
   window.gapi.resetCompanies = function () {
-    window.gapi._fakeDb.companies = _.clone(companies);
+    window.gapi._fakeDb.companies = _.cloneDeep(companies);
   };
 
   window.gapi.companyRespSkeleton = {
@@ -971,7 +981,7 @@
 
   gapi.client = {
     load: function(path, version, cb) {
-      cb();
+      delayed(cb);
     },
     core: {
       company: {
@@ -991,17 +1001,17 @@
                 });
               }
               if(!company){
-                cb({
+                delayed(cb, {
                   "result": false,
                   "code": 404,
                   "message": "NOT FOUND"
                 });
               } else {
-                cb({
+                delayed(cb, {
                   "result": true,
                   "code": 200,
                   "message": "OK",
-                  "item": _.extend(_.clone(window.gapi.companyRespSkeleton), company),
+                  "item": _.extend(_.cloneDeep(window.gapi.companyRespSkeleton), company),
                 "kind": "core#companyItem",
                 "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
                 });
@@ -1012,7 +1022,7 @@
       list: function () {
         return {
           execute: function (cb) {
-            return cb({
+            return delayed(cb, {
              "result": true,
              "code": 200,
              "message": "OK",
@@ -1039,7 +1049,7 @@
       list: function () {
         return {
           execute: function (cb) {
-            return cb({
+            return delayed(cb, {
               "result": true,
               "code": 200,
               "message": "OK",
@@ -1065,10 +1075,10 @@
         return {
           execute: function (cb) {
             if(window.gapi._fakeDb.currentUser) {
-              cb(window.gapi._fakeDb.currentUser);
+              delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentUser));
             }
             else {
-              cb({
+              delayed(cb, {
                 "result": false,
                 "code": 404,
                 "message": "NOT FOUND"
@@ -1082,10 +1092,10 @@
           execute: function (cb) {
             if(!window.gapi._fakeDb.currentUser) {
               window.gapi.resetUser();
-              window.gapi._fakeDb.currentUser.item = _.clone(obj);
+              window.gapi._fakeDb.currentUser.item = _.cloneDeep(obj);
             }
             _.extend(window.gapi._fakeDb.currentUser.item, obj);
-            return cb(window.gapi._fakeDb.currentUser);
+            return delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentUser));
           }
         };
       }
@@ -1096,26 +1106,57 @@
       get: function() {
         return {
           execute: function(cb) {
-            return cb({
-              "id":"1",
-              "name":"Sergey Brin",
-              "given_name":"Sergey",
-              "family_name":"Brin",
-              "link":"https://plus.google.com/1",
-              "picture":"",
-              "gender":"male",
-              "locale":"en",
-              "result":{
+            if(gapi.auth._token) {
+              delayed(cb, {
                 "id":"1",
                 "name":"Sergey Brin",
+                "email" :"sergey.dadad@google.com",
                 "given_name":"Sergey",
                 "family_name":"Brin",
                 "link":"https://plus.google.com/1",
                 "picture":"",
                 "gender":"male",
-                "locale":"en"
-              }
-            });
+                "locale":"en",
+                "result":{
+                  "id":"1",
+                  "name":"Sergey Brin",
+                  "given_name":"Sergey",
+                  "family_name":"Brin",
+                  "link":"https://plus.google.com/1",
+                  "picture":"",
+                  "gender":"male",
+                  "locale":"en"
+                }
+              });
+            }
+            else {
+              delayed(cb, {
+                "code": 401,
+                "message": "Invalid Credentials",
+                "data": [
+                  {
+                    "domain": "global",
+                    "reason": "authError",
+                    "message": "Invalid Credentials",
+                    "locationType": "header",
+                    "location": "Authorization"
+                  }
+                ],
+                "error": {
+                  "code": 401,
+                  "message": "Invalid Credentials",
+                  "data": [
+                    {
+                      "domain": "global",
+                      "reason": "authError",
+                      "message": "Invalid Credentials",
+                      "locationType": "header",
+                      "location": "Authorization"
+                    }
+                  ]
+                }
+              });
+            }
           }
         };
       }
@@ -1128,14 +1169,14 @@
       update: function() {
         return {
           execute: function(cb) {
-            cb({});
+            delayed(cb, {});
           }
         };
       },
       delete: function() {
         return {
           execute: function(cb) {
-            cb();
+            delayed(cb);
           }
         };
       },
@@ -1148,7 +1189,7 @@
       list: function() {
         return {
           execute: function(cb) {
-            return cb({
+            return delayed(cb, {
               "kind": "tasks#tasks",
               "items": [
               {
@@ -1216,14 +1257,14 @@
       update: function() {
         return {
           execute: function(cb) {
-            cb({});
+            delayed(cb, {});
           }
         };
       },
       delete: function() {
         return {
           execute: function(cb) {
-            cb({});
+            delayed(cb, {});
           }
         };
       },
@@ -1231,7 +1272,7 @@
         return {
           execute: function(cb) {
             // Used for the 'Creating a list' test
-            cb({
+            delayed(cb, {
               "id": "1",
               "kind": "tasks#taskList",
               "title": "Example list",
@@ -1243,7 +1284,7 @@
       list: function() {
         return {
           execute: function(cb) {
-            cb({
+            delayed(cb, {
               "kind": "tasks#taskLists",
               "items": [
               {
@@ -1285,7 +1326,7 @@
 };
 gapi.auth = {
   authorize: function(options, cb) {
-    cb({
+    var token = {
       "state": "",
       "access_token": "ya29.ZwAgQsgKffXb9iIAAACywIxIBmnB3GZZy-8ZF2nVT37cniK5PzKHxzWu6DQh8uyoRYpIjLYdneCEgYZb2U8",
       "token_type": "Bearer",
@@ -1303,13 +1344,15 @@ gapi.auth = {
         "signed_in": true,
         "method": "PROMPT"
       }
-    });
+    };
+    gapi.auth._token = token;
+    delayed(cb, _.cloneDeep(token));
   },
-  setToken: function () {
-    //TODO
+  setToken: function (token) {
+    gapi.auth._token = token;
   },
   getToken: function () {
-    //TODO
+    delete gapi.auth._token;
   }
 };
 

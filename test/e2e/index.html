@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="test-app">
   <head>
+    <!-- <link href="../../src/css/glyphicons.min.css" rel="stylesheet" type="text/css"> -->
     <link href="//s3.amazonaws.com/rise-common-test/styles/glyphicons/glyphicons.min.css" rel="stylesheet" type="text/css">
 
     <!-- build:css css/style.css -->
@@ -38,11 +39,16 @@
     <script type="text/javascript" src="../../components/rv-loading/loading.js"></script>
     <script type="text/javascript" src="../../components/ng-biscuit/dist/ng-biscuit.js"></script>
     <script type="text/javascript" src="../../src/templates.js"></script>
-    <script type="text/javascript" src="../../src/js/common-header.js"></script>
+    <script type="text/javascript" src="../../src/js/dtv-common-header.js"></script>
+    <script type="text/javascript" src="../../src/js/controllers/ctr-modals.js"></script>
+    <script type="text/javascript" src="../../src/js/controllers/ctr-terms-conditions.js"></script>
+    <script type="text/javascript" src="../../src/js/controllers/ctr-login.js"></script>]
     <script type="text/javascript" src="../../src/js/svc-util.js"></script>
     <script type="text/javascript" src="../../src/js/svc-auth.js"></script>
     <script type="text/javascript" src="../../src/js/svc-registration.js"></script>
     <script type="text/javascript" src="../../src/js/svc-cache.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-profile.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-oauth2.js"></script>
     <script type="text/javascript" src="../../src/js/svc-company.js"></script>
     <script type="text/javascript" src="../../src/js/config/config.js"></script>
     <script type="text/javascript" src="../../src/js/svc-config.js"></script>
@@ -93,7 +99,6 @@
           'Consectetur adipiscing elit',
           'Suspendisse convallis leo sed'
         ];
-        $rootScope.userState = apiAuth.getUserState();
 
         $scope.db = window.gapi._fakeDb;
 
@@ -113,6 +118,7 @@
         $scope.$watch("db", function (newVal) {
           localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal));
         }, true);
+
       });
 
 
@@ -121,8 +127,8 @@
     <h1>Test App for Common Header</h1>
 
     This app was built for the sole purpose of testing & demoing common header.
-
-    <button class="btn" ng-click="resetDb()">Reset</button>
+    Set server latency to <input type="number" ng-model="db.serverDelay" /> ms.
+    <button class="btn" ng-click="resetDb()">Reset DB</button>
 
     <div class="row">
       <div class="col-md-1"></div>
