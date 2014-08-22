@@ -4,7 +4,7 @@
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
       "risevision.common.config", "risevision.common.company",
-      "ngBiscuit"
+      "risevision.common.profile", "ngBiscuit"
     ])
 
     // Some constants
@@ -14,10 +14,10 @@
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
       "gapiLoader", "coreAPILoader", "oauthAPILoader", "CLIENT_ID",
       "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService",
-      "$location", "companyService", "cookieStore",
+      "$location", "companyService", "cookieStore", "getProfile",
       function($interval, $rootScope, $q, $http, gapiLoader, coreAPILoader,
         oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
-        localStorageService, $location, companyService, cookieStore) {
+        localStorageService, $location, companyService, cookieStore, getProfile) {
 
         var that = this;
         var factory = {};
@@ -31,11 +31,6 @@
 
           angular.extend(userState, {
             user: {
-              profile: {
-                  name: "",
-                  email: "",
-                  picture: DEFAULT_PROFILE_PICTURE
-              },
               company: null
             },
             selectedCompanyId: null,
@@ -47,8 +42,6 @@
           });
 
         };
-
-        that.resetUserState();
 
         var accessToken = cookieStore.get("rv-token");
 
@@ -67,6 +60,7 @@
         * setup an already existinguser "session".
         */
         factory.$authenticate = function(forceAuth) {
+          $log.debug("$authentication called");
           var authenticateDeferred = $q.defer();
           that.resetUserState();
 
@@ -93,12 +87,10 @@
           if (forceAuth || userAuthed === true) {
             that.authorize(userAuthed === true && !forceAuth).then(function(authResult) {
               if (authResult && ! authResult.error) {
-                var profilePromise = that.getProfile();
                 var companiesPromise = companyService.getUserCompanies();
 
                 // Block until profile and companies are loaded.
-                $q.all([profilePromise, companiesPromise]).then(function(result) {
-                  var profileResult = result[0];
+                $q.all([getProfile(userState), companiesPromise]).then(function(result) {
                   var companiesResult = result[1];
 
                   $log.debug("companiesResult", companiesResult);
@@ -123,11 +115,6 @@
 
                     userState.selectedCompanyName = c.name;
                     userState.selectedCompanyId = c.id;
-
-                    userState.user.profile.name = profileResult.name;
-                    userState.user.profile.email = profileResult.email;
-                    userState.user.profile.picture = profileResult.picture;
-
                     authenticateDeferred.resolve();
 
                   }
@@ -212,19 +199,6 @@
             });
           });
           return authorizeDeferred.promise;
-        };
-
-        this.getProfile = function () {
-          var deferred = $q.defer();
-          oauthAPILoader.get().then(function () {
-            coreAPILoader.get().then(function (coreApi) {
-              var request = coreApi.user.get({});
-              request.execute(function (resp) {
-                deferred.resolve(resp);
-              });
-            });
-          });
-          return deferred.promise;
         };
 
         /**

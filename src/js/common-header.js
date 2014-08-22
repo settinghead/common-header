@@ -7,6 +7,7 @@ angular.module("risevision.common.header", [
   "risevision.common.header.templates",
   "risevision.common.loading",
   "risevision.common.registration",
+  "risevision.common.oauth2",
   "ui.bootstrap"
 ])
 .directive("commonHeader",
@@ -86,6 +87,7 @@ angular.module("risevision.common.header", [
         };
 
         scope.termsAndConditions = function (size) {
+          // var modalInstance =
           $modal.open({
             templateUrl: "terms-and-conditions.html",
             controller: "TermsConditionsModalCtrl",
@@ -179,22 +181,7 @@ angular.module("risevision.common.header", [
     };
   }
 ])
-.controller("TermsConditionsModalCtrl", [
-  "$scope", "$modalInstance", "$rootScope", "acceptTermsAndConditions",
-  function($scope, $modalInstance, $rootScope, acceptTermsAndConditions) {
-    $scope.profile = {};
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-      $rootScope.userState.status = "pendingCheck";
-    };
-    $scope.agree = function () {
-      acceptTermsAndConditions($scope.profile).then(function () {
-        $modalInstance.close("success");
-        $rootScope.userState.status = "pendingCheck";
-      });
-    };
-  }
-])
+
 .controller("CreateProfileModalCtrl", [
   "$scope", "$modalInstance", "$rootScope", "updateProfile",
   function($scope, $modalInstance, $rootScope, updateProfile) {

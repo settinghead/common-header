@@ -1,13 +1,11 @@
 (function (angular) {
   "use strict";
 
-  angular.module("risevision.common.registration", [])
+  angular.module("risevision.common.registration", ["risevision.common.profile"])
 
   .value("userStatusDependencies", {
     "termsConditionsAccepted" : "signedInWithGoogle",
-    "profileUpdated": "termsConditionsAccepted",
-    "companyCreated": "profileUpdated",
-    "registrationComplete": "companyCreated"
+    "registrationComplete": "termsConditionsAccepted"
   })
 
   .factory("checkUserStatus", [
@@ -64,7 +62,9 @@
         var request = coreApi.user.get({});
         request.execute(function (resp) {
             $log.debug("termsConditionsAccepted core.user.get() resp", resp);
-            if(resp.result === true && resp.item.termsAcceptanceDate) {
+            if(resp.result === true
+              && resp.item.termsAcceptanceDate
+              && resp.item.email) {
               deferred.resolve(resp);
             }
             else {
@@ -73,14 +73,6 @@
         });
       });
       return deferred.promise;
-    };
-  }])
-
-  .factory("acceptTermsAndConditions", ["updateProfile", function (updateProfile) {
-    return function (profile) {
-      return updateProfile(angular.extend({
-        termsAcceptanceDate: (new Date()).toISOString()
-      }, profile));
     };
   }])
 
@@ -98,28 +90,6 @@
             }
             else {
               deferred.reject("profileUpdated");
-            }
-        });
-      });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("updateProfile", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
-    return function (profile) {
-      $log.debug("updateProfile", profile);
-      var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
-        //TODO: consult Alxey
-        var request = coreApi.user.update(profile);
-        request.execute(function (resp) {
-            $log.debug("updateProfile resp", resp);
-            if(resp.result === true) {
-              deferred.resolve(resp);
-            }
-            else {
-              deferred.reject("updateProfile");
             }
         });
       });

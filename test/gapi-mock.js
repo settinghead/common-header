@@ -1099,6 +1099,7 @@
             return cb({
               "id":"1",
               "name":"Sergey Brin",
+              "email" :"sergey.dadad@google.com",
               "given_name":"Sergey",
               "family_name":"Brin",
               "link":"https://plus.google.com/1",

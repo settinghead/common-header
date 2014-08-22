@@ -397,22 +397,48 @@ app.run(["$templateCache", function($templateCache) {
     "</script>\n" +
     "\n" +
     "<script type=\"text/ng-template\" id=\"terms-and-conditions.html\">\n" +
-    "	<div class=\"modal-header\">\n" +
-    "		<button type=\"button\" ng-click=\"closeModal()\" class=\"close\">\n" +
-    "		<span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
-    "	</div>\n" +
-    "	<div class=\"modal-body\">\n" +
-    "		<form class=\"form-horizontal\">\n" +
-    "			<h3>Terms and Conditions Goes Here</h3>\n" +
-    "			<div>You agree bro?</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"exampleInputEmail1\">Email address</label>\n" +
-    "				<input type=\"email\" class=\"form-control\" ng-model=\"profile.email\" placeholder=\"Enter email\">\n" +
-    "			</div>\n" +
-    "			<button type=\"button\" class=\"btn btn-primary\" ng-click=\"agree()\">Accept</button>\n" +
-    "			<button type=\"button\" class=\"btn\" ng-click=\"closeModal()\">Decline</button>\n" +
-    "		</form>\n" +
-    "	</div>\n" +
+    "		<div class=\"modal-header\">\n" +
+    "			<button type=\"button\" ng-click=\"closeModal()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "			<h2 class=\"modal-title\">Welcome To Rise Vision</h2>\n" +
+    "		</div>\n" +
+    "		<div class=\"modal-body terms-conditions-modal\">\n" +
+    "			<p>We require an Email address that we can reliably reach you at\n" +
+    "			for system notices and other critical information. We promise,\n" +
+    "			 only system notices, we won't send you anything else unless you\n" +
+    "			sign up for the Newsletter below, and we won't share your email address\n" +
+    "			with anyone else. Promise!</p>\n" +
+    "\n" +
+    "			<form role=\"form\">\n" +
+    "				<div class=\"form-group\">\n" +
+    "			    <label for=\"exampleInputEmail1\">Email address</label>\n" +
+    "			    <input type=\"email\" class=\"form-control\"\n" +
+    "					id=\"exampleInputEmail1\" placeholder=\"Enter email\" required\n" +
+    "					ng-model=\"userState.user.profile.email\">\n" +
+    "			  </div>\n" +
+    "			  <!-- Terms of Service and Privacy -->\n" +
+    "			  <div class=\"checkbox\">\n" +
+    "			    <label>\n" +
+    "			    <input type=\"checkbox\" ng-model=\"userState.user.profile.accepted\" />\n" +
+    "					I accept Terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
+    "			    </label>\n" +
+    "			  </div>\n" +
+    "			  <!-- Newsletter -->\n" +
+    "			  <div class=\"checkbox\">\n" +
+    "			    <label>\n" +
+    "			      <input type=\"checkbox\" ng-model=\"userState.user.profile.newsletter\"> Sign up for the Rise Vision Newsletter\n" +
+    "			    </label>\n" +
+    "			  </div>\n" +
+    "			  <div class=\"form-group\">\n" +
+    "					<button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
+    "					ng-click=\"closeModal()\">\n" +
+    "					  Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
+    "					</button>\n" +
+    "					<button ng-click=\"agree()\" type=\"submit\" class=\"btn btn-success btn-fixed-width\">\n" +
+    "					  Save <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
+    "					</button>\n" +
+    "				</div>\n" +
+    "			</form>\n" +
+    "		</div>\n" +
     "</script>\n" +
     "\n" +
     "<script type=\"text/ng-template\" id=\"create-profile.html\">\n" +
