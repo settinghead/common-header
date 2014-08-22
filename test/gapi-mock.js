@@ -15,6 +15,18 @@
     }
   };
 
+  var guid = (function() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+                 .toString(16)
+                 .substring(1);
+    }
+    return function() {
+      return s4() + s4() + "-" + s4() + "-" + s4() + "-" +
+             s4() + "-" + s4() + s4() + s4();
+    };
+  })();
+
   window.gapi.resetDb = function () {
     if(!window.gapi._fakeDb) {
       window.gapi._fakeDb = {serverDelay: 0};
@@ -29,6 +41,12 @@
 
   window.gapi.resetCompanies = function () {
     window.gapi._fakeDb.companies = _.cloneDeep(companies);
+  };
+
+  window.gapi.clearCompanies = function () {
+    while(window.gapi._fakeDb.companies.length > 0) {
+      window.gapi._fakeDb.companies.pop();
+    }
   };
 
   window.gapi.companyRespSkeleton = {
@@ -1019,6 +1037,33 @@
           }
         };
       },
+      update: function (fields) {
+        return {
+          execute: function (cb) {
+            var company;
+            if(fields.id) {
+              company = _.find(window.gapi._fakeDb.companies, function (company) {
+                return company.id === fields.id;
+              });
+              _.extend(company, fields);
+            }
+            else {
+              company = _.cloneDeep(fields);
+              company.id = guid();
+              window.gapi._fakeDb.companies.push(company);
+            }
+            console.log("company created", company);
+            delayed(cb, {
+              "result": true,
+              "code": 200,
+              "message": "OK",
+              "item": _.extend(_.cloneDeep(window.gapi.companyRespSkeleton), company),
+            "kind": "core#companyItem",
+            "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
+          });
+          }
+        };
+      },
       list: function () {
         return {
           execute: function (cb) {
@@ -1111,10 +1156,10 @@
                 "id":"1",
                 "name":"Sergey Brin",
                 "email" :"sergey.dadad@google.com",
+                "picture" : "http://api.randomuser.me/portraits/med/men/22.jpg",
                 "given_name":"Sergey",
                 "family_name":"Brin",
                 "link":"https://plus.google.com/1",
-                "picture":"",
                 "gender":"male",
                 "locale":"en",
                 "result":{

@@ -43,7 +43,9 @@
     <script type="text/javascript" src="../../src/js/controllers/ctr-modals.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-terms-conditions.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-login.js"></script>]
+    <script type="text/javascript" src="../../src/js/controllers/ctr-companies.js"></script>]
     <script type="text/javascript" src="../../src/js/svc-util.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-geodata.js"></script>
     <script type="text/javascript" src="../../src/js/svc-auth.js"></script>
     <script type="text/javascript" src="../../src/js/svc-registration.js"></script>
     <script type="text/javascript" src="../../src/js/svc-cache.js"></script>
@@ -114,6 +116,9 @@
         $scope.resetCompanies = function () {
           window.gapi.resetCompanies();
         }
+        $scope.clearCompanies = function () {
+          window.gapi.clearCompanies();
+        }
 
         $scope.$watch("db", function (newVal) {
           localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal));
@@ -142,6 +147,7 @@
       </div>
       <div class="col-md-5 jsonView" defocus>
         <h3 class="inline">All Companies in Fake Google DB</h3>
+        <button class="btn" ng-click="clearCompanies()">Clear</button>
         <button class="btn" ng-click="resetCompanies()">Reset</button>
         <div><json child="db.companies" default-collapsed="false" type="'array'">
         </json></div>

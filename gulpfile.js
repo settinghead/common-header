@@ -11,16 +11,9 @@
 // Include gulp
 
 var env = process.env.NODE_ENV || "dev",
-    gulp = require('gulp'),
-    replace = require("gulp-replace"),
+    gulp = require("gulp"),
     jshint = require("gulp-jshint"),
-
-    jsFiles = [
-      "src/*.js",
-    ],
-    htmlFiles = [
-      "src/*.html"
-    ],
+    watch = require("gulp-watch"),
     factory = require("widget-tester").gulpTaskFactory,
     runSequence = require("run-sequence"),
     html2js = require("gulp-html2js"),
@@ -38,7 +31,7 @@ gulp.task("html", ["lint"], function () {
 });
 
 
-gulp.task("build", ["html"]);
+gulp.task("build", ["html", "html2js"]);
 
 gulp.task("lint", ["config"], function() {
   return gulp.src([
@@ -53,16 +46,30 @@ gulp.task("lint", ["config"], function() {
     });
 });
 
-gulp.task('html2js', function() {
-  return gulp.src('src/templates/*.html')
+gulp.task("html2js", function() {
+  return gulp.src("src/templates/*.html")
     .pipe(html2js({
-      outputModuleName: 'risevision.common.header.templates',
+      outputModuleName: "risevision.common.header.templates",
       useStrict: true,
       base: "src/templates"
     }))
-    .pipe(concat('templates.js'))
-    .pipe(gulp.dest('./src/'));
+    .pipe(concat("templates.js"))
+    .pipe(gulp.dest("./src/"));
 });
+
+gulp.task("html2js-watch", function() {
+  gulp.src("src/templates/*.html")
+    .pipe(watch(function(){
+      return gulp.src("src/templates/*.html").pipe(html2js({
+        outputModuleName: "risevision.common.header.templates",
+        useStrict: true,
+        base: "src/templates"
+      }))
+      .pipe(concat("templates.js"))
+      .pipe(gulp.dest("./src/"));
+    }));
+});
+
 
 /* Task: config
  * Copies configuration file in place based on the current
@@ -87,6 +94,7 @@ gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: [
   ]}));
 
 gulp.task("test:e2e:server", ["html2js", "config"], factory.testServer());
+gulp.task("test:e2e:server-watch", ["html2js-watch", "config"], factory.testServer());
 gulp.task("test:e2e:server:close", factory.testServerClose());
 gulp.task("test:webdrive_update", factory.webdriveUpdate());
 gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular());

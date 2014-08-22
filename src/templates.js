@@ -129,15 +129,20 @@ app.run(["$templateCache", function($templateCache) {
     "				</ul>\n" +
     "			</li>\n" +
     "			<!-- END Current App -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"userState.selectedCompanyId\">\n" +
+    "			<li class=\"dropdown\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n" +
     "					<i class=\"glyphicons cogwheel\"></i>\n" +
     "				</a>\n" +
     "				<ul class=\"dropdown-menu\">\n" +
-    "					<li class=\"dropdown-header dropdown-title\">\n" +
+    "					<li class=\"dropdown-header dropdown-title\"\n" +
+    "					  ng-show=\"userState.user.company\">\n" +
     "						Current Company\n" +
     "					</li>\n" +
-    "					<li class=\"dropdown-header\">\n" +
+    "					<li class=\"dropdown-header dropdown-title\"\n" +
+    "						ng-show=\"!userState.user.company\">\n" +
+    "						You have not created a company.</li>\n" +
+    "\n" +
+    "					<li class=\"dropdown-header\" ng-show=\"userState.user.company\">\n" +
     "						<!-- home -->\n" +
     "						<i ng-if=\"!subCompanySelected\" class=\"glyphicons home\"></i>\n" +
     "						<!-- warning -->\n" +
@@ -146,6 +151,13 @@ app.run(["$templateCache", function($templateCache) {
     "						<div ng-if=\"subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "					</li>\n" +
     "					<li ng-if=\"subCompanySelected\" class=\"divider\"></li>\n" +
+    "					<li ng-show=\"!userState.user.company\">\n" +
+    "						<a href=\"\" data-toggle=\"modal\" data-target=\"#sub-company-modal\"\n" +
+    "						  ng-click=\"companySettings()\">\n" +
+    "							<i class=\"glyphicons plus\"></i>\n" +
+    "							<span class=\"item-name\">Create a Company</span>\n" +
+    "						</a>\n" +
+    "					</li>\n" +
     "					<li ng-if=\"subCompanySelected\">\n" +
     "						<a href=\"\" ng-click=\"resetCompany()\">\n" +
     "							<i class=\"glyphicons home\"></i>\n" +
@@ -153,7 +165,7 @@ app.run(["$templateCache", function($templateCache) {
     "						</a>\n" +
     "					</li>\n" +
     "					<li class=\"divider\"></li>\n" +
-    "					<li>\n" +
+    "					<li ng-show=\"userState.user.company\">\n" +
     "						<a href=\"\" ng-click=\"switchCompany()\">\n" +
     "							<i class=\"glyphicons new_window\"></i>\n" +
     "							<span class=\"item-name\">Select Sub-Company</span>\n" +
@@ -258,144 +270,6 @@ app.run(["$templateCache", function($templateCache) {
     "	</div>\n" +
     "</script>\n" +
     "\n" +
-    "<!-- Add Sub-Company Modal -->\n" +
-    "<script type=\"text/ng-template\" id=\"sub-company-modal.html\">\n" +
-    "	<div class=\"modal-header\">\n" +
-    "		<button type=\"button\" class=\"close\" ng-click=\"closeModal()\" aria-hidden=\"true\">\n" +
-    "			<i class=\"glyphicons remove_2\"></i>\n" +
-    "		</button>\n" +
-    "		<h2 id=\"sub-company-label\" class=\"modal-title\">Add Sub-Company</h2>\n" +
-    "	</div>\n" +
-    "	<div class=\"modal-body\">\n" +
-    "		<form role=\"form\">\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-name\">\n" +
-    "					Name\n" +
-    "				</label>\n" +
-    "				<input id=\"sub-company-name\" type=\"text\" class=\"form-control\" ng-model=\"company.name\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-street\">\n" +
-    "					Street\n" +
-    "				</label>\n" +
-    "				<input id=\"sub-company-street\" type=\"text\" class=\"form-control\" ng-model=\"company.street\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-unit\">\n" +
-    "					Unit\n" +
-    "				</label>\n" +
-    "				<input id=\"sub-company-unit\" type=\"text\" class=\"form-control\" ng-model=\"company.unit\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-city\">\n" +
-    "					City\n" +
-    "				</label>\n" +
-    "				<input id=\"sub-company-city\" type=\"text\" class=\"form-control\" ng-model=\"company.city\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-country\">\n" +
-    "					Country\n" +
-    "				</label>\n" +
-    "				<select id=\"sub-company-country\" class=\"form-control selectpicker\" ng-model=\"company.country\" ng-options=\"c[1] as c[0] for c in countries\">\n" +
-    "					<option value=\"\">&lt; Select Country &gt;</option>\n" +
-    "				</select>\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-state\">\n" +
-    "					State / Province\n" +
-    "				</label>\n" +
-    "				<!-- <input id=\"sub-company-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" /> -->\n" +
-    "				<select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
-    "					<option value=\"\">&lt; Select Province &gt;</option>\n" +
-    "				</select>\n" +
-    "				<!-- <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
-    "					<option value=\"\">&lt; Select State &gt;</option>\n" +
-    "				</select> -->\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-zip\">\n" +
-    "					Zip / Postal Code\n" +
-    "				</label>\n" +
-    "				<input id=\"sub-company-zip\" type=\"text\" class=\"form-control\" ng-model=\"company.postalCode\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"sub-company-monitoring\">\n" +
-    "					Send Monitoring Emails To\n" +
-    "				</label>\n" +
-    "				<input id=\"sub-company-monitoring\" type=\"email\" class=\"form-control\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<a href=\"\" data-dismiss=\"modal\" data-toggle=\"modal\" ng-click=\"moveCompany()\">Move a Company Under Your Company</a>\n" +
-    "			</div>\n" +
-    "		</form>\n" +
-    "	</div>\n" +
-    "	<div class=\"modal-footer\">\n" +
-    "		<button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\">Save\n" +
-    "			<i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
-    "		</button>\n" +
-    "		<button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\">Cancel\n" +
-    "			<i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
-    "		</button>\n" +
-    "	</div>\n" +
-    "</script>\n" +
-    "\n" +
-    "<!-- Move Company Modal -->\n" +
-    "<script type=\"text/ng-template\" id=\"move-company-modal.html\">\n" +
-    "	<div class=\"modal-header\">\n" +
-    "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
-    "			<i class=\"glyphicons remove_2\"></i>\n" +
-    "		</button>\n" +
-    "		<h2 id=\"move-company-label\" class=\"modal-title\">Move Company</h2>\n" +
-    "	</div>\n" +
-    "	<div class=\"modal-body\">\n" +
-    "		<form role=\"form\">\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"auth-key\">\n" +
-    "					Enter the Authentication Key of the Company that you want to move.\n" +
-    "				</label>\n" +
-    "				<div class=\"row\">\n" +
-    "					<div class=\"col-sm-6\">\n" +
-    "						<input id=\"auth-key\" type=\"text\" class=\"form-control\" />\n" +
-    "					</div>\n" +
-    "					<div class=\"col-sm-6\">\n" +
-    "						<a href=\"\" ng-click=\"getCompany()\">Retrieve Company Details</a>\n" +
-    "					</div>\n" +
-    "				</div>\n" +
-    "			</div>\n" +
-    "		</form>\n" +
-    "		<div ng-show=\"showCompanyDetails\">\n" +
-    "			<h3>Details of the Company You Want to Move</h3>\n" +
-    "			<div>\n" +
-    "				Acme Company 123<br>\n" +
-    "				1234 W. 100th Ave<br>\n" +
-    "				Kansas City, KS 12345\n" +
-    "			</div>\n" +
-    "			<h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
-    "			<div class=\"to-company\">\n" +
-    "				Rise Display<br>\n" +
-    "				22019 W. 83rd St.<br>\n" +
-    "				Shawnee, KS 66226\n" +
-    "			</div>\n" +
-    "		</div>\n" +
-    "		<div ng-show=\"showCompanyMessages\">\n" +
-    "			<div class=\"alert alert-success\">\n" +
-    "				The Company was moved successfully.\n" +
-    "			</div>\n" +
-    "			<div class=\"alert alert-danger\">\n" +
-    "				There was a problem moving the Company. Please try again.\n" +
-    "			</div>\n" +
-    "		</div>\n" +
-    "	</div>\n" +
-    "	<div class=\"modal-footer\">\n" +
-    "		<button type=\"button\" class=\"btn btn-success\" ng-show=\"showMoveCompany\" ng-click=\"moveCompany()\">Move Company\n" +
-    "			<i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
-    "		</button>\n" +
-    "		<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
-    "			Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
-    "		</button>\n" +
-    "	</div>\n" +
-    "</script>\n" +
-    "\n" +
     "<script type=\"text/ng-template\" id=\"terms-and-conditions.html\">\n" +
     "		<div class=\"modal-header\">\n" +
     "			<button type=\"button\" ng-click=\"closeModal()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
@@ -461,200 +335,6 @@ app.run(["$templateCache", function($templateCache) {
     "		</form>\n" +
     "	</div>\n" +
     "</script>\n" +
-    "\n" +
-    "<!-- Company Settings Modal -->\n" +
-    "<script type=\"text/ng-template\" id=\"company-settings-modal.html\">\n" +
-    "	<div class=\"modal-header\">\n" +
-    "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
-    "			<i class=\"glyphicons remove_2\"></i>\n" +
-    "		</button>\n" +
-    "		<h2 id=\"company-settings-label\" class=\"modal-title\">Company Settings</h2>\n" +
-    "	</div>\n" +
-    "	<div class=\"modal-body\">\n" +
-    "		<form role=\"form\">\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-name\">\n" +
-    "					Name\n" +
-    "				</label>\n" +
-    "				<input id=\"company-settings-name\" type=\"text\" class=\"form-control\" ng-model=\"company.name\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-street\">\n" +
-    "					Street\n" +
-    "				</label>\n" +
-    "				<input id=\"company-settings-street\" type=\"text\" class=\"form-control\" ng-model=\"company.street\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-unit\">\n" +
-    "					Unit\n" +
-    "				</label>\n" +
-    "				<input id=\"company-settings-unit\" type=\"text\" class=\"form-control\" ng-model=\"company.unit\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-city\">\n" +
-    "					City\n" +
-    "				</label>\n" +
-    "				<input id=\"company-settings-city\" type=\"text\" class=\"form-control\" ng-model=\"company.city\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-country\">\n" +
-    "					Country\n" +
-    "				</label>\n" +
-    "				<select id=\"company-settings-country\" class=\"form-control selectpicker\" ng-model=\"company.country\" ng-options=\"c[1] as c[0] for c in countries\">\n" +
-    "					<option value=\"\">&lt; Select Country &gt;</option>\n" +
-    "				</select>\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-state\">\n" +
-    "					State / Province\n" +
-    "				</label>\n" +
-    "				<!-- <input id=\"company-settings-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" /> -->\n" +
-    "				<select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
-    "					<option value=\"\">&lt; Select Province &gt;</option>\n" +
-    "				</select>\n" +
-    "				<!-- <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
-    "					<option value=\"\">&lt; Select State &gt;</option>\n" +
-    "				</select> -->\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-zip\">\n" +
-    "					Zip / Postal Code\n" +
-    "				</label>\n" +
-    "				<input id=\"company-settings-zip\" type=\"text\" class=\"form-control\" ng-model=\"company.postalCode\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-phone\">\n" +
-    "					Telephone\n" +
-    "				</label>\n" +
-    "				<input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label for=\"company-settings-monitoring\">\n" +
-    "					Send Monitoring Emails To\n" +
-    "				</label>\n" +
-    "				<input id=\"company-settings-monitoring\" type=\"email\" class=\"form-control\" />\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label>\n" +
-    "					Authentication Key\n" +
-    "				</label>\n" +
-    "				<a class=\"action-link\" href=\"\">Reset</a>\n" +
-    "				<div>\n" +
-    "					authKey\n" +
-    "				</div>\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label>\n" +
-    "					Claim ID\n" +
-    "				</label>\n" +
-    "				<a class=\"action-link\" href=\"\">Reset</a>\n" +
-    "				<div>\n" +
-    "					abc123\n" +
-    "				</div>\n" +
-    "			</div>\n" +
-    "			<div class=\"form-group\">\n" +
-    "				<label>\n" +
-    "					Sub-Company Home Page Presentation\n" +
-    "				</label>\n" +
-    "				<a class=\"action-link\" href=\"\" ng-click=\"showSelector()\">Select</a>\n" +
-    "				<a class=\"action-link\" href=\"\">Default</a>\n" +
-    "				<div id=\"presentation-name\">Rise Vision Default (ID=a6789044-ae4a-48c7-b6fd-b5d4ffea2f24)</div>\n" +
-    "				<div class=\"presentation-selector\" ng-show=\"isSelectorVisible\">\n" +
-    "					<div class=\"panel panel-default\">\n" +
-    "						<ul class=\"list-unstyled selector-header\">\n" +
-    "							<li ng-class=\"{active : selected == 'list'}\">\n" +
-    "								<a href=\"\" ng-click=\"showPresentationView($event, 'list')\">Search Presentations</a>\n" +
-    "							</li>\n" +
-    "							<li ng-class=\"{active : selected == 'search'}\">\n" +
-    "								<a href=\"\" ng-click=\"showPresentationView($event, 'search')\">Enter Presentation ID</a>\n" +
-    "							</li>\n" +
-    "							<li class=\"close-button\">\n" +
-    "								<button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"closeSelector()\">\n" +
-    "									<i class=\"glyphicons remove_2\"></i>\n" +
-    "								</button>\n" +
-    "							</li>\n" +
-    "						</ul>\n" +
-    "						<div class=\"panel-body\">\n" +
-    "							<div class=\"presentation-list\" ng-show=\"selected == 'list'\">\n" +
-    "								<div class=\"input-group search\">\n" +
-    "									<input type=\"text\" class=\"form-control\" placeholder=\"Search Presentations\">\n" +
-    "									<span class=\"input-group-btn\">\n" +
-    "										<button class=\"btn btn-primary\" type=\"submit\">\n" +
-    "											<i class=\"glyphicon glyphicon-search\"></i>\n" +
-    "										</button>\n" +
-    "									</span>\n" +
-    "								</div>\n" +
-    "								<div class=\"list-group scrollable-list\">\n" +
-    "									<a href=\"\" class=\"list-group-item\" ng-click=\"setPresentation($event, 'Demo Presentation')\">\n" +
-    "										Demo Presentation\n" +
-    "									</a>\n" +
-    "									<a href=\"\" class=\"list-group-item\" ng-click=\"setPresentation($event, 'My First Presentation')\">\n" +
-    "										My First Presentation\n" +
-    "									</a>\n" +
-    "								</div>\n" +
-    "							</div>\n" +
-    "							<div class=\"presentation-search\" ng-show=\"selected == 'search'\">\n" +
-    "								<form role=\"form\">\n" +
-    "									<div class=\"form-group\">\n" +
-    "										<input id=\"presentation-id\" type=\"text\" class=\"form-control\" placeholder=\"Enter Presentation ID\" />\n" +
-    "									</div>\n" +
-    "									<div class=\"form-group\">\n" +
-    "										<a href=\"\" ng-click=\"setPresentation($event)\">Retrieve Presentation</a>\n" +
-    "									</div>\n" +
-    "								</div>\n" +
-    "							</div>\n" +
-    "						</div>\n" +
-    "					</div>\n" +
-    "				</div>\n" +
-    "				<div class=\"form-group\">\n" +
-    "					<label for=\"company-settings-community-url\">\n" +
-    "						Sub-Company Community URL\n" +
-    "					</label>\n" +
-    "					<a class=\"action-link\" href=\"\">Default</a>\n" +
-    "					<input id=\"company-settings-community-url\" type=\"url\" class=\"form-control\" />\n" +
-    "				</div>\n" +
-    "				<div class=\"form-group\">\n" +
-    "					<label for=\"company-settings-support-url\">\n" +
-    "						Sub-Company Support URL\n" +
-    "					</label>\n" +
-    "					<a class=\"action-link\" href=\"\">Default</a>\n" +
-    "					<input id=\"company-settings-support-url\" type=\"url\" class=\"form-control\" />\n" +
-    "				</div>\n" +
-    "				<div class=\"form-group\">\n" +
-    "					<label>\n" +
-    "						Seller ID\n" +
-    "					</label>\n" +
-    "					<div>\n" +
-    "						123456\n" +
-    "					</div>\n" +
-    "				</div>\n" +
-    "				<div class=\"form-group\">\n" +
-    "					<label for=\"company-settings-status\">\n" +
-    "						Status\n" +
-    "					</label>\n" +
-    "					<select id=\"company-settings-status\" class=\"form-control selectpicker\">\n" +
-    "						<option value=\"active\">Active</option>\n" +
-    "						<option value=\"inactive\">Inactive</option>\n" +
-    "					</select>\n" +
-    "				</div>\n" +
-    "			</form>\n" +
-    "		</div>\n" +
-    "		<div class=\"modal-footer\">\n" +
-    "			<button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Save\n" +
-    "				<i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
-    "			</button>\n" +
-    "			<button type=\"button\" class=\"btn btn-danger btn-fixed-width\" ng-show=\"!isDeletingCompany\" ng-click=\"deleteCompany()\">\n" +
-    "				Delete <i class=\"glyphicons white bin icon-right\"></i>\n" +
-    "			</button>\n" +
-    "			<button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +
-    "				Confirm Deletion <i class=\"glyphicons white warning_sign icon-right\"></i>\n" +
-    "			</button>\n" +
-    "			<button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
-    "				<i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
-    "			</button>\n" +
-    "		</div>\n" +
-    "	</div>\n" +
-    "	</script>\n" +
     "\n" +
     "	<!-- Company Users Modal -->\n" +
     "	<script type=\"text/ng-template\" id=\"company-users-modal.html\">\n" +
@@ -1022,6 +702,354 @@ app.run(["$templateCache", function($templateCache) {
     "		</div>\n" +
     "	</div>\n" +
     "</script>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("company-modals.html",
+    "<!-- Add Sub-Company Modal -->\n" +
+    "<script type=\"text/ng-template\" id=\"sub-company-modal.html\">\n" +
+    "  <div class=\"modal-header\">\n" +
+    "    <button type=\"button\" class=\"close\" ng-click=\"closeModal()\" aria-hidden=\"true\">\n" +
+    "      <i class=\"glyphicons remove_2\"></i>\n" +
+    "    </button>\n" +
+    "    <h2 id=\"sub-company-label\" class=\"modal-title\">Add Sub-Company</h2>\n" +
+    "  </div>\n" +
+    "  <div class=\"modal-body\">\n" +
+    "    <form role=\"form\">\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-name\">\n" +
+    "          Name\n" +
+    "        </label>\n" +
+    "        <input id=\"sub-company-name\" type=\"text\" class=\"form-control\" ng-model=\"company.name\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-street\">\n" +
+    "          Street\n" +
+    "        </label>\n" +
+    "        <input id=\"sub-company-street\" type=\"text\" class=\"form-control\" ng-model=\"company.street\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-unit\">\n" +
+    "          Unit\n" +
+    "        </label>\n" +
+    "        <input id=\"sub-company-unit\" type=\"text\" class=\"form-control\" ng-model=\"company.unit\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-city\">\n" +
+    "          City\n" +
+    "        </label>\n" +
+    "        <input id=\"sub-company-city\" type=\"text\" class=\"form-control\" ng-model=\"company.city\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-country\">\n" +
+    "          Country\n" +
+    "        </label>\n" +
+    "        <select id=\"sub-company-country\" class=\"form-control selectpicker\" ng-model=\"company.country\" ng-options=\"c[1] as c[0] for c in countries\">\n" +
+    "          <option value=\"\">&lt; Select Country &gt;</option>\n" +
+    "        </select>\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-state\">\n" +
+    "          State / Province\n" +
+    "        </label>\n" +
+    "        <!-- <input id=\"sub-company-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" /> -->\n" +
+    "        <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
+    "          <option value=\"\">&lt; Select Province &gt;</option>\n" +
+    "        </select>\n" +
+    "        <!-- <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
+    "          <option value=\"\">&lt; Select State &gt;</option>\n" +
+    "        </select> -->\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-zip\">\n" +
+    "          Zip / Postal Code\n" +
+    "        </label>\n" +
+    "        <input id=\"sub-company-zip\" type=\"text\" class=\"form-control\" ng-model=\"company.postalCode\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"sub-company-monitoring\">\n" +
+    "          Send Monitoring Emails To\n" +
+    "        </label>\n" +
+    "        <input id=\"sub-company-monitoring\" type=\"email\" class=\"form-control\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <a href=\"\" data-dismiss=\"modal\" data-toggle=\"modal\" ng-click=\"moveCompany()\">Move a Company Under Your Company</a>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "  <div class=\"modal-footer\">\n" +
+    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"save()\">Save\n" +
+    "      <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
+    "    </button>\n" +
+    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"closeModal()\">Cancel\n" +
+    "      <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "</script>\n" +
+    "\n" +
+    "<!-- Move Company Modal -->\n" +
+    "<script type=\"text/ng-template\" id=\"move-company-modal.html\">\n" +
+    "  <div class=\"modal-header\">\n" +
+    "    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "      <i class=\"glyphicons remove_2\"></i>\n" +
+    "    </button>\n" +
+    "    <h2 id=\"move-company-label\" class=\"modal-title\">Move Company</h2>\n" +
+    "  </div>\n" +
+    "  <div class=\"modal-body\">\n" +
+    "    <form role=\"form\">\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"auth-key\">\n" +
+    "          Enter the Authentication Key of the Company that you want to move.\n" +
+    "        </label>\n" +
+    "        <div class=\"row\">\n" +
+    "          <div class=\"col-sm-6\">\n" +
+    "            <input id=\"auth-key\" type=\"text\" class=\"form-control\" />\n" +
+    "          </div>\n" +
+    "          <div class=\"col-sm-6\">\n" +
+    "            <a href=\"\" ng-click=\"getCompany()\">Retrieve Company Details</a>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "    <div ng-show=\"showCompanyDetails\">\n" +
+    "      <h3>Details of the Company You Want to Move</h3>\n" +
+    "      <div>\n" +
+    "        Acme Company 123<br>\n" +
+    "        1234 W. 100th Ave<br>\n" +
+    "        Kansas City, KS 12345\n" +
+    "      </div>\n" +
+    "      <h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
+    "      <div class=\"to-company\">\n" +
+    "        Rise Display<br>\n" +
+    "        22019 W. 83rd St.<br>\n" +
+    "        Shawnee, KS 66226\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div ng-show=\"showCompanyMessages\">\n" +
+    "      <div class=\"alert alert-success\">\n" +
+    "        The Company was moved successfully.\n" +
+    "      </div>\n" +
+    "      <div class=\"alert alert-danger\">\n" +
+    "        There was a problem moving the Company. Please try again.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"modal-footer\">\n" +
+    "    <button type=\"button\" class=\"btn btn-success\" ng-show=\"showMoveCompany\" ng-click=\"moveCompany()\">Move Company\n" +
+    "      <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
+    "    </button>\n" +
+    "    <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
+    "      Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "</script>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("company-settings-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "    <i class=\"glyphicons remove_2\"></i>\n" +
+    "  </button>\n" +
+    "  <h2 id=\"company-settings-label\" class=\"modal-title\">Company Settings</h2>\n" +
+    "</div>\n" +
+    "<div class=\"modal-body\">\n" +
+    "  <form role=\"form\">\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-name\">\n" +
+    "        Name\n" +
+    "      </label>\n" +
+    "      <input id=\"company-settings-name\" type=\"text\" class=\"form-control\" ng-model=\"company.name\" />\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-street\">\n" +
+    "        Street\n" +
+    "      </label>\n" +
+    "      <input id=\"company-settings-street\" type=\"text\" class=\"form-control\" ng-model=\"company.street\" />\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-unit\">\n" +
+    "        Unit\n" +
+    "      </label>\n" +
+    "      <input id=\"company-settings-unit\" type=\"text\" class=\"form-control\" ng-model=\"company.unit\" />\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-city\">\n" +
+    "        City\n" +
+    "      </label>\n" +
+    "      <input id=\"company-settings-city\" type=\"text\" class=\"form-control\" ng-model=\"company.city\" />\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-country\">\n" +
+    "        Country\n" +
+    "      </label>\n" +
+    "      <select id=\"company-settings-country\" class=\"form-control selectpicker\"\n" +
+    "        ng-model=\"company.country\" ng-options=\"c[1] as c[0] for c in countries\">\n" +
+    "        <option value=\"\">&lt; Select Country &gt;</option>\n" +
+    "      </select>\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-state\">\n" +
+    "        State / Province\n" +
+    "      </label>\n" +
+    "      <!-- <input id=\"company-settings-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" /> -->\n" +
+    "      <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
+    "        <option value=\"\">&lt; Select Province &gt;</option>\n" +
+    "      </select>\n" +
+    "      <!-- <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
+    "        <option value=\"\">&lt; Select State &gt;</option>\n" +
+    "      </select> -->\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-zip\">\n" +
+    "        Zip / Postal Code\n" +
+    "      </label>\n" +
+    "      <input id=\"company-settings-zip\" type=\"text\" class=\"form-control\" ng-model=\"company.postalCode\" />\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-phone\">\n" +
+    "        Telephone\n" +
+    "      </label>\n" +
+    "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" />\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"company-settings-monitoring\">\n" +
+    "        Send Monitoring Emails To\n" +
+    "      </label>\n" +
+    "      <input id=\"company-settings-monitoring\" type=\"email\" class=\"form-control\" />\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label>\n" +
+    "        Authentication Key\n" +
+    "      </label>\n" +
+    "      <a class=\"action-link\" href=\"\">Reset</a>\n" +
+    "      <div>\n" +
+    "        authKey\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label>\n" +
+    "        Claim ID\n" +
+    "      </label>\n" +
+    "      <a class=\"action-link\" href=\"\">Reset</a>\n" +
+    "      <div>\n" +
+    "        abc123\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label>\n" +
+    "        Sub-Company Home Page Presentation\n" +
+    "      </label>\n" +
+    "      <a class=\"action-link\" href=\"\" ng-click=\"showSelector()\">Select</a>\n" +
+    "      <a class=\"action-link\" href=\"\">Default</a>\n" +
+    "      <div id=\"presentation-name\">Rise Vision Default (ID=a6789044-ae4a-48c7-b6fd-b5d4ffea2f24)</div>\n" +
+    "      <div class=\"presentation-selector\" ng-show=\"isSelectorVisible\">\n" +
+    "        <div class=\"panel panel-default\">\n" +
+    "          <ul class=\"list-unstyled selector-header\">\n" +
+    "            <li ng-class=\"{active : selected == 'list'}\">\n" +
+    "              <a href=\"\" ng-click=\"showPresentationView($event, 'list')\">Search Presentations</a>\n" +
+    "            </li>\n" +
+    "            <li ng-class=\"{active : selected == 'search'}\">\n" +
+    "              <a href=\"\" ng-click=\"showPresentationView($event, 'search')\">Enter Presentation ID</a>\n" +
+    "            </li>\n" +
+    "            <li class=\"close-button\">\n" +
+    "              <button type=\"button\" class=\"close\" aria-hidden=\"true\" ng-click=\"closeSelector()\">\n" +
+    "                <i class=\"glyphicons remove_2\"></i>\n" +
+    "              </button>\n" +
+    "            </li>\n" +
+    "          </ul>\n" +
+    "          <div class=\"panel-body\">\n" +
+    "            <div class=\"presentation-list\" ng-show=\"selected == 'list'\">\n" +
+    "              <div class=\"input-group search\">\n" +
+    "                <input type=\"text\" class=\"form-control\" placeholder=\"Search Presentations\">\n" +
+    "                <span class=\"input-group-btn\">\n" +
+    "                  <button class=\"btn btn-primary\" type=\"submit\">\n" +
+    "                    <i class=\"glyphicon glyphicon-search\"></i>\n" +
+    "                  </button>\n" +
+    "                </span>\n" +
+    "              </div>\n" +
+    "              <div class=\"list-group scrollable-list\">\n" +
+    "                <a href=\"\" class=\"list-group-item\" ng-click=\"setPresentation($event, 'Demo Presentation')\">\n" +
+    "                  Demo Presentation\n" +
+    "                </a>\n" +
+    "                <a href=\"\" class=\"list-group-item\" ng-click=\"setPresentation($event, 'My First Presentation')\">\n" +
+    "                  My First Presentation\n" +
+    "                </a>\n" +
+    "              </div>\n" +
+    "            </div>\n" +
+    "            <div class=\"presentation-search\" ng-show=\"selected == 'search'\">\n" +
+    "              <form role=\"form\">\n" +
+    "                <div class=\"form-group\">\n" +
+    "                  <input id=\"presentation-id\" type=\"text\" class=\"form-control\" placeholder=\"Enter Presentation ID\" />\n" +
+    "                </div>\n" +
+    "                <div class=\"form-group\">\n" +
+    "                  <a href=\"\" ng-click=\"setPresentation($event)\">Retrieve Presentation</a>\n" +
+    "                </div>\n" +
+    "              </div>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"company-settings-community-url\">\n" +
+    "          Sub-Company Community URL\n" +
+    "        </label>\n" +
+    "        <a class=\"action-link\" href=\"\">Default</a>\n" +
+    "        <input id=\"company-settings-community-url\" type=\"url\" class=\"form-control\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"company-settings-support-url\">\n" +
+    "          Sub-Company Support URL\n" +
+    "        </label>\n" +
+    "        <a class=\"action-link\" href=\"\">Default</a>\n" +
+    "        <input id=\"company-settings-support-url\" type=\"url\" class=\"form-control\" />\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label>\n" +
+    "          Seller ID\n" +
+    "        </label>\n" +
+    "        <div>\n" +
+    "          123456\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "      <div class=\"form-group\">\n" +
+    "        <label for=\"company-settings-status\">\n" +
+    "          Status\n" +
+    "        </label>\n" +
+    "        <select id=\"company-settings-status\" class=\"form-control selectpicker\">\n" +
+    "          <option value=\"active\">Active</option>\n" +
+    "          <option value=\"inactive\">Inactive</option>\n" +
+    "        </select>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "  <div class=\"modal-footer\">\n" +
+    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"save()\">Save\n" +
+    "      <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
+    "    </button>\n" +
+    "    <button type=\"button\" class=\"btn btn-danger btn-fixed-width\" ng-show=\"!isDeletingCompany\" ng-click=\"deleteCompany()\">\n" +
+    "      Delete <i class=\"glyphicons white bin icon-right\"></i>\n" +
+    "    </button>\n" +
+    "    <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +
+    "      Confirm Deletion <i class=\"glyphicons white warning_sign icon-right\"></i>\n" +
+    "    </button>\n" +
+    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\">Cancel\n" +
+    "      <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "</div>\n" +
     "");
 }]);
 })();

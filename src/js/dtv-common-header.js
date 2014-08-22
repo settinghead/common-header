@@ -8,6 +8,7 @@ angular.module("risevision.common.header", [
   "risevision.common.loading",
   "risevision.common.registration",
   "risevision.common.oauth2",
+  "risevision.common.geodata",
   "ui.bootstrap"
 ])
 .directive("commonHeader",
@@ -60,14 +61,16 @@ angular.module("risevision.common.header", [
         };
         // Show Company Settings Modal
         scope.companySettings = function(companyId, size) {
-          // var modalInstance =
-          $modal.open({
-            templateUrl: "company-settings-modal.html",
+          var modalInstance = $modal.open({
+            template: $templateCache.get("company-settings-modal.html"),
             controller: "CompanySettingsModalCtrl",
             size: size,
             resolve: {
               companyId: function () {return companyId; }
             }
+          });
+          modalInstance.result.finally(function () {
+            userState.status = "pendingCheck";
           });
         };
         // Show User Settings Modal

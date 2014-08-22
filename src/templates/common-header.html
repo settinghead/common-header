@@ -123,15 +123,20 @@
 				</ul>
 			</li>
 			<!-- END Current App -->
-			<li class="dropdown" ng-show="userState.selectedCompanyId">
+			<li class="dropdown">
 				<a href="" class="dropdown-toggle" data-toggle="dropdown">
 					<i class="glyphicons cogwheel"></i>
 				</a>
 				<ul class="dropdown-menu">
-					<li class="dropdown-header dropdown-title">
+					<li class="dropdown-header dropdown-title"
+					  ng-show="userState.user.company">
 						Current Company
 					</li>
-					<li class="dropdown-header">
+					<li class="dropdown-header dropdown-title"
+						ng-show="!userState.user.company">
+						You have not created a company.</li>
+
+					<li class="dropdown-header" ng-show="userState.user.company">
 						<!-- home -->
 						<i ng-if="!subCompanySelected" class="glyphicons home"></i>
 						<!-- warning -->
@@ -140,6 +145,13 @@
 						<div ng-if="subCompanySelected" class="danger">This is a Sub-Company of your Company.</div>
 					</li>
 					<li ng-if="subCompanySelected" class="divider"></li>
+					<li ng-show="!userState.user.company">
+						<a href="" data-toggle="modal" data-target="#sub-company-modal"
+						  ng-click="companySettings()">
+							<i class="glyphicons plus"></i>
+							<span class="item-name">Create a Company</span>
+						</a>
+					</li>
 					<li ng-if="subCompanySelected">
 						<a href="" ng-click="resetCompany()">
 							<i class="glyphicons home"></i>
@@ -147,7 +159,7 @@
 						</a>
 					</li>
 					<li class="divider"></li>
-					<li>
+					<li ng-show="userState.user.company">
 						<a href="" ng-click="switchCompany()">
 							<i class="glyphicons new_window"></i>
 							<span class="item-name">Select Sub-Company</span>
@@ -252,144 +264,6 @@
 	</div>
 </script>
 
-<!-- Add Sub-Company Modal -->
-<script type="text/ng-template" id="sub-company-modal.html">
-	<div class="modal-header">
-		<button type="button" class="close" ng-click="closeModal()" aria-hidden="true">
-			<i class="glyphicons remove_2"></i>
-		</button>
-		<h2 id="sub-company-label" class="modal-title">Add Sub-Company</h2>
-	</div>
-	<div class="modal-body">
-		<form role="form">
-			<div class="form-group">
-				<label for="sub-company-name">
-					Name
-				</label>
-				<input id="sub-company-name" type="text" class="form-control" ng-model="company.name" />
-			</div>
-			<div class="form-group">
-				<label for="sub-company-street">
-					Street
-				</label>
-				<input id="sub-company-street" type="text" class="form-control" ng-model="company.street" />
-			</div>
-			<div class="form-group">
-				<label for="sub-company-unit">
-					Unit
-				</label>
-				<input id="sub-company-unit" type="text" class="form-control" ng-model="company.unit" />
-			</div>
-			<div class="form-group">
-				<label for="sub-company-city">
-					City
-				</label>
-				<input id="sub-company-city" type="text" class="form-control" ng-model="company.city" />
-			</div>
-			<div class="form-group">
-				<label for="sub-company-country">
-					Country
-				</label>
-				<select id="sub-company-country" class="form-control selectpicker" ng-model="company.country" ng-options="c[1] as c[0] for c in countries">
-					<option value="">&lt; Select Country &gt;</option>
-				</select>
-			</div>
-			<div class="form-group">
-				<label for="sub-company-state">
-					State / Province
-				</label>
-				<!-- <input id="sub-company-state" type="text" class="form-control" ng-model="company.province" ng-hide="company.country == 'US' || company.country == 'CA'" /> -->
-				<select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsCA" ng-show="company.country == 'CA'">
-					<option value="">&lt; Select Province &gt;</option>
-				</select>
-				<!-- <select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsUS" ng-show="company.country == 'US'">
-					<option value="">&lt; Select State &gt;</option>
-				</select> -->
-			</div>
-			<div class="form-group">
-				<label for="sub-company-zip">
-					Zip / Postal Code
-				</label>
-				<input id="sub-company-zip" type="text" class="form-control" ng-model="company.postalCode" />
-			</div>
-			<div class="form-group">
-				<label for="sub-company-monitoring">
-					Send Monitoring Emails To
-				</label>
-				<input id="sub-company-monitoring" type="email" class="form-control" />
-			</div>
-			<div class="form-group">
-				<a href="" data-dismiss="modal" data-toggle="modal" ng-click="moveCompany()">Move a Company Under Your Company</a>
-			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-primary btn-fixed-width" data-dismiss="modal">Save
-			<i class="glyphicons white ok_2 icon-right"></i>
-		</button>
-		<button type="button" class="btn btn-primary btn-fixed-width" data-dismiss="modal">Cancel
-			<i class="glyphicons white remove_2 icon-right"></i>
-		</button>
-	</div>
-</script>
-
-<!-- Move Company Modal -->
-<script type="text/ng-template" id="move-company-modal.html">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeModal()">
-			<i class="glyphicons remove_2"></i>
-		</button>
-		<h2 id="move-company-label" class="modal-title">Move Company</h2>
-	</div>
-	<div class="modal-body">
-		<form role="form">
-			<div class="form-group">
-				<label for="auth-key">
-					Enter the Authentication Key of the Company that you want to move.
-				</label>
-				<div class="row">
-					<div class="col-sm-6">
-						<input id="auth-key" type="text" class="form-control" />
-					</div>
-					<div class="col-sm-6">
-						<a href="" ng-click="getCompany()">Retrieve Company Details</a>
-					</div>
-				</div>
-			</div>
-		</form>
-		<div ng-show="showCompanyDetails">
-			<h3>Details of the Company You Want to Move</h3>
-			<div>
-				Acme Company 123<br>
-				1234 W. 100th Ave<br>
-				Kansas City, KS 12345
-			</div>
-			<h3>Details of the Company You Are Moving the Above Company Under</h3>
-			<div class="to-company">
-				Rise Display<br>
-				22019 W. 83rd St.<br>
-				Shawnee, KS 66226
-			</div>
-		</div>
-		<div ng-show="showCompanyMessages">
-			<div class="alert alert-success">
-				The Company was moved successfully.
-			</div>
-			<div class="alert alert-danger">
-				There was a problem moving the Company. Please try again.
-			</div>
-		</div>
-	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-success" ng-show="showMoveCompany" ng-click="moveCompany()">Move Company
-			<i class="glyphicons white ok_2 icon-right"></i>
-		</button>
-		<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="closeModal()">
-			Cancel <i class="glyphicons white remove_2 icon-right"></i>
-		</button>
-	</div>
-</script>
-
 <script type="text/ng-template" id="terms-and-conditions.html">
 		<div class="modal-header">
 			<button type="button" ng-click="closeModal()" class="close"><span>&times;</span><span class="sr-only">Close</span></button>
@@ -455,200 +329,6 @@
 		</form>
 	</div>
 </script>
-
-<!-- Company Settings Modal -->
-<script type="text/ng-template" id="company-settings-modal.html">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeModal()">
-			<i class="glyphicons remove_2"></i>
-		</button>
-		<h2 id="company-settings-label" class="modal-title">Company Settings</h2>
-	</div>
-	<div class="modal-body">
-		<form role="form">
-			<div class="form-group">
-				<label for="company-settings-name">
-					Name
-				</label>
-				<input id="company-settings-name" type="text" class="form-control" ng-model="company.name" />
-			</div>
-			<div class="form-group">
-				<label for="company-settings-street">
-					Street
-				</label>
-				<input id="company-settings-street" type="text" class="form-control" ng-model="company.street" />
-			</div>
-			<div class="form-group">
-				<label for="company-settings-unit">
-					Unit
-				</label>
-				<input id="company-settings-unit" type="text" class="form-control" ng-model="company.unit" />
-			</div>
-			<div class="form-group">
-				<label for="company-settings-city">
-					City
-				</label>
-				<input id="company-settings-city" type="text" class="form-control" ng-model="company.city" />
-			</div>
-			<div class="form-group">
-				<label for="company-settings-country">
-					Country
-				</label>
-				<select id="company-settings-country" class="form-control selectpicker" ng-model="company.country" ng-options="c[1] as c[0] for c in countries">
-					<option value="">&lt; Select Country &gt;</option>
-				</select>
-			</div>
-			<div class="form-group">
-				<label for="company-settings-state">
-					State / Province
-				</label>
-				<!-- <input id="company-settings-state" type="text" class="form-control" ng-model="company.province" ng-hide="company.country == 'US' || company.country == 'CA'" /> -->
-				<select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsCA" ng-show="company.country == 'CA'">
-					<option value="">&lt; Select Province &gt;</option>
-				</select>
-				<!-- <select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsUS" ng-show="company.country == 'US'">
-					<option value="">&lt; Select State &gt;</option>
-				</select> -->
-			</div>
-			<div class="form-group">
-				<label for="company-settings-zip">
-					Zip / Postal Code
-				</label>
-				<input id="company-settings-zip" type="text" class="form-control" ng-model="company.postalCode" />
-			</div>
-			<div class="form-group">
-				<label for="company-settings-phone">
-					Telephone
-				</label>
-				<input id="company-settings-phone" type="tel" class="form-control" />
-			</div>
-			<div class="form-group">
-				<label for="company-settings-monitoring">
-					Send Monitoring Emails To
-				</label>
-				<input id="company-settings-monitoring" type="email" class="form-control" />
-			</div>
-			<div class="form-group">
-				<label>
-					Authentication Key
-				</label>
-				<a class="action-link" href="">Reset</a>
-				<div>
-					authKey
-				</div>
-			</div>
-			<div class="form-group">
-				<label>
-					Claim ID
-				</label>
-				<a class="action-link" href="">Reset</a>
-				<div>
-					abc123
-				</div>
-			</div>
-			<div class="form-group">
-				<label>
-					Sub-Company Home Page Presentation
-				</label>
-				<a class="action-link" href="" ng-click="showSelector()">Select</a>
-				<a class="action-link" href="">Default</a>
-				<div id="presentation-name">Rise Vision Default (ID=a6789044-ae4a-48c7-b6fd-b5d4ffea2f24)</div>
-				<div class="presentation-selector" ng-show="isSelectorVisible">
-					<div class="panel panel-default">
-						<ul class="list-unstyled selector-header">
-							<li ng-class="{active : selected == 'list'}">
-								<a href="" ng-click="showPresentationView($event, 'list')">Search Presentations</a>
-							</li>
-							<li ng-class="{active : selected == 'search'}">
-								<a href="" ng-click="showPresentationView($event, 'search')">Enter Presentation ID</a>
-							</li>
-							<li class="close-button">
-								<button type="button" class="close" aria-hidden="true" ng-click="closeSelector()">
-									<i class="glyphicons remove_2"></i>
-								</button>
-							</li>
-						</ul>
-						<div class="panel-body">
-							<div class="presentation-list" ng-show="selected == 'list'">
-								<div class="input-group search">
-									<input type="text" class="form-control" placeholder="Search Presentations">
-									<span class="input-group-btn">
-										<button class="btn btn-primary" type="submit">
-											<i class="glyphicon glyphicon-search"></i>
-										</button>
-									</span>
-								</div>
-								<div class="list-group scrollable-list">
-									<a href="" class="list-group-item" ng-click="setPresentation($event, 'Demo Presentation')">
-										Demo Presentation
-									</a>
-									<a href="" class="list-group-item" ng-click="setPresentation($event, 'My First Presentation')">
-										My First Presentation
-									</a>
-								</div>
-							</div>
-							<div class="presentation-search" ng-show="selected == 'search'">
-								<form role="form">
-									<div class="form-group">
-										<input id="presentation-id" type="text" class="form-control" placeholder="Enter Presentation ID" />
-									</div>
-									<div class="form-group">
-										<a href="" ng-click="setPresentation($event)">Retrieve Presentation</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="company-settings-community-url">
-						Sub-Company Community URL
-					</label>
-					<a class="action-link" href="">Default</a>
-					<input id="company-settings-community-url" type="url" class="form-control" />
-				</div>
-				<div class="form-group">
-					<label for="company-settings-support-url">
-						Sub-Company Support URL
-					</label>
-					<a class="action-link" href="">Default</a>
-					<input id="company-settings-support-url" type="url" class="form-control" />
-				</div>
-				<div class="form-group">
-					<label>
-						Seller ID
-					</label>
-					<div>
-						123456
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="company-settings-status">
-						Status
-					</label>
-					<select id="company-settings-status" class="form-control selectpicker">
-						<option value="active">Active</option>
-						<option value="inactive">Inactive</option>
-					</select>
-				</div>
-			</form>
-		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-primary btn-fixed-width" data-dismiss="modal" ng-click="closeModal()">Save
-				<i class="glyphicons white ok_2 icon-right"></i>
-			</button>
-			<button type="button" class="btn btn-danger btn-fixed-width" ng-show="!isDeletingCompany" ng-click="deleteCompany()">
-				Delete <i class="glyphicons white bin icon-right"></i>
-			</button>
-			<button type="button" class="btn btn-danger btn-confirm-delete" data-dismiss="modal" ng-show="isDeletingCompany" ng-click="closeModal()">
-				Confirm Deletion <i class="glyphicons white warning_sign icon-right"></i>
-			</button>
-			<button type="button" class="btn btn-primary btn-fixed-width" data-dismiss="modal" ng-click="closeModal()">Cancel
-				<i class="glyphicons white remove_2 icon-right"></i>
-			</button>
-		</div>
-	</div>
-	</script>
 
 	<!-- Company Users Modal -->
 	<script type="text/ng-template" id="company-users-modal.html">
