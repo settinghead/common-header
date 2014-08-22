@@ -21,15 +21,16 @@ angular.module("risevision.common.header")
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
-      $rootScope.userState.status = "pendingCheck";
     };
 
     $scope.$watch("userState.user.profile.accepted", function (newVal) {
-      if(newVal) {
-        userState.user.profile.termsAcceptanceDate = new Date().toISOString();
-      }
-      else {
-        delete userState.user.profile.termsAcceptanceDate;
+      if(angular.isDefined(newVal)) {
+        if(newVal){
+          userState.user.profile.termsAcceptanceDate = new Date().toISOString();
+        }
+        else {
+          delete userState.user.profile.termsAcceptanceDate;
+        }
       }
     });
 
@@ -37,7 +38,6 @@ angular.module("risevision.common.header")
       //update terms and conditions date
       updateProfile(userState.user.profile).then(function () {
         $modalInstance.close("success");
-        $rootScope.userState.status = "pendingCheck";
       });
     };
   }

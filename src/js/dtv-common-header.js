@@ -14,9 +14,10 @@ angular.module("risevision.common.header", [
   ["$modal", "$rootScope", "$q", "apiAuth", "$loading",
    "$interval", "oauthAPILoader", "cacheService", "$log",
     "$templateCache", "userStatusDependencies", "checkUserStatus",
+    "userState",
   function($modal, $rootScope, $q, apiAuth, $loading, $interval,
     oauthAPILoader, cacheService, $log, $templateCache,
-    dependencies, checkUserStatus) {
+    dependencies, checkUserStatus, userState) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
@@ -24,13 +25,13 @@ angular.module("risevision.common.header", [
       link: function(scope) {
         scope.navCollapsed = true;
 
-        $rootScope.$on("rvAuth.$authenticate", function() {
-          $rootScope.userState = apiAuth.getUserState();
-        });
+        // $rootScope.$on("rvAuth.$authenticate", function() {
+        //   getUserCompanies();
+        // });
 
-        $rootScope.$on("rvAuth.$signOut", function () {
-          $rootScope.userState = apiAuth.getUserState();
-        });
+        // $rootScope.$on("rvAuth.$signOut", function () {
+        //   // $rootScope.userState = apiAuth.getUserState();
+        // });
 
         // Login Modal
         scope.loginModal = function(size) {
@@ -43,7 +44,9 @@ angular.module("risevision.common.header", [
         };
 
         scope.logout = function () {
-          apiAuth.$signOut();
+          apiAuth.$signOut().finally(function (){
+            $rootScope.userState.status = "pendingCheck";
+          });
         };
 
         // Show Add Sub-Company Modal
@@ -87,11 +90,14 @@ angular.module("risevision.common.header", [
         };
 
         scope.termsAndConditions = function (size) {
-          // var modalInstance =
-          $modal.open({
+          var modalInstance = $modal.open({
             templateUrl: "terms-and-conditions.html",
             controller: "TermsConditionsModalCtrl",
-            size: size
+            size: size,
+            backdrop: "static"
+          });
+          modalInstance.result.finally(function (){
+            userState.status = "pendingCheck";
           });
         };
 
@@ -125,9 +131,9 @@ angular.module("risevision.common.header", [
         }
 
         $rootScope.$watch("userState.status", function (newStatus, oldStatus){
-          if(newStatus && newStatus !== oldStatus) {
+          if(newStatus) {
             $log.debug("statusChange from", oldStatus, "to", newStatus);
-
+            //render a dialog based on the state user is in
             if(newStatus === "termsConditionsAccepted") {
               scope.termsAndConditions();
             }
@@ -138,123 +144,21 @@ angular.module("risevision.common.header", [
               //no company id
               scope.companySettings(null);
             }
-            else if(newStatus !== "registrationComplete") {
-              checkUserStatus($rootScope.userState);
+            else if (newStatus === "notLoggedIn") {
+              //no company id
+              scope.loginModal(null);
+            }
+            else if(newStatus !== "acceptableState") {
+              checkUserStatus();
             }
           }
         });
 
-        $rootScope.$watch("userState.authStatus", function (newVal) {
-          if(newVal === -1) {
-            apiAuth.$authenticate(false);
-          }
-        });
+        $rootScope.userState = userState;
+        // apiAuth.init();
+        userState.status = "pendingCheck";
 
       }
-    };
-  }
-])
-.controller("AuthModalCtrl", ["$scope", "$modalInstance", "$window",
-  "apiAuth",
-  function($scope, $modalInstance, $window, apiAuth) {
-
-    $scope.authenticate = function() {
-      apiAuth.$authenticate(true);
-      $modalInstance.dismiss();
-    };
-
-  }
-])
-.controller("SubCompanyModalCtrl", ["$scope", "$modalInstance", "$modal",
-  function($scope, $modalInstance, $modal) {
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-    };
-    // Show Move Company Modal
-    $scope.moveCompany = function(size) {
-      // var modalInstance =
-      $modal.open({
-        templateUrl: "move-company-modal.html",
-        controller: "MoveCompanyModalCtrl",
-        size: size
-      });
-    };
-  }
-])
-
-.controller("CreateProfileModalCtrl", [
-  "$scope", "$modalInstance", "$rootScope", "updateProfile",
-  function($scope, $modalInstance, $rootScope, updateProfile) {
-
-    $scope.profile = {};
-
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-      $rootScope.userState.status = "pendingCheck";
-    };
-    $scope.continue = function () {
-      updateProfile($scope.profile).then(function () {
-        $modalInstance.close("success");
-        $rootScope.userState.status = "pendingCheck";
-      });
-    };
-  }
-])
-.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance",
-  function($scope, $modalInstance) {
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-    };
-  }
-])
-.controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
-  "companyService", "companyId", "$rootScope",
-  function($scope, $modalInstance, companyService, companyId, $rootScope) {
-    $scope.company = {id: companyId};
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-      if(!companyId) {
-        $rootScope.userState.status = "pendingCheck";
-      }
-    };
-    $scope.save = function () {
-      companyService.createOrUpdateCompany($scope.company).then(
-        function () {
-          $modalInstance.close("success");
-        },
-      function (error) {
-        alert("Error", error);
-      });
-    };
-  }
-])
-.controller("UserSettingsModalCtrl", ["$scope", "$modalInstance",
-  function($scope, $modalInstance) {
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-    };
-  }
-])
-.controller("PaymentMethodsModalCtrl", ["$scope", "$modalInstance", "$modal",
-  function($scope, $modalInstance, $modal) {
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-    };
-    // Show Payment Methods Modal
-    $scope.creditCards = function(size) {
-      // var modalInstance =
-      $modal.open({
-        templateUrl: "credit-cards-modal.html",
-        controller: "CreditCardsModalCtrl",
-        size: size
-      });
-    };
-  }
-])
-.controller("CreditCardsModalCtrl", ["$scope", "$modalInstance",
-  function($scope, $modalInstance) {
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
     };
   }
 ]);
