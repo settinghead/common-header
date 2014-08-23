@@ -3,6 +3,9 @@
   "use strict";
 
   angular.module("risevision.common.cache", [])
+
+    .constant("userState", { user: {} })
+
     .value("rvStorage", sessionStorage)
 
     .factory("userInfoCache", ["$cacheFactory", function ($cacheFactory) {

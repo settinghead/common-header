@@ -3,6 +3,61 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("auth-buttons.html",
+    "<!-- If User NOT Authenticated -->\n" +
+    "<ul class=\"nav navbar-nav navbar-right actions-nav\" style=\"min-width: 80px; min-height: 41px;\">\n" +
+    "\n" +
+    "  <li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
+    "    <a href=\"\" class=\"dropdown-toggle\">\n" +
+    "      <img ng-src=\"{{userState.user.profile.picture}}\" class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "    </a>\n" +
+    "    <ul class=\"dropdown-menu\">\n" +
+    "      <li class=\"dropdown-header dropdown-title\">\n" +
+    "        {{userProfileName}}\n" +
+    "      </li>\n" +
+    "      <li class=\"dropdown-header\">\n" +
+    "        {{userProfileEmail}}\n" +
+    "      </li>\n" +
+    "      <li class=\"divider\"></li>\n" +
+    "      <li>\n" +
+    "        <a href=\"\" ng-click=\"userSettings()\">\n" +
+    "          <i class=\"glyphicons cogwheels\"></i>\n" +
+    "          <span class=\"item-name\">User Settings</span>\n" +
+    "        </a>\n" +
+    "      </li>\n" +
+    "      <li class=\"divider\"></li>\n" +
+    "      <li>\n" +
+    "        <a href=\"\" ng-click=\"paymentMethods()\">\n" +
+    "          <i class=\"glyphicons usd\"></i>\n" +
+    "          <span class=\"item-name\">Payment Methods</span>\n" +
+    "        </a>\n" +
+    "      </li>\n" +
+    "      <li class=\"divider\"></li>\n" +
+    "      <li ng-show=\"userState.authStatus > 0\">\n" +
+    "        <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
+    "          <i class=\"glyphicons log_out\"></i>\n" +
+    "          <span class=\"item-name\">Sign Out</span>\n" +
+    "        </a>\n" +
+    "      </li>\n" +
+    "    </ul>\n" +
+    "  </li>\n" +
+    "  <li ng-show=\"userState.authStatus === 0\">\n" +
+    "    <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
+    "      <span>Sign In</span>\n" +
+    "      <i class=\"glyphicons log_in\"></i>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "</ul>\n" +
+    "</li>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("authorization-modal.html",
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" ng-click=\"closeModal()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
@@ -149,125 +204,16 @@ app.run(["$templateCache", function($templateCache) {
     "				</ul>\n" +
     "			</li>\n" +
     "			<!-- END Current App -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
-    "				<a href=\"\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n" +
-    "					<i class=\"glyphicons cogwheel\"></i>\n" +
-    "				</a>\n" +
-    "				<ul class=\"dropdown-menu\">\n" +
-    "					<li class=\"dropdown-header dropdown-title\"\n" +
-    "					  ng-show=\"userState.user.company\">\n" +
-    "						Current Company\n" +
-    "					</li>\n" +
-    "					<li class=\"dropdown-header dropdown-title\"\n" +
-    "						ng-show=\"!userState.user.company\">\n" +
-    "						You have not created a company.</li>\n" +
-    "\n" +
-    "					<li class=\"dropdown-header\" ng-show=\"userState.user.company\">\n" +
-    "						<!-- home -->\n" +
-    "						<i ng-if=\"!subCompanySelected\" class=\"glyphicons home\"></i>\n" +
-    "						<!-- warning -->\n" +
-    "						<i ng-if=\"subCompanySelected\" class=\"glyphicons warning_sign glyphicon-danger\"></i>\n" +
-    "						{{userState.selectedCompanyName}}\n" +
-    "						<div ng-if=\"subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
-    "					</li>\n" +
-    "					<li ng-if=\"subCompanySelected\" class=\"divider\"></li>\n" +
-    "					<li ng-show=\"!userState.user.company\">\n" +
-    "						<a href=\"\" data-toggle=\"modal\" data-target=\"#sub-company-modal\"\n" +
-    "						  ng-click=\"companySettings()\">\n" +
-    "							<i class=\"glyphicons plus\"></i>\n" +
-    "							<span class=\"item-name\">Create a Company</span>\n" +
-    "						</a>\n" +
-    "					</li>\n" +
-    "					<li ng-if=\"subCompanySelected\">\n" +
-    "						<a href=\"\" ng-click=\"resetCompany()\">\n" +
-    "							<i class=\"glyphicons home\"></i>\n" +
-    "							<span class=\"item-name\">Switch To My Company</span>\n" +
-    "						</a>\n" +
-    "					</li>\n" +
-    "					<li class=\"divider\"></li>\n" +
-    "					<li ng-show=\"userState.user.company\">\n" +
-    "						<a href=\"\" ng-click=\"switchCompany()\">\n" +
-    "							<i class=\"glyphicons new_window\"></i>\n" +
-    "							<span class=\"item-name\">Select Sub-Company</span>\n" +
-    "						</a>\n" +
-    "					</li>\n" +
-    "					<li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
-    "					<li ng-if=\"isAdmin\">\n" +
-    "						<a href=\"\" data-toggle=\"modal\" data-target=\"#sub-company-modal\" ng-click=\"addSubCompany()\">\n" +
-    "							<i class=\"glyphicons plus\"></i>\n" +
-    "							<span class=\"item-name\">Add Sub-Company</span>\n" +
-    "						</a>\n" +
-    "					</li>\n" +
-    "					<li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
-    "					<li ng-if=\"isAdmin\">\n" +
-    "						<a href=\"\" ng-click=\"companySettings()\">\n" +
-    "							<i class=\"glyphicons cogwheels\"></i>\n" +
-    "							<span class=\"item-name\">Company Settings</span>\n" +
-    "						</a>\n" +
-    "					</li>\n" +
-    "					<li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
-    "					<li ng-if=\"isAdmin\">\n" +
-    "						<a href=\"\" data-toggle=\"modal\" data-target=\"#company-users-modal\">\n" +
-    "							<i class=\"glyphicons group\"></i>\n" +
-    "							<span class=\"item-name\">Company Users</span>\n" +
-    "						</a>\n" +
-    "					</li>\n" +
-    "				</ul>\n" +
-    "			</li>\n" +
+    "			<!-- Company Dropdown -->\n" +
+    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\"\n" +
+    "				ng-controller=\"CompanyButtonsCtrl\" ng-include=\"'company-buttons.html'\"></li>\n" +
     "			<li ng-controller=\"AuthButtonsCtr\"\n" +
+    "			ng-include=\"'auth-buttons.html'\"\n" +
     "			rv-spinner=\"spinnerOptions\"\n" +
     "			rv-spinner-key=\"auth-buttons\"\n" +
     "			rv-spinner-start-active=\"1\"\n" +
     "			>\n" +
-    "				<!-- If User NOT Authenticated -->\n" +
-    "				<ul class=\"nav navbar-nav navbar-right actions-nav\" style=\"min-width: 80px; min-height: 41px;\">\n" +
-    "\n" +
-    "					<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
-    "						<a href=\"\" class=\"dropdown-toggle\">\n" +
-    "							<img ng-src=\"{{userState.user.profile.picture}}\" class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
-    "						</a>\n" +
-    "						<ul class=\"dropdown-menu\">\n" +
-    "							<li class=\"dropdown-header dropdown-title\">\n" +
-    "								{{userProfileName}}\n" +
-    "							</li>\n" +
-    "							<li class=\"dropdown-header\">\n" +
-    "								{{userProfileEmail}}\n" +
-    "							</li>\n" +
-    "							<li class=\"divider\"></li>\n" +
-    "							<li>\n" +
-    "								<a href=\"\" ng-click=\"userSettings()\">\n" +
-    "									<i class=\"glyphicons cogwheels\"></i>\n" +
-    "									<span class=\"item-name\">User Settings</span>\n" +
-    "								</a>\n" +
-    "							</li>\n" +
-    "							<li class=\"divider\"></li>\n" +
-    "							<li>\n" +
-    "								<a href=\"\" ng-click=\"paymentMethods()\">\n" +
-    "									<i class=\"glyphicons usd\"></i>\n" +
-    "									<span class=\"item-name\">Payment Methods</span>\n" +
-    "								</a>\n" +
-    "							</li>\n" +
-    "							<li class=\"divider\"></li>\n" +
-    "							<li ng-show=\"userState.authStatus > 0\">\n" +
-    "								<a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
-    "									<i class=\"glyphicons log_out\"></i>\n" +
-    "									<span class=\"item-name\">Sign Out</span>\n" +
-    "								</a>\n" +
-    "							</li>\n" +
-    "						</ul>\n" +
-    "					</li>\n" +
-    "					<li ng-show=\"userState.authStatus === 0\">\n" +
-    "						<a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
-    "							<span>Sign In</span>\n" +
-    "							<i class=\"glyphicons log_in\"></i>\n" +
-    "						</a>\n" +
-    "					</li>\n" +
-    "				</ul>\n" +
-    "			</li>\n" +
-    "\n" +
     "		</ul>\n" +
-    "\n" +
-    "\n" +
     "\n" +
     "	</div>\n" +
     "	<div ng-if=\"subCompanySelected\" class=\"sub-company-alert\">\n" +
@@ -275,6 +221,79 @@ app.run(["$templateCache", function($templateCache) {
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("company-buttons.html",
+    "<a href=\"\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n" +
+    "  <i class=\"glyphicons cogwheel\"></i>\n" +
+    "</a>\n" +
+    "<ul class=\"dropdown-menu\">\n" +
+    "  <li class=\"dropdown-header dropdown-title\"\n" +
+    "    ng-show=\"userState.user.company\">\n" +
+    "    Current Company\n" +
+    "  </li>\n" +
+    "  <li class=\"dropdown-header dropdown-title\"\n" +
+    "    ng-show=\"!userState.user.company\">\n" +
+    "    You have not created a company.</li>\n" +
+    "\n" +
+    "  <li class=\"dropdown-header\" ng-show=\"userState.user.company\">\n" +
+    "    <!-- home -->\n" +
+    "    <i ng-if=\"!subCompanySelected\" class=\"glyphicons home\"></i>\n" +
+    "    <!-- warning -->\n" +
+    "    <i ng-if=\"subCompanySelected\" class=\"glyphicons warning_sign glyphicon-danger\"></i>\n" +
+    "    {{userState.selectedCompanyName}}\n" +
+    "    <div ng-if=\"subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
+    "  </li>\n" +
+    "  <li ng-if=\"subCompanySelected\" class=\"divider\"></li>\n" +
+    "  <li ng-show=\"!userState.user.company\">\n" +
+    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#sub-company-modal\"\n" +
+    "      ng-click=\"companySettings()\">\n" +
+    "      <i class=\"glyphicons plus\"></i>\n" +
+    "      <span class=\"item-name\">Create a Company</span>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "  <li ng-if=\"subCompanySelected\">\n" +
+    "    <a href=\"\" ng-click=\"resetCompany()\">\n" +
+    "      <i class=\"glyphicons home\"></i>\n" +
+    "      <span class=\"item-name\">Switch To My Company</span>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "  <li class=\"divider\"></li>\n" +
+    "  <li ng-show=\"userState.user.company\">\n" +
+    "    <a href=\"\" ng-click=\"switchCompany()\">\n" +
+    "      <i class=\"glyphicons new_window\"></i>\n" +
+    "      <span class=\"item-name\">Select Sub-Company</span>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "  <li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
+    "  <li ng-if=\"isAdmin\">\n" +
+    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#sub-company-modal\" ng-click=\"addSubCompany()\">\n" +
+    "      <i class=\"glyphicons plus\"></i>\n" +
+    "      <span class=\"item-name\">Add Sub-Company</span>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "  <li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
+    "  <li ng-if=\"isAdmin\">\n" +
+    "    <a href=\"\" ng-click=\"companySettings()\">\n" +
+    "      <i class=\"glyphicons cogwheels\"></i>\n" +
+    "      <span class=\"item-name\">Company Settings</span>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "  <li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
+    "  <li ng-if=\"isAdmin\">\n" +
+    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#company-users-modal\">\n" +
+    "      <i class=\"glyphicons group\"></i>\n" +
+    "      <span class=\"item-name\">Company Users</span>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "</ul>\n" +
     "");
 }]);
 })();

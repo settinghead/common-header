@@ -7,6 +7,7 @@
   "$log",
   function (oauthAPILoader, $q, userInfoCache, $log) {
     return function () {
+
       var deferred = $q.defer();
       var resp;
       if((resp = userInfoCache.get("oauth2UserInfo"))) {

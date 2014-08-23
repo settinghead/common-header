@@ -23,7 +23,10 @@
               $log.debug("getProfile resp", resp);
               if(userState) {
                 userState.user.profile =
-                  angular.extend({picture: oauthUserInfo.picture}, resp.item);
+                  angular.extend({
+                    picture: oauthUserInfo.picture,
+                    username: oauthUserInfo.email
+                  }, resp.item);
               }
               userInfoCache.put("profile", resp.item);
               deferred.resolve(resp.item);

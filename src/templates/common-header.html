@@ -125,125 +125,16 @@
 				</ul>
 			</li>
 			<!-- END Current App -->
-			<li class="dropdown" ng-show="userState.authStatus > 0">
-				<a href="" class="dropdown-toggle" data-toggle="dropdown">
-					<i class="glyphicons cogwheel"></i>
-				</a>
-				<ul class="dropdown-menu">
-					<li class="dropdown-header dropdown-title"
-					  ng-show="userState.user.company">
-						Current Company
-					</li>
-					<li class="dropdown-header dropdown-title"
-						ng-show="!userState.user.company">
-						You have not created a company.</li>
-
-					<li class="dropdown-header" ng-show="userState.user.company">
-						<!-- home -->
-						<i ng-if="!subCompanySelected" class="glyphicons home"></i>
-						<!-- warning -->
-						<i ng-if="subCompanySelected" class="glyphicons warning_sign glyphicon-danger"></i>
-						{{userState.selectedCompanyName}}
-						<div ng-if="subCompanySelected" class="danger">This is a Sub-Company of your Company.</div>
-					</li>
-					<li ng-if="subCompanySelected" class="divider"></li>
-					<li ng-show="!userState.user.company">
-						<a href="" data-toggle="modal" data-target="#sub-company-modal"
-						  ng-click="companySettings()">
-							<i class="glyphicons plus"></i>
-							<span class="item-name">Create a Company</span>
-						</a>
-					</li>
-					<li ng-if="subCompanySelected">
-						<a href="" ng-click="resetCompany()">
-							<i class="glyphicons home"></i>
-							<span class="item-name">Switch To My Company</span>
-						</a>
-					</li>
-					<li class="divider"></li>
-					<li ng-show="userState.user.company">
-						<a href="" ng-click="switchCompany()">
-							<i class="glyphicons new_window"></i>
-							<span class="item-name">Select Sub-Company</span>
-						</a>
-					</li>
-					<li ng-if="isAdmin" class="divider"></li>
-					<li ng-if="isAdmin">
-						<a href="" data-toggle="modal" data-target="#sub-company-modal" ng-click="addSubCompany()">
-							<i class="glyphicons plus"></i>
-							<span class="item-name">Add Sub-Company</span>
-						</a>
-					</li>
-					<li ng-if="isAdmin" class="divider"></li>
-					<li ng-if="isAdmin">
-						<a href="" ng-click="companySettings()">
-							<i class="glyphicons cogwheels"></i>
-							<span class="item-name">Company Settings</span>
-						</a>
-					</li>
-					<li ng-if="isAdmin" class="divider"></li>
-					<li ng-if="isAdmin">
-						<a href="" data-toggle="modal" data-target="#company-users-modal">
-							<i class="glyphicons group"></i>
-							<span class="item-name">Company Users</span>
-						</a>
-					</li>
-				</ul>
-			</li>
+			<!-- Company Dropdown -->
+			<li class="dropdown" ng-show="userState.authStatus > 0"
+				ng-controller="CompanyButtonsCtrl" ng-include="'company-buttons.html'"></li>
 			<li ng-controller="AuthButtonsCtr"
+			ng-include="'auth-buttons.html'"
 			rv-spinner="spinnerOptions"
 			rv-spinner-key="auth-buttons"
 			rv-spinner-start-active="1"
 			>
-				<!-- If User NOT Authenticated -->
-				<ul class="nav navbar-nav navbar-right actions-nav" style="min-width: 80px; min-height: 41px;">
-
-					<li class="dropdown" ng-show="userState.authStatus > 0">
-						<a href="" class="dropdown-toggle">
-							<img ng-src="{{userState.user.profile.picture}}" class="profile-pic" width="30" height="30" alt="User" />
-						</a>
-						<ul class="dropdown-menu">
-							<li class="dropdown-header dropdown-title">
-								{{userProfileName}}
-							</li>
-							<li class="dropdown-header">
-								{{userProfileEmail}}
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="" ng-click="userSettings()">
-									<i class="glyphicons cogwheels"></i>
-									<span class="item-name">User Settings</span>
-								</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="" ng-click="paymentMethods()">
-									<i class="glyphicons usd"></i>
-									<span class="item-name">Payment Methods</span>
-								</a>
-							</li>
-							<li class="divider"></li>
-							<li ng-show="userState.authStatus > 0">
-								<a href="" ng-click="logout()" class="sign-out-button">
-									<i class="glyphicons log_out"></i>
-									<span class="item-name">Sign Out</span>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li ng-show="userState.authStatus === 0">
-						<a href="" class="sign-in" ng-click="loginModal()">
-							<span>Sign In</span>
-							<i class="glyphicons log_in"></i>
-						</a>
-					</li>
-				</ul>
-			</li>
-
 		</ul>
-
-
 
 	</div>
 	<div ng-if="subCompanySelected" class="sub-company-alert">

@@ -187,16 +187,6 @@
     };
   }])
 
-  .factory("companiesLoaded", ["$q", "getUserCompanies", function ($q, getUserCompanies) {
-    return function () {
-      var deferred = $q.defer();
-      getUserCompanies().then(deferred.resolve, function (){
-        deferred.reject("companiesLoaded");
-      });
-      return deferred.promise;
-    };
-  }])
-
   .factory("profileLoaded", ["$q", "getProfile", function ($q, getProfile) {
     return function () {
       var deferred = $q.defer();

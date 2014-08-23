@@ -25,33 +25,10 @@ angular.module("risevision.common.header", [
       scope: false,
       link: function(scope) {
         scope.navCollapsed = true;
+
         // $rootScope.$on("rvAuth.$authenticate", function() {
         //   getUserCompanies();
         // });
-
-        // $rootScope.$on("rvAuth.$signOut", function () {
-        //   // $rootScope.userState = apiAuth.getUserState();
-        // });
-
-        // Show Add Sub-Company Modal
-        scope.addSubCompany = function(size) {
-          $modal.open({
-            template: $templateCache.get("sub-company-modal.html"),
-            controller: "SubCompanyModalCtrl",
-            size: size
-          });
-        };
-        // Show Company Settings Modal
-        scope.companySettings = function(companyId, size) {
-          $modal.open({
-            template: $templateCache.get("company-settings-modal.html"),
-            controller: "CompanySettingsModalCtrl",
-            size: size,
-            resolve: {
-              companyId: function () {return companyId; }
-            }
-          });
-        };
 
         scope.termsAndConditions = function (size) {
           var modalInstance = $modal.open({
