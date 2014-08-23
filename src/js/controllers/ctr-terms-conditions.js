@@ -34,14 +34,17 @@ angular.module("risevision.common.header")
       }
     });
 
-    $scope.$watch("userState.status", function (newVal) {
-      if(newVal === "pendingCheck") {
-        $loading.start("terms-conditions-modal");
-      }
-      else {
-        $loading.stop("terms-conditions-modal");
-        if(userState.status !== "termsConditionsAccepted") {
-          $modalInstance.close("success");
+    var watch = $scope.$watch("userState.status", function (newVal) {
+      if(newVal) {
+        if(newVal === "pendingCheck") {
+          $loading.start("terms-conditions-modal");
+        }
+        else {
+          $loading.stop("terms-conditions-modal");
+          if(userState.status !== "termsConditionsAccepted") {
+            $modalInstance.close("success");
+            watch();
+          }
         }
       }
     });

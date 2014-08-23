@@ -6,7 +6,7 @@
 
   .value("userStatusDependencies", {
     "termsConditionsAccepted" : "signedInWithGoogle",
-    "acceptableState": ["termsConditionsAccepted", "notLoggedIn"]
+    "acceptableState": ["notLoggedIn", "termsConditionsAccepted"]
   })
 
   .factory("checkUserStatus", [
@@ -14,72 +14,67 @@
     function (userStatusDependencies, $injector, $q, $log, userState) {
 
       var attemptStatus = function(status){
+        var lastD;
         $log.debug("Attempting to reach status", status, "...");
-        var deferred = $q.defer();
         var dependencies = userStatusDependencies[status];
 
         if(dependencies) {
           if(!(dependencies instanceof Array)) {
             dependencies = [dependencies];
           }
-          var rejP = [];
-          var rejD = {};
+
+          var prevD = $q.defer(), firstD = prevD;
 
           angular.forEach(dependencies, function(dep) {
-            rejP.push((rejD[dep] = $q.defer()).promise);
-          });
-
-          angular.forEach(dependencies, function(dep) {
-            attemptStatus(dep).then(function (){
-              //should go here if any of the dependencies is satisfied
-              $log.debug("Deps for status", dep, "satisfied.");
-              $injector.get(status)().then(
-                function () {
-                  $log.debug("Status", status, "satisfied.");
-                  deferred.resolve(true);
-                  angular.forEach(dependencies, function(dep) {
-                    rejD[dep].reject();
-                  });
-                },
-                function () {
-                  $log.debug("Status", status, "not satisfied.");
-                  rejD[dep].resolve(status);
-                }
-              );
-            }, function (s) {
-              $log.debug("Failed to reach status", dep, ".");
-              rejD[dep].resolve(s);
+            var currentD = $q.defer();
+            prevD.promise.then(currentD.resolve, function () {
+              attemptStatus(dep).then(function (){
+                //should go here if any of the dependencies is satisfied
+                $log.debug("Deps for status", dep, "satisfied.");
+                $injector.get(status)().then(
+                  function () {
+                    $log.debug("Status", status, "satisfied.");
+                    currentD.resolve(true);
+                  },
+                  function () {
+                    $log.debug("Status", status, "not satisfied.");
+                    currentD.reject(dep);
+                  }
+                ).finally(currentD.resolve);
+              }, function () {
+                $log.debug("Failed to reach status", dep, ".");
+                currentD.reject(dep);
+              });
             });
+            lastD = prevD = currentD;
           });
 
-          $q.all(rejP).then( //when all dependencies are rejected
-             //reject if none of the dependencies is satisfied
-             function(rejectedStatus) {
-               $log.debug("All deps for status", status, "have been rejected.", rejectedStatus);
-               deferred.reject(rejectedStatus[0]);
-             }
-          );
+          //commence the avalance
+          firstD.reject();
         }
         else {
           //terminal
+          lastD = $q.defer();
           $injector.get(status)().then(
             function () {
-              $log.debug("Status", status, "satisfied.");
-              deferred.resolve(true);
+              $log.debug("Terminal status", status, "satisfied.");
+              lastD.resolve(true);
             },
             function () {
-              $log.debug("Status", status, "not satisfied.");
-              deferred.reject(status);
+              $log.debug("Terminal status", status, "not satisfied.");
+              lastD.reject(status);
             }
           );
         }
-        return deferred.promise;
+
+        return lastD.promise;
       };
 
       return function (desiredStatus) {
-        return attemptStatus(desiredStatus || "acceptableState").then(
+        if(!desiredStatus) {desiredStatus = "acceptableState"; }
+        return attemptStatus(desiredStatus).then(
           function () {
-            userState.status = "OK";
+            userState.status = desiredStatus;
           },
           function (status) {
             // if rejected at any given step,

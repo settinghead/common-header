@@ -41,8 +41,8 @@
     };
   }])
 
-  .factory("updateProfile", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
+  .factory("updateProfile", ["$q", "coreAPILoader", "$log", "userInfoCache",
+  function ($q, coreAPILoader, $log, userInfoCache) {
     return function (profile) {
       $log.debug("updateProfile", profile);
       var deferred = $q.defer();
@@ -52,7 +52,8 @@
         request.execute(function (resp) {
             $log.debug("updateProfile resp", resp);
             if(resp.result === true) {
-              deferred.resolve(resp);
+              userInfoCache.put("profile", resp.item);
+              deferred.resolve(resp.item);
             }
             else {
               deferred.reject("updateProfile");

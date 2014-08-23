@@ -78,17 +78,6 @@ angular.module("risevision.common.header", [
             if(newStatus === "termsConditionsAccepted") {
               scope.termsAndConditions();
             }
-            else if (newStatus === "profileUpdated") {
-              scope.updateProfile();
-            }
-            else if (newStatus === "companyCreated") {
-              //no company id
-              scope.companySettings(null);
-            }
-            else if (newStatus === "notLoggedIn") {
-              //no company id
-              scope.loginModal(null);
-            }
             else if(newStatus !== "acceptableState") {
               checkUserStatus();
             }
