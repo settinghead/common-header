@@ -2,12 +2,12 @@ angular.module("risevision.common.header")
 .controller("TermsConditionsModalCtrl", [
   "$scope", "$modalInstance", "$rootScope",
   "updateProfile", "getProfile", "getOAuthUserInfo",
+  "$loading",
   function($scope, $modalInstance, $rootScope,
-    updateProfile, getProfile, getOAuthUserInfo) {
+    updateProfile, getProfile, getOAuthUserInfo, $loading) {
 
     var userState = $rootScope.userState;
-
-    getProfile(userState).then(function () {
+    getProfile(userState).finally(function () {
       if(!userState.user.profile) {
         userState.user.profile = userState.user.profile || {};
       }
@@ -34,10 +34,22 @@ angular.module("risevision.common.header")
       }
     });
 
+    $scope.$watch("userState.status", function (newVal) {
+      if(newVal === "pendingCheck") {
+        $loading.start("terms-conditions-modal");
+      }
+      else {
+        $loading.stop("terms-conditions-modal");
+        if(userState.status !== "termsConditionsAccepted") {
+          $modalInstance.close("success");
+        }
+      }
+    });
+
     $scope.agree = function () {
       //update terms and conditions date
-      updateProfile(userState.user.profile).then(function () {
-        $modalInstance.close("success");
+      updateProfile(userState.user.profile).then(function (){
+        userState.status = "pendingCheck";
       });
     };
   }

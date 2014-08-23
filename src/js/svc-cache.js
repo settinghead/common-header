@@ -3,12 +3,14 @@
   "use strict";
 
   angular.module("risevision.common.cache", [])
-
     .value("rvStorage", sessionStorage)
+
+    .factory("userInfoCache", ["$cacheFactory", function ($cacheFactory) {
+      return $cacheFactory("user-info-cache");
+    }])
 
     .service("cacheService", ["rvStorage", function (rvStorage) {
       var products = [];
-
       this.clear = function () {
           rvStorage.clear();
       };

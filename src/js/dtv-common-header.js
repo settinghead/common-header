@@ -25,7 +25,6 @@ angular.module("risevision.common.header", [
       scope: false,
       link: function(scope) {
         scope.navCollapsed = true;
-
         // $rootScope.$on("rvAuth.$authenticate", function() {
         //   getUserCompanies();
         // });
@@ -36,7 +35,6 @@ angular.module("risevision.common.header", [
 
         // Show Add Sub-Company Modal
         scope.addSubCompany = function(size) {
-          // var modalInstance =
           $modal.open({
             template: $templateCache.get("sub-company-modal.html"),
             controller: "SubCompanyModalCtrl",
@@ -45,16 +43,13 @@ angular.module("risevision.common.header", [
         };
         // Show Company Settings Modal
         scope.companySettings = function(companyId, size) {
-          var modalInstance = $modal.open({
+          $modal.open({
             template: $templateCache.get("company-settings-modal.html"),
             controller: "CompanySettingsModalCtrl",
             size: size,
             resolve: {
               companyId: function () {return companyId; }
             }
-          });
-          modalInstance.result.finally(function () {
-            userState.status = "pendingCheck";
           });
         };
 

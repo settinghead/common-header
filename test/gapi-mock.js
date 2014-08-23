@@ -1007,31 +1007,40 @@
           return {
             execute: function (cb) {
               var company;
-              if(obj && obj.id) {
-                company = _.find(window.gapi._fakeDb.companies, function (company) {
-                  return company.id === obj.id;
-                });
+              if(gapi.auth._token) {
+                if(obj && obj.id) {
+                  company = _.find(window.gapi._fakeDb.companies, function (company) {
+                    return company.id === obj.id;
+                  });
+                }
+                else if (window.gapi._fakeDb.currentUser.item.companyId){
+                  company =
+                  _.find(window.gapi._fakeDb.companies, function (company) {
+                    return company.id === window.gapi._fakeDb.currentUser.item.companyId;
+                  });
+                }
+                if(!company){
+                  delayed(cb, {
+                    "result": false,
+                    "code": 404,
+                    "message": "NOT FOUND"
+                  });
+                } else {
+                  delayed(cb, {
+                    "result": true,
+                    "code": 200,
+                    "message": "OK",
+                    "item": _.extend(_.cloneDeep(window.gapi.companyRespSkeleton), company),
+                  "kind": "core#companyItem",
+                  "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
+                  });
+                }
               }
-              else if (window.gapi._fakeDb.currentUser.item.companyId){
-                company =
-                _.find(window.gapi._fakeDb.companies, function (company) {
-                  return company.id === window.gapi._fakeDb.currentUser.item.companyId;
-                });
-              }
-              if(!company){
+              else {
                 delayed(cb, {
                   "result": false,
-                  "code": 404,
-                  "message": "NOT FOUND"
-                });
-              } else {
-                delayed(cb, {
-                  "result": true,
-                  "code": 200,
-                  "message": "OK",
-                  "item": _.extend(_.cloneDeep(window.gapi.companyRespSkeleton), company),
-                "kind": "core#companyItem",
-                "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
+                  "code": 401,
+                  "message": "NOT LOGGED IN"
                 });
               }
           }
@@ -1119,14 +1128,23 @@
       get: function () {
         return {
           execute: function (cb) {
-            if(window.gapi._fakeDb.currentUser) {
-              delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentUser));
+            if(gapi.auth._token){
+              if(window.gapi._fakeDb.currentUser) {
+                delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentUser));
+              }
+              else {
+                delayed(cb, {
+                  "result": false,
+                  "code": 404,
+                  "message": "NOT FOUND"
+                });
+              }
             }
             else {
               delayed(cb, {
                 "result": false,
-                "code": 404,
-                "message": "NOT FOUND"
+                "code": 401,
+                "message": "NOT LOGGED IN"
               });
             }
           }

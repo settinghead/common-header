@@ -6,9 +6,7 @@
 
   .value("userStatusDependencies", {
     "termsConditionsAccepted" : "signedInWithGoogle",
-    "profileLoaded": "termsConditionsAccepted",
-    "companiesLoaded": "profileLoaded",
-    "acceptableState": ["companiesLoaded", "notLoggedIn"]
+    "acceptableState": ["termsConditionsAccepted", "notLoggedIn"]
   })
 
   .factory("checkUserStatus", [
@@ -100,24 +98,19 @@
   }])
 
 
-  .factory("signedInWithGoogle", ["$q", "oauthAPILoader", "$log", "userState",
-  function ($q, oauthAPILoader, $log, userState) {
+  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "$log", "userState",
+  function ($q, getOAuthUserInfo, $log, userState) {
     return function () {
       var deferred = $q.defer();
-      oauthAPILoader.get().then(function (gApi) {
-        gApi.client.oauth2.userinfo.get().execute(function(resp){
-          $log.debug("oauth2.userinfo.get() resp", resp);
-          if(resp.error) {
-            deferred.reject("signedInWithGoogle");
-            userState.authStatus = 0;
-          }
-          else {
-            deferred.resolve(true);
-            userState.authStatus = 1;
-          }
-        });
-      }, deferred.resolve //count error as not logged in
-      );
+      getOAuthUserInfo().then(
+        function () {
+          deferred.resolve();
+          userState.authStatus = 1;
+          },
+        function () {
+          deferred.reject("signedInWithGoogle");
+          userState.authStatus = 0;
+          });
       return deferred.promise;
     };
   }])
@@ -133,24 +126,22 @@
     };
   }])
 
-  .factory("termsConditionsAccepted", ["$q", "coreAPILoader", "$log",
-   function ($q, coreAPILoader, $log) {
+  .factory("termsConditionsAccepted", ["$q", "coreAPILoader", "$log", "getProfile",
+   function ($q, coreAPILoader, $log, getProfile) {
     return function () {
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
-        var request = coreApi.user.get({});
-        request.execute(function (resp) {
-            $log.debug("termsConditionsAccepted core.user.get() resp", resp);
-            if(resp.result === true &&
-              resp.item.termsAcceptanceDate &&
-              resp.item.email) {
-              deferred.resolve(resp);
-            }
-            else {
-              deferred.reject("termsConditionsAccepted");
-            }
-        });
+
+      getProfile().then(function (profile) {
+        if(
+          profile.termsAcceptanceDate &&
+          profile.email) {
+            deferred.resolve();
+          }
+        else {deferred.reject("termsConditionsAccepted");}
+      }, function () {
+        deferred.reject("termsConditionsAccepted");
       });
+
       return deferred.promise;
     };
   }])

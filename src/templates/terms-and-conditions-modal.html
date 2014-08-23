@@ -1,3 +1,6 @@
+<div rv-spinner
+rv-spinner-key="terms-conditions-modal"
+rv-spinner-start-active="1">
 <div class="modal-header">
   <button type="button" ng-click="closeModal()" class="close"><span>&times;</span><span class="sr-only">Close</span></button>
   <h2 class="modal-title">Welcome To Rise Vision</h2>
@@ -34,9 +37,10 @@
       ng-click="closeModal()">
         Cancel <i class="glyphicons white remove_2 icon-right"></i>
       </button>
-      <button ng-click="agree()" type="submit" class="btn btn-success btn-fixed-width">
+      <button ng-click="agree()" type="button" class="btn btn-success btn-fixed-width">
         Save <i class="glyphicons white ok_2 icon-right"></i>
       </button>
     </div>
   </form>
+</div>
 </div>

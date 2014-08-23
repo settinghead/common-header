@@ -2,15 +2,17 @@
 
   "use strict";
   angular.module("risevision.common.profile", [
-  "risevision.common.gapi", "risevision.common.oauth2"]).
+  "risevision.common.gapi", "risevision.common.oauth2",
+  "risevision.common.cache"]).
   factory("getProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
-  "userState", "getOAuthUserInfo",
-  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo) {
+  "userState", "getOAuthUserInfo", "userInfoCache",
+  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
+    userInfoCache) {
     return function () {
       var deferred = $q.defer();
-      if(userState && userState.user.profile) {
+      if(userInfoCache.get("profile")) {
         //skip if already exists
-        deferred.resolve(userState.user.profile);
+        deferred.resolve(userInfoCache.get("profile"));
       }
       else {
         $q.all([oauthAPILoader.get(), coreAPILoader.get(), getOAuthUserInfo()]).then(function (results){
@@ -21,8 +23,9 @@
               $log.debug("getProfile resp", resp);
               if(userState) {
                 userState.user.profile =
-                  angular.extend(resp.item, {picture: oauthUserInfo.picture});
+                  angular.extend({picture: oauthUserInfo.picture}, resp.item);
               }
+              userInfoCache.put("profile", resp.item);
               deferred.resolve(resp.item);
             }
             else {

@@ -18,10 +18,10 @@
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
       "gapiLoader", "coreAPILoader", "oauthAPILoader", "CLIENT_ID",
       "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService",
-      "$location", "cookieStore", "userState",
+      "$location", "cookieStore", "userState", "userInfoCache",
       function($interval, $rootScope, $q, $http, gapiLoader, coreAPILoader,
         oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
-        localStorageService, $location, cookieStore, userState) {
+        localStorageService, $location, cookieStore, userState, userInfoCache) {
 
         var that = this;
         var factory = {};
@@ -64,6 +64,7 @@
           $log.debug("$authentication called");
           var authenticateDeferred = $q.defer();
           that.resetUserState();
+          userInfoCache.removeAll();
 
           /**
           * This event is designed to be clearer about the auth flow.
@@ -188,6 +189,7 @@
             cookieStore.remove("rv-token",
               {domain: "." + getBaseDomain()});
             cookieStore.remove("rv-token");
+            userInfoCache.removeAll();
             //clear auth token
             gApi.auth.setToken();
             accessToken = undefined;

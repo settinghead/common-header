@@ -220,7 +220,7 @@ app.run(["$templateCache", function($templateCache) {
     "			rv-spinner-start-active=\"1\"\n" +
     "			>\n" +
     "				<!-- If User NOT Authenticated -->\n" +
-    "				<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
+    "				<ul class=\"nav navbar-nav navbar-right actions-nav\" style=\"min-width: 80px; min-height: 41px;\">\n" +
     "\n" +
     "					<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
     "						<a href=\"\" class=\"dropdown-toggle\">\n" +
@@ -913,6 +913,9 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("terms-and-conditions-modal.html",
+    "<div rv-spinner\n" +
+    "rv-spinner-key=\"terms-conditions-modal\"\n" +
+    "rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" ng-click=\"closeModal()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
     "  <h2 class=\"modal-title\">Welcome To Rise Vision</h2>\n" +
@@ -949,11 +952,12 @@ app.run(["$templateCache", function($templateCache) {
     "      ng-click=\"closeModal()\">\n" +
     "        Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "      </button>\n" +
-    "      <button ng-click=\"agree()\" type=\"submit\" class=\"btn btn-success btn-fixed-width\">\n" +
+    "      <button ng-click=\"agree()\" type=\"button\" class=\"btn btn-success btn-fixed-width\">\n" +
     "        Save <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
     "      </button>\n" +
     "    </div>\n" +
     "  </form>\n" +
+    "</div>\n" +
     "</div>\n" +
     "");
 }]);
