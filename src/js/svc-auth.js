@@ -143,7 +143,7 @@
             opts.prompt = "select_account";
           }
 
-          oauthAPILoader.get().then(function (gApi) {
+          oauthAPILoader().then(function (gApi) {
             gApi.auth.authorize(opts, function (authResult) {
               $log.debug("authResult", authResult);
               if (authResult && !authResult.error) {
@@ -183,7 +183,7 @@
         */
         factory.$signOut = function() {
           var deferred = $q.defer();
-          gapiLoader.get().then(function (gApi) {
+          gapiLoader().then(function (gApi) {
             // The flag the indicates a user is potentially
             // authenticated already, must be destroyed.
             cookieStore.remove("rv-token",
@@ -206,7 +206,7 @@
         };
 
         if(accessToken) {
-          gapiLoader.get().then(function (gApi) {
+          gapiLoader().then(function (gApi) {
             gApi.auth.setToken(accessToken, null);
             // factory.$authenticate(false);
             userState.authStatus = AUTH_STAUS_LOADING;

@@ -29,7 +29,7 @@
 
   window.gapi.resetDb = function () {
     if(!window.gapi._fakeDb) {
-      window.gapi._fakeDb = {serverDelay: 0};
+      window.gapi._fakeDb = {serverDelay: 300};
     }
     window.gapi._fakeDb.companies = _.cloneDeep(companies);
     window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);

@@ -15,7 +15,7 @@
         deferred.resolve(userInfoCache.get("profile"));
       }
       else {
-        $q.all([oauthAPILoader.get(), coreAPILoader.get(), getOAuthUserInfo()]).then(function (results){
+        $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
           var coreApi = results[1];
           var oauthUserInfo = results[2];
           coreApi.user.get({}).execute(function (resp){
@@ -46,7 +46,7 @@
     return function (profile) {
       $log.debug("updateProfile", profile);
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         //TODO: consult Alxey
         var request = coreApi.user.update(profile);
         request.execute(function (resp) {

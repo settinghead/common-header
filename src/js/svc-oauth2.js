@@ -19,7 +19,7 @@
         }
       }
       else {
-        oauthAPILoader.get().then(function (gApi){
+        oauthAPILoader().then(function (gApi){
           gApi.client.oauth2.userinfo.get().execute(function (resp){
             $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
             userInfoCache.put("oauth2UserInfo", resp);

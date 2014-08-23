@@ -30,7 +30,9 @@
             prevD.promise.then(currentD.resolve, function () {
               attemptStatus(dep).then(function (){
                 //should go here if any of the dependencies is satisfied
-                $log.debug("Deps for status", dep, "satisfied.");
+                if(userStatusDependencies[dep]) {
+                  $log.debug("Deps for status", dep, "satisfied.");
+                }
                 $injector.get(status)().then(
                   function () {
                     $log.debug("Status", status, "satisfied.");
@@ -145,7 +147,7 @@
   function ($q, coreAPILoader, $log) {
     return function () {
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         //TODO
         var request = coreApi.user.get({});
         request.execute(function (resp) {
@@ -166,7 +168,7 @@
   function ($q, coreAPILoader, $log) {
     return function () {
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         var request = coreApi.user.get();
         request.execute(function (resp) {
             $log.debug("companyCreated core.user.get() resp", resp);
