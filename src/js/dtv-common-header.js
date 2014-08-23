@@ -8,6 +8,7 @@ angular.module("risevision.common.header", [
   "risevision.common.loading",
   "risevision.common.registration",
   "risevision.common.oauth2",
+  "risevision.common.geodata",
   "ui.bootstrap"
 ])
 .directive("commonHeader",
@@ -33,48 +34,34 @@ angular.module("risevision.common.header", [
         //   // $rootScope.userState = apiAuth.getUserState();
         // });
 
-        // Login Modal
-        scope.loginModal = function(size) {
-          // var modalInstance =
-          $modal.open({
-            templateUrl: "authorization-modal.html",
-            controller: "AuthModalCtrl",
-            size: size
-          });
-        };
-
-        scope.logout = function () {
-          apiAuth.$signOut().finally(function (){
-            $rootScope.userState.status = "pendingCheck";
-          });
-        };
-
         // Show Add Sub-Company Modal
         scope.addSubCompany = function(size) {
           // var modalInstance =
           $modal.open({
-            templateUrl: "sub-company-modal.html",
+            template: $templateCache.get("sub-company-modal.html"),
             controller: "SubCompanyModalCtrl",
             size: size
           });
         };
         // Show Company Settings Modal
         scope.companySettings = function(companyId, size) {
-          // var modalInstance =
-          $modal.open({
-            templateUrl: "company-settings-modal.html",
+          var modalInstance = $modal.open({
+            template: $templateCache.get("company-settings-modal.html"),
             controller: "CompanySettingsModalCtrl",
             size: size,
             resolve: {
               companyId: function () {return companyId; }
             }
           });
+          modalInstance.result.finally(function () {
+            userState.status = "pendingCheck";
+          });
         };
         // Show User Settings Modal
         scope.userSettings = function(size) {
           // var modalInstance =
           $modal.open({
-            templateUrl: "user-settings-modal.html",
+            template: $templateCache.get("user-settings-modal.html"),
             controller: "UserSettingsModalCtrl",
             size: size
           });
@@ -83,7 +70,7 @@ angular.module("risevision.common.header", [
         scope.paymentMethods = function(size) {
           // var modalInstance =
           $modal.open({
-            templateUrl: "payment-methods-modal.html",
+            template: $templateCache.get("payment-methods-modal.html"),
             controller: "PaymentMethodsModalCtrl",
             size: size
           });
@@ -91,7 +78,7 @@ angular.module("risevision.common.header", [
 
         scope.termsAndConditions = function (size) {
           var modalInstance = $modal.open({
-            templateUrl: "terms-and-conditions.html",
+            template: $templateCache.get("terms-and-conditions-modal.html"),
             controller: "TermsConditionsModalCtrl",
             size: size,
             backdrop: "static"

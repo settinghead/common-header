@@ -1,0 +1,53 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeModal()">
+    <i class="glyphicons remove_2"></i>
+  </button>
+  <h2 id="move-company-label" class="modal-title">Move Company</h2>
+</div>
+<div class="modal-body">
+  <form role="form">
+    <div class="form-group">
+      <label for="auth-key">
+        Enter the Authentication Key of the Company that you want to move.
+      </label>
+      <div class="row">
+        <div class="col-sm-6">
+          <input id="auth-key" type="text" class="form-control" />
+        </div>
+        <div class="col-sm-6">
+          <a href="" ng-click="getCompany()">Retrieve Company Details</a>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div ng-show="showCompanyDetails">
+    <h3>Details of the Company You Want to Move</h3>
+    <div>
+      Acme Company 123<br>
+      1234 W. 100th Ave<br>
+      Kansas City, KS 12345
+    </div>
+    <h3>Details of the Company You Are Moving the Above Company Under</h3>
+    <div class="to-company">
+      Rise Display<br>
+      22019 W. 83rd St.<br>
+      Shawnee, KS 66226
+    </div>
+  </div>
+  <div ng-show="showCompanyMessages">
+    <div class="alert alert-success">
+      The Company was moved successfully.
+    </div>
+    <div class="alert alert-danger">
+      There was a problem moving the Company. Please try again.
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" ng-show="showMoveCompany" ng-click="moveCompany()">Move Company
+    <i class="glyphicons white ok_2 icon-right"></i>
+  </button>
+  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="closeModal()">
+    Cancel <i class="glyphicons white remove_2 icon-right"></i>
+  </button>
+</div>

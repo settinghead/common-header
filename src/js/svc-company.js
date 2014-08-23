@@ -47,16 +47,26 @@ angular.module("risevision.common.company",
     var that = this;
     this.getCompany = function (companyId) {
       var deferred = $q.defer();
-      var obj = {
-          "id": companyId
-      };
-      coreAPILoader.get().then(function (coreApi) {
-        var request = coreApi.company.get(obj);
-        request.execute(function (resp) {
-            $log.debug("getCompany resp", resp);
-            deferred.resolve(resp);
+      if(companyId) {
+        var obj = {
+            "id": companyId
+        };
+        coreAPILoader.get().then(function (coreApi) {
+          var request = coreApi.company.get(obj);
+          request.execute(function (resp) {
+              $log.debug("getCompany resp", resp);
+              if(resp.result) {
+                deferred.resolve(resp.item);
+              }
+              else {
+                deferred.reject(resp);
+              }
+          });
         });
-      });
+      }
+      else {
+        deferred.resolve({});
+      }
       return deferred.promise;
     };
 
