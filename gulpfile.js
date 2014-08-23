@@ -93,14 +93,14 @@ gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: [
   "test/unit/*spec.js"
   ]}));
 
-gulp.task("test:e2e:server", ["html2js", "config"], factory.testServer());
-gulp.task("test:e2e:server-watch", ["html2js-watch", "config"], factory.testServer());
-gulp.task("test:e2e:server:close", factory.testServerClose());
+gulp.task("server", ["html2js", "config"], factory.testServer());
+gulp.task("server-watch", ["html2js-watch", "config"], factory.testServer());
+gulp.task("server-close", factory.testServerClose());
 gulp.task("test:webdrive_update", factory.webdriveUpdate());
 gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular());
 gulp.task("test:e2e", function (cb) {
   runSequence(
-    "test:e2e:server", "test:e2e:core", "test:e2e:server:close", cb);
+    "server", "test:e2e:core", "server-close", cb);
   });
 
 gulp.task("metrics", factory.metrics());
