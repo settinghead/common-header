@@ -10,6 +10,143 @@
     <link href="../../components/JSONedit/css/styles.css" rel="stylesheet" type="text/css" />
     <!-- endbuild -->
 
+    <style>
+
+    /*Lets start with the cloud formation rather*/
+
+/*The container will also serve as the SKY*/
+
+*{ margin: 0; padding: 0;}
+
+
+body{
+  background-color: transparent;
+}
+
+#clouds{
+  position: fixed;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+	padding: 100px 0;
+	background: #c9dbe9;
+	background: -webkit-linear-gradient(top, #c9dbe9 0%, #fff 100%);
+	background: -linear-gradient(top, #c9dbe9 0%, #fff 100%);
+	background: -moz-linear-gradient(top, #c9dbe9 0%, #fff 100%);
+}
+
+/*Time to finalise the cloud shape*/
+.cloud {
+	width: 200px; height: 60px;
+	background: #fff;
+
+	border-radius: 200px;
+	-moz-border-radius: 200px;
+	-webkit-border-radius: 200px;
+
+	position: relative;
+}
+
+.cloud:before, .cloud:after {
+	content: '';
+	position: absolute;
+	background: #fff;
+	width: 100px; height: 80px;
+	position: absolute; top: -15px; left: 10px;
+
+	border-radius: 100px;
+	-moz-border-radius: 100px;
+	-webkit-border-radius: 100px;
+
+	-webkit-transform: rotate(30deg);
+	transform: rotate(30deg);
+	-moz-transform: rotate(30deg);
+}
+
+.cloud:after {
+	width: 120px; height: 120px;
+	top: -55px; left: auto; right: 15px;
+}
+
+/*Time to animate*/
+.x1 {
+	-webkit-animation: moveclouds 150s linear infinite;
+	-moz-animation: moveclouds 150s linear infinite;
+	-o-animation: moveclouds 150s linear infinite;
+  opacity: 0.6; /*opacity proportional to the size*/
+
+}
+
+/*variable speed, opacity, and position of clouds for realistic effect*/
+.x2 {
+	left: 200px;
+
+	-webkit-transform: scale(0.6);
+	-moz-transform: scale(0.6);
+	transform: scale(0.6);
+	opacity: 0.3; /*opacity proportional to the size*/
+
+	/*Speed will also be proportional to the size and opacity*/
+	/*More the speed. Less the time in 's' = seconds*/
+	-webkit-animation: moveclouds 250s linear infinite;
+	-moz-animation: moveclouds 250s linear infinite;
+	-o-animation: moveclouds 250s linear infinite;
+}
+
+.x3 {
+	left: -750px; top: -100px;
+
+	-webkit-transform: scale(0.8);
+	-moz-transform: scale(0.8);
+	transform: scale(0.8);
+	opacity: 0.5; /*opacity proportional to the size*/
+
+	-webkit-animation: moveclouds 200s linear infinite;
+	-moz-animation: moveclouds 200s linear infinite;
+	-o-animation: moveclouds 200s linear infinite;
+}
+
+.x4 {
+	left: -170px; top: -50px;
+
+	-webkit-transform: scale(0.75);
+	-moz-transform: scale(0.75);
+	transform: scale(0.75);
+	opacity: 0.4; /*opacity proportional to the size*/
+
+	-webkit-animation: moveclouds 180s linear infinite;
+	-moz-animation: moveclouds 180s linear infinite;
+	-o-animation: moveclouds 180s linear infinite;
+}
+
+.x5 {
+	left: -400px; top: -80px;
+
+	-webkit-transform: scale(0.8);
+	-moz-transform: scale(0.8);
+	transform: scale(0.8);
+	opacity: 0.6; /*opacity proportional to the size*/
+
+	-webkit-animation: moveclouds 200s linear infinite;
+	-moz-animation: moveclouds 200s linear infinite;
+	-o-animation: moveclouds 200s linear infinite;
+}
+
+@-webkit-keyframes moveclouds {
+	0% {margin-left: 1000px;}
+	100% {margin-left: -1000px;}
+}
+@-moz-keyframes moveclouds {
+	0% {margin-left: 1000px;}
+	100% {margin-left: -1000px;}
+}
+@-o-keyframes moveclouds {
+	0% {margin-left: 1000px;}
+	100% {margin-left: -1000px;}
+}
+    </style>
   </head>
   <body ng-controller="mainController">
 
@@ -136,25 +273,36 @@
     This app was built for the sole purpose of testing & demoing common header.
     Set server latency to <input type="number" ng-model="db.serverDelay" /> ms.
     <button class="btn" ng-click="resetDb()">Reset DB</button>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="jsonView col-md-5" defocus>
+          <h3 class="inline">User in Fake Google DB</h3>
+          <button class="btn" ng-click="deleteUser()">Delete</button>
+          <button class="btn" ng-click="resetUser()">Reset</button>
 
-    <div class="row">
-      <div class="col-md-1"></div>
-      <div class="jsonView col-md-5" defocus>
-        <h3 class="inline">User in Fake Google DB</h3>
-        <button class="btn" ng-click="deleteUser()">Delete</button>
-        <button class="btn" ng-click="resetUser()">Reset</button>
-
-        <div><json child="db.currentUser.item" default-collapsed="false" type="'object'">
-        </json></div>
+          <div><json child="db.currentUser.item" default-collapsed="false" type="'object'">
+          </json></div>
+        </div>
+        <div class="col-md-5 jsonView" defocus>
+          <h3 class="inline">All Companies in Fake Google DB</h3>
+          <button class="btn" ng-click="clearCompanies()">Clear</button>
+          <button class="btn" ng-click="resetCompanies()">Reset</button>
+          <div><json child="db.companies" default-collapsed="false" type="'array'">
+          </json></div>
+        </div>
+        <div class="col-md-1"></div>
       </div>
-      <div class="col-md-5 jsonView" defocus>
-        <h3 class="inline">All Companies in Fake Google DB</h3>
-        <button class="btn" ng-click="clearCompanies()">Clear</button>
-        <button class="btn" ng-click="resetCompanies()">Reset</button>
-        <div><json child="db.companies" default-collapsed="false" type="'array'">
-        </json></div>
-      </div>
-      <div class="col-md-1"></div>
     </div>
+
+    <div id="clouds">
+    	<div class="cloud x1"></div>
+    	<!-- Time for multiple clouds to dance around -->
+    	<div class="cloud x2"></div>
+    	<div class="cloud x3"></div>
+    	<div class="cloud x4"></div>
+    	<div class="cloud x5"></div>
+    </div>
+
   </body>
 </html>
