@@ -190,7 +190,11 @@
 					</li>
 				</ul>
 			</li>
-			<li ng-controller="AuthButtonsCtr" rv-spinner>
+			<li ng-controller="AuthButtonsCtr"
+			rv-spinner="spinnerOptions"
+			rv-spinner-key="auth-buttons"
+			rv-spinner-start-active="1"
+			>
 				<!-- If User NOT Authenticated -->
 				<ul class="nav navbar-nav navbar-right actions-nav">
 
@@ -228,16 +232,11 @@
 							</li>
 						</ul>
 					</li>
-
 					<li ng-show="userState.authStatus === 0">
 						<a href="" class="sign-in" ng-click="loginModal()">
 							<span>Sign In</span>
 							<i class="glyphicons log_in"></i>
 						</a>
-					</li>
-
-					<li ng-show="userState.authStatus === -1">
-						Loading...
 					</li>
 				</ul>
 			</li>

@@ -16,7 +16,7 @@
     function (userStatusDependencies, $injector, $q, $log, userState) {
 
       var attemptStatus = function(status){
-        $log.debug("Attempting status", status);
+        $log.debug("Attempting to reach status", status, "...");
         var deferred = $q.defer();
         var dependencies = userStatusDependencies[status];
 
@@ -33,18 +33,18 @@
 
           angular.forEach(dependencies, function(dep) {
             attemptStatus(dep).then(function (){
-              //should go here if any of the dependencies is fulfilled
-              $log.debug("Deps for status", dep, "fulfilled.");
+              //should go here if any of the dependencies is satisfied
+              $log.debug("Deps for status", dep, "satisfied.");
               $injector.get(status)().then(
                 function () {
-                  $log.debug("Status", status, "fulfilled.");
+                  $log.debug("Status", status, "satisfied.");
                   deferred.resolve(true);
                   angular.forEach(dependencies, function(dep) {
                     rejD[dep].reject();
                   });
                 },
                 function () {
-                  $log.debug("Status", status, "not fulfilled.");
+                  $log.debug("Status", status, "not satisfied.");
                   rejD[dep].resolve(status);
                 }
               );
@@ -55,7 +55,7 @@
           });
 
           $q.all(rejP).then( //when all dependencies are rejected
-             //reject if none of the dependencies is fulfilled
+             //reject if none of the dependencies is satisfied
              function(rejectedStatus) {
                $log.debug("All deps for status", status, "have been rejected.", rejectedStatus);
                deferred.reject(rejectedStatus[0]);
@@ -66,11 +66,11 @@
           //terminal
           $injector.get(status)().then(
             function () {
-              $log.debug("Status", status, "fulfilled.");
+              $log.debug("Status", status, "satisfied.");
               deferred.resolve(true);
             },
             function () {
-              $log.debug("Status", status, "not fulfilled.");
+              $log.debug("Status", status, "not satisfied.");
               deferred.reject(status);
             }
           );
