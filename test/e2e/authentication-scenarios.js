@@ -53,8 +53,8 @@
         // });
         //
         assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
-        expect(element(by.css("img.profile-pic")).isDisplayed()).to.eventually.equal(true);
-        expect(element(by.css(".sign-out-button")).isDisplayed()).to.eventually.equal(false);
+        assert.eventually.isTrue(element(by.css("img.profile-pic")).isDisplayed(), "profile pic should show");
+        assert.eventually.isFalse((element(by.css(".sign-out-button")).isDisplayed()), "sign out button should not show");
 
         //click on profile pic
         element(by.css("img.profile-pic")).click();
