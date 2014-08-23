@@ -1,6 +1,7 @@
 angular.module("risevision.common.header")
 .controller("SubCompanyModalCtrl", ["$scope", "$modalInstance", "$modal",
-  function($scope, $modalInstance, $modal) {
+  "$templateCache",
+  function($scope, $modalInstance, $modal, $templateCache) {
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
     };
@@ -8,7 +9,7 @@ angular.module("risevision.common.header")
     $scope.moveCompany = function(size) {
       // var modalInstance =
       $modal.open({
-        templateUrl: "move-company-modal.html",
+        template: $templateCache.get("move-company-modal.html"),
         controller: "MoveCompanyModalCtrl",
         size: size
       });

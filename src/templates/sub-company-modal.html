@@ -1,0 +1,77 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="closeModal()" aria-hidden="true">
+    <i class="glyphicons remove_2"></i>
+  </button>
+  <h2 id="sub-company-label" class="modal-title">Add Sub-Company</h2>
+</div>
+<div class="modal-body">
+  <form role="form">
+    <div class="form-group">
+      <label for="sub-company-name">
+        Name
+      </label>
+      <input id="sub-company-name" type="text" class="form-control" ng-model="company.name" />
+    </div>
+    <div class="form-group">
+      <label for="sub-company-street">
+        Street
+      </label>
+      <input id="sub-company-street" type="text" class="form-control" ng-model="company.street" />
+    </div>
+    <div class="form-group">
+      <label for="sub-company-unit">
+        Unit
+      </label>
+      <input id="sub-company-unit" type="text" class="form-control" ng-model="company.unit" />
+    </div>
+    <div class="form-group">
+      <label for="sub-company-city">
+        City
+      </label>
+      <input id="sub-company-city" type="text" class="form-control" ng-model="company.city" />
+    </div>
+    <div class="form-group">
+      <label for="sub-company-country">
+        Country
+      </label>
+      <select id="sub-company-country" class="form-control selectpicker" ng-model="company.country" ng-options="c[1] as c[0] for c in countries">
+        <option value="">&lt; Select Country &gt;</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="sub-company-state">
+        State / Province
+      </label>
+      <!-- <input id="sub-company-state" type="text" class="form-control" ng-model="company.province" ng-hide="company.country == 'US' || company.country == 'CA'" /> -->
+      <select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsCA" ng-show="company.country == 'CA'">
+        <option value="">&lt; Select Province &gt;</option>
+      </select>
+      <!-- <select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsUS" ng-show="company.country == 'US'">
+        <option value="">&lt; Select State &gt;</option>
+      </select> -->
+    </div>
+    <div class="form-group">
+      <label for="sub-company-zip">
+        Zip / Postal Code
+      </label>
+      <input id="sub-company-zip" type="text" class="form-control" ng-model="company.postalCode" />
+    </div>
+    <div class="form-group">
+      <label for="sub-company-monitoring">
+        Send Monitoring Emails To
+      </label>
+      <input id="sub-company-monitoring" type="email" class="form-control" />
+    </div>
+    <div class="form-group">
+      <a href="" data-dismiss="modal" data-toggle="modal" ng-click="moveCompany()">Move a Company Under Your Company</a>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary btn-fixed-width" ng-click="save()">Save
+    <i class="glyphicons white ok_2 icon-right"></i>
+  </button>
+  <button type="button" class="btn btn-primary btn-fixed-width" ng-click="closeModal()">Cancel
+    <i class="glyphicons white remove_2 icon-right"></i>
+  </button>
+</div>

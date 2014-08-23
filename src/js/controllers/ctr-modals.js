@@ -1,6 +1,5 @@
 angular.module("risevision.common.header")
 
-
 .controller("CreateProfileModalCtrl", [
   "$scope", "$modalInstance", "$rootScope", "updateProfile",
   function($scope, $modalInstance, $rootScope, updateProfile) {
@@ -27,7 +26,8 @@ angular.module("risevision.common.header")
   }
 ])
 .controller("PaymentMethodsModalCtrl", ["$scope", "$modalInstance", "$modal",
-  function($scope, $modalInstance, $modal) {
+  "$templateCache",
+  function($scope, $modalInstance, $modal, $templateCache) {
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
     };
@@ -35,7 +35,7 @@ angular.module("risevision.common.header")
     $scope.creditCards = function(size) {
       // var modalInstance =
       $modal.open({
-        templateUrl: "credit-cards-modal.html",
+        template: $templateCache.get("credit-cards-modal.html"),
         controller: "CreditCardsModalCtrl",
         size: size
       });
