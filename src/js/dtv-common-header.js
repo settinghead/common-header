@@ -57,24 +57,6 @@ angular.module("risevision.common.header", [
             userState.status = "pendingCheck";
           });
         };
-        // Show User Settings Modal
-        scope.userSettings = function(size) {
-          // var modalInstance =
-          $modal.open({
-            template: $templateCache.get("user-settings-modal.html"),
-            controller: "UserSettingsModalCtrl",
-            size: size
-          });
-        };
-        // Show Payment Methods Modal
-        scope.paymentMethods = function(size) {
-          // var modalInstance =
-          $modal.open({
-            template: $templateCache.get("payment-methods-modal.html"),
-            controller: "PaymentMethodsModalCtrl",
-            size: size
-          });
-        };
 
         scope.termsAndConditions = function (size) {
           var modalInstance = $modal.open({

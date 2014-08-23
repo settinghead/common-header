@@ -65,31 +65,8 @@ app.run(["$templateCache", function($templateCache) {
     "			</ul>\n" +
     "		</div>\n" +
     "\n" +
-    "		<!-- If User NOT Authenticated -->\n" +
-    "		<ul class=\"nav navbar-nav navbar-right actions-nav\" ng-controller=\"LoginButtonsCtr\">\n" +
-    "\n" +
-    "			<li ng-show=\"userState.authStatus > 0\">\n" +
-    "				<a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
-    "					<i class=\"glyphicons log_out\"></i>\n" +
-    "					<span class=\"item-name\">Sign Out</span>\n" +
-    "				</a>\n" +
-    "			</li>\n" +
-    "\n" +
-    "			<li ng-show=\"userState.authStatus === 0\">\n" +
-    "				<a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
-    "					<span>Sign In</span>\n" +
-    "					<i class=\"glyphicons log_in\"></i>\n" +
-    "				</a>\n" +
-    "			</li>\n" +
-    "\n" +
-    "			<li ng-show=\"userState.authStatus === -1\">\n" +
-    "				Loading...\n" +
-    "			</li>\n" +
-    "		</ul>\n" +
-    "\n" +
     "		<!-- If User Authenticated -->\n" +
-    "		<ul class=\"nav navbar-nav navbar-right actions-nav\"\n" +
-    "		  ng-show=\"userState.authStatus === 1\">\n" +
+    "		<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
     "			<!-- Notifications -->\n" +
     "			<li class=\"dropdown\" ng-if=\"userState.selectedCompanyId\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\">\n" +
@@ -115,7 +92,7 @@ app.run(["$templateCache", function($templateCache) {
     "				</a>\n" +
     "			</li>\n" +
     "			<!-- Current App -->\n" +
-    "			<li class=\"dropdown\">\n" +
+    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\">\n" +
     "					<i class=\"glyphicons show_thumbnails\"></i>\n" +
     "				</a>\n" +
@@ -172,7 +149,7 @@ app.run(["$templateCache", function($templateCache) {
     "				</ul>\n" +
     "			</li>\n" +
     "			<!-- END Current App -->\n" +
-    "			<li class=\"dropdown\">\n" +
+    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n" +
     "					<i class=\"glyphicons cogwheel\"></i>\n" +
     "				</a>\n" +
@@ -237,34 +214,58 @@ app.run(["$templateCache", function($templateCache) {
     "					</li>\n" +
     "				</ul>\n" +
     "			</li>\n" +
-    "			<li class=\"dropdown\">\n" +
-    "				<a href=\"\" class=\"dropdown-toggle\">\n" +
-    "					<img ng-src=\"{{userState.user.profile.picture}}\" class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
-    "				</a>\n" +
-    "				<ul class=\"dropdown-menu\">\n" +
-    "					<li class=\"dropdown-header dropdown-title\">\n" +
-    "						{{userProfileName}}\n" +
+    "			<li ng-controller=\"AuthButtonsCtr\" rv-spinner>\n" +
+    "				<!-- If User NOT Authenticated -->\n" +
+    "				<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
+    "\n" +
+    "					<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
+    "						<a href=\"\" class=\"dropdown-toggle\">\n" +
+    "							<img ng-src=\"{{userState.user.profile.picture}}\" class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "						</a>\n" +
+    "						<ul class=\"dropdown-menu\">\n" +
+    "							<li class=\"dropdown-header dropdown-title\">\n" +
+    "								{{userProfileName}}\n" +
+    "							</li>\n" +
+    "							<li class=\"dropdown-header\">\n" +
+    "								{{userProfileEmail}}\n" +
+    "							</li>\n" +
+    "							<li class=\"divider\"></li>\n" +
+    "							<li>\n" +
+    "								<a href=\"\" ng-click=\"userSettings()\">\n" +
+    "									<i class=\"glyphicons cogwheels\"></i>\n" +
+    "									<span class=\"item-name\">User Settings</span>\n" +
+    "								</a>\n" +
+    "							</li>\n" +
+    "							<li class=\"divider\"></li>\n" +
+    "							<li>\n" +
+    "								<a href=\"\" ng-click=\"paymentMethods()\">\n" +
+    "									<i class=\"glyphicons usd\"></i>\n" +
+    "									<span class=\"item-name\">Payment Methods</span>\n" +
+    "								</a>\n" +
+    "							</li>\n" +
+    "							<li class=\"divider\"></li>\n" +
+    "							<li ng-show=\"userState.authStatus > 0\">\n" +
+    "								<a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
+    "									<i class=\"glyphicons log_out\"></i>\n" +
+    "									<span class=\"item-name\">Sign Out</span>\n" +
+    "								</a>\n" +
+    "							</li>\n" +
+    "						</ul>\n" +
     "					</li>\n" +
-    "					<li class=\"dropdown-header\">\n" +
-    "						{{userProfileEmail}}\n" +
-    "					</li>\n" +
-    "					<li class=\"divider\"></li>\n" +
-    "					<li>\n" +
-    "						<a href=\"\" ng-click=\"userSettings()\">\n" +
-    "							<i class=\"glyphicons cogwheels\"></i>\n" +
-    "							<span class=\"item-name\">User Settings</span>\n" +
+    "\n" +
+    "					<li ng-show=\"userState.authStatus === 0\">\n" +
+    "						<a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
+    "							<span>Sign In</span>\n" +
+    "							<i class=\"glyphicons log_in\"></i>\n" +
     "						</a>\n" +
     "					</li>\n" +
-    "					<li class=\"divider\"></li>\n" +
-    "					<li>\n" +
-    "						<a href=\"\" ng-click=\"paymentMethods()\">\n" +
-    "							<i class=\"glyphicons usd\"></i>\n" +
-    "							<span class=\"item-name\">Payment Methods</span>\n" +
-    "						</a>\n" +
+    "\n" +
+    "					<li ng-show=\"userState.authStatus === -1\">\n" +
+    "						Loading...\n" +
     "					</li>\n" +
-    "					<li class=\"divider\"></li>\n" +
     "				</ul>\n" +
     "			</li>\n" +
+    "\n" +
     "		</ul>\n" +
     "\n" +
     "\n" +

@@ -47,7 +47,7 @@ gulp.task("lint", ["config"], function() {
 });
 
 gulp.task("html2js", function() {
-  return gulp.src("src/templates/*.html")
+  return gulp.src("src/templates/**/*.html")
     .pipe(html2js({
       outputModuleName: "risevision.common.header.templates",
       useStrict: true,
