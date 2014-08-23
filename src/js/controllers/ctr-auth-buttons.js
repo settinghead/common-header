@@ -1,7 +1,11 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "apiAuth", "userState",
-  function($scope, $modal, $templateCache, apiAuth, userState) {
+  "apiAuth", "userState", "$rootScope", "$loading",
+  function($scope, $modal, $templateCache, apiAuth, userState, $rootScope,
+  $loading) {
+
+    $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
+
     // Login Modal
     $scope.loginModal = function(size) {
       // var modalInstance =
@@ -12,9 +16,17 @@ angular.module("risevision.common.header")
       });
     };
 
+    $scope.authenticate = function() {
+      apiAuth.$authenticate(true).finally(function(){
+        userState.status = "pendingCheck";
+        $loading.start("auth-buttons");
+      });
+    };
+
     $scope.logout = function () {
       apiAuth.$signOut().finally(function (){
         userState.status = "pendingCheck";
+        $loading.start("auth-buttons");
       });
     };
 
@@ -36,5 +48,14 @@ angular.module("risevision.common.header")
         size: size
       });
     };
+
+    $scope.$watch("userState.status", function (newStatus){
+      if (newStatus === "pendingCheck") {
+        $loading.start("auth-buttons");
+      }
+      else {
+        $loading.stop("auth-buttons");
+      }
+    });
   }
 ]);

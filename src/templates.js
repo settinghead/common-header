@@ -214,7 +214,11 @@ app.run(["$templateCache", function($templateCache) {
     "					</li>\n" +
     "				</ul>\n" +
     "			</li>\n" +
-    "			<li ng-controller=\"AuthButtonsCtr\" rv-spinner>\n" +
+    "			<li ng-controller=\"AuthButtonsCtr\"\n" +
+    "			rv-spinner=\"spinnerOptions\"\n" +
+    "			rv-spinner-key=\"auth-buttons\"\n" +
+    "			rv-spinner-start-active=\"1\"\n" +
+    "			>\n" +
     "				<!-- If User NOT Authenticated -->\n" +
     "				<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
     "\n" +
@@ -252,16 +256,11 @@ app.run(["$templateCache", function($templateCache) {
     "							</li>\n" +
     "						</ul>\n" +
     "					</li>\n" +
-    "\n" +
     "					<li ng-show=\"userState.authStatus === 0\">\n" +
     "						<a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "							<span>Sign In</span>\n" +
     "							<i class=\"glyphicons log_in\"></i>\n" +
     "						</a>\n" +
-    "					</li>\n" +
-    "\n" +
-    "					<li ng-show=\"userState.authStatus === -1\">\n" +
-    "						Loading...\n" +
     "					</li>\n" +
     "				</ul>\n" +
     "			</li>\n" +

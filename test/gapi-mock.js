@@ -1135,10 +1135,12 @@
       update: function (obj) {
         return {
           execute: function (cb) {
+            if(!obj) {obj = {}; }
             if(!window.gapi._fakeDb.currentUser) {
               window.gapi.resetUser();
               window.gapi._fakeDb.currentUser.item = _.cloneDeep(obj);
             }
+
             _.extend(window.gapi._fakeDb.currentUser.item, obj);
             return delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentUser));
           }

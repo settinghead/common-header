@@ -35,6 +35,10 @@ angular.module("risevision.common.company",
                   userState.selectedCompanyId = c.id;
                 }
               }
+              else {
+                delete userState.selectedCompanyName;
+                delete userState.selectedCompanyId;
+              }
             });
           });
           return deferred.promise;
