@@ -58,16 +58,15 @@ gulp.task("html2js", function() {
 });
 
 gulp.task("html2js-watch", function() {
-  gulp.src("src/templates/*.html")
-    .pipe(watch(function(){
-      return gulp.src("src/templates/*.html").pipe(html2js({
-        outputModuleName: "risevision.common.header.templates",
-        useStrict: true,
-        base: "src/templates"
-      }))
-      .pipe(concat("templates.js"))
-      .pipe(gulp.dest("./src/"));
-    }));
+  watch({glob: "src/templates/*.html"}, function(){
+    return gulp.src("src/templates/*.html").pipe(html2js({
+      outputModuleName: "risevision.common.header.templates",
+      useStrict: true,
+      base: "src/templates"
+    }))
+    .pipe(concat("templates.js"))
+    .pipe(gulp.dest("./src/"));
+  });
 });
 
 
