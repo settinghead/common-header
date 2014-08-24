@@ -21,13 +21,11 @@
           coreApi.user.get({}).execute(function (resp){
             if(resp.result === true) {
               $log.debug("getProfile resp", resp);
-              if(userState) {
-                userState.user.profile =
-                  angular.extend({
-                    picture: oauthUserInfo.picture,
-                    username: oauthUserInfo.email
-                  }, resp.item);
-              }
+              userState.user.profile =
+                angular.extend({
+                  picture: oauthUserInfo.picture,
+                  username: oauthUserInfo.email
+                }, resp.item);
               userInfoCache.put("profile", resp.item);
               deferred.resolve(resp.item);
             }
@@ -41,8 +39,9 @@
     };
   }])
 
-  .factory("updateProfile", ["$q", "coreAPILoader", "$log", "userInfoCache",
-  function ($q, coreAPILoader, $log, userInfoCache) {
+  .factory("updateProfile", ["$q", "coreAPILoader", "$log",
+  "userInfoCache", "userState", "getProfile",
+  function ($q, coreAPILoader, $log, userInfoCache, userState, getProfile) {
     return function (profile) {
       $log.debug("updateProfile", profile);
       var deferred = $q.defer();
@@ -53,7 +52,7 @@
             $log.debug("updateProfile resp", resp);
             if(resp.result === true) {
               userInfoCache.put("profile", resp.item);
-              deferred.resolve(resp.item);
+              getProfile().then(function() {deferred.resolve(resp.item);});
             }
             else {
               deferred.reject("updateProfile");
