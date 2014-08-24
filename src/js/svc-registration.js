@@ -6,9 +6,7 @@
 
   .value("userStatusDependencies", {
     "termsConditionsAccepted" : "signedInWithGoogle",
-    "profileLoaded": "termsConditionsAccepted",
-    "companiesLoaded": "profileLoaded",
-    "acceptableState": ["companiesLoaded", "notLoggedIn"]
+    "acceptableState": ["notLoggedIn", "termsConditionsAccepted"]
   })
 
   .factory("checkUserStatus", [
@@ -16,72 +14,69 @@
     function (userStatusDependencies, $injector, $q, $log, userState) {
 
       var attemptStatus = function(status){
+        var lastD;
         $log.debug("Attempting to reach status", status, "...");
-        var deferred = $q.defer();
         var dependencies = userStatusDependencies[status];
 
         if(dependencies) {
           if(!(dependencies instanceof Array)) {
             dependencies = [dependencies];
           }
-          var rejP = [];
-          var rejD = {};
+
+          var prevD = $q.defer(), firstD = prevD;
 
           angular.forEach(dependencies, function(dep) {
-            rejP.push((rejD[dep] = $q.defer()).promise);
-          });
-
-          angular.forEach(dependencies, function(dep) {
-            attemptStatus(dep).then(function (){
-              //should go here if any of the dependencies is satisfied
-              $log.debug("Deps for status", dep, "satisfied.");
-              $injector.get(status)().then(
-                function () {
-                  $log.debug("Status", status, "satisfied.");
-                  deferred.resolve(true);
-                  angular.forEach(dependencies, function(dep) {
-                    rejD[dep].reject();
-                  });
-                },
-                function () {
-                  $log.debug("Status", status, "not satisfied.");
-                  rejD[dep].resolve(status);
+            var currentD = $q.defer();
+            prevD.promise.then(currentD.resolve, function () {
+              attemptStatus(dep).then(function (){
+                //should go here if any of the dependencies is satisfied
+                if(userStatusDependencies[dep]) {
+                  $log.debug("Deps for status", dep, "satisfied.");
                 }
-              );
-            }, function (s) {
-              $log.debug("Failed to reach status", dep, ".");
-              rejD[dep].resolve(s);
+                $injector.get(status)().then(
+                  function () {
+                    $log.debug("Status", status, "satisfied.");
+                    currentD.resolve(true);
+                  },
+                  function () {
+                    $log.debug("Status", status, "not satisfied.");
+                    currentD.reject(dep);
+                  }
+                ).finally(currentD.resolve);
+              }, function () {
+                $log.debug("Failed to reach status", dep, ".");
+                currentD.reject(dep);
+              });
             });
+            lastD = prevD = currentD;
           });
 
-          $q.all(rejP).then( //when all dependencies are rejected
-             //reject if none of the dependencies is satisfied
-             function(rejectedStatus) {
-               $log.debug("All deps for status", status, "have been rejected.", rejectedStatus);
-               deferred.reject(rejectedStatus[0]);
-             }
-          );
+          //commence the avalance
+          firstD.reject();
         }
         else {
           //terminal
+          lastD = $q.defer();
           $injector.get(status)().then(
             function () {
-              $log.debug("Status", status, "satisfied.");
-              deferred.resolve(true);
+              $log.debug("Terminal status", status, "satisfied.");
+              lastD.resolve(true);
             },
             function () {
-              $log.debug("Status", status, "not satisfied.");
-              deferred.reject(status);
+              $log.debug("Terminal status", status, "not satisfied.");
+              lastD.reject(status);
             }
           );
         }
-        return deferred.promise;
+
+        return lastD.promise;
       };
 
       return function (desiredStatus) {
-        return attemptStatus(desiredStatus || "acceptableState").then(
+        if(!desiredStatus) {desiredStatus = "acceptableState"; }
+        return attemptStatus(desiredStatus).then(
           function () {
-            userState.status = "OK";
+            userState.status = desiredStatus;
           },
           function (status) {
             // if rejected at any given step,
@@ -100,24 +95,19 @@
   }])
 
 
-  .factory("signedInWithGoogle", ["$q", "oauthAPILoader", "$log", "userState",
-  function ($q, oauthAPILoader, $log, userState) {
+  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "$log", "userState",
+  function ($q, getOAuthUserInfo, $log, userState) {
     return function () {
       var deferred = $q.defer();
-      oauthAPILoader.get().then(function (gApi) {
-        gApi.client.oauth2.userinfo.get().execute(function(resp){
-          $log.debug("oauth2.userinfo.get() resp", resp);
-          if(resp.error) {
-            deferred.reject("signedInWithGoogle");
-            userState.authStatus = 0;
-          }
-          else {
-            deferred.resolve(true);
-            userState.authStatus = 1;
-          }
-        });
-      }, deferred.resolve //count error as not logged in
-      );
+      getOAuthUserInfo().then(
+        function () {
+          deferred.resolve();
+          userState.authStatus = 1;
+          },
+        function () {
+          deferred.reject("signedInWithGoogle");
+          userState.authStatus = 0;
+          });
       return deferred.promise;
     };
   }])
@@ -133,24 +123,22 @@
     };
   }])
 
-  .factory("termsConditionsAccepted", ["$q", "coreAPILoader", "$log",
-   function ($q, coreAPILoader, $log) {
+  .factory("termsConditionsAccepted", ["$q", "coreAPILoader", "$log", "getProfile",
+   function ($q, coreAPILoader, $log, getProfile) {
     return function () {
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
-        var request = coreApi.user.get({});
-        request.execute(function (resp) {
-            $log.debug("termsConditionsAccepted core.user.get() resp", resp);
-            if(resp.result === true &&
-              resp.item.termsAcceptanceDate &&
-              resp.item.email) {
-              deferred.resolve(resp);
-            }
-            else {
-              deferred.reject("termsConditionsAccepted");
-            }
-        });
+
+      getProfile().then(function (profile) {
+        if(
+          profile.termsAcceptanceDate &&
+          profile.email) {
+            deferred.resolve();
+          }
+        else {deferred.reject("termsConditionsAccepted");}
+      }, function () {
+        deferred.reject("termsConditionsAccepted");
       });
+
       return deferred.promise;
     };
   }])
@@ -159,7 +147,7 @@
   function ($q, coreAPILoader, $log) {
     return function () {
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         //TODO
         var request = coreApi.user.get({});
         request.execute(function (resp) {
@@ -180,7 +168,7 @@
   function ($q, coreAPILoader, $log) {
     return function () {
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         var request = coreApi.user.get();
         request.execute(function (resp) {
             $log.debug("companyCreated core.user.get() resp", resp);
@@ -191,16 +179,6 @@
               deferred.reject("companyCreated");
             }
         });
-      });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("companiesLoaded", ["$q", "getUserCompanies", function ($q, getUserCompanies) {
-    return function () {
-      var deferred = $q.defer();
-      getUserCompanies().then(deferred.resolve, function (){
-        deferred.reject("companiesLoaded");
       });
       return deferred.promise;
     };

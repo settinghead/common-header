@@ -30,34 +30,6 @@ angular.module("risevision.common.header", [
         //   getUserCompanies();
         // });
 
-        // $rootScope.$on("rvAuth.$signOut", function () {
-        //   // $rootScope.userState = apiAuth.getUserState();
-        // });
-
-        // Show Add Sub-Company Modal
-        scope.addSubCompany = function(size) {
-          // var modalInstance =
-          $modal.open({
-            template: $templateCache.get("sub-company-modal.html"),
-            controller: "SubCompanyModalCtrl",
-            size: size
-          });
-        };
-        // Show Company Settings Modal
-        scope.companySettings = function(companyId, size) {
-          var modalInstance = $modal.open({
-            template: $templateCache.get("company-settings-modal.html"),
-            controller: "CompanySettingsModalCtrl",
-            size: size,
-            resolve: {
-              companyId: function () {return companyId; }
-            }
-          });
-          modalInstance.result.finally(function () {
-            userState.status = "pendingCheck";
-          });
-        };
-
         scope.termsAndConditions = function (size) {
           var modalInstance = $modal.open({
             template: $templateCache.get("terms-and-conditions-modal.html"),
@@ -105,17 +77,6 @@ angular.module("risevision.common.header", [
             //render a dialog based on the state user is in
             if(newStatus === "termsConditionsAccepted") {
               scope.termsAndConditions();
-            }
-            else if (newStatus === "profileUpdated") {
-              scope.updateProfile();
-            }
-            else if (newStatus === "companyCreated") {
-              //no company id
-              scope.companySettings(null);
-            }
-            else if (newStatus === "notLoggedIn") {
-              //no company id
-              scope.loginModal(null);
             }
             else if(newStatus !== "acceptableState") {
               checkUserStatus();

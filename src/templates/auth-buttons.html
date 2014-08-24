@@ -1,0 +1,45 @@
+<!-- If User NOT Authenticated -->
+<ul class="nav navbar-nav navbar-right actions-nav" style="min-width: 80px; min-height: 41px;">
+
+  <li class="dropdown" ng-show="userState.authStatus > 0">
+    <a href="" class="dropdown-toggle">
+      <img ng-src="{{userState.user.profile.picture}}" class="profile-pic" width="30" height="30" alt="User" />
+    </a>
+    <ul class="dropdown-menu">
+      <li class="dropdown-header dropdown-title">
+        {{userProfileName}}
+      </li>
+      <li class="dropdown-header">
+        {{userProfileEmail}}
+      </li>
+      <li class="divider"></li>
+      <li>
+        <a href="" ng-click="userSettings()">
+          <i class="glyphicons cogwheels"></i>
+          <span class="item-name">User Settings</span>
+        </a>
+      </li>
+      <li class="divider"></li>
+      <li>
+        <a href="" ng-click="paymentMethods()">
+          <i class="glyphicons usd"></i>
+          <span class="item-name">Payment Methods</span>
+        </a>
+      </li>
+      <li class="divider"></li>
+      <li ng-show="userState.authStatus > 0">
+        <a href="" ng-click="logout()" class="sign-out-button">
+          <i class="glyphicons log_out"></i>
+          <span class="item-name">Sign Out</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li ng-show="userState.authStatus === 0">
+    <a href="" class="sign-in" ng-click="loginModal()">
+      <span>Sign In</span>
+      <i class="glyphicons log_in"></i>
+    </a>
+  </li>
+</ul>
+</li>

@@ -3,7 +3,7 @@
 
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
-      "risevision.common.config",
+      "risevision.common.config", "risevision.common.cache",
       "ngBiscuit"
     ])
 
@@ -11,17 +11,33 @@
     .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
-    .constant("userState", {
-      user: {}
-    })
+
+    .factory("getBaseDomain", ["$log", "$location", function ($log, $location) {
+      return function getBaseDomain() {
+        var result;
+        var hostname = $location.host();
+        var port = $location.port() ? ":" + $location.port() : "";
+        var parts = hostname.split(".");
+        if(parts.length > 1) {
+          //localhost
+          result = parts.slice(parts.length -2).join(".") + port;
+        }
+        else {
+          result = hostname + port;
+        }
+        $log.debug("baseDomain", result);
+        return result;
+      };
+    }])
 
     .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
       "gapiLoader", "coreAPILoader", "oauthAPILoader", "CLIENT_ID",
       "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService",
-      "$location", "cookieStore", "userState",
+      "$location", "cookieStore", "userState", "userInfoCache", "getBaseDomain",
       function($interval, $rootScope, $q, $http, gapiLoader, coreAPILoader,
         oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
-        localStorageService, $location, cookieStore, userState) {
+        localStorageService, $location, cookieStore, userState, userInfoCache,
+        getBaseDomain) {
 
         var that = this;
         var factory = {};
@@ -64,6 +80,7 @@
           $log.debug("$authentication called");
           var authenticateDeferred = $q.defer();
           that.resetUserState();
+          userInfoCache.removeAll();
 
           /**
           * This event is designed to be clearer about the auth flow.
@@ -105,22 +122,6 @@
           return authenticateDeferred.promise;
         };
 
-        function getBaseDomain() {
-          var result;
-          var hostname = $location.host();
-          var port = $location.port() ? ":" + $location.port() : "";
-          var parts = hostname.split(".");
-          if(parts.length > 1) {
-            //localhost
-            result = parts.slice(parts.length -2).join(".") + port;
-          }
-          else {
-            result = hostname + port;
-          }
-          $log.debug("baseDomain", result);
-          return result;
-        }
-
         /*
         * Responsible for triggering the Google OAuth process.
         *
@@ -142,7 +143,7 @@
             opts.prompt = "select_account";
           }
 
-          oauthAPILoader.get().then(function (gApi) {
+          oauthAPILoader().then(function (gApi) {
             gApi.auth.authorize(opts, function (authResult) {
               $log.debug("authResult", authResult);
               if (authResult && !authResult.error) {
@@ -182,12 +183,13 @@
         */
         factory.$signOut = function() {
           var deferred = $q.defer();
-          gapiLoader.get().then(function (gApi) {
+          gapiLoader().then(function (gApi) {
             // The flag the indicates a user is potentially
             // authenticated already, must be destroyed.
             cookieStore.remove("rv-token",
               {domain: "." + getBaseDomain()});
             cookieStore.remove("rv-token");
+            userInfoCache.removeAll();
             //clear auth token
             gApi.auth.setToken();
             accessToken = undefined;
@@ -204,7 +206,7 @@
         };
 
         if(accessToken) {
-          gapiLoader.get().then(function (gApi) {
+          gapiLoader().then(function (gApi) {
             gApi.auth.setToken(accessToken, null);
             // factory.$authenticate(false);
             userState.authStatus = AUTH_STAUS_LOADING;

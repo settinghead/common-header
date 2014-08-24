@@ -13,7 +13,7 @@ angular.module("risevision.common.company",
           var deferred = $q.defer();
           var AUTH_STATUS_AUTHENTICATED = 1;
 
-          coreAPILoader.get().then(function (client) {
+          coreAPILoader().then(function (client) {
             var request = client.company.list({});
             request.execute(function (resp) {
               if(resp.result === true) {
@@ -55,7 +55,7 @@ angular.module("risevision.common.company",
         var obj = {
             "id": companyId
         };
-        coreAPILoader.get().then(function (coreApi) {
+        coreAPILoader().then(function (coreApi) {
           var request = coreApi.company.get(obj);
           request.execute(function (resp) {
               $log.debug("getCompany resp", resp);
@@ -83,7 +83,7 @@ angular.module("risevision.common.company",
         "count": count,
         "sort": sort
       };
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         var request = coreApi.subcompanies.get(obj);
         request.execute(function (resp) {
             deferred.resolve(resp);
@@ -143,7 +143,7 @@ angular.module("risevision.common.company",
         //     "validate": validationRequired
         // };
         fields.validate = validationRequired || false;
-        coreAPILoader.get().then(function (coreApi) {
+        coreAPILoader().then(function (coreApi) {
           var request = coreApi.company.update(fields);
           request.execute(function (resp) {
               deferred.resolve(resp);
@@ -156,7 +156,7 @@ angular.module("risevision.common.company",
     this.createCompany = function (company) {
       var deferred = $q.defer();
       company.validate = true;
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         var request = coreApi.company.add(company);
         request.execute(function (resp) {
             deferred.resolve(resp);
@@ -184,7 +184,7 @@ angular.module("risevision.common.company",
             "postalCode": company.postalCode,
             "province": company.province,
         };
-        coreAPILoader.get().then(function (coreApi) {
+        coreAPILoader().then(function (coreApi) {
           var request = coreApi.company.validateAddress(obj);
           request.execute(function (resp) {
               deferred.resolve(resp);

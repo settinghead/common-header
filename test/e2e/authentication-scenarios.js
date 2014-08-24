@@ -25,22 +25,28 @@
 
         //clear local storage
         browser.executeScript("localStorage.clear();");
+
         ptor.driver.navigate().refresh();
+        element(by.id("server-delay")).clear();
+        element(by.id("server-delay")).sendKeys("0");
+
       });
 
       it("should authorize", function() {
-        expect(element(by.css("a.sign-in")).isDisplayed()).to.eventually.equal(true);
+
+
+        assert.eventually.isTrue(element(by.css("a.sign-in")).isDisplayed(), "Sign in button should show");
         //dialog does not show
-        expect(element(by.css(".authorization-modal")).isPresent()).to.eventually.equal(false);
+        assert.eventually.isFalse(element(by.css(".authorization-modal")).isPresent(), "Auth modal should not show in the beginning");
         //click on sign in button
         element(by.css("a.sign-in")).click();
         //dialog shows
-        expect(element(by.css(".authorization-modal")).isDisplayed()).to.eventually.equal(true);
-        expect(element(by.css(".authorize-button")).isDisplayed()).to.eventually.equal(true);
+        assert.eventually.isTrue(element(by.css(".authorization-modal")).isDisplayed(), "Auth modal should show after clicking on sign in");
+        assert.eventually.isTrue(element(by.css(".authorize-button")).isDisplayed(), "Auth button should exist in auth modal");
         //click authorize
         element(by.css(".authorize-button")).click();
         //auth dialog should disappear
-        expect(element(by.css(".authorization-modal")).isPresent()).to.eventually.equal(false);
+        assert.eventually.isFalse(element(by.css(".authorization-modal")).isPresent(), "Auth modal should close");
 
       });
 

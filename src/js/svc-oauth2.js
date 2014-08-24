@@ -1,16 +1,38 @@
 (function (angular) {
 
   "use strict";
-  angular.module("risevision.common.oauth2", ["risevision.common.gapi"]).
-  factory("getOAuthUserInfo", ["oauthAPILoader", "$q",
-  function (oauthAPILoader, $q) {
+  angular.module("risevision.common.oauth2",
+  ["risevision.common.gapi", "risevision.common.cache"]).
+  factory("getOAuthUserInfo", ["oauthAPILoader", "$q", "userInfoCache",
+  "$log",
+  function (oauthAPILoader, $q, userInfoCache, $log) {
     return function () {
+
       var deferred = $q.defer();
-      oauthAPILoader.get().then(function (gApi){
-        gApi.client.oauth2.userinfo.get().execute(function (resp){
+      var resp;
+      if((resp = userInfoCache.get("oauth2UserInfo"))) {
+        if(resp.error) {
+          deferred.reject(resp.error);
+        }
+        else {
           deferred.resolve(resp);
-        });
-      }, deferred.reject);
+        }
+      }
+      else {
+        oauthAPILoader().then(function (gApi){
+          gApi.client.oauth2.userinfo.get().execute(function (resp){
+            $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
+            userInfoCache.put("oauth2UserInfo", resp);
+            if(resp.error) {
+              deferred.reject(resp.error);
+            }
+            else {
+              deferred.resolve(resp);
+            }
+          });
+        }, deferred.reject);
+      }
+
       return deferred.promise;
     };
   }]);

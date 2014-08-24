@@ -2,27 +2,31 @@
 
   "use strict";
   angular.module("risevision.common.profile", [
-  "risevision.common.gapi", "risevision.common.oauth2"]).
+  "risevision.common.gapi", "risevision.common.oauth2",
+  "risevision.common.cache"]).
   factory("getProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
-  "userState", "getOAuthUserInfo",
-  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo) {
+  "userState", "getOAuthUserInfo", "userInfoCache",
+  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
+    userInfoCache) {
     return function () {
       var deferred = $q.defer();
-      if(userState && userState.user.profile) {
+      if(userInfoCache.get("profile")) {
         //skip if already exists
-        deferred.resolve(userState.user.profile);
+        deferred.resolve(userInfoCache.get("profile"));
       }
       else {
-        $q.all([oauthAPILoader.get(), coreAPILoader.get(), getOAuthUserInfo()]).then(function (results){
+        $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
           var coreApi = results[1];
           var oauthUserInfo = results[2];
           coreApi.user.get({}).execute(function (resp){
             if(resp.result === true) {
               $log.debug("getProfile resp", resp);
-              if(userState) {
-                userState.user.profile =
-                  angular.extend(resp.item, {picture: oauthUserInfo.picture});
-              }
+              userState.user.profile =
+                angular.extend({
+                  picture: oauthUserInfo.picture,
+                  username: oauthUserInfo.email
+                }, resp.item);
+              userInfoCache.put("profile", resp.item);
               deferred.resolve(resp.item);
             }
             else {
@@ -36,17 +40,19 @@
   }])
 
   .factory("updateProfile", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
+  "userInfoCache", "userState", "getProfile",
+  function ($q, coreAPILoader, $log, userInfoCache, userState, getProfile) {
     return function (profile) {
       $log.debug("updateProfile", profile);
       var deferred = $q.defer();
-      coreAPILoader.get().then(function (coreApi) {
+      coreAPILoader().then(function (coreApi) {
         //TODO: consult Alxey
         var request = coreApi.user.update(profile);
         request.execute(function (resp) {
             $log.debug("updateProfile resp", resp);
             if(resp.result === true) {
-              deferred.resolve(resp);
+              userInfoCache.put("profile", resp.item);
+              getProfile().then(function() {deferred.resolve(resp.item);});
             }
             else {
               deferred.reject("updateProfile");

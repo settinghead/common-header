@@ -38,6 +38,9 @@ angular.module("risevision.common.header")
           alert("An error has occurred.", resp.error);
         });
     }
+    $scope.closeModal = function() {
+      $modalInstance.dismiss("cancel");
+    };
     $scope.save = function () {
       companyService.updateCompany($scope.company).then(
         function () {
