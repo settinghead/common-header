@@ -9,15 +9,16 @@ angular.module("risevision.common.header", [
   "risevision.common.registration",
   "risevision.common.oauth2",
   "risevision.common.geodata",
+  "risevision.common.shoppingcart",
   "ui.bootstrap"
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "apiAuth", "$loading",
-   "$interval", "oauthAPILoader", "cacheService", "$log",
+   "$interval", "oauthAPILoader", "$log",
     "$templateCache", "userStatusDependencies", "checkUserStatus",
     "userState",
   function($modal, $rootScope, $q, apiAuth, $loading, $interval,
-    oauthAPILoader, cacheService, $log, $templateCache,
+    oauthAPILoader, $log, $templateCache,
     dependencies, checkUserStatus, userState) {
     return {
       restrict: "E",

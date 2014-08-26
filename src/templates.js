@@ -123,7 +123,7 @@ app.run(["$templateCache", function($templateCache) {
     "		<!-- If User Authenticated -->\n" +
     "		<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
     "			<!-- Notifications -->\n" +
-    "			<li class=\"dropdown\" ng-if=\"userState.selectedCompanyId\">\n" +
+    "			<li class=\"dropdown\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\">\n" +
     "					<i class=\"glyphicons bell\"></i>\n" +
     "					<span class=\"label label-danger\">{{messages.length}}</span>\n" +
@@ -139,12 +139,10 @@ app.run(["$templateCache", function($templateCache) {
     "				</ul>\n" +
     "			</li>\n" +
     "			<!-- Shopping Cart -->\n" +
-    "			<li class=\"shopping-cart\" ng-init=\"updateCartIcon()\"\n" +
-    "			  ng-show=\"userState.selectedCompanyId\">\n" +
-    "				<a href=\"\">\n" +
-    "					<i class=\"glyphicons shopping_cart\"></i>\n" +
-    "					<span id=\"cartBadge\" class=\"label label-primary\">7</span>\n" +
-    "				</a>\n" +
+    "			<li class=\"shopping-cart\"\n" +
+    "			  ng-controller=\"ShoppingCartButtonCtrl\"\n" +
+    "				ng-show=\"userState.selectedCompanyId\"\n" +
+    "				ng-include=\"'shoppingcart-button.html'\">\n" +
     "			</li>\n" +
     "			<!-- Current App -->\n" +
     "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
@@ -835,6 +833,20 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("shoppingcart-button.html",
+    "<a href=\"\" class=\"shopping-cart-button\">\n" +
+    "  <i class=\"glyphicons shopping_cart\"></i>\n" +
+    "  <span id=\"cartBadge\" class=\"label label-primary\">{{cartCount()}}</span>\n" +
+    "</a>\n" +
     "");
 }]);
 })();
