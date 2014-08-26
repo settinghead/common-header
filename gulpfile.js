@@ -111,6 +111,7 @@ gulp.task("default", [], function () {
   console.log("\n***********************");
   console.log("* Tell me what to do: *");
   console.log("***********************");
+  console.log("* gulp test           *");
   console.log("* gulp build          *");
   console.log("***********************\n");
   return true;
