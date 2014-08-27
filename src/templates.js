@@ -123,7 +123,7 @@ app.run(["$templateCache", function($templateCache) {
     "		<!-- If User Authenticated -->\n" +
     "		<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
     "			<!-- Notifications -->\n" +
-    "			<li class=\"dropdown\">\n" +
+    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\">\n" +
     "					<i class=\"glyphicons bell\"></i>\n" +
     "					<span class=\"label label-danger\">{{messages.length}}</span>\n" +
