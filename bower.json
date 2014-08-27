@@ -21,6 +21,7 @@
   "dependencies": {
     "ngstorage": "0.3.0",
     "angular": "1.2.22",
+    "angular-route": "1.2.22",
     "angular-mocks": "1.2.22",
     "angular-bootstrap": "~0.11.0",
     "angular-spinner": "~0.4.0",

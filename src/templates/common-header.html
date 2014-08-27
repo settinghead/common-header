@@ -44,7 +44,7 @@
 		<!-- If User Authenticated -->
 		<ul class="nav navbar-nav navbar-right actions-nav">
 			<!-- Notifications -->
-			<li class="dropdown" ng-if="userState.selectedCompanyId">
+			<li class="dropdown">
 				<a href="" class="dropdown-toggle">
 					<i class="glyphicons bell"></i>
 					<span class="label label-danger">{{messages.length}}</span>
@@ -60,12 +60,10 @@
 				</ul>
 			</li>
 			<!-- Shopping Cart -->
-			<li class="shopping-cart" ng-init="updateCartIcon()"
-			  ng-show="userState.selectedCompanyId">
-				<a href="">
-					<i class="glyphicons shopping_cart"></i>
-					<span id="cartBadge" class="label label-primary">7</span>
-				</a>
+			<li class="shopping-cart"
+			  ng-controller="ShoppingCartButtonCtrl"
+				ng-show="userState.selectedCompanyId"
+				ng-include="'shoppingcart-button.html'">
 			</li>
 			<!-- Current App -->
 			<li class="dropdown" ng-show="userState.authStatus > 0">

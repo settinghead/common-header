@@ -80,7 +80,7 @@ gulp.task("config", function() {
     .pipe(gulp.dest("./src/js/config"));
 });
 
-gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: [
+var unitTestFiles = [
   "components/jquery/dist/jquery.js",
   "components/angular/angular.js",
   "components/angular-bootstrap/ui-bootstrap-tpls.js",
@@ -90,7 +90,10 @@ gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: [
   "src/js/config/config.js",
   "src/js/*.js",
   "test/unit/*spec.js"
-  ]}));
+  ];
+
+gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: unitTestFiles}));
+gulp.task("test:unit-watch", ["config"], factory.testUnitAngular({testFiles: unitTestFiles, watch: true}));
 
 gulp.task("server", ["html2js", "config"], factory.testServer());
 gulp.task("server-watch", ["html2js-watch", "config"], factory.testServer());
