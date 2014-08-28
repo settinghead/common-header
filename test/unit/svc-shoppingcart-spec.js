@@ -2,7 +2,7 @@
 
 describe("Services: Shopping Cart", function() {
 
-  beforeEach(module("risevision.common.shoppingcart"));
+  beforeEach(module("risevision.common.cache"));
 
   it("should exist", function() {
     inject(function(shoppingCart) {
@@ -12,6 +12,7 @@ describe("Services: Shopping Cart", function() {
 
   it("should add items to cart", function (){
     inject(function(shoppingCart) {
+      shoppingCart.initialize();
       shoppingCart.addItem({id: "aabbccccdd", orderedPricing: [100]}, 2, 0);
       expect(shoppingCart.getItemCount()).to.equal(1);
       shoppingCart.addItem({id: "cdcds", orderedPricing: [100]}, 2, 0);
@@ -23,6 +24,7 @@ describe("Services: Shopping Cart", function() {
 
   it("should remove items from cart", function () {
     inject(function(shoppingCart) {
+      shoppingCart.initialize();
       shoppingCart.addItem({id: "aabbccccdd", orderedPricing: [100]}, 2, 0);
       shoppingCart.addItem({id: "cdcds", orderedPricing: [100]}, 2, 0);
       shoppingCart.addItem({id: "vdvdv", orderedPricing: [100]}, 2, 0);
@@ -39,6 +41,7 @@ describe("Services: Shopping Cart", function() {
 
     it("should clear cart", function () {
       inject(function(shoppingCart) {
+        shoppingCart.initialize();
         shoppingCart.addItem({id: "aabbccccdd", orderedPricing: [100]}, 2, 0);
         shoppingCart.addItem({id: "cdcds", orderedPricing: [100]}, 2, 0);
         shoppingCart.addItem({id: "vdvdv", orderedPricing: [100]}, 2, 0);

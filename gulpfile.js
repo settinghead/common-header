@@ -25,7 +25,8 @@ var env = process.env.NODE_ENV || "dev",
 gulp.task("html", ["lint"], function () {
   return gulp.src("test/e2e/index.html")
     .pipe(usemin({
-    js: [] //disable mangle just for $routeProvider in controllers.js
+    js: [], //disable mangle just for $routeProvider in controllers.js
+    css: []
   }))
   .pipe(gulp.dest("dist/"));
 });
@@ -33,7 +34,12 @@ gulp.task("html", ["lint"], function () {
 
 gulp.task("build", ["html", "html2js"]);
 
-gulp.task("lint", ["config"], function() {
+gulp.task("fonts-copy", function () {
+  return gulp.src(["src/css/fonts/*"])
+    .pipe(gulp.dest("./dist/css/fonts"));
+});
+
+gulp.task("lint", ["config", "fonts-copy"], function() {
   return gulp.src([
       "src/js/**/*.js",
       "test/**/*.js"

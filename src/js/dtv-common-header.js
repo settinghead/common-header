@@ -9,15 +9,15 @@ angular.module("risevision.common.header", [
   "risevision.common.registration",
   "risevision.common.oauth2",
   "risevision.common.geodata",
-  "risevision.common.shoppingcart",
+  "risevision.common.util",
   "ui.bootstrap"
 ])
 .directive("commonHeader",
-  ["$modal", "$rootScope", "$q", "apiAuth", "$loading",
+  ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
     "$templateCache", "userStatusDependencies", "checkUserStatus",
     "userState",
-  function($modal, $rootScope, $q, apiAuth, $loading, $interval,
+  function($modal, $rootScope, $q, $loading, $interval,
     oauthAPILoader, $log, $templateCache,
     dependencies, checkUserStatus, userState) {
     return {
@@ -26,10 +26,6 @@ angular.module("risevision.common.header", [
       scope: false,
       link: function(scope) {
         scope.navCollapsed = true;
-
-        // $rootScope.$on("rvAuth.$authenticate", function() {
-        //   getUserCompanies();
-        // });
 
         scope.termsAndConditions = function (size) {
           var modalInstance = $modal.open({
@@ -86,7 +82,6 @@ angular.module("risevision.common.header", [
         });
 
         $rootScope.userState = userState;
-        // apiAuth.init();
         userState.status = "pendingCheck";
 
       }

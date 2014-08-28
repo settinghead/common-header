@@ -16,6 +16,7 @@ angular.module("risevision.common.header")
     };
   }
 ])
+
 .controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance",
   function($scope, $modalInstance) {
     $scope.closeModal = function() {
@@ -23,6 +24,7 @@ angular.module("risevision.common.header")
     };
   }
 ])
+
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
   "companyService", "companyId", "COUNTRIES",
   function($scope, $modalInstance, companyService, companyId,
@@ -51,4 +53,55 @@ angular.module("risevision.common.header")
       });
     };
   }
+])
+
+.controller("companySelectorCtr", ["$scope", "$modalInstance",
+    "companyService", "companyId", "BaseList",
+    function ($scope, $modalInstance, companyService,
+      companyId, BaseList) {
+
+    var DB_MAX_COUNT = 20; //number of records to load at a time
+
+    $scope.companies = new BaseList(DB_MAX_COUNT);
+    $scope.search = {
+        searchString: ""
+    };
+
+    $scope.closeModal = function () {
+        $modalInstance.dismiss("cancel");
+    };
+
+    function loadCompanies() {
+      if (!$scope.companies.endOfList) {
+        companyService.getCompanies(companyId, $scope.search.searchString, $scope.companies.cursor, DB_MAX_COUNT, null).then(function (result) {
+          if (result && result.items) {
+            $scope.companies.add(result.items, result.cursor);
+          }
+        });
+      }
+    }
+
+    if ($scope.companies.list.length === 0) {
+      loadCompanies();
+    }
+
+    $scope.doSearch = function () {
+      $scope.companies.clear();
+      loadCompanies();
+    };
+
+    $scope.setCompany = function (company) {
+      $modalInstance.close(company);
+    };
+
+    $scope.handleScroll = function (event, isEndEvent) {
+      //console.log(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
+      if (isEndEvent) {
+        if ((event.target.scrollHeight - event.target.clientHeight - event.target.scrollTop) < 20) {
+          //load more rows if less than 20px left to the bottom
+          loadCompanies();
+        }
+      }
+    };
+}
 ]);

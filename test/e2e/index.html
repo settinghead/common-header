@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html ng-app="test-app">
   <head>
-    <!-- <link href="../../src/css/glyphicons.min.css" rel="stylesheet" type="text/css"> -->
-    <link href="//s3.amazonaws.com/rise-common-test/styles/glyphicons/glyphicons.min.css" rel="stylesheet" type="text/css">
+    <!-- <link href="//s3.amazonaws.com/rise-common-test/styles/glyphicons/glyphicons.min.css" rel="stylesheet" type="text/css"> -->
 
     <!-- build:css css/style.css -->
+    <link href="../../src/css/glyphicons.min.css" rel="stylesheet" type="text/css">
     <link href="../../components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="../../components/rv-common-style/dist/css/rise.min.css" rel="stylesheet" type="text/css" />
     <link href="../../components/JSONedit/css/styles.css" rel="stylesheet" type="text/css" />
@@ -73,7 +73,7 @@
     <script type="text/javascript" src="../../components/jQuery/dist/jquery.js"></script>
     <script type="text/javascript" src="../../components/angular/angular.js"></script>
     <script type="text/javascript" src="../../components/angular-route/angular-route.js"></script>
-
+    <script type="text/javascript" src="../../components/angular-animate/angular-animate.js"></script>
     <script type="text/javascript" src="../../components/bootstrap/dist/js/bootstrap.js"></script>
     <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap.js"></script>
     <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
@@ -150,7 +150,7 @@
         }];
       })
 
-      .controller("FakeGoogleController", function ($scope, $rootScope, apiAuth) {
+      .controller("FakeGoogleController", function ($scope, $rootScope) {
           $scope.db = window.gapi._fakeDb;
 
           $scope.deleteUser = function () {

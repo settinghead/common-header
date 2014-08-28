@@ -1,4 +1,4 @@
 <a href="" class="shopping-cart-button">
   <i class="glyphicons shopping_cart"></i>
-  <span id="cartBadge" class="label label-primary">{{cartCount()}}</span>
+  <span id="cartBadge" class="label label-primary">{{userState.shoppingCart.items.length | surpressZero}}</span>
 </a>

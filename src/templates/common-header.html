@@ -1,6 +1,6 @@
 <!-- Common Header Navbar -->
 <nav class="navbar navbar-default navbar-static-top"
-	ng-class="{'double-margin': subCompanySelected}" role="navigation">
+	ng-class="{'double-margin': userState.subCompanySelected}" role="navigation">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" ng-click="navCollapsed = !navCollapsed">
@@ -62,7 +62,7 @@
 			<!-- Shopping Cart -->
 			<li class="shopping-cart"
 			  ng-controller="ShoppingCartButtonCtrl"
-				ng-show="userState.selectedCompanyId"
+				ng-show="userState.shoppingCart.items !== null"
 				ng-include="'shoppingcart-button.html'">
 			</li>
 			<!-- Current App -->
@@ -125,17 +125,22 @@
 			<!-- END Current App -->
 			<!-- Company Dropdown -->
 			<li class="dropdown" ng-show="userState.authStatus > 0"
-				ng-controller="CompanyButtonsCtrl" ng-include="'company-buttons.html'"></li>
-			<li ng-controller="AuthButtonsCtr"
-			ng-include="'auth-buttons.html'"
-			rv-spinner="spinnerOptions"
-			rv-spinner-key="auth-buttons"
-			rv-spinner-start-active="1"
-			>
+				ng-controller="CompanyButtonsCtrl"
+				ng-include="'company-buttons.html'"
+			></li>
+
+			<li
+			  ng-controller="AuthButtonsCtr"
+				ng-include="'auth-buttons.html'"
+				rv-spinner="spinnerOptions"
+				rv-spinner-key="auth-buttons"
+				rv-spinner-start-active="1"
+			></li>
 		</ul>
 
 	</div>
-	<div ng-if="subCompanySelected" class="sub-company-alert">
+	<div ng-if="userState.subCompanySelected"
+	  class="sub-company-alert">
 		You’re in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}
 	</div>
 </nav>

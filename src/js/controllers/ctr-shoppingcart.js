@@ -1,17 +1,30 @@
 angular.module("risevision.common.header")
-.controller("ShoppingCartButtonCtrl", [
-  "$scope", "shoppingCart", "userState",
-  function($scope, shoppingCart, userState) {
-    userState.shoppingCart = {};
-    var items = userState.shoppingCart.items = shoppingCart.getItems();
 
-    $scope.cartCount = function () {
-      if(items && items.length > 0) {
-        return items.length;
+.filter("surpressZero", function () {
+  return function (num) {
+    if(num) {
+      return num;
+    }
+    else {
+      return;
+    }
+  };
+})
+
+.controller("ShoppingCartButtonCtrl", [
+  "$scope", "shoppingCart", "userState", "$log",
+  function($scope, shoppingCart, userState, $log) {
+    userState.shoppingCart = {};
+
+    $scope.$watch("userState.user.profile.username", function (newVal) {
+      if(newVal) {
+        userState.shoppingCart.items = shoppingCart.initialize();
+        $log.debug("Shopping cart populated.");
       }
-      else{
-        return;
+      else {
+        //clear cart on scope
+        userState.shoppingCart.items = null;
       }
-    };
+    });
   }
 ]);

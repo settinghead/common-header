@@ -1,16 +1,16 @@
 (function (angular) {
   "use strict";
 
-  angular.module("risevision.common.shoppingcart",
-  ["risevision.common.cache"])
+  angular.module("risevision.common.cache")
 
-  .factory("shoppingCart", ["rvStorage", "$log", function (rvStorage, $log){
-
-    var items = [];
+  .factory("shoppingCart", ["rvStorage", "$log",
+    function (rvStorage, $log){
+    var items = null;
     var itemsMap = {};
 
     var readFromStorage = function() {
       var storedCartContents = rvStorage.getItem("rvStore_OrderProducts");
+      $log.debug("storedCartContents", storedCartContents);
       if (storedCartContents) {
         var res = JSON.parse(storedCartContents);
         if (res && res.items && res.itemsMap) {
@@ -22,8 +22,6 @@
       }
     };
 
-    readFromStorage();
-
     var persistToStorage = function() {
       rvStorage.setItem("rvStore_OrderProducts",
         JSON.stringify({items: items, itemsMap: itemsMap}));
@@ -32,27 +30,25 @@
 
     return {
       getSubTotal: function (isCAD) {
-          var items = this.getItems();
-          var shipping = 0;
-          var subTotal = 0;
-          for (var i = 0; i < items.length; i++) {
-              var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-              var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
-              if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
-                shipping += shippingCost * items[i].quantity || 0;
-                subTotal += productCost * items[i].quantity || 0;
-              }
+        var shipping = 0;
+        var subTotal = 0;
+        for (var i = 0; i < items.length; i++) {
+          var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+          var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
+          if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
+            shipping += shippingCost * items[i].quantity || 0;
+            subTotal += productCost * items[i].quantity || 0;
           }
-          return subTotal + shipping;
+        }
+        return subTotal + shipping;
       },
       getShippingTotal: function (isCAD) {
-          var items = this.getItems();
-          var shipping = 0;
-          for (var i = 0; i < items.length; i++) {
-              var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-              shipping += shippingCost * items[i].quantity || 0;
-          }
-          return shipping;
+        var shipping = 0;
+        for (var i = 0; i < items.length; i++) {
+          var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+          shipping += shippingCost * items[i].quantity || 0;
+        }
+        return shipping;
       },
       clear: function () {
         items.length = 0;
@@ -60,8 +56,15 @@
           delete itemsMap[key];
         }
         persistToStorage();
+        $log.debug("Shopping cart cleared.");
       },
-      getItems: function () {
+      destroy: function () {
+        this.clear();
+        items = null;
+      },
+      initialize: function () {
+        items = [];
+        readFromStorage();
         return items;
       },
       getItemCount: function () {
@@ -93,7 +96,7 @@
         }
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
-        if (itemToAdd && angular.isNumber(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
+        if (items && itemToAdd && angular.isNumber(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
           if (itemsMap[itemToAdd.id]) {
             // qty for existing item is increased
             itemsMap[itemToAdd.id].quantity += qty;

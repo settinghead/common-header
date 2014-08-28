@@ -15,26 +15,27 @@
 
   browser.driver.manage().window().setSize(1024, 768);
 
-  xdescribe("Shopping Cart", function() {
+  xdescribe("Companies", function() {
   var ptor;
 
       before(function() {
         ptor = protractor.getInstance();
         ptor.manage().deleteAllCookies();
         browser.get("/test/e2e/index.html#/fake-store");
+
         //clear local storage
         browser.executeScript("localStorage.clear();");
+
         ptor.driver.navigate().refresh();
       });
 
-      it("should not function when user is not signed in", function() {
-        assert.eventually.isTrue(element(by.css("a.sign-in")).isDisplayed(), "Sign in button should show");
-
+      it("icon should not show when the user is not signed in", function() {
         assert.eventually.isTrue(element(by.id("buy-product-1")).isDisplayed(), "Product 1 button should show");
         assert.eventually.isTrue(element(by.id("buy-product-2")).isDisplayed(), "Product 2 button should show");
         assert.eventually.isTrue(element(by.id("buy-product-3")).isDisplayed(), "Product 3 button should show");
-
         assert.eventually.isFalse(element(by.css(".shopping-cart-button")).isDisplayed(), "Cart button should not show");
+
+        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
         element(by.id("buy-product-2")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Should not add to cart");
 
@@ -48,15 +49,14 @@
         assert.eventually.isTrue(element(by.id("buy-product-1")).isDisplayed(), "Product 1 button should show");
         assert.eventually.isTrue(element(by.id("buy-product-2")).isDisplayed(), "Product 2 button should show");
         assert.eventually.isTrue(element(by.id("buy-product-3")).isDisplayed(), "Product 3 button should show");
-
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
         element(by.id("buy-product-2")).click();
-
         browser.takeScreenshot().then(function(png) {
         var stream = fs.createWriteStream("/tmp/screenshot.png");
           stream.write(new Buffer(png, "base64"));
           stream.end();
         });
+
         //add to cart
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "1", "Cart badge should display 1");
         element(by.id("buy-product-3")).click();
@@ -67,35 +67,9 @@
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "3", "Cart badge should display 3");
       });
 
-      it("should persist cart on refresh", function() {
-        ptor.driver.navigate().refresh();
-        assert.eventually.isTrue(element(by.css(".shopping-cart-button")).isDisplayed(), "Cart button should show");
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "3", "Cart badge should display 3");
-      });
-
       it("should clear cart", function() {
         element(by.id("clear-cart")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart should be cleared out");
-      });
-
-      it("should clear cart when logging out", function() {
-        ptor.driver.navigate().refresh();
-
-        element(by.id("buy-product-2")).click();
-        element(by.id("buy-product-3")).click();
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "2", "Cart badge should display 2");
-
-        element(by.css("img.profile-pic")).click();
-        //shows sign-out menu item
-        expect(element(by.css(".sign-out-button")).isDisplayed()).to.eventually.equal(true);
-        //click sign out
-        element(by.css(".sign-out-button")).click();
-        assert.eventually.isTrue(element(by.css("a.sign-in")).isDisplayed(), "Sign in button should show");
-
-        //log in
-        element(by.css("a.sign-in")).click();
-        element(by.css(".authorize-button")).click();
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
       });
 
   });
