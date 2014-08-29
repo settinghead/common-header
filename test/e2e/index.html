@@ -43,6 +43,11 @@
 
             <div><json child="db.currentUser.item" default-collapsed="false" type="'object'">
             </json></div>
+            <h3 class="inline">System Messages</h3>
+            <button class="btn" ng-click="resetSystemMessages()">Reset</button>
+
+            <div><json child="db.systemMessages.items" default-collapsed="false" type="'object'">
+            </json></div>
           </div>
           <div class="col-md-5 jsonView" defocus>
             <h3 class="inline">All Companies in Fake Google DB</h3>
@@ -73,6 +78,7 @@
     <script type="text/javascript" src="../../components/jQuery/dist/jquery.js"></script>
     <script type="text/javascript" src="../../components/angular/angular.js"></script>
     <script type="text/javascript" src="../../components/angular-route/angular-route.js"></script>
+    <script type="text/javascript" src="../../components/angular-sanitize/angular-sanitize.js"></script>
     <script type="text/javascript" src="../../components/angular-animate/angular-animate.js"></script>
     <script type="text/javascript" src="../../components/bootstrap/dist/js/bootstrap.js"></script>
     <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap.js"></script>
@@ -164,6 +170,9 @@
           }
           $scope.resetCompanies = function () {
             window.gapi.resetCompanies();
+          }
+          $scope.resetSystemMessages = function () {
+            window.gapi.resetSystemMessages();
           }
           $scope.clearCompanies = function () {
             window.gapi.clearCompanies();

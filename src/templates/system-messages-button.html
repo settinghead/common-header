@@ -1,0 +1,14 @@
+<a href="" class="dropdown-toggle system-messages-button">
+  <i class="glyphicons bell"></i>
+  <span class="label label-danger system-messages-badge">{{messages.length}}</span>
+</a>
+<ul class="dropdown-menu system-messages">
+  <li class="dropdown-header dropdown-title">
+    System Message
+  </li>
+  <li class="divider"></li>
+  <li class="system-message"
+    ng-repeat="message in messages"
+    ng-bind-html="renderHtml(message.text)">
+  </li>
+</ul>

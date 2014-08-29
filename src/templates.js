@@ -125,20 +125,10 @@ app.run(["$templateCache", function($templateCache) {
     "		<!-- If User Authenticated -->\n" +
     "		<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
     "			<!-- Notifications -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
-    "				<a href=\"\" class=\"dropdown-toggle\">\n" +
-    "					<i class=\"glyphicons bell\"></i>\n" +
-    "					<span class=\"label label-danger\">{{messages.length}}</span>\n" +
-    "				</a>\n" +
-    "				<ul class=\"dropdown-menu system-messages\">\n" +
-    "					<li class=\"dropdown-header dropdown-title\">\n" +
-    "						System Message\n" +
-    "					</li>\n" +
-    "					<li class=\"divider\"></li>\n" +
-    "					<li class=\"system-message\" ng-repeat=\"message in messages\">\n" +
-    "					{{message}}\n" +
-    "					</li>\n" +
-    "				</ul>\n" +
+    "			<li class=\"dropdown\" class=\"system-messages\"\n" +
+    "			  ng-show=\"userState.authStatus > 0\"\n" +
+    "				ng-controller=\"SystemMessagesButtonCtrl\"\n" +
+    "				ng-include=\"'system-messages-button.html'\">\n" +
     "			</li>\n" +
     "			<!-- Shopping Cart -->\n" +
     "			<li class=\"shopping-cart\"\n" +
@@ -984,6 +974,30 @@ app.run(["$templateCache", function($templateCache) {
     "    <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("system-messages-button.html",
+    "<a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
+    "  <i class=\"glyphicons bell\"></i>\n" +
+    "  <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
+    "</a>\n" +
+    "<ul class=\"dropdown-menu system-messages\">\n" +
+    "  <li class=\"dropdown-header dropdown-title\">\n" +
+    "    System Message\n" +
+    "  </li>\n" +
+    "  <li class=\"divider\"></li>\n" +
+    "  <li class=\"system-message\"\n" +
+    "    ng-repeat=\"message in messages\"\n" +
+    "    ng-bind-html=\"renderHtml(message.text)\">\n" +
+    "  </li>\n" +
+    "</ul>\n" +
     "");
 }]);
 })();

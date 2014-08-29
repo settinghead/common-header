@@ -13,7 +13,7 @@
 
   var fs = require("fs");
 
-  browser.driver.manage().window().setSize(1024, 768);
+  browser.driver.manage().window().setSize(1124, 850);
 
   describe("Shopping Cart", function() {
   var ptor;
@@ -50,10 +50,8 @@
         assert.eventually.isTrue(element(by.id("buy-product-3")).isDisplayed(), "Product 3 button should show");
 
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
-        element(by.id("buy-product-2")).click();
 
-
-        browser.refresh();
+        // ptor.driver.navigate().refresh();
 
         browser.takeScreenshot().then(function(png) {
         var stream = fs.createWriteStream("/tmp/screenshot.png");
@@ -62,6 +60,7 @@
         });
 
         //add to cart
+        element(by.id("buy-product-2")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "1", "Cart badge should display 1");
         element(by.id("buy-product-3")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "2", "Cart badge should display 2");
@@ -84,8 +83,6 @@
       });
 
       it("should clear cart when logging out", function() {
-        ptor.driver.navigate().refresh();
-
         element(by.id("buy-product-2")).click();
         element(by.id("buy-product-3")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "2", "Cart badge should display 2");

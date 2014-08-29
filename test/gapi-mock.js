@@ -38,6 +38,7 @@
     }
     window.gapi._fakeDb.companies = _.cloneDeep(companies);
     window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
+    window.gapi._fakeDb.systemMessages = _.cloneDeep(systemMessages);
   };
 
   window.gapi.resetUser = function () {
@@ -52,6 +53,10 @@
     while(window.gapi._fakeDb.companies.length > 0) {
       window.gapi._fakeDb.companies.pop();
     }
+  };
+
+  window.gapi.resetSystemMessages = function () {
+    window.gapi._fakeDb.systemMessages = _.cloneDeep(systemMessages);
   };
 
   window.gapi.companyRespSkeleton = {
@@ -189,6 +194,29 @@
     },
     "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
   };
+
+  var systemMessages = {
+   "items": [
+      {
+       "text": "We have updated our <a href=\"http://www.risevision." +
+         "com/terms-service-privacy/\" target=_blank>Service Agreement" +
+         "</a> with you. Please <a href=\"http://www.risevision.com/" +
+         "terms-service-privacy/\" target=_blank>CLICK HERE</a> here to" +
+         " review. Thank You.",
+       "startDate": "2001-01-01T00:00:00.000Z",
+       "endDate": "2014-05-13T00:00:00.000Z",
+       "kind": "core#systemmessageItem"
+     },
+     {
+      "text": "Everything 10% Off in the next 10 seconds",
+      "startDate": "2001-01-01T00:00:00.000Z",
+      "endDate": "2014-09-13T00:00:00.000Z",
+      "kind": "core#systemmessageItem"
+     }
+   ],
+   "kind": "core#systemmessage",
+   "etag": "\"DxU-6pohsdi2UIVUQMfQkq7ADWs/7wbH6LlcDW2l8ZyL1nAod1Q9wFE\""
+ };
 
   var companies = [{
     "id": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
@@ -1007,6 +1035,18 @@
       delayed(cb);
     },
     core: {
+      systemmessages: {
+        list: function (obj) {
+          obj = obj || {};
+          return {
+            execute : function (cb) {
+              if(obj.companyId) {
+                delayed(cb, _.cloneDeep(window.gapi._fakeDb.systemMessages));
+              }
+            }
+          };
+        }
+      },
       company: {
         get: function (obj) {
           return {
@@ -1099,31 +1139,6 @@
              "items": window.gapi._fakeDb.companies,
              "kind": "core#company",
              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/aU3KWpXBGvssoqWVjsHR5ngSZlU\""
-            });
-          }
-        };
-      }
-    },
-    systemmessages: {
-      list: function () {
-        return {
-          execute: function (cb) {
-            return delayed(cb, {
-              "result": true,
-              "code": 200,
-              "message": "OK",
-              "items": [
-              {
-                "text": "We have updated our" +
-                " <a href=\"http://www.risevision.com/terms-service-privacy/\" "+
-                "target=_blank>Service Agreement</a> with you. Please <a href=\"http://www.risevision.com/terms-service-privacy/\" target=_blank>CLICK HERE</a> here to review. Thank You.",
-                "startDate": "2001-01-01T00:00:00.000Z",
-                "endDate": "2014-05-13T00:00:00.000Z",
-                "kind": "core#systemmessageItem"
-              }
-              ],
-              "kind": "core#systemmessage",
-              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/sB61Vl9SAWfWM8ATswBPMiM8HG8\""
             });
           }
         };

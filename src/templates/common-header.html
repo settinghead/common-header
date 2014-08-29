@@ -44,20 +44,10 @@
 		<!-- If User Authenticated -->
 		<ul class="nav navbar-nav navbar-right actions-nav">
 			<!-- Notifications -->
-			<li class="dropdown" ng-show="userState.authStatus > 0">
-				<a href="" class="dropdown-toggle">
-					<i class="glyphicons bell"></i>
-					<span class="label label-danger">{{messages.length}}</span>
-				</a>
-				<ul class="dropdown-menu system-messages">
-					<li class="dropdown-header dropdown-title">
-						System Message
-					</li>
-					<li class="divider"></li>
-					<li class="system-message" ng-repeat="message in messages">
-					{{message}}
-					</li>
-				</ul>
+			<li class="dropdown" class="system-messages"
+			  ng-show="userState.authStatus > 0"
+				ng-controller="SystemMessagesButtonCtrl"
+				ng-include="'system-messages-button.html'">
 			</li>
 			<!-- Shopping Cart -->
 			<li class="shopping-cart"
