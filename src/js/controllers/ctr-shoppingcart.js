@@ -6,7 +6,7 @@ angular.module("risevision.common.header")
       return num;
     }
     else {
-      return;
+      return "";
     }
   };
 })
