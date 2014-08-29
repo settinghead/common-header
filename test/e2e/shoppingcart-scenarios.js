@@ -15,7 +15,7 @@
 
   browser.driver.manage().window().setSize(1024, 768);
 
-  xdescribe("Shopping Cart", function() {
+  describe("Shopping Cart", function() {
   var ptor;
 
       before(function() {
@@ -52,11 +52,15 @@
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
         element(by.id("buy-product-2")).click();
 
+
+        browser.refresh();
+
         browser.takeScreenshot().then(function(png) {
         var stream = fs.createWriteStream("/tmp/screenshot.png");
           stream.write(new Buffer(png, "base64"));
           stream.end();
         });
+
         //add to cart
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "1", "Cart badge should display 1");
         element(by.id("buy-product-3")).click();
@@ -65,6 +69,7 @@
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "3", "Cart badge should display 3");
         element(by.id("buy-product-3")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "3", "Cart badge should display 3");
+
       });
 
       it("should persist cart on refresh", function() {
