@@ -20,9 +20,10 @@
   ],
   "dependencies": {
     "ngstorage": "0.3.0",
-    "angular": "1.2.22",
-    "angular-route": "1.2.22",
-    "angular-mocks": "1.2.22",
+    "angular": "1.2.23",
+    "angular-route": "1.2.23",
+    "angular-mocks": "1.2.23",
+    "angular-animate": "1.2.23",
     "angular-bootstrap": "~0.11.0",
     "angular-spinner": "~0.4.0",
     "bootstrap": "~3.2.0",

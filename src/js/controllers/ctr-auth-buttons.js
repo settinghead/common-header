@@ -1,8 +1,9 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "apiAuth", "userState", "$rootScope", "$loading",
-  function($scope, $modal, $templateCache, apiAuth, userState, $rootScope,
-  $loading) {
+  "userState", "$rootScope", "$loading", "authenticate",
+  "signOut", "$log",
+  function($scope, $modal, $templateCache, userState, $rootScope,
+  $loading, authenticate, signOut, $log) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
@@ -17,16 +18,18 @@ angular.module("risevision.common.header")
     };
 
     $scope.authenticate = function() {
-      apiAuth.$authenticate(true).finally(function(){
+      authenticate(true).finally(function(){
         userState.status = "pendingCheck";
         $loading.start("auth-buttons");
       });
     };
 
     $scope.logout = function () {
-      apiAuth.$signOut().finally(function (){
+      signOut().then(function (){
         userState.status = "pendingCheck";
         $loading.start("auth-buttons");
+      }, function (err) {
+        $log.error("sign out failed", err);
       });
     };
 
@@ -48,6 +51,8 @@ angular.module("risevision.common.header")
         size: size
       });
     };
+
+    authenticate(false);
 
     $scope.$watch("userState.status", function (newStatus){
       if (newStatus === "pendingCheck") {

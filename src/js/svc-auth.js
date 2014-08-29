@@ -1,4 +1,4 @@
-(function(angular) {
+(function (angular) {
   "use strict";
 
   angular.module("risevision.common.auth",
@@ -10,123 +10,109 @@
     // Some constants
     .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
+    .value("AUTH_STAUS_LOADING", -1)
+    .value("AUTH_STATUS_NOT_AUTHENTICATED", 0)
 
+    .service("accessTokenKeeper", ["$log", "getBaseDomain", "cookieStore",
+      "gapiLoader",
+      function ($log, getBaseDomain, cookieStore, gapiLoader) {
+
+      //load token from cookie
+
+      var accessToken = cookieStore.get("rv-token");
+      if(accessToken) {
+        accessToken = JSON.parse(accessToken);
+      }
+
+      $log.debug("Access token", accessToken);
+
+      this.get = function () {
+        return accessToken;
+      };
+
+      this.set = function (obj) {
+        if(typeof obj === "object") {
+          cookieStore.put(
+            "rv-token", JSON.stringify(obj),
+            {domain: "." + getBaseDomain()}
+            );
+          cookieStore.put(
+            "rv-token", JSON.stringify(obj));
+        }
+        return gapiLoader().then(function (gApi) {
+          gApi.auth.setToken(obj);
+        });
+      };
+
+      this.clear = function () {
+        $log.debug("Clearing access token...");
+        accessToken = null;
+        cookieStore.remove("rv-token",
+          {domain: "." + getBaseDomain()});
+        cookieStore.remove("rv-token");
+        return gapiLoader().then(function (gApi) {
+          gApi.auth.setToken();
+        });
+      };
+    }])
 
     .factory("getBaseDomain", ["$log", "$location", function ($log, $location) {
+
+      var result;
+
       return function getBaseDomain() {
-        var result;
-        var hostname = $location.host();
-        var port = $location.port() ? ":" + $location.port() : "";
-        var parts = hostname.split(".");
-        if(parts.length > 1) {
-          //localhost
-          result = parts.slice(parts.length -2).join(".") + port;
+        if(!result) {
+          var hostname = $location.host();
+          var port = $location.port() ? ":" + $location.port() : "";
+          var parts = hostname.split(".");
+          if(parts.length > 1) {
+            //localhost
+            result = parts.slice(parts.length -2).join(".") + port;
+          }
+          else {
+            result = hostname + port;
+          }
+          $log.debug("baseDomain", result);
         }
-        else {
-          result = hostname + port;
-        }
-        $log.debug("baseDomain", result);
         return result;
       };
     }])
 
-    .factory("apiAuth", ["$interval", "$rootScope", "$q", "$http",
-      "gapiLoader", "coreAPILoader", "oauthAPILoader", "CLIENT_ID",
-      "SCOPES", "DEFAULT_PROFILE_PICTURE", "$log", "localStorageService",
-      "$location", "cookieStore", "userState", "userInfoCache", "getBaseDomain",
-      function($interval, $rootScope, $q, $http, gapiLoader, coreAPILoader,
-        oauthAPILoader, CLIENT_ID, SCOPES, DEFAULT_PROFILE_PICTURE, $log,
-        localStorageService, $location, cookieStore, userState, userInfoCache,
-        getBaseDomain) {
+    /**
+    * A Convenience method for the app to
+    * get the userState object.
+    *
+    */
+    .factory("resetUserState", ["$log", "userState", "AUTH_STAUS_LOADING",
+     function ($log, userState, AUTH_STAUS_LOADING){
+      return function() {
+        angular.extend(userState, {
+          user: {
+            company: null
+          },
+          selectedCompanyId: null,
+          selectedCompany: null,
+          isRiseAdmin: false,
+          isRiseUser: false,
+          isAuthed: false,
+          authStatus: AUTH_STAUS_LOADING,
+        });
+        $log.debug("User state has been reset.");
+      };
+    }])
 
-        var that = this;
-        var factory = {};
-
-        var AUTH_STATUS_NOT_AUTHENTICATED = 0;
-        var AUTH_STAUS_LOADING = -1;
-
-        this.resetUserState = function() {
-          angular.extend(userState, {
-            user: {
-              company: null
-            },
-            selectedCompanyId: null,
-            selectedCompany: null,
-            isRiseAdmin: false,
-            isRiseUser: false,
-            isAuthed: false,
-            authStatus: AUTH_STAUS_LOADING,
-          });
-          $log.debug("User state has been reset.");
-        };
-
-        var accessToken = cookieStore.get("rv-token");
-
-        if(accessToken) {
-          accessToken = JSON.parse(accessToken);
-        }
-
-        $log.debug("Access token", accessToken);
-
-        /**
-        * The entry point for an app.
-        * This may or may not result in a valid authentication.
-        *
-        * If forceAuth is true, then this is a login request.
-        * If not, then it's the app init auth check which will
-        * setup an already existinguser "session".
-        */
-        factory.$authenticate = function(forceAuth) {
-          $log.debug("$authentication called");
-          var authenticateDeferred = $q.defer();
-          that.resetUserState();
-          userInfoCache.removeAll();
-
-          /**
-          * This event is designed to be clearer about the auth flow.
-          * It returns a promise that will resolve upon successful authentication,
-          * or otherwise be 'reject'ed.
-          *
-          * This allows a UI to respond to the attempt (by locking the UI for example),
-          * and also allow better handling of the failure case.
-          *
-          */
-          $rootScope.$broadcast("rvAuth.$authenticate", {
-            isImmediate: !forceAuth,
-            promise: authenticateDeferred.promise,
-            userState: userState
-          });
-
-          // This flag indicates a potentially authenticated user.
-          var userAuthed = (angular.isDefined(accessToken) && accessToken !== null);
-          $log.debug("userAuthed", userAuthed);
-
-          if (forceAuth || userAuthed === true) {
-            that.authorize(userAuthed === true && !forceAuth)
-            .then(function(authResult) {
-              if (authResult && ! authResult.error) {
-                authenticateDeferred.resolve();
-              }
-              else {
-                authenticateDeferred.reject("Authentication Error: " + authResult.error);
-              }
-            });
-          }
-          else {
-            var msg = "user is not authenticated";
-            $log.info(msg);
-            userState.authStatus = AUTH_STATUS_NOT_AUTHENTICATED;
-            authenticateDeferred.reject(msg);
-          }
-
-          return authenticateDeferred.promise;
-        };
-
+    .factory("authenticate", ["$log", "$q", "resetUserState",
+      "userInfoCache", "userState", "CLIENT_ID", "SCOPES", "$location",
+      "getBaseDomain", "oauthAPILoader", "AUTH_STATUS_NOT_AUTHENTICATED",
+      "AUTH_STAUS_LOADING", "accessTokenKeeper",
+      function ($log, $q, resetUserState, userInfoCache, userState, CLIENT_ID,
+      SCOPES, $location, getBaseDomain, oauthAPILoader, AUTH_STATUS_NOT_AUTHENTICATED,
+      AUTH_STAUS_LOADING, accessTokenKeeper) {
         /*
         * Responsible for triggering the Google OAuth process.
         *
         */
-        this.authorize = function(attemptImmediate) {
+        var authorize = function(attemptImmediate) {
           var authorizeDeferred = $q.defer();
 
           var opts = {
@@ -147,15 +133,7 @@
             gApi.auth.authorize(opts, function (authResult) {
               $log.debug("authResult", authResult);
               if (authResult && !authResult.error) {
-                accessToken = authResult;
-                if(typeof accessToken === "object") {
-                  cookieStore.put(
-                    "rv-token", JSON.stringify(accessToken),
-                    {domain: "." + getBaseDomain()}
-                    );
-                  cookieStore.put(
-                    "rv-token", JSON.stringify(accessToken));
-                }
+                accessTokenKeeper.set(authResult);
                 authorizeDeferred.resolve(authResult);
               }
               else {
@@ -166,57 +144,60 @@
           return authorizeDeferred.promise;
         };
 
-        /**
-        * A Convenience method for the app to
-        * get the userState object.
-        *
-        */
-        factory.getUserState = function() {
-          return userState;
-        };
+      return function(forceAuth) {
+        $log.debug("authentication called");
+        userState.authStatus = AUTH_STAUS_LOADING;
 
-        /**
-        * This would be called from the common header (sign out button),
-        * or elsewhere in the app (ad-hoc signout). It's responsible
-        * for immediately flushing all state and broadcasting
-        * an event that the header or app uses to update itself.
-        */
-        factory.$signOut = function() {
-          var deferred = $q.defer();
-          gapiLoader().then(function (gApi) {
-            // The flag the indicates a user is potentially
-            // authenticated already, must be destroyed.
-            cookieStore.remove("rv-token",
-              {domain: "." + getBaseDomain()});
-            cookieStore.remove("rv-token");
-            userInfoCache.removeAll();
-            //clear auth token
-            gApi.auth.setToken();
-            accessToken = undefined;
-            // The majority of state is in here
-            that.resetUserState();
-            deferred.resolve();
-            $rootScope.$broadcast("rvAuth.$signOut");
-          }, deferred.reject);
-          return deferred.promise;
-        };
+        var authenticateDeferred = $q.defer();
+        resetUserState();
+        userInfoCache.removeAll();
 
-        factory.getAccessToken = function () {
-          return accessToken;
-        };
+        // This flag indicates a potentially authenticated user.
+        var accessToken = accessTokenKeeper.get();
+        var userAuthed = (angular.isDefined(accessToken) && accessToken !== null);
+        $log.debug("userAuthed", userAuthed);
 
-        if(accessToken) {
-          gapiLoader().then(function (gApi) {
-            gApi.auth.setToken(accessToken, null);
-            // factory.$authenticate(false);
-            userState.authStatus = AUTH_STAUS_LOADING;
+        if (forceAuth || userAuthed === true) {
+          authorize(userAuthed === true && !forceAuth)
+          .then(function(authResult) {
+            if (authResult && ! authResult.error) {
+              authenticateDeferred.resolve();
+            }
+            else {
+              authenticateDeferred.reject("Authentication Error: " + authResult.error);
+            }
           });
         }
+        else {
+          var msg = "user is not authenticated";
+          $log.info(msg);
+          userState.authStatus = AUTH_STATUS_NOT_AUTHENTICATED;
+          authenticateDeferred.reject(msg);
+        }
 
-        that.resetUserState();
+        return authenticateDeferred.promise;
+      };
+    }])
 
-        return factory;
-
-      }]);
+    .factory("signOut", ["$q", "$log", "gapiLoader", "cookieStore", "getBaseDomain",
+    "userInfoCache", "accessTokenKeeper", "resetUserState", "shoppingCart",
+     function ($q, $log, gapiLoader, cookieStore, getBaseDomain, userInfoCache,
+       accessTokenKeeper, resetUserState, shoppingCart) {
+      return function() {
+        var deferred = $q.defer();
+        userInfoCache.removeAll();
+        // The flag the indicates a user is potentially
+        // authenticated already, must be destroyed.
+        accessTokenKeeper.clear().then(function () {
+          //clear auth token
+          // The majority of state is in here
+          resetUserState();
+          shoppingCart.destroy();
+          deferred.resolve();
+          $log.debug("User is signed out.");
+        }, deferred.reject);
+        return deferred.promise;
+      };
+    }]);
 
 })(angular);

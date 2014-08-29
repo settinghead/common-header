@@ -5,18 +5,20 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons.html",
     "<!-- If User NOT Authenticated -->\n" +
-    "<ul class=\"nav navbar-nav navbar-right actions-nav\" style=\"min-width: 80px; min-height: 41px;\">\n" +
+    "<ul class=\"nav navbar-nav navbar-right actions-nav\"\n" +
+    "  style=\"min-width: 80px; min-height: 41px;\">\n" +
     "\n" +
     "  <li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
-    "      <img ng-src=\"{{userState.user.profile.picture}}\" class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "      <img ng-src=\"{{userState.user.profile.picture}}\"\n" +
+    "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "    <ul class=\"dropdown-menu\">\n" +
     "      <li class=\"dropdown-header dropdown-title\">\n" +
-    "        {{userProfileName}}\n" +
+    "        {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}\n" +
     "      </li>\n" +
     "      <li class=\"dropdown-header\">\n" +
-    "        {{userProfileEmail}}\n" +
+    "        {{userState.user.profile.email}}\n" +
     "      </li>\n" +
     "      <li class=\"divider\"></li>\n" +
     "      <li>\n" +
@@ -79,7 +81,7 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("common-header.html",
     "<!-- Common Header Navbar -->\n" +
     "<nav class=\"navbar navbar-default navbar-static-top\"\n" +
-    "	ng-class=\"{'double-margin': subCompanySelected}\" role=\"navigation\">\n" +
+    "	ng-class=\"{'double-margin': userState.subCompanySelected}\" role=\"navigation\">\n" +
     "	<div class=\"container\">\n" +
     "		<div class=\"navbar-header\">\n" +
     "			<button type=\"button\" class=\"navbar-toggle\" ng-click=\"navCollapsed = !navCollapsed\">\n" +
@@ -141,7 +143,7 @@ app.run(["$templateCache", function($templateCache) {
     "			<!-- Shopping Cart -->\n" +
     "			<li class=\"shopping-cart\"\n" +
     "			  ng-controller=\"ShoppingCartButtonCtrl\"\n" +
-    "				ng-show=\"userState.selectedCompanyId\"\n" +
+    "				ng-show=\"userState.shoppingCart.items !== null\"\n" +
     "				ng-include=\"'shoppingcart-button.html'\">\n" +
     "			</li>\n" +
     "			<!-- Current App -->\n" +
@@ -204,17 +206,22 @@ app.run(["$templateCache", function($templateCache) {
     "			<!-- END Current App -->\n" +
     "			<!-- Company Dropdown -->\n" +
     "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\"\n" +
-    "				ng-controller=\"CompanyButtonsCtrl\" ng-include=\"'company-buttons.html'\"></li>\n" +
-    "			<li ng-controller=\"AuthButtonsCtr\"\n" +
-    "			ng-include=\"'auth-buttons.html'\"\n" +
-    "			rv-spinner=\"spinnerOptions\"\n" +
-    "			rv-spinner-key=\"auth-buttons\"\n" +
-    "			rv-spinner-start-active=\"1\"\n" +
-    "			>\n" +
+    "				ng-controller=\"CompanyButtonsCtrl\"\n" +
+    "				ng-include=\"'company-buttons.html'\"\n" +
+    "			></li>\n" +
+    "\n" +
+    "			<li\n" +
+    "			  ng-controller=\"AuthButtonsCtr\"\n" +
+    "				ng-include=\"'auth-buttons.html'\"\n" +
+    "				rv-spinner=\"spinnerOptions\"\n" +
+    "				rv-spinner-key=\"auth-buttons\"\n" +
+    "				rv-spinner-start-active=\"1\"\n" +
+    "			></li>\n" +
     "		</ul>\n" +
     "\n" +
     "	</div>\n" +
-    "	<div ng-if=\"subCompanySelected\" class=\"sub-company-alert\">\n" +
+    "	<div ng-if=\"userState.subCompanySelected\"\n" +
+    "	  class=\"sub-company-alert\">\n" +
     "		You’re in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}\n" +
     "	</div>\n" +
     "</nav>\n" +
@@ -229,7 +236,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
-    "<a href=\"\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n" +
+    "<a href=\"\" class=\"dropdown-toggle\">\n" +
     "  <i class=\"glyphicons cogwheel\"></i>\n" +
     "</a>\n" +
     "<ul class=\"dropdown-menu\">\n" +
@@ -237,27 +244,23 @@ app.run(["$templateCache", function($templateCache) {
     "    ng-show=\"userState.user.company\">\n" +
     "    Current Company\n" +
     "  </li>\n" +
-    "  <li class=\"dropdown-header dropdown-title\"\n" +
-    "    ng-show=\"!userState.user.company\">\n" +
-    "    You have not created a company.</li>\n" +
-    "\n" +
     "  <li class=\"dropdown-header\" ng-show=\"userState.user.company\">\n" +
     "    <!-- home -->\n" +
-    "    <i ng-if=\"!subCompanySelected\" class=\"glyphicons home\"></i>\n" +
+    "    <i ng-if=\"!userState.subCompanySelected\" class=\"glyphicons home\"></i>\n" +
     "    <!-- warning -->\n" +
-    "    <i ng-if=\"subCompanySelected\" class=\"glyphicons warning_sign glyphicon-danger\"></i>\n" +
+    "    <i ng-if=\"userState.subCompanySelected\" class=\"glyphicons warning_sign glyphicon-danger\"></i>\n" +
     "    {{userState.selectedCompanyName}}\n" +
-    "    <div ng-if=\"subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
+    "    <div ng-if=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "  </li>\n" +
-    "  <li ng-if=\"subCompanySelected\" class=\"divider\"></li>\n" +
+    "  <li ng-if=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
     "  <li ng-show=\"!userState.user.company\">\n" +
-    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#sub-company-modal\"\n" +
+    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#subcompany-modal\"\n" +
     "      ng-click=\"companySettings()\">\n" +
     "      <i class=\"glyphicons plus\"></i>\n" +
     "      <span class=\"item-name\">Create a Company</span>\n" +
     "    </a>\n" +
     "  </li>\n" +
-    "  <li ng-if=\"subCompanySelected\">\n" +
+    "  <li ng-if=\"userState.subCompanySelected\">\n" +
     "    <a href=\"\" ng-click=\"resetCompany()\">\n" +
     "      <i class=\"glyphicons home\"></i>\n" +
     "      <span class=\"item-name\">Switch To My Company</span>\n" +
@@ -272,7 +275,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </li>\n" +
     "  <li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
     "  <li ng-if=\"isAdmin\">\n" +
-    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#sub-company-modal\" ng-click=\"addSubCompany()\">\n" +
+    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#subcompany-modal\" ng-click=\"addSubCompany()\">\n" +
     "      <i class=\"glyphicons plus\"></i>\n" +
     "      <span class=\"item-name\">Add Sub-Company</span>\n" +
     "    </a>\n" +
@@ -292,6 +295,53 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "  </li>\n" +
     "</ul>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("company-selector-modal.html",
+    "<form role=\"form\">\n" +
+    "	<div class=\"modal-header\">\n" +
+    "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "			<i class=\"glyphicons remove_2\"></i>\n" +
+    "		</button>\n" +
+    "		<h2 id=\"switch-company\" class=\"modal-title\">\n" +
+    "			Select Sub-Company\n" +
+    "		</h2>\n" +
+    "		<div class=\"input-group company-search\">\n" +
+    "			<input id=\"csSearch\" type=\"text\" class=\"form-control\" placeholder=\"Search Companies\" ng-model=\"searchString\" ng-enter=\"doSearch()\">\n" +
+    "			<span class=\"input-group-btn\">\n" +
+    "				<button class=\"btn btn-primary\" type=\"submit\" ng-click=\"doSearch()\">\n" +
+    "					<i class=\"glyphicon glyphicon-search\"></i>\n" +
+    "				</button>\n" +
+    "			</span>\n" +
+    "		</div>\n" +
+    "	</div>\n" +
+    "	<div class=\"modal-body jfk-scrollbar\" ng-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
+    "		<div class=\"list-group scrollable-list\">\n" +
+    "			<a href=\"#\" class=\"list-group-item\" ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
+    "				<div class=\"row\">\n" +
+    "					<div class=\"col-md-7\">\n" +
+    "						{{company.name}}\n" +
+    "					</div>\n" +
+    "					<div class=\"col-md-5 text-right\">\n" +
+    "						{{company.fullAddress}}\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "			</a>\n" +
+    "		</div>\n" +
+    "	</div>\n" +
+    "	<div class=\"modal-footer\">\n" +
+    "		<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">Cancel\n" +
+    "			<i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
+    "		</button>\n" +
+    "	</div>\n" +
+    "</form>\n" +
     "");
 }]);
 })();
@@ -845,7 +895,7 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("shoppingcart-button.html",
     "<a href=\"\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"glyphicons shopping_cart\"></i>\n" +
-    "  <span id=\"cartBadge\" class=\"label label-primary\">{{cartCount()}}</span>\n" +
+    "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
     "");
 }]);
@@ -856,7 +906,7 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("sub-company-modal.html",
+  $templateCache.put("subcompany-modal.html",
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" ng-click=\"closeModal()\" aria-hidden=\"true\">\n" +
     "    <i class=\"glyphicons remove_2\"></i>\n" +

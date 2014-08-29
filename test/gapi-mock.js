@@ -9,9 +9,14 @@
     if(arguments) {
       var cb = arguments[0];
       var restArgs = Array.prototype.slice.call(arguments, 1);
-      setTimeout(function (){
+      if(!window.gapi._fakeDb.serverDelay) {
         cb.apply(null, restArgs);
-      }, window.gapi._fakeDb.serverDelay || 0);
+      }
+      else {
+        setTimeout(function (){
+          cb.apply(null, restArgs);
+        }, window.gapi._fakeDb.serverDelay);
+      }
     }
   };
 
@@ -29,7 +34,7 @@
 
   window.gapi.resetDb = function () {
     if(!window.gapi._fakeDb) {
-      window.gapi._fakeDb = {serverDelay: 300};
+      window.gapi._fakeDb = {serverDelay: 0};
     }
     window.gapi._fakeDb.companies = _.cloneDeep(companies);
     window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
@@ -1346,7 +1351,11 @@
           }
         };
       },
-      list: function() {
+      list: function(options) {
+
+        options = options || {};
+
+
         return {
           execute: function(cb) {
             delayed(cb, {

@@ -3,52 +3,57 @@
 angular.module("risevision.common.company",
   [
     "risevision.common.config",
-    "risevision.common.gapi"
+    "risevision.common.gapi",
+    "risevision.common.cache"
   ])
 
-  .factory("getUserCompanies", [
-  "coreAPILoader", "$q", "$log", "userState",
-  function (coreAPILoader, $q, $log, userState){
-      return function () {
-          var deferred = $q.defer();
-          var AUTH_STATUS_AUTHENTICATED = 1;
-
-          coreAPILoader().then(function (client) {
-            var request = client.company.list({});
-            request.execute(function (resp) {
-              if(resp.result === true) {
-                deferred.resolve(resp);
-                //update user state if supplied
-                if (resp.items && resp.items.length > 0) {
-                  var c = resp.items[0];
-                  $log.debug("selectedCompany", c);
-                  userState.user.company = c;
-                  userState.authStatus = AUTH_STATUS_AUTHENTICATED;
-                  userState.isAuthed = true;
-                  userState.user.company = c;
-
-                  //release 1 simpification - everyone is Purchaser ("pu" role)
-                  userState.isRiseUser = true;
-                  userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
-
-                  userState.selectedCompanyName = c.name;
-                  userState.selectedCompanyId = c.id;
-                }
-              }
-              else {
-                delete userState.selectedCompanyName;
-                delete userState.selectedCompanyId;
-              }
-            });
-          });
-          return deferred.promise;
-      };
+  .factory("switchCompany", ["userState", function (userState) {
+    return function (company) {
+      userState.selectedCompanyId = company.id;
+      userState.selectedCompanyName = company.name;
+    };
   }])
 
-  .service("companyService", ["coreAPILoader", "$q", "$log",
-    function (coreAPILoader, $q, $log) {
+  .service("companyService", ["coreAPILoader", "$q", "$log", "userState",
+    function (coreAPILoader, $q, $log, userState) {
 
     var that = this;
+
+    this.getUserCompanies = function (){
+        var deferred = $q.defer();
+        var AUTH_STATUS_AUTHENTICATED = 1;
+
+        coreAPILoader().then(function (client) {
+          var request = client.company.list({});
+          request.execute(function (resp) {
+            if(resp.result === true) {
+              deferred.resolve(resp);
+              //update user state if supplied
+              if (resp.items && resp.items.length > 0) {
+                var c = resp.items[0];
+                $log.debug("selectedCompany", c);
+                userState.user.company = c;
+                userState.authStatus = AUTH_STATUS_AUTHENTICATED;
+                userState.isAuthed = true;
+                userState.user.company = c;
+
+                //release 1 simpification - everyone is Purchaser ("pu" role)
+                userState.isRiseUser = true;
+                userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
+
+                userState.selectedCompanyName = c.name;
+                userState.selectedCompanyId = c.id;
+              }
+            }
+            else {
+              delete userState.selectedCompanyName;
+              delete userState.selectedCompanyId;
+            }
+          });
+        });
+        return deferred.promise;
+    };
+
     this.getCompany = function (companyId) {
       var deferred = $q.defer();
       if(companyId) {
@@ -74,7 +79,7 @@ angular.module("risevision.common.company",
       return deferred.promise;
     };
 
-    this.getSubCompanies = function (companyId, search, cursor, count, sort) {
+    this.getCompanies = function (companyId, search, cursor, count, sort) {
       var deferred = $q.defer();
       var obj = {
         "companyId": companyId,
@@ -84,7 +89,7 @@ angular.module("risevision.common.company",
         "sort": sort
       };
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.subcompanies.get(obj);
+        var request = coreApi.company.list(obj);
         request.execute(function (resp) {
             deferred.resolve(resp);
         });

@@ -1,16 +1,18 @@
 <!-- If User NOT Authenticated -->
-<ul class="nav navbar-nav navbar-right actions-nav" style="min-width: 80px; min-height: 41px;">
+<ul class="nav navbar-nav navbar-right actions-nav"
+  style="min-width: 80px; min-height: 41px;">
 
   <li class="dropdown" ng-show="userState.authStatus > 0">
     <a href="" class="dropdown-toggle">
-      <img ng-src="{{userState.user.profile.picture}}" class="profile-pic" width="30" height="30" alt="User" />
+      <img ng-src="{{userState.user.profile.picture}}"
+        class="profile-pic" width="30" height="30" alt="User" />
     </a>
     <ul class="dropdown-menu">
       <li class="dropdown-header dropdown-title">
-        {{userProfileName}}
+        {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}
       </li>
       <li class="dropdown-header">
-        {{userProfileEmail}}
+        {{userState.user.profile.email}}
       </li>
       <li class="divider"></li>
       <li>
