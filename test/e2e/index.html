@@ -32,12 +32,20 @@
 
       This app was built for the sole purpose of testing & demoing common header.
       Set server latency to <input type="number" ng-model="db.serverDelay" id="server-delay" /> ms.
-      <button class="btn" ng-click="resetDb()">Reset DB</button>
+      <button class="btn" ng-click="resetDb()" id="reset-db">Reset DB</button>
       <div class="container">
         <div class="row">
           <div class="col-md-1"></div>
           <div class="jsonView col-md-5" defocus>
-            <h3 class="inline">User in Fake Google DB</h3>
+            <h3 class="inline">Account in Fake Google DB</h3>
+            <button class="btn" ng-click="deleteAccount()">Delete</button>
+            <button class="btn" ng-click="resetAccount()">Reset</button>
+            <div>
+              <json child="db.currentAccount.item"
+                default-collapsed="false"
+                type="'object'"></json>
+            </div>
+            <h3 class="inline">Profile in Fake Google DB</h3>
             <button class="btn" ng-click="deleteUser()">Delete</button>
             <button class="btn" ng-click="resetUser()">Reset</button>
 
@@ -83,6 +91,7 @@
     <script type="text/javascript" src="../../components/bootstrap/dist/js/bootstrap.js"></script>
     <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap.js"></script>
     <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script type="text/javascript" src="../../components/checklist-model/checklist-model.js"></script>
     <script type="text/javascript" src="../../components/ngstorage/ngStorage.js"></script>
     <script type="text/javascript" src="../../components/angular-spinner/angular-spinner.js"></script>
     <script type="text/javascript" src="../../components/spin.js/spin.js"></script>
@@ -98,6 +107,7 @@
     <script type="text/javascript" src="../../src/js/controllers/ctr-terms-conditions.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-login.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-company-modals.js"></script>
+    <script type="text/javascript" src="../../src/js/controllers/ctr-user-settings-modal.js"></script>
     <script type="text/javascript" src="../../src/js/svc-util.js"></script>
     <script type="text/javascript" src="../../src/js/svc-geodata.js"></script>
     <script type="text/javascript" src="../../src/js/svc-auth.js"></script>

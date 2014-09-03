@@ -38,11 +38,16 @@
     }
     window.gapi._fakeDb.companies = _.cloneDeep(companies);
     window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
+    window.gapi._fakeDb.currentAccount = _.cloneDeep(currentAccount);
     window.gapi._fakeDb.systemMessages = _.cloneDeep(systemMessages);
   };
 
   window.gapi.resetUser = function () {
     window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
+  };
+
+  window.gapi.resetAccount = function () {
+    window.gapi._fakeDb.currentAccount = _.cloneDeep(currentAccount);
   };
 
   window.gapi.resetCompanies = function () {
@@ -163,6 +168,18 @@
     "adsInterested": false,
   };
 
+  var currentAccount = {
+    "result": true,
+    "code": 200,
+    "message": "OK",
+    "item": {
+      "username": "michael.sanchez@awesome.io",
+      "changedBy": "bloosbrock@gmail.com",
+      "changeDate": "2014-07-18T11:38:24.668Z"
+    },
+    "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
+  };
+
   var currentUser = {
     "result": true,
     "code": 200,
@@ -175,6 +192,7 @@
       "firstName": "Michael",
       "lastName": "Sanchez",
       "email": "michael.sanchez@awesome.io",
+      "phone": "+1123-456-7890",
       "lastLogin": "2014-08-18T12:03:40.000Z",
       "status": 1,
       "roles": [
@@ -1140,6 +1158,46 @@
              "kind": "core#company",
              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/aU3KWpXBGvssoqWVjsHR5ngSZlU\""
             });
+          }
+        };
+      }
+    },
+    account: {
+      get: function () {
+        return {
+          execute: function (cb) {
+            if(gapi.auth._token){
+              if(window.gapi._fakeDb.currentAccount) {
+                delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentAccount));
+              }
+              else {
+                delayed(cb, {
+                  "result": false,
+                  "code": 404,
+                  "message": "NOT FOUND"
+                });
+              }
+            }
+            else {
+              delayed(cb, {
+                "result": false,
+                "code": 401,
+                "message": "NOT LOGGED IN"
+              });
+            }
+          }
+        };
+      },
+      add: function (obj) {
+        return {
+          execute: function (cb) {
+            if(!obj) {obj = {}; }
+            if(!window.gapi._fakeDb.currenAccount) {
+              window.gapi._fakeDb.currentAccount.item = _.cloneDeep(obj);
+            }
+
+            _.extend(window.gapi._fakeDb.currentAccount.item, obj);
+            return delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentAccount));
           }
         };
       }

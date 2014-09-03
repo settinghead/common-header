@@ -4,7 +4,7 @@
   </button>
   <h2 id="user-settings-label" class="modal-title">User Settings</h2>
 </div>
-<div class="modal-body">
+<div class="modal-body user-settings-modal">
   <form role="form">
     <div class="form-group">
       <label>
@@ -16,29 +16,50 @@
       <label for="user-settings-first-name">
         First Name
       </label>
-      <input id="user-settings-first-name" type="text" class="form-control" />
+      <input id="user-settings-first-name"
+        type="text"
+        class="form-control"
+        ng-model="userState.user.profile.firstName"
+        />
     </div>
     <div class="form-group">
       <label for="user-settings-last-name">
         Last Name
       </label>
-      <input id="user-settings-last-name" type="text" class="form-control" />
+      <input id="user-settings-last-name"
+        type="text"
+        class="form-control"
+        ng-model="userState.user.profile.lastName"
+        />
     </div>
     <div class="form-group">
       <label for="user-settings-phone">
         Telephone
       </label>
-      <input id="user-settings-phone" type="tel" class="form-control" />
+      <input
+        id="user-settings-phone"
+        type="tel"
+        class="form-control"
+        ng-model="userState.user.profile.phone"
+         />
     </div>
     <div class="form-group">
       <label for="user-settings-email">
         Email
       </label>
-      <input id="user-settings-email" type="email" class="form-control" />
+      <input
+        id="user-settings-email"
+        type="email"
+        class="form-control"
+        ng-model="userState.user.profile.email"
+        />
     </div>
     <div class="checkbox">
       <label>
-        <input type="checkbox"> Subscribe To Email Updates
+        <input type="checkbox"
+          id="user-settings-newsletter"
+          ng-model="userState.user.profile.newsletter">
+          Subscribe To Email Updates
       </label>
     </div>
     <div class="form-group">
@@ -47,27 +68,42 @@
       </label>
       <div class="checkbox">
         <label>
-          <input type="checkbox"> Editor
+          <input type="checkbox"
+            id="user-settings-editor"
+            checklist-model="userState.user.profile.roles"
+            checklist-value="'ce'"> Editor
         </label>
       </div>
       <div class="checkbox">
         <label>
-          <input type="checkbox"> Publisher
+          <input type="checkbox"
+            id="user-settings-publisher"
+            checklist-model="userState.user.profile.roles"
+            checklist-value="'pu'"> Publisher
         </label>
       </div>
       <div class="checkbox">
         <label>
-          <input type="checkbox"> Display
+          <input type="checkbox"
+            id="user-settings-display"
+            checklist-model="userState.user.profile.roles"
+            checklist-value="'da'"> Display
         </label>
       </div>
       <div class="checkbox">
         <label>
-          <input type="checkbox"> Administrator
+          <input type="checkbox"
+            id="user-settings-administrator"
+            checklist-model="userState.user.profile.roles"
+            checklist-value="'ua'"> Administrator
         </label>
       </div>
       <div class="checkbox">
         <label>
-          <input type="checkbox"> System
+          <input type="checkbox"
+            id="user-settings-system"
+            checklist-model="userState.user.profile.roles"
+            checklist-value="'sa'"> System
         </label>
       </div>
     </div>
@@ -75,28 +111,28 @@
       <label>
         Last Login
       </label>
-      <div>03/24/14 3:59 PM</div>
+      <div>{{userState.user.profile.lastLogin | date:'MM/dd/yy HH:mm:ss Z'}}</div>
     </div>
     <div class="form-group">
       <label for="user-settings-status">
         Status
       </label>
-      <select id="user-settings-status" class="form-control selectpicker">
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
+      <select id="user-settings-status"
+        class="form-control selectpicker"
+        ng-model="userState.user.profile.status"
+        >
+        <option value="1">Active</option>
+        <option value="0">Inactive</option>
       </select>
     </div>
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary btn-fixed-width" data-dismiss="modal" ng-click="closeModal()">
+  <button type="button"
+    class="btn btn-primary btn-fixed-width"
+    data-dismiss="modal"
+    ng-click="save()" id="save-button">
     Save <i class="glyphicons white ok_2 icon-right"></i>
-  </button>
-  <button type="button" class="btn btn-danger btn-fixed-width" ng-show="!isDeletingUser" ng-click="deleteUser()">
-    Delete <i class="glyphicons white bin icon-right"></i>
-  </button>
-  <button type="button" class="btn btn-danger btn-confirm-delete" data-dismiss="modal" ng-show="isDeletingUser" ng-click="closeModal()">
-    Confirm Deletion <i class="glyphicons white warning_sign icon-right"></i>
   </button>
   <button type="button" class="btn btn-primary btn-fixed-width" data-dismiss="modal" ng-click="closeModal()">
     Cancel <i class="glyphicons white remove_2 icon-right"></i>

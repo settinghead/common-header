@@ -22,7 +22,7 @@ app.run(["$templateCache", function($templateCache) {
     "      </li>\n" +
     "      <li class=\"divider\"></li>\n" +
     "      <li>\n" +
-    "        <a href=\"\" ng-click=\"userSettings()\">\n" +
+    "        <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button\">\n" +
     "          <i class=\"glyphicons cogwheels\"></i>\n" +
     "          <span class=\"item-name\">User Settings</span>\n" +
     "        </a>\n" +
@@ -1070,7 +1070,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"user-settings-label\" class=\"modal-title\">User Settings</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body\">\n" +
+    "<div class=\"modal-body user-settings-modal\">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
@@ -1082,29 +1082,50 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"user-settings-first-name\">\n" +
     "        First Name\n" +
     "      </label>\n" +
-    "      <input id=\"user-settings-first-name\" type=\"text\" class=\"form-control\" />\n" +
+    "      <input id=\"user-settings-first-name\"\n" +
+    "        type=\"text\"\n" +
+    "        class=\"form-control\"\n" +
+    "        ng-model=\"userState.user.profile.firstName\"\n" +
+    "        />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-last-name\">\n" +
     "        Last Name\n" +
     "      </label>\n" +
-    "      <input id=\"user-settings-last-name\" type=\"text\" class=\"form-control\" />\n" +
+    "      <input id=\"user-settings-last-name\"\n" +
+    "        type=\"text\"\n" +
+    "        class=\"form-control\"\n" +
+    "        ng-model=\"userState.user.profile.lastName\"\n" +
+    "        />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-phone\">\n" +
     "        Telephone\n" +
     "      </label>\n" +
-    "      <input id=\"user-settings-phone\" type=\"tel\" class=\"form-control\" />\n" +
+    "      <input\n" +
+    "        id=\"user-settings-phone\"\n" +
+    "        type=\"tel\"\n" +
+    "        class=\"form-control\"\n" +
+    "        ng-model=\"userState.user.profile.phone\"\n" +
+    "         />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-email\">\n" +
     "        Email\n" +
     "      </label>\n" +
-    "      <input id=\"user-settings-email\" type=\"email\" class=\"form-control\" />\n" +
+    "      <input\n" +
+    "        id=\"user-settings-email\"\n" +
+    "        type=\"email\"\n" +
+    "        class=\"form-control\"\n" +
+    "        ng-model=\"userState.user.profile.email\"\n" +
+    "        />\n" +
     "    </div>\n" +
     "    <div class=\"checkbox\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\"> Subscribe To Email Updates\n" +
+    "        <input type=\"checkbox\"\n" +
+    "          id=\"user-settings-newsletter\"\n" +
+    "          ng-model=\"userState.user.profile.newsletter\">\n" +
+    "          Subscribe To Email Updates\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
@@ -1113,27 +1134,42 @@ app.run(["$templateCache", function($templateCache) {
     "      </label>\n" +
     "      <div class=\"checkbox\">\n" +
     "        <label>\n" +
-    "          <input type=\"checkbox\"> Editor\n" +
+    "          <input type=\"checkbox\"\n" +
+    "            id=\"user-settings-editor\"\n" +
+    "            checklist-model=\"userState.user.profile.roles\"\n" +
+    "            checklist-value=\"'ce'\"> Editor\n" +
     "        </label>\n" +
     "      </div>\n" +
     "      <div class=\"checkbox\">\n" +
     "        <label>\n" +
-    "          <input type=\"checkbox\"> Publisher\n" +
+    "          <input type=\"checkbox\"\n" +
+    "            id=\"user-settings-publisher\"\n" +
+    "            checklist-model=\"userState.user.profile.roles\"\n" +
+    "            checklist-value=\"'pu'\"> Publisher\n" +
     "        </label>\n" +
     "      </div>\n" +
     "      <div class=\"checkbox\">\n" +
     "        <label>\n" +
-    "          <input type=\"checkbox\"> Display\n" +
+    "          <input type=\"checkbox\"\n" +
+    "            id=\"user-settings-display\"\n" +
+    "            checklist-model=\"userState.user.profile.roles\"\n" +
+    "            checklist-value=\"'da'\"> Display\n" +
     "        </label>\n" +
     "      </div>\n" +
     "      <div class=\"checkbox\">\n" +
     "        <label>\n" +
-    "          <input type=\"checkbox\"> Administrator\n" +
+    "          <input type=\"checkbox\"\n" +
+    "            id=\"user-settings-administrator\"\n" +
+    "            checklist-model=\"userState.user.profile.roles\"\n" +
+    "            checklist-value=\"'ua'\"> Administrator\n" +
     "        </label>\n" +
     "      </div>\n" +
     "      <div class=\"checkbox\">\n" +
     "        <label>\n" +
-    "          <input type=\"checkbox\"> System\n" +
+    "          <input type=\"checkbox\"\n" +
+    "            id=\"user-settings-system\"\n" +
+    "            checklist-model=\"userState.user.profile.roles\"\n" +
+    "            checklist-value=\"'sa'\"> System\n" +
     "        </label>\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -1141,28 +1177,28 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Last Login\n" +
     "      </label>\n" +
-    "      <div>03/24/14 3:59 PM</div>\n" +
+    "      <div>{{userState.user.profile.lastLogin | date:'MM/dd/yy HH:mm:ss Z'}}</div>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-status\">\n" +
     "        Status\n" +
     "      </label>\n" +
-    "      <select id=\"user-settings-status\" class=\"form-control selectpicker\">\n" +
-    "        <option value=\"active\">Active</option>\n" +
-    "        <option value=\"inactive\">Inactive</option>\n" +
+    "      <select id=\"user-settings-status\"\n" +
+    "        class=\"form-control selectpicker\"\n" +
+    "        ng-model=\"userState.user.profile.status\"\n" +
+    "        >\n" +
+    "        <option value=\"1\">Active</option>\n" +
+    "        <option value=\"0\">Inactive</option>\n" +
     "      </select>\n" +
     "    </div>\n" +
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
+    "  <button type=\"button\"\n" +
+    "    class=\"btn btn-primary btn-fixed-width\"\n" +
+    "    data-dismiss=\"modal\"\n" +
+    "    ng-click=\"save()\" id=\"save-button\">\n" +
     "    Save <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
-    "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-danger btn-fixed-width\" ng-show=\"!isDeletingUser\" ng-click=\"deleteUser()\">\n" +
-    "    Delete <i class=\"glyphicons white bin icon-right\"></i>\n" +
-    "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingUser\" ng-click=\"closeModal()\">\n" +
-    "    Confirm Deletion <i class=\"glyphicons white warning_sign icon-right\"></i>\n" +
     "  </button>\n" +
     "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +

@@ -29,7 +29,7 @@
       ptor.driver.navigate().refresh();
       element(by.id("server-delay")).clear();
       element(by.id("server-delay")).sendKeys("0");
-
+      element(by.id("reset-db")).click();
     });
 
     it("should authorize", function() {

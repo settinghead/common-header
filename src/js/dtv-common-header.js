@@ -11,6 +11,7 @@ angular.module("risevision.common.header", [
   "risevision.common.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
+  "checklist-model",
   "ui.bootstrap",
   "ngSanitize"
 ])
