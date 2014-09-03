@@ -38,10 +38,16 @@
     }
     window.gapi._fakeDb.companies = _.cloneDeep(companies);
     window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
+    window.gapi._fakeDb.currentAccount = _.cloneDeep(currentAccount);
+    window.gapi._fakeDb.systemMessages = _.cloneDeep(systemMessages);
   };
 
   window.gapi.resetUser = function () {
     window.gapi._fakeDb.currentUser = _.cloneDeep(currentUser);
+  };
+
+  window.gapi.resetAccount = function () {
+    window.gapi._fakeDb.currentAccount = _.cloneDeep(currentAccount);
   };
 
   window.gapi.resetCompanies = function () {
@@ -52,6 +58,10 @@
     while(window.gapi._fakeDb.companies.length > 0) {
       window.gapi._fakeDb.companies.pop();
     }
+  };
+
+  window.gapi.resetSystemMessages = function () {
+    window.gapi._fakeDb.systemMessages = _.cloneDeep(systemMessages);
   };
 
   window.gapi.companyRespSkeleton = {
@@ -158,6 +168,18 @@
     "adsInterested": false,
   };
 
+  var currentAccount = {
+    "result": true,
+    "code": 200,
+    "message": "OK",
+    "item": {
+      "username": "michael.sanchez@awesome.io",
+      "changedBy": "bloosbrock@gmail.com",
+      "changeDate": "2014-07-18T11:38:24.668Z"
+    },
+    "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
+  };
+
   var currentUser = {
     "result": true,
     "code": 200,
@@ -170,6 +192,7 @@
       "firstName": "Michael",
       "lastName": "Sanchez",
       "email": "michael.sanchez@awesome.io",
+      "phone": "+1123-456-7890",
       "lastLogin": "2014-08-18T12:03:40.000Z",
       "status": 1,
       "roles": [
@@ -189,6 +212,29 @@
     },
     "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
   };
+
+  var systemMessages = {
+   "items": [
+      {
+       "text": "We have updated our <a href=\"http://www.risevision." +
+         "com/terms-service-privacy/\" target=_blank>Service Agreement" +
+         "</a> with you. Please <a href=\"http://www.risevision.com/" +
+         "terms-service-privacy/\" target=_blank>CLICK HERE</a> here to" +
+         " review. Thank You.",
+       "startDate": "2001-01-01T00:00:00.000Z",
+       "endDate": "2014-05-13T00:00:00.000Z",
+       "kind": "core#systemmessageItem"
+     },
+     {
+      "text": "Everything 10% Off in the next 10 seconds",
+      "startDate": "2001-01-01T00:00:00.000Z",
+      "endDate": "2014-09-13T00:00:00.000Z",
+      "kind": "core#systemmessageItem"
+     }
+   ],
+   "kind": "core#systemmessage",
+   "etag": "\"DxU-6pohsdi2UIVUQMfQkq7ADWs/7wbH6LlcDW2l8ZyL1nAod1Q9wFE\""
+ };
 
   var companies = [{
     "id": "b428b4e8-c8b9-41d5-8a10-b4193c789443",
@@ -1007,6 +1053,18 @@
       delayed(cb);
     },
     core: {
+      systemmessages: {
+        list: function (obj) {
+          obj = obj || {};
+          return {
+            execute : function (cb) {
+              if(obj.companyId) {
+                delayed(cb, _.cloneDeep(window.gapi._fakeDb.systemMessages));
+              }
+            }
+          };
+        }
+      },
       company: {
         get: function (obj) {
           return {
@@ -1104,27 +1162,42 @@
         };
       }
     },
-    systemmessages: {
-      list: function () {
+    account: {
+      get: function () {
         return {
           execute: function (cb) {
-            return delayed(cb, {
-              "result": true,
-              "code": 200,
-              "message": "OK",
-              "items": [
-              {
-                "text": "We have updated our" +
-                " <a href=\"http://www.risevision.com/terms-service-privacy/\" "+
-                "target=_blank>Service Agreement</a> with you. Please <a href=\"http://www.risevision.com/terms-service-privacy/\" target=_blank>CLICK HERE</a> here to review. Thank You.",
-                "startDate": "2001-01-01T00:00:00.000Z",
-                "endDate": "2014-05-13T00:00:00.000Z",
-                "kind": "core#systemmessageItem"
+            if(gapi.auth._token){
+              if(window.gapi._fakeDb.currentAccount) {
+                delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentAccount));
               }
-              ],
-              "kind": "core#systemmessage",
-              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/sB61Vl9SAWfWM8ATswBPMiM8HG8\""
-            });
+              else {
+                delayed(cb, {
+                  "result": false,
+                  "code": 404,
+                  "message": "NOT FOUND"
+                });
+              }
+            }
+            else {
+              delayed(cb, {
+                "result": false,
+                "code": 401,
+                "message": "NOT LOGGED IN"
+              });
+            }
+          }
+        };
+      },
+      add: function (obj) {
+        return {
+          execute: function (cb) {
+            if(!obj) {obj = {}; }
+            if(!window.gapi._fakeDb.currenAccount) {
+              window.gapi._fakeDb.currentAccount.item = _.cloneDeep(obj);
+            }
+
+            _.extend(window.gapi._fakeDb.currentAccount.item, obj);
+            return delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentAccount));
           }
         };
       }

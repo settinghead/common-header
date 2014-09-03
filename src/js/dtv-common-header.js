@@ -7,10 +7,13 @@ angular.module("risevision.common.header", [
   "risevision.common.header.templates",
   "risevision.common.loading",
   "risevision.common.registration",
+  "risevision.common.systemmessages",
   "risevision.common.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
-  "ui.bootstrap"
+  "checklist-model",
+  "ui.bootstrap",
+  "ngSanitize"
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",

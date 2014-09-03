@@ -18,13 +18,7 @@ angular.module("risevision.common.header")
     };
   }
 ])
-.controller("UserSettingsModalCtrl", ["$scope", "$modalInstance",
-  function($scope, $modalInstance) {
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-    };
-  }
-])
+
 .controller("PaymentMethodsModalCtrl", ["$scope", "$modalInstance", "$modal",
   "$templateCache",
   function($scope, $modalInstance, $modal, $templateCache) {
