@@ -1,9 +1,17 @@
 angular.module("risevision.common.header")
 .controller("SubCompanyModalCtrl", ["$scope", "$modalInstance", "$modal",
-  "$templateCache",
-  function($scope, $modalInstance, $modal, $templateCache) {
+  "$templateCache", "createCompany",
+  function($scope, $modalInstance, $modal, $templateCache, createCompany) {
+
+    $scope.company = {};
+
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
+    };
+    $scope.save = function () {
+      createCompany($scope.company).then(function () {
+        $modalInstance.close("success");
+      });
     };
     // Show Move Company Modal
     $scope.moveCompany = function(size) {

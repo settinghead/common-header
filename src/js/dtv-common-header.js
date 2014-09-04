@@ -1,5 +1,6 @@
 angular.module("risevision.common.header", [
   "risevision.common.auth",
+  "risevision.common.account",
   "risevision.common.gapi",
   "risevision.common.cache",
   "risevision.common.company",
@@ -30,7 +31,7 @@ angular.module("risevision.common.header", [
       link: function(scope) {
         scope.navCollapsed = true;
 
-        scope.termsAndConditions = function (size) {
+        var termsAndConditions = function (size) {
           var modalInstance = $modal.open({
             template: $templateCache.get("terms-and-conditions-modal.html"),
             controller: "TermsConditionsModalCtrl",
@@ -39,14 +40,6 @@ angular.module("risevision.common.header", [
           });
           modalInstance.result.finally(function (){
             userState.status = "pendingCheck";
-          });
-        };
-
-        scope.updateProfile = function (size) {
-          $modal.open({
-            templateUrl: "create-profile.html",
-            controller: "CreateProfileModalCtrl",
-            size: size
           });
         };
 
@@ -73,10 +66,10 @@ angular.module("risevision.common.header", [
 
         $rootScope.$watch("userState.status", function (newStatus, oldStatus){
           if(newStatus) {
-            $log.debug("statusChange from", oldStatus, "to", newStatus);
+            $log.debug("status changed from", oldStatus, "to", newStatus);
             //render a dialog based on the state user is in
-            if(newStatus === "termsConditionsAccepted") {
-              scope.termsAndConditions();
+            if(newStatus === "basicProfileCreated") {
+              termsAndConditions();
             }
             else if(newStatus !== "acceptableState") {
               checkUserStatus();

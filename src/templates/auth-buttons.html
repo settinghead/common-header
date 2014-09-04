@@ -2,7 +2,7 @@
 <ul class="nav navbar-nav navbar-right actions-nav"
   style="min-width: 80px; min-height: 41px;">
 
-  <li class="dropdown" ng-show="userState.authStatus > 0">
+  <li class="dropdown" ng-show="userState.user.profile">
     <a href="" class="dropdown-toggle">
       <img ng-src="{{userState.user.profile.picture}}"
         class="profile-pic" width="30" height="30" alt="User" />
@@ -14,22 +14,28 @@
       <li class="dropdown-header">
         {{userState.user.profile.email}}
       </li>
+      <li ng-show="!userState.user.profile.username">
+        <a href="" ng-click="register()">
+          <i class="glyphicons user_add"></i>
+          <span class="item-name">Register</span>
+        </a>
+      </li>
       <li class="divider"></li>
-      <li>
+      <li ng-show="userState.user.profile.username">
         <a href="" ng-click="userSettings()" class="user-settings-button">
           <i class="glyphicons cogwheels"></i>
           <span class="item-name">User Settings</span>
         </a>
       </li>
       <li class="divider"></li>
-      <li>
+      <li ng-show="userState.user.profile.username">
         <a href="" ng-click="paymentMethods()">
           <i class="glyphicons usd"></i>
           <span class="item-name">Payment Methods</span>
         </a>
       </li>
       <li class="divider"></li>
-      <li ng-show="userState.authStatus > 0">
+      <li ng-show="userState.user.profile">
         <a href="" ng-click="logout()" class="sign-out-button">
           <i class="glyphicons log_out"></i>
           <span class="item-name">Sign Out</span>
@@ -37,7 +43,7 @@
       </li>
     </ul>
   </li>
-  <li ng-show="userState.authStatus === 0">
+  <li ng-show="!userState.user.profile">
     <a href="" class="sign-in" ng-click="loginModal()">
       <span>Sign In</span>
       <i class="glyphicons log_in"></i>

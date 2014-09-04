@@ -1,9 +1,9 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$rootScope", "$loading", "authenticate",
-  "signOut", "$log",
+  "signOut", "$log", "getProfile", "cookieStore",
   function($scope, $modal, $templateCache, userState, $rootScope,
-  $loading, authenticate, signOut, $log) {
+  $loading, authenticate, signOut, $log, getProfile, cookieStore) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
@@ -24,8 +24,14 @@ angular.module("risevision.common.header")
       });
     };
 
+    $scope.register = function () {
+      cookieStore.remove("surpressRegistration");
+      userState.status = "pendingCheck";
+    };
+
     $scope.logout = function () {
       signOut().then(function (){
+        alert("If you are using a public computer, please do not forget to log out of Google Account, or close your browser window if you are using Incognito mode. ");
         userState.status = "pendingCheck";
         $loading.start("auth-buttons");
       }, function (err) {
@@ -52,7 +58,7 @@ angular.module("risevision.common.header")
       });
     };
 
-    authenticate(false);
+    authenticate(false).then(getProfile);
 
     $scope.$watch("userState.status", function (newStatus){
       if (newStatus === "pendingCheck") {
@@ -60,6 +66,17 @@ angular.module("risevision.common.header")
       }
       else {
         $loading.stop("auth-buttons");
+      }
+    });
+
+    $scope.$watchCollection("userState.user.profile.roles", function (newVals) {
+      if(newVals) {
+        if(!userState.roleMap) {
+          userState.roleMap = {};
+        }
+        newVals.forEach(function (val){
+          userState.roleMap[val] = true;
+        });
       }
     });
   }

@@ -8,7 +8,7 @@ app.run(["$templateCache", function($templateCache) {
     "<ul class=\"nav navbar-nav navbar-right actions-nav\"\n" +
     "  style=\"min-width: 80px; min-height: 41px;\">\n" +
     "\n" +
-    "  <li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
+    "  <li class=\"dropdown\" ng-show=\"userState.user.profile\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
     "      <img ng-src=\"{{userState.user.profile.picture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
@@ -20,22 +20,28 @@ app.run(["$templateCache", function($templateCache) {
     "      <li class=\"dropdown-header\">\n" +
     "        {{userState.user.profile.email}}\n" +
     "      </li>\n" +
+    "      <li ng-show=\"!userState.user.profile.username\">\n" +
+    "        <a href=\"\" ng-click=\"register()\">\n" +
+    "          <i class=\"glyphicons user_add\"></i>\n" +
+    "          <span class=\"item-name\">Register</span>\n" +
+    "        </a>\n" +
+    "      </li>\n" +
     "      <li class=\"divider\"></li>\n" +
-    "      <li>\n" +
+    "      <li ng-show=\"userState.user.profile.username\">\n" +
     "        <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button\">\n" +
     "          <i class=\"glyphicons cogwheels\"></i>\n" +
     "          <span class=\"item-name\">User Settings</span>\n" +
     "        </a>\n" +
     "      </li>\n" +
     "      <li class=\"divider\"></li>\n" +
-    "      <li>\n" +
+    "      <li ng-show=\"userState.user.profile.username\">\n" +
     "        <a href=\"\" ng-click=\"paymentMethods()\">\n" +
     "          <i class=\"glyphicons usd\"></i>\n" +
     "          <span class=\"item-name\">Payment Methods</span>\n" +
     "        </a>\n" +
     "      </li>\n" +
     "      <li class=\"divider\"></li>\n" +
-    "      <li ng-show=\"userState.authStatus > 0\">\n" +
+    "      <li ng-show=\"userState.user.profile\">\n" +
     "        <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
     "          <i class=\"glyphicons log_out\"></i>\n" +
     "          <span class=\"item-name\">Sign Out</span>\n" +
@@ -43,7 +49,7 @@ app.run(["$templateCache", function($templateCache) {
     "      </li>\n" +
     "    </ul>\n" +
     "  </li>\n" +
-    "  <li ng-show=\"userState.authStatus === 0\">\n" +
+    "  <li ng-show=\"!userState.user.profile\">\n" +
     "    <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "      <span>Sign In</span>\n" +
     "      <i class=\"glyphicons log_in\"></i>\n" +
@@ -126,7 +132,7 @@ app.run(["$templateCache", function($templateCache) {
     "		<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
     "			<!-- Notifications -->\n" +
     "			<li class=\"dropdown\" class=\"system-messages\"\n" +
-    "			  ng-show=\"userState.authStatus > 0\"\n" +
+    "			  ng-show=\"userState.user.profile.username\"\n" +
     "				ng-controller=\"SystemMessagesButtonCtrl\"\n" +
     "				ng-include=\"'system-messages-button.html'\">\n" +
     "			</li>\n" +
@@ -137,7 +143,7 @@ app.run(["$templateCache", function($templateCache) {
     "				ng-include=\"'shoppingcart-button.html'\">\n" +
     "			</li>\n" +
     "			<!-- Current App -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\">\n" +
+    "			<li class=\"dropdown\" ng-show=\"userState.user.profile\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\">\n" +
     "					<i class=\"glyphicons show_thumbnails\"></i>\n" +
     "				</a>\n" +
@@ -195,7 +201,7 @@ app.run(["$templateCache", function($templateCache) {
     "			</li>\n" +
     "			<!-- END Current App -->\n" +
     "			<!-- Company Dropdown -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"userState.authStatus > 0\"\n" +
+    "			<li class=\"dropdown\" ng-show=\"userState.user.profile.username\"\n" +
     "				ng-controller=\"CompanyButtonsCtrl\"\n" +
     "				ng-include=\"'company-buttons.html'\"\n" +
     "			></li>\n" +
@@ -263,23 +269,24 @@ app.run(["$templateCache", function($templateCache) {
     "      <span class=\"item-name\">Select Sub-Company</span>\n" +
     "    </a>\n" +
     "  </li>\n" +
-    "  <li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
-    "  <li ng-if=\"isAdmin\">\n" +
+    "  <li ng-if=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
+    "  <li ng-if=\"userState.roleMap.sa\">\n" +
     "    <a href=\"\" data-toggle=\"modal\" data-target=\"#subcompany-modal\" ng-click=\"addSubCompany()\">\n" +
     "      <i class=\"glyphicons plus\"></i>\n" +
     "      <span class=\"item-name\">Add Sub-Company</span>\n" +
     "    </a>\n" +
     "  </li>\n" +
-    "  <li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
-    "  <li ng-if=\"isAdmin\">\n" +
+    "  <li ng-if=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
+    "  <li ng-if=\"userState.roleMap.sa\">\n" +
     "    <a href=\"\" ng-click=\"companySettings()\">\n" +
     "      <i class=\"glyphicons cogwheels\"></i>\n" +
     "      <span class=\"item-name\">Company Settings</span>\n" +
     "    </a>\n" +
     "  </li>\n" +
-    "  <li ng-if=\"isAdmin\" class=\"divider\"></li>\n" +
-    "  <li ng-if=\"isAdmin\">\n" +
-    "    <a href=\"\" data-toggle=\"modal\" data-target=\"#company-users-modal\">\n" +
+    "  <li ng-if=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
+    "  <li ng-show=\"userState.roleMap.sa\">\n" +
+    "    <a href=\"\" data-toggle=\"modal\"\n" +
+    "    data-target=\"#company-users-modal\" ng-click=\"companyUsers()\">\n" +
     "      <i class=\"glyphicons group\"></i>\n" +
     "      <span class=\"item-name\">Company Users</span>\n" +
     "    </a>\n" +
@@ -528,7 +535,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +
     "      Confirm Deletion <i class=\"glyphicons white warning_sign icon-right\"></i>\n" +
     "    </button>\n" +
-    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\">Cancel\n" +
+    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
     "      <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "    </button>\n" +
     "  </div>\n" +
@@ -1012,7 +1019,7 @@ app.run(["$templateCache", function($templateCache) {
     "rv-spinner-key=\"terms-conditions-modal\"\n" +
     "rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
-    "  <button type=\"button\" ng-click=\"closeModal()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "  <button type=\"button\" ng-click=\"cancel()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
     "  <h2 class=\"modal-title\">Welcome To Rise Vision</h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body terms-conditions-modal\">\n" +
@@ -1039,12 +1046,12 @@ app.run(["$templateCache", function($templateCache) {
     "    <!-- Newsletter -->\n" +
     "    <div class=\"checkbox\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.newsletter\"> Sign up for the Rise Vision Newsletter\n" +
+    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.mailSyncEnabled\"> Sign up for the Rise Vision Newsletter\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
-    "      ng-click=\"closeModal()\">\n" +
+    "      ng-click=\"cancel()\">\n" +
     "        Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "      </button>\n" +
     "      <button ng-click=\"agree()\" type=\"button\" class=\"btn btn-success btn-fixed-width\">\n" +
@@ -1124,7 +1131,7 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        <input type=\"checkbox\"\n" +
     "          id=\"user-settings-newsletter\"\n" +
-    "          ng-model=\"userState.user.profile.newsletter\">\n" +
+    "          ng-model=\"userState.user.profile.mailSyncEnabled\">\n" +
     "          Subscribe To Email Updates\n" +
     "      </label>\n" +
     "    </div>\n" +

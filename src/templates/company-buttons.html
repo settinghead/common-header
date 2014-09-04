@@ -35,23 +35,24 @@
       <span class="item-name">Select Sub-Company</span>
     </a>
   </li>
-  <li ng-if="isAdmin" class="divider"></li>
-  <li ng-if="isAdmin">
+  <li ng-if="userState.roleMap.sa" class="divider"></li>
+  <li ng-if="userState.roleMap.sa">
     <a href="" data-toggle="modal" data-target="#subcompany-modal" ng-click="addSubCompany()">
       <i class="glyphicons plus"></i>
       <span class="item-name">Add Sub-Company</span>
     </a>
   </li>
-  <li ng-if="isAdmin" class="divider"></li>
-  <li ng-if="isAdmin">
+  <li ng-if="userState.roleMap.sa" class="divider"></li>
+  <li ng-if="userState.roleMap.sa">
     <a href="" ng-click="companySettings()">
       <i class="glyphicons cogwheels"></i>
       <span class="item-name">Company Settings</span>
     </a>
   </li>
-  <li ng-if="isAdmin" class="divider"></li>
-  <li ng-if="isAdmin">
-    <a href="" data-toggle="modal" data-target="#company-users-modal">
+  <li ng-if="userState.roleMap.sa" class="divider"></li>
+  <li ng-show="userState.roleMap.sa">
+    <a href="" data-toggle="modal"
+    data-target="#company-users-modal" ng-click="companyUsers()">
       <i class="glyphicons group"></i>
       <span class="item-name">Company Users</span>
     </a>
