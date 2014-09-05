@@ -1,5 +1,5 @@
 angular.module("risevision.common.header")
-.controller("TermsConditionsModalCtrl", [
+.controller("RegistrationModalCtrl", [
   "$scope", "$modalInstance", "$rootScope",
   "updateProfile", "getProfile", "getOAuthUserInfo",
   "$loading", "createAccount", "$log", "cookieStore",
