@@ -94,7 +94,7 @@ app.run(["$templateCache", function($templateCache) {
     "					<span class=\"icon-bar\"></span>\n" +
     "				</div>\n" +
     "			</button>\n" +
-    "			<a class=\"navbar-brand\" href=\"http://www.risevision.com/\">\n" +
+    "			<a class=\"navbar-brand\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
     "		</div>\n" +
