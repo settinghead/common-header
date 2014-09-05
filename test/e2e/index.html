@@ -52,6 +52,8 @@
             <div><json child="db.currentUser.item" default-collapsed="false" type="'object'">
             </json></div>
             <h3 class="inline">System Messages</h3>
+            <button class="btn" ng-click="clearSystemMessages()">Clear</button>
+
             <button class="btn" ng-click="resetSystemMessages()">Reset</button>
 
             <div><json child="db.systemMessages.items" default-collapsed="false" type="'object'">
@@ -111,6 +113,7 @@
     <script type="text/javascript" src="../../src/js/svc-util.js"></script>
     <script type="text/javascript" src="../../src/js/svc-geodata.js"></script>
     <script type="text/javascript" src="../../src/js/svc-auth.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-account.js"></script>
     <script type="text/javascript" src="../../src/js/svc-registration.js"></script>
     <script type="text/javascript" src="../../src/js/svc-cache.js"></script>
     <script type="text/javascript" src="../../src/js/svc-profile.js"></script>
@@ -170,7 +173,10 @@
           $scope.db = window.gapi._fakeDb;
 
           $scope.deleteUser = function () {
-            delete window.gapi._fakeDb.currentUser;
+            window.gapi.deleteUser();
+          }
+          $scope.deleteAccount = function () {
+            window.gapi.deleteAccount();
           }
           $scope.resetUser = function () {
             window.gapi.resetUser();
@@ -183,6 +189,9 @@
           }
           $scope.resetSystemMessages = function () {
             window.gapi.resetSystemMessages();
+          }
+          $scope.clearSystemMessages = function () {
+            window.gapi.clearSystemMessages();
           }
           $scope.clearCompanies = function () {
             window.gapi.clearCompanies();

@@ -48,6 +48,7 @@
 
   window.gapi.resetAccount = function () {
     window.gapi._fakeDb.currentAccount = _.cloneDeep(currentAccount);
+    window.gapi._fakeDb.termsAcceptanceDate = new Date().toISOString();
   };
 
   window.gapi.resetCompanies = function () {
@@ -60,8 +61,23 @@
     }
   };
 
+  window.gapi.deleteUser = function () {
+    delete window.gapi._fakeDb.currentUser;
+  };
+
+  window.gapi.deleteAccount = function () {
+    this.clearCompanies();
+    this.deleteUser();
+    this.clearSystemMessages();
+    delete window.gapi._fakeDb.currentAccount;
+  };
+
   window.gapi.resetSystemMessages = function () {
     window.gapi._fakeDb.systemMessages = _.cloneDeep(systemMessages);
+  };
+
+  window.gapi.clearSystemMessages = function () {
+    window.gapi._fakeDb.systemMessages = [];
   };
 
   window.gapi.companyRespSkeleton = {
@@ -1109,6 +1125,25 @@
           }
         };
       },
+      add: function (fields) {
+        return {
+          execute: function (cb) {
+            var company;
+            company = _.cloneDeep(fields);
+            company.id = guid();
+            window.gapi._fakeDb.companies.push(company);
+            console.log("company created", company);
+            delayed(cb, {
+              "result": true,
+              "code": 200,
+              "message": "OK",
+              "item": company,
+            "kind": "core#companyItem",
+            "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
+          });
+          }
+        };
+      },
       update: function (fields) {
         return {
           execute: function (cb) {
@@ -1129,7 +1164,7 @@
               "result": true,
               "code": 200,
               "message": "OK",
-              "item": _.extend(_.cloneDeep(window.gapi.companyRespSkeleton), company),
+              "item": company,
             "kind": "core#companyItem",
             "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
           });
@@ -1163,41 +1198,14 @@
       }
     },
     account: {
-      get: function () {
+      add: function () {
         return {
           execute: function (cb) {
-            if(gapi.auth._token){
-              if(window.gapi._fakeDb.currentAccount) {
-                delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentAccount));
-              }
-              else {
-                delayed(cb, {
-                  "result": false,
-                  "code": 404,
-                  "message": "NOT FOUND"
-                });
-              }
-            }
-            else {
-              delayed(cb, {
-                "result": false,
-                "code": 401,
-                "message": "NOT LOGGED IN"
-              });
-            }
-          }
-        };
-      },
-      add: function (obj) {
-        return {
-          execute: function (cb) {
-            if(!obj) {obj = {}; }
             if(!window.gapi._fakeDb.currenAccount) {
-              window.gapi._fakeDb.currentAccount.item = _.cloneDeep(obj);
+              window.gapi.resetAccount();
             }
-
-            _.extend(window.gapi._fakeDb.currentAccount.item, obj);
-            return delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentAccount));
+            return delayed(
+              cb, _.cloneDeep(window.gapi._fakeDb.currentAccount));
           }
         };
       }
@@ -1238,6 +1246,7 @@
             }
 
             _.extend(window.gapi._fakeDb.currentUser.item, obj);
+            _.extend(window.gapi._fakeDb.currentUser.item, {username: window.gapi._fakeDb.currentAccount.item.username});
             return delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentUser));
           }
         };

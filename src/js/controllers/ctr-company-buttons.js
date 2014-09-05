@@ -1,15 +1,12 @@
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "companyService", "$timeout", "switchCompany",
-  function($scope, $modal, $templateCache, companyService, $timeout, switchCompany) {
+  "getUserCompanies", "$timeout", "switchCompany",
+  function($scope, $modal, $templateCache, getUserCompanies, $timeout, switchCompany) {
 
     //reload user companies when current username is changed
     $scope.$watch("userState.user.profile.username", function (newVal) {
       if(newVal) {
-        companyService.getUserCompanies()
-          //this is needed or shopping cart won't show immediately
-          // .then(function (){$timeout(function (){$scope.$digest();});})
-          ;
+        getUserCompanies();
       }
     });
 
@@ -28,7 +25,13 @@ angular.module("risevision.common.header")
         controller: "CompanySettingsModalCtrl",
         size: size,
         resolve: {
-          companyId: function () {return companyId; }
+          companyId: function () {
+            var cId = companyId;
+            if(!cId) {
+              cId = $scope.userState.selectedCompanyId;
+            }
+            return cId;
+          }
         }
       });
     };

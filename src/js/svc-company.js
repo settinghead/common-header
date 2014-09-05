@@ -4,7 +4,8 @@ angular.module("risevision.common.company",
   [
     "risevision.common.config",
     "risevision.common.gapi",
-    "risevision.common.cache"
+    "risevision.common.cache",
+    "risevision.common.oauth2"
   ])
 
   .factory("switchCompany", ["userState", function (userState) {
@@ -14,45 +15,75 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .service("companyService", ["coreAPILoader", "$q", "$log", "userState",
-    function (coreAPILoader, $q, $log, userState) {
+  .factory("createCompany", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
+    return function (company) {
+      var deferred = $q.defer();
+      company.validate = true;
+      coreAPILoader().then(function (coreApi) {
+        var request = coreApi.company.add(company);
+        request.execute(function (resp) {
+          if(resp.result) {
+            deferred.resolve(resp.item);
+          }
+          else {
+            deferred.reject(resp);
+          }
+        }, deferred.reject);
+      });
+      return deferred.promise;
+    };
+  }])
 
-    var that = this;
+  .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "userState",
+  "getOAuthUserInfo", "createCompany",
+  function ($q, $log, coreAPILoader, userState, getOAuthUserInfo, createCompany) {
+    return function () {
+      var deferred = $q.defer();
+      $log.debug("getUserCompanies called");
 
-    this.getUserCompanies = function (){
-        var deferred = $q.defer();
-        var AUTH_STATUS_AUTHENTICATED = 1;
+      coreAPILoader().then(function (client) {
+        var request = client.company.list({});
+        request.execute(function (resp) {
+          $log.debug("client.company.list resp", resp);
+          if(resp.result === true) {
+            deferred.resolve(resp);
+            //update user state if supplied
+            var updateState = function (c) {
+              $log.debug("selectedCompany", c);
+              userState.user.company = c;
+              userState.isAuthed = true;
+              userState.user.company = c;
 
-        coreAPILoader().then(function (client) {
-          var request = client.company.list({});
-          request.execute(function (resp) {
-            if(resp.result === true) {
-              deferred.resolve(resp);
-              //update user state if supplied
-              if (resp.items && resp.items.length > 0) {
-                var c = resp.items[0];
-                $log.debug("selectedCompany", c);
-                userState.user.company = c;
-                userState.authStatus = AUTH_STATUS_AUTHENTICATED;
-                userState.isAuthed = true;
-                userState.user.company = c;
+              //release 1 simpification - everyone is Purchaser ("pu" role)
+              userState.isRiseUser = true;
+              userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
 
-                //release 1 simpification - everyone is Purchaser ("pu" role)
-                userState.isRiseUser = true;
-                userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
-
-                userState.selectedCompanyName = c.name;
-                userState.selectedCompanyId = c.id;
-              }
+              userState.selectedCompanyName = c.name;
+              userState.selectedCompanyId = c.id;
+            };
+            if (resp.items && resp.items.length > 0) {
+              updateState(resp.items[0]);
             }
             else {
-              delete userState.selectedCompanyName;
-              delete userState.selectedCompanyId;
+              getOAuthUserInfo().then(function (userInfo) {
+                createCompany({
+                  name: userInfo.email + "'s Company"}).then(updateState, deferred.reject);
+              }, deferred.reject);
             }
-          });
+          }
+          else {
+            delete userState.selectedCompanyName;
+            delete userState.selectedCompanyId;
+            deferred.reject();
+          }
         });
-        return deferred.promise;
+      }, deferred.reject);
+      return deferred.promise;
     };
+  }])
+
+  .service("companyService", ["coreAPILoader", "$q", "$log",
+    function (coreAPILoader, $q, $log) {
 
     this.getCompany = function (companyId) {
       var deferred = $q.defer();
@@ -156,27 +187,6 @@ angular.module("risevision.common.company",
         });
 
         return deferred.promise;
-    };
-
-    this.createCompany = function (company) {
-      var deferred = $q.defer();
-      company.validate = true;
-      coreAPILoader().then(function (coreApi) {
-        var request = coreApi.company.add(company);
-        request.execute(function (resp) {
-            deferred.resolve(resp);
-        });
-      });
-      return deferred.promise;
-    };
-
-    this.createOrUpdateCompany = function (company) {
-      if(company.id) {
-        return that.createCompany(company);
-      }
-      else{
-        return that.updateCompany(company);
-      }
     };
 
     this.validateAddress = function (company) {

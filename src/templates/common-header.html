@@ -45,7 +45,7 @@
 		<ul class="nav navbar-nav navbar-right actions-nav">
 			<!-- Notifications -->
 			<li class="dropdown" class="system-messages"
-			  ng-show="userState.authStatus > 0"
+			  ng-show="userState.user.profile.username"
 				ng-controller="SystemMessagesButtonCtrl"
 				ng-include="'system-messages-button.html'">
 			</li>
@@ -56,7 +56,7 @@
 				ng-include="'shoppingcart-button.html'">
 			</li>
 			<!-- Current App -->
-			<li class="dropdown" ng-show="userState.authStatus > 0">
+			<li class="dropdown" ng-show="userState.user.profile">
 				<a href="" class="dropdown-toggle">
 					<i class="glyphicons show_thumbnails"></i>
 				</a>
@@ -114,7 +114,7 @@
 			</li>
 			<!-- END Current App -->
 			<!-- Company Dropdown -->
-			<li class="dropdown" ng-show="userState.authStatus > 0"
+			<li class="dropdown" ng-show="userState.user.profile.username"
 				ng-controller="CompanyButtonsCtrl"
 				ng-include="'company-buttons.html'"
 			></li>

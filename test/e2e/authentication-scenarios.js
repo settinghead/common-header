@@ -71,7 +71,7 @@
 
       //click sign out
       element(by.css(".sign-out-button")).click();
-
+      browser.switchTo().alert().then(function (alert){alert.accept();});
       //signed out; sign-in button shows
       expect(element(by.css("a.sign-in")).isDisplayed()).to.eventually.equal(true);
 

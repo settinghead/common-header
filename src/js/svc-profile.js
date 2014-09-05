@@ -18,14 +18,19 @@
         $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
           var coreApi = results[1];
           var oauthUserInfo = results[2];
+          if(oauthUserInfo.email) {
+            userState.user.profile = {
+              picture: oauthUserInfo.picture
+            };
+          }
           coreApi.user.get({}).execute(function (resp){
             if(resp.result === true) {
               $log.debug("getProfile resp", resp);
-              userState.user.profile =
-                angular.extend({
-                  picture: oauthUserInfo.picture,
-                  username: oauthUserInfo.email
-                }, resp.item);
+                angular.extend(userState.user.profile,
+                  angular.extend({
+                    picture: oauthUserInfo.picture,
+                    username: oauthUserInfo.email
+                  }, resp.item));
               userInfoCache.put("profile", resp.item);
               deferred.resolve(resp.item);
             }
@@ -46,12 +51,11 @@
       $log.debug("updateProfile", profile);
       var deferred = $q.defer();
       coreAPILoader().then(function (coreApi) {
-        //TODO: consult Alxey
         var request = coreApi.user.update(profile);
         request.execute(function (resp) {
             $log.debug("updateProfile resp", resp);
             if(resp.result === true) {
-              userInfoCache.put("profile", resp.item);
+              userInfoCache.remove("profile");
               getProfile().then(function() {deferred.resolve(resp.item);});
             }
             else {

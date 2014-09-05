@@ -10,8 +10,6 @@
     // Some constants
     .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
-    .value("AUTH_STAUS_LOADING", -1)
-    .value("AUTH_STATUS_NOT_AUTHENTICATED", 0)
 
     .service("accessTokenKeeper", ["$log", "getBaseDomain", "cookieStore",
       "gapiLoader",
@@ -83,8 +81,8 @@
     * get the userState object.
     *
     */
-    .factory("resetUserState", ["$log", "userState", "AUTH_STAUS_LOADING",
-     function ($log, userState, AUTH_STAUS_LOADING){
+    .factory("resetUserState", ["$log", "userState",
+     function ($log, userState){
       return function() {
         angular.extend(userState, {
           user: {
@@ -94,8 +92,7 @@
           selectedCompany: null,
           isRiseAdmin: false,
           isRiseUser: false,
-          isAuthed: false,
-          authStatus: AUTH_STAUS_LOADING,
+          isAuthed: false
         });
         $log.debug("User state has been reset.");
       };
@@ -103,11 +100,9 @@
 
     .factory("authenticate", ["$log", "$q", "resetUserState",
       "userInfoCache", "userState", "CLIENT_ID", "SCOPES", "$location",
-      "getBaseDomain", "oauthAPILoader", "AUTH_STATUS_NOT_AUTHENTICATED",
-      "AUTH_STAUS_LOADING", "accessTokenKeeper",
+      "getBaseDomain", "oauthAPILoader", "accessTokenKeeper",
       function ($log, $q, resetUserState, userInfoCache, userState, CLIENT_ID,
-      SCOPES, $location, getBaseDomain, oauthAPILoader, AUTH_STATUS_NOT_AUTHENTICATED,
-      AUTH_STAUS_LOADING, accessTokenKeeper) {
+      SCOPES, $location, getBaseDomain, oauthAPILoader, accessTokenKeeper) {
         /*
         * Responsible for triggering the Google OAuth process.
         *
@@ -146,8 +141,6 @@
 
       return function(forceAuth) {
         $log.debug("authentication called");
-        userState.authStatus = AUTH_STAUS_LOADING;
-
         var authenticateDeferred = $q.defer();
         resetUserState();
         userInfoCache.removeAll();
@@ -171,7 +164,6 @@
         else {
           var msg = "user is not authenticated";
           $log.info(msg);
-          userState.authStatus = AUTH_STATUS_NOT_AUTHENTICATED;
           authenticateDeferred.reject(msg);
         }
 

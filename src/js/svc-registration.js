@@ -5,8 +5,8 @@
   ["risevision.common.profile"])
 
   .value("userStatusDependencies", {
-    "termsConditionsAccepted" : "signedInWithGoogle",
-    "acceptableState": ["notLoggedIn", "termsConditionsAccepted"]
+    "basicProfileCreated" : "signedInWithGoogle",
+    "acceptableState": ["notLoggedIn", "basicProfileCreated"]
   })
 
   .factory("checkUserStatus", [
@@ -95,18 +95,16 @@
   }])
 
 
-  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "$log", "userState",
-  function ($q, getOAuthUserInfo, $log, userState) {
+  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo",
+  function ($q, getOAuthUserInfo) {
     return function () {
       var deferred = $q.defer();
       getOAuthUserInfo().then(
         function () {
           deferred.resolve();
-          userState.authStatus = 1;
           },
         function () {
           deferred.reject("signedInWithGoogle");
-          userState.authStatus = 0;
           });
       return deferred.promise;
     };
@@ -123,43 +121,32 @@
     };
   }])
 
-  .factory("termsConditionsAccepted", ["$q", "coreAPILoader", "$log", "getProfile",
-   function ($q, coreAPILoader, $log, getProfile) {
+
+  .factory("basicProfileCreated", ["$q", "getProfile", "cookieStore",
+  function ($q, getProfile, cookieStore) {
     return function () {
       var deferred = $q.defer();
 
       getProfile().then(function (profile) {
-        if(
-          profile.termsAcceptanceDate &&
-          profile.email) {
-            deferred.resolve();
-          }
-        else {deferred.reject("termsConditionsAccepted");}
+        if(angular.isDefined(profile.email) &&
+          angular.isDefined(profile.mailSyncEnabled)) {
+          deferred.resolve(profile);
+        }
+        else if (cookieStore.get("surpressRegistration")){
+          deferred.resolve({});
+        }
+        else {
+          deferred.reject("basicProfileCreated");
+        }
       }, function () {
-        deferred.reject("termsConditionsAccepted");
+        if (cookieStore.get("surpressRegistration")){
+          deferred.resolve({});
+        }
+        else {
+          deferred.reject("basicProfileCreated");
+        }
       });
 
-      return deferred.promise;
-    };
-  }])
-
-  .factory("profileUpdated", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
-    return function () {
-      var deferred = $q.defer();
-      coreAPILoader().then(function (coreApi) {
-        //TODO
-        var request = coreApi.user.get({});
-        request.execute(function (resp) {
-            $log.debug("profileUpdated core.user.get() resp", resp);
-            if(resp.result === true && resp.item.firstName) {
-              deferred.resolve(resp);
-            }
-            else {
-              deferred.reject("profileUpdated");
-            }
-        });
-      });
       return deferred.promise;
     };
   }])
