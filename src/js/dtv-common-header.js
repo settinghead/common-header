@@ -33,7 +33,7 @@ angular.module("risevision.common.header", [
 
         var termsAndConditions = function (size) {
           var modalInstance = $modal.open({
-            template: $templateCache.get("terms-and-conditions-modal.html"),
+            template: $templateCache.get("registration-modal.html"),
             controller: "RegistrationModalCtrl",
             size: size,
             backdrop: "static"

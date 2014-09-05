@@ -38,8 +38,8 @@
           <div class="col-md-1"></div>
           <div class="jsonView col-md-5" defocus>
             <h3 class="inline">Account in Fake Google DB</h3>
-            <button class="btn" ng-click="deleteAccount()">Delete</button>
-            <button class="btn" ng-click="resetAccount()">Reset</button>
+            <button class="btn" ng-click="deleteAccount()" id="delete-account">Delete</button>
+            <button class="btn" ng-click="resetAccount()" id="reset-account">Reset</button>
             <div>
               <json child="db.currentAccount.item"
                 default-collapsed="false"

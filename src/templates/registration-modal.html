@@ -1,11 +1,11 @@
 <div rv-spinner
-rv-spinner-key="terms-conditions-modal"
+rv-spinner-key="registration-modal"
 rv-spinner-start-active="1">
 <div class="modal-header">
   <button type="button" ng-click="cancel()" class="close"><span>&times;</span><span class="sr-only">Close</span></button>
   <h2 class="modal-title">Welcome To Rise Vision</h2>
 </div>
-<div class="modal-body terms-conditions-modal">
+<div class="modal-body registration-modal">
   <p>We require an Email address that we can reliably reach you at
   for system notices and other critical information. We promise,
    only system notices, we won't send you anything else unless you
@@ -22,7 +22,7 @@ rv-spinner-start-active="1">
     <!-- Terms of Service and Privacy -->
     <div class="checkbox">
       <label>
-      <input type="checkbox" ng-model="userState.user.profile.accepted" />
+      <input type="checkbox" ng-model="userState.user.profile.accepted" class="accept-terms-checkbox" />
       I accept Terms of <a href="http://www.risevision.com/terms-service-privacy/" target="_blank">Service and Privacy</a>
       </label>
     </div>
@@ -33,12 +33,12 @@ rv-spinner-start-active="1">
       </label>
     </div>
     <div class="form-group">
+      <button ng-click="save()" type="button" class="btn btn-success btn-fixed-width registration-save-button">
+        Save <i class="glyphicons white ok_2 icon-right"></i>
+      </button>
       <button type="button" class="btn btn-primary btn-fixed-width"
       ng-click="cancel()">
         Cancel <i class="glyphicons white remove_2 icon-right"></i>
-      </button>
-      <button ng-click="agree()" type="button" class="btn btn-success btn-fixed-width">
-        Save <i class="glyphicons white ok_2 icon-right"></i>
       </button>
     </div>
   </form>

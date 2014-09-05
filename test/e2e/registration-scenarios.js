@@ -9,12 +9,13 @@
 
   chai.use(chaiAsPromised);
   var expect = chai.expect;
+  var assert = chai.assert;
 
   var fs = require("fs");
 
   browser.driver.manage().window().setSize(1024, 768);
 
-  xdescribe("Registration", function() {
+  describe("Registration", function() {
   var ptor;
 
       before(function() {
@@ -28,24 +29,23 @@
       });
 
       it("should show T&C Dialog on new Google Account", function() {
-        delete window.currentUser.termsAcceptanceDate;
-        delete window.currentUser.email;
+
+        element(by.id("reset-db")).click();
+        //delete account
+        element(by.id("delete-account")).click();
 
         expect(element(by.css("a.sign-in")).isDisplayed()).to.eventually.equal(true);
-        //dialog does not show
-        expect(element(by.css(".terms-conditions-modal")).isPresent()).to.eventually.equal(false);
         //click on sign in button
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
         //dialog shows
-        expect(element(by.css(".terms-conditions-modal")).isDisplayed()).to.eventually.equal(true);
+        assert.eventually.isTrue(element(by.css(".registration-modal")).isPresent(), "registration dialog should show");
         //click authorize
-        element(by.css(".accept-terms-button")).click();
-        //auth dialog should disappear
-        expect(element(by.css(".terms-conditions-modal")).isPresent()).to.eventually.equal(false);
+        element(by.css(".accept-terms-checkbox")).click();
+        element(by.css(".registration-save-button")).click();
       });
 
-      it("should show Email Update dialogue after the user has accepted T&C", function() {
+      xit("should show Email Update dialogue after the user has accepted T&C", function() {
         delete window.currentUser.email;
 
         expect(element(by.css(".update-profile-modal")).isPresent()).to.eventually.equal(false);
@@ -65,11 +65,11 @@
         expect(element(by.css(".update-profile-modal")).isPresent()).to.eventually.equal(false);
       });
 
-      it("should show company creation dialogue if no company is created", function() {
+      xit("should show company creation dialogue if no company is created", function() {
         //TODO
       });
 
-      it("should follow complete workflow", function() {
+      xit("should follow complete workflow", function() {
         //TODO
       });
 
