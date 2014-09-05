@@ -109,9 +109,9 @@ gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular({
   browser: "chrome"
 }));
 gulp.task("test:e2e", function (cb) {
-  runSequence(
-    "server", "test:e2e:core", "server-close", cb);
-  });
+  runSequence("server", "test:e2e:core", "server-close", cb);
+});
+
 
 gulp.task("metrics", factory.metrics());
 gulp.task("test", ["lint"], function (cb) {

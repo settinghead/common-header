@@ -891,6 +891,62 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("registration-modal.html",
+    "<div rv-spinner\n" +
+    "rv-spinner-key=\"registration-modal\"\n" +
+    "rv-spinner-start-active=\"1\">\n" +
+    "<div class=\"modal-header\">\n" +
+    "  <button type=\"button\" ng-click=\"cancel()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "  <h2 class=\"modal-title\">Welcome To Rise Vision</h2>\n" +
+    "</div>\n" +
+    "<div class=\"modal-body registration-modal\">\n" +
+    "  <p>We require an Email address that we can reliably reach you at\n" +
+    "  for system notices and other critical information. We promise,\n" +
+    "   only system notices, we won't send you anything else unless you\n" +
+    "  sign up for the Newsletter below, and we won't share your email address\n" +
+    "  with anyone else. Promise!</p>\n" +
+    "\n" +
+    "  <form role=\"form\">\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label for=\"exampleInputEmail1\">Email address</label>\n" +
+    "      <input type=\"email\" class=\"form-control\"\n" +
+    "      id=\"exampleInputEmail1\" placeholder=\"Enter email\" required\n" +
+    "      ng-model=\"userState.user.profile.email\">\n" +
+    "    </div>\n" +
+    "    <!-- Terms of Service and Privacy -->\n" +
+    "    <div class=\"checkbox\">\n" +
+    "      <label>\n" +
+    "      <input type=\"checkbox\" ng-model=\"userState.user.profile.accepted\" class=\"accept-terms-checkbox\" />\n" +
+    "      I accept Terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
+    "      </label>\n" +
+    "    </div>\n" +
+    "    <!-- Newsletter -->\n" +
+    "    <div class=\"checkbox\">\n" +
+    "      <label>\n" +
+    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.mailSyncEnabled\"> Sign up for the Rise Vision Newsletter\n" +
+    "      </label>\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <button ng-click=\"save()\" type=\"button\" class=\"btn btn-success btn-fixed-width registration-save-button\">\n" +
+    "        Save <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
+    "      </button>\n" +
+    "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
+    "      ng-click=\"cancel()\">\n" +
+    "        Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </form>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("shoppingcart-button.html",
     "<a href=\"\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"glyphicons shopping_cart\"></i>\n" +
@@ -1007,62 +1063,6 @@ app.run(["$templateCache", function($templateCache) {
     "    ng-bind-html=\"renderHtml(message.text)\">\n" +
     "  </li>\n" +
     "</ul>\n" +
-    "");
-}]);
-})();
-
-(function(module) {
-try { app = angular.module("risevision.common.header.templates"); }
-catch(err) { app = angular.module("risevision.common.header.templates", []); }
-app.run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("terms-and-conditions-modal.html",
-    "<div rv-spinner\n" +
-    "rv-spinner-key=\"terms-conditions-modal\"\n" +
-    "rv-spinner-start-active=\"1\">\n" +
-    "<div class=\"modal-header\">\n" +
-    "  <button type=\"button\" ng-click=\"cancel()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
-    "  <h2 class=\"modal-title\">Welcome To Rise Vision</h2>\n" +
-    "</div>\n" +
-    "<div class=\"modal-body terms-conditions-modal\">\n" +
-    "  <p>We require an Email address that we can reliably reach you at\n" +
-    "  for system notices and other critical information. We promise,\n" +
-    "   only system notices, we won't send you anything else unless you\n" +
-    "  sign up for the Newsletter below, and we won't share your email address\n" +
-    "  with anyone else. Promise!</p>\n" +
-    "\n" +
-    "  <form role=\"form\">\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"exampleInputEmail1\">Email address</label>\n" +
-    "      <input type=\"email\" class=\"form-control\"\n" +
-    "      id=\"exampleInputEmail1\" placeholder=\"Enter email\" required\n" +
-    "      ng-model=\"userState.user.profile.email\">\n" +
-    "    </div>\n" +
-    "    <!-- Terms of Service and Privacy -->\n" +
-    "    <div class=\"checkbox\">\n" +
-    "      <label>\n" +
-    "      <input type=\"checkbox\" ng-model=\"userState.user.profile.accepted\" />\n" +
-    "      I accept Terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
-    "      </label>\n" +
-    "    </div>\n" +
-    "    <!-- Newsletter -->\n" +
-    "    <div class=\"checkbox\">\n" +
-    "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.mailSyncEnabled\"> Sign up for the Rise Vision Newsletter\n" +
-    "      </label>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
-    "      ng-click=\"cancel()\">\n" +
-    "        Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
-    "      </button>\n" +
-    "      <button ng-click=\"agree()\" type=\"button\" class=\"btn btn-success btn-fixed-width\">\n" +
-    "        Save <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
-    "      </button>\n" +
-    "    </div>\n" +
-    "  </form>\n" +
-    "</div>\n" +
-    "</div>\n" +
     "");
 }]);
 })();

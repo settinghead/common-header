@@ -1,10 +1,10 @@
 angular.module("risevision.common.header")
-.controller("TermsConditionsModalCtrl", [
+.controller("RegistrationModalCtrl", [
   "$scope", "$modalInstance", "$rootScope",
-  "updateProfile", "getProfile", "getOAuthUserInfo",
+  "updateProfile", "getProfile",
   "$loading", "createAccount", "$log", "cookieStore",
   function($scope, $modalInstance, $rootScope,
-    updateProfile, getProfile, getOAuthUserInfo, $loading,
+    updateProfile, getProfile, $loading,
     createAccount, $log, cookieStore) {
 
     var userState = $rootScope.userState;
@@ -14,12 +14,6 @@ angular.module("risevision.common.header")
       }
       if(!angular.isDefined(userState.user.profile.accepted)) {
         userState.user.profile.accepted = false;
-      }
-      if(!userState.user.profile.email) {
-        //retrieve user email from oatuh2 user info
-        getOAuthUserInfo().then(function (userInfo) {
-          userState.user.profile.email = userInfo.email;
-        });
       }
     });
 
@@ -32,10 +26,10 @@ angular.module("risevision.common.header")
       if(newVal) {
         if(newVal === "pendingCheck") {
           //start the spinner
-          $loading.start("terms-conditions-modal");
+          $loading.start("registration-modal");
         }
         else {
-          $loading.stop("terms-conditions-modal");
+          $loading.stop("registration-modal");
           if(userState.status !== "basicProfileCreated") {
             $modalInstance.close("success");
             //stop the watch
@@ -45,10 +39,13 @@ angular.module("risevision.common.header")
       }
     });
 
-    $scope.agree = function () {
+    $scope.save = function () {
       //update terms and conditions date
       createAccount(userState.user.profile).then(
-        function () { userState.status = "pendingCheck"; },
+        function () {
+          $modalInstance.close("success");
+          userState.status = "pendingCheck";
+        },
         function (err) {alert("Error: " + err);
         $log.error(err);});
     };
