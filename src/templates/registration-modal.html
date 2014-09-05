@@ -2,42 +2,52 @@
 rv-spinner-key="registration-modal"
 rv-spinner-start-active="1">
 <div class="modal-header">
-  <button type="button" ng-click="cancel()" class="close"><span>&times;</span><span class="sr-only">Close</span></button>
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeModal()">
+    <i class="glyphicons remove_2"></i>
+  </button>
   <h2 class="modal-title">Welcome To Rise Vision</h2>
 </div>
 <div class="modal-body registration-modal">
-  <p>We require an Email address that we can reliably reach you at
+  <p>We require an email address that we can reliably reach you at
   for system notices and other critical information. We promise,
    only system notices, we won't send you anything else unless you
-  sign up for the Newsletter below, and we won't share your email address
+  sign up for the newsletter below, and we won't share your email address
   with anyone else. Promise!</p>
 
-  <form role="form">
-    <div class="form-group">
-      <label for="exampleInputEmail1">Email address</label>
-      <input type="email" class="form-control"
-      id="exampleInputEmail1" placeholder="Enter email" required
+  <form role="form" name="registrationForm">
+    <div class="form-group" ng-class="{ 'has-error' : registrationForm.email.$invalid && !userForm.email.$pristine }">
+      <label for="email">Email</label>
+      <input type="email" class="form-control email"
+      name="email"
+      id="email" placeholder="Enter email" required
       ng-model="userState.user.profile.email">
+      <p ng-show="registrationForm.email.$invalid && !registrationForm.email.$pristine" class="help-block">Enter a valid email.</p>
     </div>
     <!-- Terms of Service and Privacy -->
-    <div class="checkbox">
+    <div class="checkbox form-group" ng-class="{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }">
       <label>
-      <input type="checkbox" ng-model="userState.user.profile.accepted" class="accept-terms-checkbox" />
-      I accept Terms of <a href="http://www.risevision.com/terms-service-privacy/" target="_blank">Service and Privacy</a>
+      <input type="checkbox" name="accepted"
+        ng-model="userState.user.profile.accepted"
+        class="accept-terms-checkbox" required />
+      I accept the terms of <a href="http://www.risevision.com/terms-service-privacy/" target="_blank">Service and Privacy</a>
+      <p ng-show="registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine" class="help-block">You must accept terms and condtions.</p>
       </label>
     </div>
     <!-- Newsletter -->
-    <div class="checkbox">
+    <div class="checkbox form-group">
       <label>
-        <input type="checkbox" ng-model="userState.user.profile.mailSyncEnabled"> Sign up for the Rise Vision Newsletter
+        <input type="checkbox" ng-model="userState.user.profile.mailSyncEnabled"> Sign up for our Newsletter
       </label>
     </div>
     <div class="form-group">
-      <button ng-click="save()" type="button" class="btn btn-success btn-fixed-width registration-save-button">
+      <button ng-click="save()"
+        type="button"
+        class="btn btn-success btn-fixed-width registration-save-button"
+        ng-disabled="registrationForm.$invalid">
         Save <i class="glyphicons white ok_2 icon-right"></i>
       </button>
       <button type="button" class="btn btn-primary btn-fixed-width"
-      ng-click="cancel()">
+      ng-click="closeModal()">
         Cancel <i class="glyphicons white remove_2 icon-right"></i>
       </button>
     </div>

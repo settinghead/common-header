@@ -14,13 +14,7 @@
       <li class="dropdown-header">
         {{userState.user.profile.email}}
       </li>
-      <li ng-show="!userState.user.profile.username">
-        <a href="" ng-click="register()">
-          <i class="glyphicons user_add"></i>
-          <span class="item-name">Register</span>
-        </a>
-      </li>
-      <li class="divider"></li>
+      <li class="divider" ng-show="userState.user.profile.username"></li>
       <li ng-show="userState.user.profile.username">
         <a href="" ng-click="userSettings()" class="user-settings-button">
           <i class="glyphicons cogwheels"></i>

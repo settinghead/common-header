@@ -51,7 +51,9 @@
         return shipping;
       },
       clear: function () {
-        items.length = 0;
+        if(items) {
+          items.length = 0;
+        }
         for (var key in itemsMap) {
           delete itemsMap[key];
         }
