@@ -5,8 +5,12 @@ angular.module("risevision.common.header")
     $scope.authenticate = function() {
       authenticate(true).finally(function(){
         $rootScope.userState.status = "pendingCheck";
-        $modalInstance.dismiss();
+        $modalInstance.close("success");
       });
+    };
+
+    $scope.closeModal = function () {
+      $modalInstance.dismiss("cancel");
     };
   }
 ]);

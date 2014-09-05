@@ -68,7 +68,9 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("authorization-modal.html",
     "<div class=\"modal-header\">\n" +
-    "  <button type=\"button\" ng-click=\"closeModal()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "  		<i class=\"glyphicons remove_2\"></i>\n" +
+    "  	</button>\n" +
     "</div>\n" +
     "<div class=\"modal-body authorization-modal\">\n" +
     "  <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\" class=\"profile-img\">\n" +
