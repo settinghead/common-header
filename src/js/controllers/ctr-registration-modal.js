@@ -10,16 +10,16 @@ angular.module("risevision.common.header")
     var userState = $rootScope.userState;
     getProfile(userState).finally(function () {
       if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
-        userState.user.profile.mailSyncEnabled = true;
+        userState.user.profile.mailSyncEnabled = false;
       }
       if(!angular.isDefined(userState.user.profile.accepted)) {
         userState.user.profile.accepted = false;
       }
     });
 
-    $scope.cancel = function() {
-      $modalInstance.dismiss("cancel");
+    $scope.closeModal = function() {
       cookieStore.put("surpressRegistration", true);
+      $modalInstance.dismiss("cancel");
     };
 
     var watch = $scope.$watch("userState.status", function (newVal) {

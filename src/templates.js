@@ -20,13 +20,7 @@ app.run(["$templateCache", function($templateCache) {
     "      <li class=\"dropdown-header\">\n" +
     "        {{userState.user.profile.email}}\n" +
     "      </li>\n" +
-    "      <li ng-show=\"!userState.user.profile.username\">\n" +
-    "        <a href=\"\" ng-click=\"register()\">\n" +
-    "          <i class=\"glyphicons user_add\"></i>\n" +
-    "          <span class=\"item-name\">Register</span>\n" +
-    "        </a>\n" +
-    "      </li>\n" +
-    "      <li class=\"divider\"></li>\n" +
+    "      <li class=\"divider\" ng-show=\"userState.user.profile.username\"></li>\n" +
     "      <li ng-show=\"userState.user.profile.username\">\n" +
     "        <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button\">\n" +
     "          <i class=\"glyphicons cogwheels\"></i>\n" +
@@ -896,42 +890,52 @@ app.run(["$templateCache", function($templateCache) {
     "rv-spinner-key=\"registration-modal\"\n" +
     "rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
-    "  <button type=\"button\" ng-click=\"cancel()\" class=\"close\"><span>&times;</span><span class=\"sr-only\">Close</span></button>\n" +
+    "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "    <i class=\"glyphicons remove_2\"></i>\n" +
+    "  </button>\n" +
     "  <h2 class=\"modal-title\">Welcome To Rise Vision</h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body registration-modal\">\n" +
-    "  <p>We require an Email address that we can reliably reach you at\n" +
+    "  <p>We require an email address that we can reliably reach you at\n" +
     "  for system notices and other critical information. We promise,\n" +
     "   only system notices, we won't send you anything else unless you\n" +
-    "  sign up for the Newsletter below, and we won't share your email address\n" +
+    "  sign up for the newsletter below, and we won't share your email address\n" +
     "  with anyone else. Promise!</p>\n" +
     "\n" +
-    "  <form role=\"form\">\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"exampleInputEmail1\">Email address</label>\n" +
-    "      <input type=\"email\" class=\"form-control\"\n" +
-    "      id=\"exampleInputEmail1\" placeholder=\"Enter email\" required\n" +
+    "  <form role=\"form\" name=\"registrationForm\">\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : registrationForm.email.$invalid && !userForm.email.$pristine }\">\n" +
+    "      <label for=\"email\">Email</label>\n" +
+    "      <input type=\"email\" class=\"form-control email\"\n" +
+    "      name=\"email\"\n" +
+    "      id=\"email\" placeholder=\"Enter email\" required\n" +
     "      ng-model=\"userState.user.profile.email\">\n" +
+    "      <p ng-show=\"registrationForm.email.$invalid && !registrationForm.email.$pristine\" class=\"help-block\">Enter a valid email.</p>\n" +
     "    </div>\n" +
     "    <!-- Terms of Service and Privacy -->\n" +
-    "    <div class=\"checkbox\">\n" +
+    "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
     "      <label>\n" +
-    "      <input type=\"checkbox\" ng-model=\"userState.user.profile.accepted\" class=\"accept-terms-checkbox\" />\n" +
-    "      I accept Terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
+    "      <input type=\"checkbox\" name=\"accepted\"\n" +
+    "        ng-model=\"userState.user.profile.accepted\"\n" +
+    "        class=\"accept-terms-checkbox\" required />\n" +
+    "      I accept the terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
+    "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\" class=\"help-block\">You must accept terms and condtions.</p>\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <!-- Newsletter -->\n" +
-    "    <div class=\"checkbox\">\n" +
+    "    <div class=\"checkbox form-group\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.mailSyncEnabled\"> Sign up for the Rise Vision Newsletter\n" +
+    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.mailSyncEnabled\"> Sign up for our Newsletter\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
-    "      <button ng-click=\"save()\" type=\"button\" class=\"btn btn-success btn-fixed-width registration-save-button\">\n" +
+    "      <button ng-click=\"save()\"\n" +
+    "        type=\"button\"\n" +
+    "        class=\"btn btn-success btn-fixed-width registration-save-button\"\n" +
+    "        ng-disabled=\"registrationForm.$invalid\">\n" +
     "        Save <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
     "      </button>\n" +
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
-    "      ng-click=\"cancel()\">\n" +
+    "      ng-click=\"closeModal()\">\n" +
     "        Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "      </button>\n" +
     "    </div>\n" +

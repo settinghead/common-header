@@ -40,9 +40,16 @@
         element(by.css(".authorize-button")).click();
         //dialog shows
         assert.eventually.isTrue(element(by.css(".registration-modal")).isPresent(), "registration dialog should show");
+
+        //fill in email address
+        element(by.css(".registration-modal .email")).sendKeys("michael.sanchez@awesomecompany.io");
+
         //click authorize
         element(by.css(".accept-terms-checkbox")).click();
         element(by.css(".registration-save-button")).click();
+
+
+        assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
       });
 
       xit("should show Email Update dialogue after the user has accepted T&C", function() {

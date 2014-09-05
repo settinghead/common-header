@@ -185,6 +185,7 @@
           // The majority of state is in here
           resetUserState();
           shoppingCart.destroy();
+          cookieStore.remove("surpressRegistration");
           deferred.resolve();
           $log.debug("User is signed out.");
         }, deferred.reject);
