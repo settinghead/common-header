@@ -300,14 +300,17 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("company-selector-modal.html",
     "<form role=\"form\">\n" +
     "	<div class=\"modal-header\">\n" +
-    "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\"\n" +
+    "		  aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "			<i class=\"glyphicons remove_2\"></i>\n" +
     "		</button>\n" +
     "		<h2 id=\"switch-company\" class=\"modal-title\">\n" +
     "			Select Sub-Company\n" +
     "		</h2>\n" +
     "		<div class=\"input-group company-search\">\n" +
-    "			<input id=\"csSearch\" type=\"text\" class=\"form-control\" placeholder=\"Search Companies\" ng-model=\"searchString\" ng-enter=\"doSearch()\">\n" +
+    "			<input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
+    "			  placeholder=\"Search Companies\"\n" +
+    "				ng-model=\"search.searchString\" ng-enter=\"doSearch()\">\n" +
     "			<span class=\"input-group-btn\">\n" +
     "				<button class=\"btn btn-primary\" type=\"submit\" ng-click=\"doSearch()\">\n" +
     "					<i class=\"glyphicon glyphicon-search\"></i>\n" +
@@ -315,7 +318,8 @@ app.run(["$templateCache", function($templateCache) {
     "			</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
-    "	<div class=\"modal-body jfk-scrollbar\" ng-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
+    "	<div class=\"modal-body jfk-scrollbar\"\n" +
+    "	  ng-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
     "		<div class=\"list-group scrollable-list\">\n" +
     "			<a href=\"#\" class=\"list-group-item\" ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
     "				<div class=\"row\">\n" +
@@ -1201,6 +1205,11 @@ app.run(["$templateCache", function($templateCache) {
     "    ng-click=\"save()\" id=\"save-button\">\n" +
     "    Save <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
     "  </button>\n" +
+    "\n" +
+    "  <button type=\"button\" class=\"btn btn-danger btn-fixed-width\" ng-disabled=\"true\" ng-click=\"deleteUser()\">\n" +
+    "		Delete <i class=\"glyphicons white bin icon-right\"></i>\n" +
+    "	</button>\n" +
+    "\n" +
     "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "  </button>\n" +

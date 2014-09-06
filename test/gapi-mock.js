@@ -1171,25 +1171,31 @@
           }
         };
       },
-      list: function () {
+      list: function (opt) {
+        opt = _.extend({count: 20, cursor: 0}, opt);
         return {
           execute: function (cb) {
+            var companies = window.gapi._fakeDb.companies;
+            if(opt.search) {
+              companies = _.filter(window.gapi._fakeDb.companies,
+                function (company) {
+                  return company.name.toLowerCase().indexOf(opt.search.toLowerCase()) >= 0;
+                });
+            }
+
+            if(opt.cursor) {
+              companies = companies.slice(opt.cursor);
+            }
+            if(opt.count) {
+              companies = companies.slice(0, opt.count);
+            }
+
             return delayed(cb, {
              "result": true,
              "code": 200,
              "message": "OK",
-             "cursor": "false:Cq8ECpgCCvsBvJeNloyLkI-Xmo27mpyUv5iSnpaT0ZyQktiM37yQko" +
-               "-ekYb_AP7__vcKlehA__r_14yBjYmenJCNmtKLmoyL_wB0baCgmYuMoKD_AF2ej4-" +
-               "akZiWkZr_AHN0bZaRm5qH_wBdm5aNmpyLkI2G0YyKnZyQko-" +
-               "ekZaajJ3Lzcedy5rH0pzHncbSy86bytLHns7P0p3LzsbMnMjHxsvLzP8Ac3Rtm5CcoJab" +
-               "_wBdmc3Om5qansjSzczGy9LLyZ3M0sfJm53Sm8-dx8nPz8jMm8ed_wBzf5nNzpuamp7" +
-               "I0s3MxsvSy8mdzNLHyZud0pvPncfJz8_IzJvHnf8A__" +
-               "4QMiFMcw71s9sZvFAAWgsJVe1Ieq0Kl_oQARINRG9jdW1lbnRJbmRleBqzAShBTk" +
-               "QgKElTICJjdXN0b21lcl9uYW1lIiAiYXBwZW5naW5lIikgKElTICJncm91cF9uYW1lIi" +
-               "Aic35ydmFjb3JlLXRlc3QiKSAoSVMgIm5hbWVzcGFjZSIgIiIpIChJUyAiaW5kZXhfb" +
-               "mFtZSIgImRpcmVjdG9yeS5zdWJjb21wYW5pZXNiNDI4YjRlOC1jOGI5LTQxZDUtOGE" +
-               "xMC1iNDE5M2M3ODk0NDMiKSAoVFJVRSkpOhQKDihUIHN0ZXh0X25hbWUpEAAiAEocCAA6FXN0OmJ0aV9nZW5lcmljX3Njb3JlckDoB1IZCgwoTiBvcmRlcl9pZCkQARkAAAAAAADw_w",
-             "items": window.gapi._fakeDb.companies,
+             "cursor": 0,
+             "items": companies,
              "kind": "core#company",
              "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/aU3KWpXBGvssoqWVjsHR5ngSZlU\""
             });

@@ -81,7 +81,9 @@ angular.module("risevision.common.header")
 
     function loadCompanies() {
       if (!$scope.companies.endOfList) {
-        companyService.getCompanies(companyId, $scope.search.searchString, $scope.companies.cursor, DB_MAX_COUNT, null).then(function (result) {
+        companyService.getCompanies(
+          companyId, $scope.search.searchString,
+          $scope.companies.cursor, DB_MAX_COUNT, null).then(function (result) {
           if (result && result.items) {
             $scope.companies.add(result.items, result.cursor);
           }
@@ -103,7 +105,7 @@ angular.module("risevision.common.header")
     };
 
     $scope.handleScroll = function (event, isEndEvent) {
-      //console.log(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
+      // console.log(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
       if (isEndEvent) {
         if ((event.target.scrollHeight - event.target.clientHeight - event.target.scrollTop) < 20) {
           //load more rows if less than 20px left to the bottom
