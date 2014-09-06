@@ -1,13 +1,16 @@
 <form role="form">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeModal()">
+		<button type="button" class="close" data-dismiss="modal"
+		  aria-hidden="true" ng-click="closeModal()">
 			<i class="glyphicons remove_2"></i>
 		</button>
 		<h2 id="switch-company" class="modal-title">
 			Select Sub-Company
 		</h2>
 		<div class="input-group company-search">
-			<input id="csSearch" type="text" class="form-control" placeholder="Search Companies" ng-model="searchString" ng-enter="doSearch()">
+			<input id="csSearch" type="text" class="form-control"
+			  placeholder="Search Companies"
+				ng-model="search.searchString" ng-enter="doSearch()">
 			<span class="input-group-btn">
 				<button class="btn btn-primary" type="submit" ng-click="doSearch()">
 					<i class="glyphicon glyphicon-search"></i>
@@ -15,7 +18,8 @@
 			</span>
 		</div>
 	</div>
-	<div class="modal-body jfk-scrollbar" ng-scroll-event="handleScroll($event, isEndEvent)">
+	<div class="modal-body jfk-scrollbar"
+	  ng-scroll-event="handleScroll($event, isEndEvent)">
 		<div class="list-group scrollable-list">
 			<a href="#" class="list-group-item" ng-repeat="company in companies.list" ng-click="setCompany(company)">
 				<div class="row">

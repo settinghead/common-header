@@ -119,9 +119,11 @@ angular.module("risevision.common.company",
         "count": count,
         "sort": sort
       };
+      $log.debug("getCompanies called with", obj);
       coreAPILoader().then(function (coreApi) {
         var request = coreApi.company.list(obj);
         request.execute(function (resp) {
+            $log.debug("getCompanies resp", resp);
             deferred.resolve(resp);
         });
       });
