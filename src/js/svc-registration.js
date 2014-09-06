@@ -94,7 +94,6 @@
     };
   }])
 
-
   .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo",
   function ($q, getOAuthUserInfo) {
     return function () {

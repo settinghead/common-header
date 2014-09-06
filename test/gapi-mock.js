@@ -1246,7 +1246,9 @@
             }
 
             _.extend(window.gapi._fakeDb.currentUser.item, obj);
-            _.extend(window.gapi._fakeDb.currentUser.item, {username: window.gapi._fakeDb.currentAccount.item.username});
+            _.extend(window.gapi._fakeDb.currentUser.item, {
+              username: window.gapi._fakeDb.currentAccount.item.username,
+              lastLogin: new Date().toISOString()});
             return delayed(cb, _.cloneDeep(window.gapi._fakeDb.currentUser));
           }
         };
