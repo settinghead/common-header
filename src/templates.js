@@ -1192,18 +1192,6 @@ app.run(["$templateCache", function($templateCache) {
     "      </label>\n" +
     "      <div>{{userState.user.profile.lastLogin | date:'MM/dd/yy HH:mm:ss Z'}}</div>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"user-settings-status\">\n" +
-    "        Status\n" +
-    "      </label>\n" +
-    "      <select id=\"user-settings-status\"\n" +
-    "        class=\"form-control selectpicker\"\n" +
-    "        ng-model=\"userState.user.profile.status\"\n" +
-    "        >\n" +
-    "        <option value=\"1\">Active</option>\n" +
-    "        <option value=\"0\">Inactive</option>\n" +
-    "      </select>\n" +
-    "    </div>\n" +
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
