@@ -34,6 +34,8 @@
         //log in
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
+        element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
+
         //reset db
         assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
 
@@ -90,7 +92,7 @@
           .isPresent(), "User settings modal should hide after saving");
 
         var profilePromise = browser.executeScript(function () {
-            return window.gapi._fakeDb.currentUser.item;
+            return window.gapi._fakeDb.users[0];
           });
         expect(profilePromise).to.eventually.have.property("firstName", "John");
         expect(profilePromise).to.eventually.have.property("lastName", "Doe");

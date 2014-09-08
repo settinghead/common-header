@@ -32,12 +32,15 @@
 
         element(by.id("reset-db")).click();
         //delete account
-        element(by.id("delete-account")).click();
+        element(by.id("clear-accounts")).click();
+        element(by.id("clear-users")).click();
 
         expect(element(by.css("a.sign-in")).isDisplayed()).to.eventually.equal(true);
         //click on sign in button
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
+        element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
+
         //dialog shows
         assert.eventually.isTrue(element(by.css(".registration-modal")).isPresent(), "registration dialog should show");
 
@@ -59,6 +62,8 @@
         //click on sign in button
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
+        element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
+
         //dialog shows
         expect(element(by.css(".update-profile-modal")).isDisplayed()).to.eventually.equal(true);
 
@@ -71,14 +76,5 @@
         //auth dialog should disappear
         expect(element(by.css(".update-profile-modal")).isPresent()).to.eventually.equal(false);
       });
-
-      xit("should show company creation dialogue if no company is created", function() {
-        //TODO
-      });
-
-      xit("should follow complete workflow", function() {
-        //TODO
-      });
-
   });
 })();

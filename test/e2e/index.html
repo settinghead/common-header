@@ -25,48 +25,70 @@
       messages="messages"
     ></common-header>
 
-    <ng-view>Loading...</ng-view>
-
-    <script type="text/ng-template" id="fake-google.html">
-      <h1>Fake Google Cloud Server</h1>
-
       This app was built for the sole purpose of testing & demoing common header.
       Set server latency to <input type="number" ng-model="db.serverDelay" id="server-delay" /> ms.
       <button class="btn" ng-click="resetDb()" id="reset-db">Reset DB</button>
+
+    <ng-view>Loading...</ng-view>
+
+    <script type="text/ng-template" id="fake-google-companies.html">
+      <h1>Fake Google Cloud Server - Companies</h1>
       <div class="container">
         <div class="row">
-          <div class="col-md-1"></div>
-          <div class="jsonView col-md-5" defocus>
-            <h3 class="inline">Account in Fake Google DB</h3>
-            <button class="btn" ng-click="deleteAccount()" id="delete-account">Delete</button>
-            <button class="btn" ng-click="resetAccount()" id="reset-account">Reset</button>
-            <div>
-              <json child="db.currentAccount.item"
-                default-collapsed="false"
-                type="'object'"></json>
-            </div>
-            <h3 class="inline">Profile in Fake Google DB</h3>
-            <button class="btn" ng-click="deleteUser()">Delete</button>
-            <button class="btn" ng-click="resetUser()">Reset</button>
-
-            <div><json child="db.currentUser.item" default-collapsed="false" type="'object'">
-            </json></div>
-            <h3 class="inline">System Messages</h3>
-            <button class="btn" ng-click="clearSystemMessages()">Clear</button>
-
-            <button class="btn" ng-click="resetSystemMessages()">Reset</button>
-
-            <div><json child="db.systemMessages.items" default-collapsed="false" type="'object'">
-            </json></div>
+          <div class="jsonView col-md-3" defocus>
           </div>
-          <div class="col-md-5 jsonView" defocus>
+          <div class="col-md-6 jsonView" defocus>
             <h3 class="inline">All Companies in Fake Google DB</h3>
             <button class="btn" ng-click="clearCompanies()">Clear</button>
             <button class="btn" ng-click="resetCompanies()">Reset</button>
             <div><json child="db.companies" default-collapsed="false" type="'array'">
             </json></div>
           </div>
-          <div class="col-md-1"></div>
+          <div class="col-md-3 jsonView" defocus>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/ng-template" id="fake-google-system-messages.html">
+      <h1>Fake Google Cloud Server - System Messages</h1>
+      <div class="container" id="companies">
+      <div class="row">
+        <div class="jsonView col-md-3"></div>
+        <div class="jsonView col-md-6">
+          <h3 class="inline">System Messages</h3>
+          <button class="btn" ng-click="clearSystemMessages()">Clear</button>
+          <button class="btn" ng-click="resetSystemMessages()">Reset</button>
+          <div><json child="db.systemMessages.items" default-collapsed="false" type="'object'">
+          </json></div>
+        </div>
+        <div class="jsonView col-md-3"></div>
+      </div>
+      <div class="tab-pane container" id="system-messages">
+      </div>
+    </script>
+
+    <script type="text/ng-template" id="fake-google-users.html">
+      <h1>Fake Google Cloud Server - Users</h1>
+      <div class="container" id="users">
+        <div class="row">
+          <div class="jsonView col-md-6">
+            <h3 class="inline">Current Accounts in Fake Google DB</h3>
+            <button class="btn" ng-click="clearAccounts()" id="clear-accounts">Clear</button>
+            <button class="btn" ng-click="resetAccounts()" id="reset-account">Reset</button>
+            <div>
+              <json child="db.accounts"
+                default-collapsed="false"
+                type="'array'"></json>
+            </div>
+          </div>
+          <div class="jsonView col-md-6">
+            <h3 class="inline">User Profiles in Fake Google DB</h3>
+            <button class="btn" id="clear-users" ng-click="clearUsers()">Clear</button>
+            <button class="btn" id="reset-users" ng-click="resetUsers()">Reset</button>
+            <div><json child="db.users" default-collapsed="false" type="'array'">
+            </json></div>
+            </div>
         </div>
       </div>
 
@@ -109,6 +131,7 @@
     <script type="text/javascript" src="../../src/js/controllers/ctr-registration-modal.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-login.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-company-modals.js"></script>
+    <script type="text/javascript" src="../../src/js/controllers/ctr-company-users-modal.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-user-settings-modal.js"></script>
     <script type="text/javascript" src="../../src/js/angular-scrollevents.js"></script>
     <script type="text/javascript" src="../../src/js/svc-util.js"></script>
@@ -117,7 +140,7 @@
     <script type="text/javascript" src="../../src/js/svc-account.js"></script>
     <script type="text/javascript" src="../../src/js/svc-registration.js"></script>
     <script type="text/javascript" src="../../src/js/svc-cache.js"></script>
-    <script type="text/javascript" src="../../src/js/svc-profile.js"></script>
+    <script type="text/javascript" src="../../src/js/svc-user.js"></script>
     <script type="text/javascript" src="../../src/js/svc-shoppingcart.js"></script>
     <script type="text/javascript" src="../../src/js/svc-system-messages.js"></script>
     <script type="text/javascript" src="../../src/js/svc-oauth2.js"></script>
@@ -134,7 +157,13 @@
     <!-- <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientJSLoad"></script> -->
 
     <script type="text/javascript" src="../../components/JSONedit/js/JSONEdit.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data/users.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data/companies.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data/accounts.js"></script>
+    <script type="text/javascript" src="../../components/mustache/mustache.js"></script>
     <script type="text/javascript" src="../gapi-mock.js"></script>
+
     <!-- endbuild -->
 
     <style>
@@ -151,56 +180,73 @@
       angular.module("test-app", ["ngRoute", "risevision.common.header", "JSONedit"])
       .config(['$routeProvider', function($routeProvider) {
         $routeProvider.
-          when('/home', {templateUrl: 'fake-google.html',   controller: "FakeGoogleController"}).
+          when('/users', {templateUrl: 'fake-google-users.html',   controller: "FakeGoogleUserController"}).
+          when('/companies', {templateUrl: 'fake-google-companies.html',   controller: "FakeGoogleCompanyController"}).
+          when('/system-messages', {templateUrl: 'fake-google-system-messages.html',   controller: "FakeGoogleSystemMessagesController"}).
           when('/fake-store', {templateUrl: 'fake-store.html',   controller: "FakeStoreController"}).
-          otherwise({redirectTo: '/home'});
+          otherwise({redirectTo: '/users'});
       }])
 
-      .controller("MainController", function($rootScope) {
+      .controller("MainController", function($rootScope, $scope) {
         $rootScope.navOptions = [{
-          title: 'Fake Google Dashboard',
-          link: '#/'
-        }, {
+          title: 'Accounts & Users',
+          link: '#/users'
+        },
+        {
+          title: 'Companies',
+          link: '#/companies'
+        },
+        {
+          title: 'System Messages',
+          link: '#/system-messages'
+        }
+        , {
           title: 'Fake Store',
           link: '#/fake-store'
-        }, {
-          title: 'Platform',
-          link: 'http://rva.risevision.com/',
-          target: '_blank'
         }];
+
+        $scope.db = window.gapi._fakeDb;
+
+        $scope.resetDb = function () {
+          window.gapi.resetDb();
+        }
+        $scope.$watch("db", function (newVal) {
+          localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal));
+        }, true);
       })
 
-      .controller("FakeGoogleController", function ($scope, $rootScope) {
-          $scope.db = window.gapi._fakeDb;
+      .controller("FakeGoogleUserController", function ($scope, $rootScope) {
 
-          $scope.deleteUser = function () {
-            window.gapi.deleteUser();
+          $scope.clearUsers = function () {
+            window.gapi.clearUsers();
           }
-          $scope.deleteAccount = function () {
-            window.gapi.deleteAccount();
+          $scope.clearAccounts = function () {
+            window.gapi.clearAccounts();
           }
-          $scope.resetUser = function () {
-            window.gapi.resetUser();
+          $scope.resetAccounts = function () {
+            window.gapi.resetAccounts();
           }
-          $scope.resetDb = function () {
-            window.gapi.resetDb();
+          $scope.resetUsers = function () {
+            window.gapi.resetUsers();
           }
-          $scope.resetCompanies = function () {
-            window.gapi.resetCompanies();
-          }
-          $scope.resetSystemMessages = function () {
-            window.gapi.resetSystemMessages();
-          }
-          $scope.clearSystemMessages = function () {
-            window.gapi.clearSystemMessages();
-          }
-          $scope.clearCompanies = function () {
-            window.gapi.clearCompanies();
-          }
+      })
 
-          $scope.$watch("db", function (newVal) {
-            localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal));
-          }, true);
+      .controller("FakeGoogleCompanyController", function ($scope, $rootScope) {
+        $scope.resetCompanies = function () {
+          window.gapi.resetCompanies();
+        }
+        $scope.clearCompanies = function () {
+          window.gapi.clearCompanies();
+        }
+      })
+
+      .controller("FakeGoogleSystemMessagesController", function ($scope, $rootScope) {
+        $scope.resetSystemMessages = function () {
+          window.gapi.resetSystemMessages();
+        }
+        $scope.clearSystemMessages = function () {
+          window.gapi.clearSystemMessages();
+        }
       })
 
       .controller("FakeStoreController", function ($scope, shoppingCart) {

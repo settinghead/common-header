@@ -1,9 +1,9 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$rootScope", "$loading", "authenticate",
-  "signOut", "$log", "getProfile", "cookieStore",
+  "signOut", "$log", "getUser", "cookieStore",
   function($scope, $modal, $templateCache, userState, $rootScope,
-  $loading, authenticate, signOut, $log, getProfile, cookieStore) {
+  $loading, authenticate, signOut, $log, getUser, cookieStore) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
@@ -58,7 +58,7 @@ angular.module("risevision.common.header")
       });
     };
 
-    authenticate(false).then(getProfile);
+    authenticate(false).then(getUser);
 
     $scope.$watch("userState.status", function (newStatus){
       if (newStatus === "pendingCheck") {
