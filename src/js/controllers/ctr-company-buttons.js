@@ -36,6 +36,15 @@ angular.module("risevision.common.header")
       });
     };
 
+    // Show Company Users Modal
+    $scope.companyUsers = function(size) {
+      $modal.open({
+        template: $templateCache.get("company-users-modal.html"),
+        controller: "CompanyUsersModalCtrl",
+        size: size
+      });
+    };
+
     $scope.switchCompany = function () {
       var modalInstance = $modal.open({
         template: $templateCache.get("company-selector-modal.html"),

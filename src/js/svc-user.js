@@ -1,10 +1,10 @@
 (function (angular) {
 
   "use strict";
-  angular.module("risevision.common.profile", [
+  angular.module("risevision.common.userprofile", [
   "risevision.common.gapi", "risevision.common.oauth2",
   "risevision.common.cache"]).
-  factory("getProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
+  factory("getUser", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
   "userState", "getOAuthUserInfo", "userInfoCache",
   function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
     userInfoCache) {
@@ -25,7 +25,7 @@
           }
           coreApi.user.get({}).execute(function (resp){
             if(resp.result === true) {
-              $log.debug("getProfile resp", resp);
+              $log.debug("getUser resp", resp);
                 angular.extend(userState.user.profile,
                   angular.extend({
                     picture: oauthUserInfo.picture,
@@ -44,25 +44,47 @@
     };
   }])
 
-  .factory("updateProfile", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getProfile",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getProfile) {
+  .factory("updateUser", ["$q", "coreAPILoader", "$log",
+  "userInfoCache", "userState", "getUser",
+  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser) {
     return function (profile) {
-      $log.debug("updateProfile", profile);
+      $log.debug("updateUser", profile);
       var deferred = $q.defer();
       coreAPILoader().then(function (coreApi) {
         var request = coreApi.user.update(profile);
         request.execute(function (resp) {
-            $log.debug("updateProfile resp", resp);
+            $log.debug("updateUser resp", resp);
             if(resp.result === true) {
               userInfoCache.remove("profile");
-              getProfile().then(function() {deferred.resolve(resp.item);});
+              getUser().then(function() {deferred.resolve(resp);});
             }
             else {
-              deferred.reject("updateProfile");
+              deferred.reject("updateUser");
             }
         });
-      });
+      }, deferred.reject);
+      return deferred.promise;
+    };
+  }])
+
+  .factory("getUsers", ["$q", "coreAPILoader", "$log", function (
+    $q, coreAPILoader, $log) {
+    return function (criteria) {
+      $log.debug("getUsers", criteria);
+      var deferred = $q.defer();
+      coreAPILoader().then(function (coreApi) {
+        var request = coreApi.user.list(criteria);
+        request.execute(function (resp) {
+            $log.debug("getUsers resp", resp);
+            if(resp.result === true) {
+              $log.debug("getUser resp", resp);
+              deferred.resolve(resp.item);
+            }
+            else {
+              deferred.reject("getUsers");
+            }
+        });
+      }, deferred.reject);
       return deferred.promise;
     };
   }]);

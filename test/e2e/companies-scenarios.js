@@ -45,6 +45,7 @@
         //log in
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
+        element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
 
         assert.eventually.isTrue(element(by.id("buy-product-1")).isDisplayed(), "Product 1 button should show");
         assert.eventually.isTrue(element(by.id("buy-product-2")).isDisplayed(), "Product 2 button should show");

@@ -2,7 +2,7 @@
   "use strict";
 
   angular.module("risevision.common.registration",
-  ["risevision.common.profile"])
+  ["risevision.common.userprofile"])
 
   .value("userStatusDependencies", {
     "basicProfileCreated" : "signedInWithGoogle",
@@ -121,12 +121,12 @@
   }])
 
 
-  .factory("basicProfileCreated", ["$q", "getProfile", "cookieStore",
-  function ($q, getProfile, cookieStore) {
+  .factory("basicProfileCreated", ["$q", "getUser", "cookieStore", "$log",
+  function ($q, getUser, cookieStore, $log) {
     return function () {
       var deferred = $q.defer();
 
-      getProfile().then(function (profile) {
+      getUser().then(function (profile) {
         if(angular.isDefined(profile.email) &&
           angular.isDefined(profile.mailSyncEnabled)) {
           deferred.resolve(profile);
@@ -137,11 +137,12 @@
         else {
           deferred.reject("basicProfileCreated");
         }
-      }, function () {
+      }, function (err) {
         if (cookieStore.get("surpressRegistration")){
           deferred.resolve({});
         }
         else {
+          $log.debug("basicProfileCreated rejected", err);
           deferred.reject("basicProfileCreated");
         }
       });
@@ -170,10 +171,10 @@
     };
   }])
 
-  .factory("profileLoaded", ["$q", "getProfile", function ($q, getProfile) {
+  .factory("profileLoaded", ["$q", "getUser", function ($q, getUser) {
     return function () {
       var deferred = $q.defer();
-      getProfile().then(deferred.resolve, function (){
+      getUser().then(deferred.resolve, function (){
         deferred.reject("profileLoaded");
       });
       return deferred.promise;

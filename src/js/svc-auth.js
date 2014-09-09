@@ -20,6 +20,9 @@
       var accessToken = cookieStore.get("rv-token");
       if(accessToken) {
         accessToken = JSON.parse(accessToken);
+        gapiLoader().then(function (gApi) {
+          gApi.auth.setToken(accessToken);
+        });
       }
 
       $log.debug("Access token", accessToken);
@@ -132,10 +135,10 @@
                 authorizeDeferred.resolve(authResult);
               }
               else {
-                authorizeDeferred.reject();
+                authorizeDeferred.reject("not authorized");
               }
             });
-          });
+          }, authorizeDeferred.reject);
           return authorizeDeferred.promise;
         };
 

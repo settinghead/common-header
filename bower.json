@@ -33,7 +33,8 @@
     "rv-common-style": "https://github.com/Rise-Vision/common-style.git",
     "rv-loading": "https://github.com/Rise-Vision/rv-loading.git",
     "q": "1.0.1",
-    "ng-biscuit": "~0.2.1"
+    "ng-biscuit": "~0.2.1",
+    "mustache": "~0.8.2"
   },
   "devDependencies": {
     "lodash": "~2.4.1",

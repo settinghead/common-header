@@ -43,6 +43,7 @@
       assert.eventually.isTrue(element(by.css(".authorize-button")).isDisplayed(), "Auth button should exist in auth modal");
       //click authorize
       element(by.css(".authorize-button")).click();
+      element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
       //auth dialog should disappear
       assert.eventually.isFalse(element(by.css(".authorization-modal")).isPresent(), "Auth modal should close");
     });
