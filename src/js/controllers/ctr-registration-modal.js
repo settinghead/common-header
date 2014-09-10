@@ -8,7 +8,7 @@ angular.module("risevision.common.header")
     registerAccount, $log, cookieStore) {
 
     var userState = $rootScope.userState;
-    getUser(userState).finally(function () {
+    getUser().finally(function () {
       if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
         userState.user.profile.mailSyncEnabled = false;
       }
@@ -41,7 +41,8 @@ angular.module("risevision.common.header")
 
     $scope.save = function () {
       //update terms and conditions date
-      registerAccount(userState.user.profile).then(
+      registerAccount(userState.user.profile.username,
+        userState.user.profile).then(
         function () {
           // $modalInstance.close("success");
           userState.status = "pendingCheck";

@@ -15,7 +15,7 @@
 
   browser.driver.manage().window().setSize(1024, 768);
 
-  xdescribe("Companies", function() {
+  describe("Companies", function() {
   var ptor;
 
       before(function() {
@@ -39,38 +39,6 @@
         element(by.id("buy-product-2")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Should not add to cart");
 
-      });
-
-      it("should add stuff to cart when logged in", function() {
-        //log in
-        element(by.css("a.sign-in")).click();
-        element(by.css(".authorize-button")).click();
-        element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
-
-        assert.eventually.isTrue(element(by.id("buy-product-1")).isDisplayed(), "Product 1 button should show");
-        assert.eventually.isTrue(element(by.id("buy-product-2")).isDisplayed(), "Product 2 button should show");
-        assert.eventually.isTrue(element(by.id("buy-product-3")).isDisplayed(), "Product 3 button should show");
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
-        element(by.id("buy-product-2")).click();
-        browser.takeScreenshot().then(function(png) {
-        var stream = fs.createWriteStream("/tmp/screenshot.png");
-          stream.write(new Buffer(png, "base64"));
-          stream.end();
-        });
-
-        //add to cart
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "1", "Cart badge should display 1");
-        element(by.id("buy-product-3")).click();
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "2", "Cart badge should display 2");
-        element(by.id("buy-product-1")).click();
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "3", "Cart badge should display 3");
-        element(by.id("buy-product-3")).click();
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "3", "Cart badge should display 3");
-      });
-
-      it("should clear cart", function() {
-        element(by.id("clear-cart")).click();
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart should be cleared out");
       });
 
   });

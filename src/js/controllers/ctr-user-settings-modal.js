@@ -1,16 +1,46 @@
 angular.module("risevision.common.header")
-  .controller("UserSettingsModalCtrl", [
-    "$scope", "$modalInstance", "updateUser", "getUser", "userState",
-    function($scope, $modalInstance, updateUser, getUser) {
 
-      getUser();
+  .controller("AddUserModalCtrl", ["$scope", "addUser", "$modalInstance", "companyId",
+  function ($scope, addUser, $modalInstance, companyId) {
+    $scope.user = {};
+    $scope.save = function () {
+      addUser(companyId, $scope.user.email, $scope.user).then(
+        function () {
+          $modalInstance.close("success");
+        },
+        function (error) {
+          alert("Error", error);
+        }
+      );
+    };
+
+    $scope.closeModal = function() {
+      $modalInstance.dismiss("cancel");
+    };
+  }])
+
+  .controller("UserSettingsModalCtrl", [
+    "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser", "addUser", "username",
+    function($scope, $modalInstance, updateUser, getUser, deleteUser, addUser, username) {
+
+      $scope.username = username;
+
+      getUser(username).then(function (user) {
+        $scope.user = user;
+      });
 
       $scope.closeModal = function() {
         $modalInstance.dismiss("cancel");
       };
 
+      $scope.deleteUser = function () {
+        if (confirm("Are you sure you want to delete this user?")) {
+          deleteUser().finally($modalInstance.dismiss("deleted"));
+        }
+      };
+
       $scope.save = function () {
-        updateUser($scope.userState.user.profile).then(
+        updateUser(username, $scope.user).then(
           function () {
             $modalInstance.close("success");
           },

@@ -45,7 +45,9 @@ angular.module("risevision.common.header")
       $modal.open({
         template: $templateCache.get("user-settings-modal.html"),
         controller: "UserSettingsModalCtrl",
-        size: size
+        size: size,
+        resolve: {username: function () {return;},
+        add: function () {return false; }}
       });
     };
     // Show Payment Methods Modal

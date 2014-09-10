@@ -12,8 +12,9 @@ angular.module("risevision.common.header", [
   "risevision.common.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
+  "risevision.common.userprofile",
   "checklist-model",
-  "ui.bootstrap", "ngSanitize", "ngScrollEvent"
+  "ui.bootstrap", "ngSanitize", "ngScrollEvent", "ngCsv"
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",

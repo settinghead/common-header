@@ -6,11 +6,11 @@
 </div>
 <div class="modal-body user-settings-modal">
   <form role="form">
-    <div class="form-group">
+    <div class="form-group" ng-if="user.username">
       <label>
         Username
       </label>
-      bloosbrock@gmail.com
+      {{user.username}}
     </div>
     <div class="form-group">
       <label for="user-settings-first-name">
@@ -19,7 +19,7 @@
       <input id="user-settings-first-name"
         type="text"
         class="form-control"
-        ng-model="userState.user.profile.firstName"
+        ng-model="user.firstName"
         />
     </div>
     <div class="form-group">
@@ -29,7 +29,7 @@
       <input id="user-settings-last-name"
         type="text"
         class="form-control"
-        ng-model="userState.user.profile.lastName"
+        ng-model="user.lastName"
         />
     </div>
     <div class="form-group">
@@ -40,7 +40,7 @@
         id="user-settings-phone"
         type="tel"
         class="form-control"
-        ng-model="userState.user.profile.phone"
+        ng-model="user.phone"
          />
     </div>
     <div class="form-group">
@@ -51,14 +51,14 @@
         id="user-settings-email"
         type="email"
         class="form-control"
-        ng-model="userState.user.profile.email"
+        ng-model="user.email"
         />
     </div>
     <div class="checkbox">
       <label>
         <input type="checkbox"
           id="user-settings-newsletter"
-          ng-model="userState.user.profile.mailSyncEnabled">
+          ng-model="user.mailSyncEnabled">
           Subscribe To Email Updates
       </label>
     </div>
@@ -70,7 +70,7 @@
         <label>
           <input type="checkbox"
             id="user-settings-editor"
-            checklist-model="userState.user.profile.roles"
+            checklist-model="user.roles"
             checklist-value="'ce'"> Editor
         </label>
       </div>
@@ -78,7 +78,7 @@
         <label>
           <input type="checkbox"
             id="user-settings-publisher"
-            checklist-model="userState.user.profile.roles"
+            checklist-model="user.roles"
             checklist-value="'pu'"> Publisher
         </label>
       </div>
@@ -86,7 +86,7 @@
         <label>
           <input type="checkbox"
             id="user-settings-display"
-            checklist-model="userState.user.profile.roles"
+            checklist-model="user.roles"
             checklist-value="'da'"> Display
         </label>
       </div>
@@ -94,7 +94,7 @@
         <label>
           <input type="checkbox"
             id="user-settings-administrator"
-            checklist-model="userState.user.profile.roles"
+            checklist-model="user.roles"
             checklist-value="'ua'"> Administrator
         </label>
       </div>
@@ -102,16 +102,16 @@
         <label>
           <input type="checkbox"
             id="user-settings-system"
-            checklist-model="userState.user.profile.roles"
+            checklist-model="user.roles"
             checklist-value="'sa'"> System
         </label>
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="user.lastLogin">
       <label>
         Last Login
       </label>
-      <div>{{userState.user.profile.lastLogin | date:'MM/dd/yy HH:mm:ss Z'}}</div>
+      <div>{{user.lastLogin | date:'MM/dd/yy HH:mm:ss Z'}}</div>
     </div>
   </form>
 </div>
@@ -123,7 +123,9 @@
     Save <i class="glyphicons white ok_2 icon-right"></i>
   </button>
 
-  <button type="button" class="btn btn-danger btn-fixed-width" ng-disabled="true" ng-click="deleteUser()">
+  <button type="button" class="btn btn-danger btn-fixed-width"
+    ng-if="username"
+    ng-click="deleteUser()">
 		Delete <i class="glyphicons white bin icon-right"></i>
 	</button>
 
