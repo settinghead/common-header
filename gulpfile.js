@@ -19,7 +19,8 @@ var env = process.env.NODE_ENV || "dev",
     html2js = require("gulp-html2js"),
     concat = require("gulp-concat"),
     rename = require("gulp-rename"),
-    usemin = require("gulp-usemin");
+    usemin = require("gulp-usemin"),
+    es = require("event-stream");
 
 
 gulp.task("html", ["lint"], function () {
@@ -35,8 +36,13 @@ gulp.task("html", ["lint"], function () {
 gulp.task("build", ["html", "html2js"]);
 
 gulp.task("fonts-copy", function () {
-  return gulp.src(["src/css/fonts/*"])
-    .pipe(gulp.dest("./dist/css/fonts"));
+  //TODO This is a temporary solution. Dulpicate files. Not recommended
+
+  return es.concat(
+    gulp.src(["src/css/fonts/*"])
+    .pipe(gulp.dest("./dist/css/fonts")),
+    gulp.src(["src/css/fonts/*"])
+    .pipe(gulp.dest("./dist/fonts")));
 });
 
 gulp.task("lint", ["config", "fonts-copy"], function() {

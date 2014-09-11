@@ -30,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/Rise-Vision/common-header/issues"
   },
-  "homepage": "https://github.com/Rise-Vision/common-header"
+  "homepage": "https://github.com/Rise-Vision/common-header",
+  "dependencies": {
+    "event-stream": "^3.1.7"
+  }
 }
