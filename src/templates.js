@@ -419,7 +419,8 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"company-settings-monitoring\">\n" +
     "        Send Monitoring Emails To\n" +
     "      </label>\n" +
-    "      <input id=\"company-settings-monitoring\" type=\"email\" class=\"form-control\" />\n" +
+    "      <input id=\"company-settings-monitoring\"\n" +
+    "        type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com\"/>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
@@ -439,7 +440,7 @@ app.run(["$templateCache", function($templateCache) {
     "        abc123\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\" ng-hide=\"true\">\n" +
     "      <label>\n" +
     "        Sub-Company Home Page Presentation\n" +
     "      </label>\n" +
@@ -493,14 +494,14 @@ app.run(["$templateCache", function($templateCache) {
     "          </div>\n" +
     "        </div>\n" +
     "      </div>\n" +
-    "      <div class=\"form-group\">\n" +
+    "      <div class=\"form-group\" ng-hide=\"true\">\n" +
     "        <label for=\"company-settings-community-url\">\n" +
     "          Sub-Company Community URL\n" +
     "        </label>\n" +
     "        <a class=\"action-link\" href=\"\">Default</a>\n" +
     "        <input id=\"company-settings-community-url\" type=\"url\" class=\"form-control\" />\n" +
     "      </div>\n" +
-    "      <div class=\"form-group\">\n" +
+    "      <div class=\"form-group\" ng-hide=\"true\">\n" +
     "        <label for=\"company-settings-support-url\">\n" +
     "          Sub-Company Support URL\n" +
     "        </label>\n" +
@@ -515,7 +516,7 @@ app.run(["$templateCache", function($templateCache) {
     "          123456\n" +
     "        </div>\n" +
     "      </div>\n" +
-    "      <div class=\"form-group\">\n" +
+    "      <div class=\"form-group\" ng-hide=\"true\">\n" +
     "        <label for=\"company-settings-status\">\n" +
     "          Status\n" +
     "        </label>\n" +

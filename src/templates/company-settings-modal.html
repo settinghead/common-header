@@ -67,7 +67,8 @@
       <label for="company-settings-monitoring">
         Send Monitoring Emails To
       </label>
-      <input id="company-settings-monitoring" type="email" class="form-control" />
+      <input id="company-settings-monitoring"
+        type="email" class="form-control" placeholder="e.g. john.doe@company.com"/>
     </div>
     <div class="form-group">
       <label>
@@ -87,7 +88,7 @@
         abc123
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-hide="true">
       <label>
         Sub-Company Home Page Presentation
       </label>
@@ -141,14 +142,14 @@
           </div>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-hide="true">
         <label for="company-settings-community-url">
           Sub-Company Community URL
         </label>
         <a class="action-link" href="">Default</a>
         <input id="company-settings-community-url" type="url" class="form-control" />
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-hide="true">
         <label for="company-settings-support-url">
           Sub-Company Support URL
         </label>
@@ -163,7 +164,7 @@
           123456
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-hide="true">
         <label for="company-settings-status">
           Status
         </label>
