@@ -140,7 +140,7 @@ app.run(["$templateCache", function($templateCache) {
     "				ng-include=\"'shoppingcart-button.html'\">\n" +
     "			</li>\n" +
     "			<!-- Current App -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"userState.user.profile\">\n" +
+    "			<li class=\"dropdown\" ng-show=\"false\">\n" +
     "				<a href=\"\" class=\"dropdown-toggle\">\n" +
     "					<i class=\"glyphicons show_thumbnails\"></i>\n" +
     "				</a>\n" +
@@ -215,7 +215,7 @@ app.run(["$templateCache", function($templateCache) {
     "	</div>\n" +
     "	<div ng-if=\"userState.subCompanySelected\"\n" +
     "	  class=\"sub-company-alert\">\n" +
-    "		You’re in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}\n" +
+    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}\n" +
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +

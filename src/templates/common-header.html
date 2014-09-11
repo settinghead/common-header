@@ -56,7 +56,7 @@
 				ng-include="'shoppingcart-button.html'">
 			</li>
 			<!-- Current App -->
-			<li class="dropdown" ng-show="userState.user.profile">
+			<li class="dropdown" ng-show="false">
 				<a href="" class="dropdown-toggle">
 					<i class="glyphicons show_thumbnails"></i>
 				</a>
@@ -131,7 +131,7 @@
 	</div>
 	<div ng-if="userState.subCompanySelected"
 	  class="sub-company-alert">
-		You’re in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}
+		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}
 	</div>
 </nav>
 <!-- END Common Header Navbar -->
