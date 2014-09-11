@@ -87,19 +87,15 @@ app.run(["$templateCache", function($templateCache) {
     "	ng-class=\"{'double-margin': userState.subCompanySelected}\" role=\"navigation\">\n" +
     "	<div class=\"container\">\n" +
     "		<div class=\"navbar-header\">\n" +
-    "			<button type=\"button\" class=\"navbar-toggle\" ng-click=\"navCollapsed = !navCollapsed\">\n" +
-    "				<span class=\"sr-only\">Toggle navigation</span>\n" +
-    "				<div class=\"icon-bar-container\">\n" +
-    "					<span class=\"icon-bar\"></span>\n" +
-    "					<span class=\"icon-bar\"></span>\n" +
-    "					<span class=\"icon-bar\"></span>\n" +
-    "				</div>\n" +
-    "			</button>\n" +
-    "			<a class=\"navbar-brand\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
+    "			<a class=\"navbar-brand visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
+    "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
+    "			</a>\n" +
+    "			<a class=\"navbar-brand hidden-lg\"\n" +
+    "				href=\"\" off-canvas-toggle>\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
     "		</div>\n" +
-    "		<div class=\"collapse navbar-collapse navbar-left\" collapse=\"navCollapsed\">\n" +
+    "		<div class=\"collapse navbar-collapse navbar-left\">\n" +
     "			<ul class=\"nav navbar-nav\">\n" +
     "				<li ng-repeat=\"opt in navOptions\">\n" +
     "					<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
@@ -219,6 +215,22 @@ app.run(["$templateCache", function($templateCache) {
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
+    "\n" +
+    "\n" +
+    "<nav class=\"off-canvas--nav\" off-canvas-nav>\n" +
+    "  <ul class=\"nav nav-pills nav-stacked\">\n" +
+    "  	<li off-canvas-toggle>\n" +
+    "  		<i class=\"fa fa-times fa-2x pull-right\"></i>\n" +
+    "  		<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
+    "  	</li>\n" +
+    "    <li ng-repeat=\"opt in navOptions\">\n" +
+    "			<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
+    "		</li>\n" +
+    "		<li>\n" +
+    "			<a target=\"_blank\" href=\"http://help.risevision.com/\">Help</a>\n" +
+    "		</li>\n" +
+    "  </ul>\n" +
+    "</nav>\n" +
     "");
 }]);
 })();

@@ -9,7 +9,6 @@
     <link href="../../components/rv-common-style/dist/css/rise.min.css" rel="stylesheet" type="text/css" />
     <link href="../../components/JSONedit/css/styles.css" rel="stylesheet" type="text/css" />
     <!-- endbuild -->
-
   </head>
   <body ng-controller="MainController">
     <common-header
@@ -25,11 +24,11 @@
       messages="messages"
     ></common-header>
 
-      This app was built for the sole purpose of testing & demoing common header.
+      This app was built for the sole purpose of testing &amp; demoing common header.
       Set server latency to <input type="number" ng-model="db.serverDelay" id="server-delay" /> ms.
       <button class="btn" ng-click="resetDb()" id="reset-db">Reset DB</button>
 
-    <ng-view>Loading...</ng-view>
+    <ng-view off-canvas-content>Loading...</ng-view>
 
     <script type="text/ng-template" id="fake-google-companies.html">
       <h1>Fake Google Cloud Server - Companies</h1>
@@ -112,6 +111,7 @@
     <script type="text/javascript" src="../../components/angular-route/angular-route.js"></script>
     <script type="text/javascript" src="../../components/angular-sanitize/angular-sanitize.js"></script>
     <script type="text/javascript" src="../../components/angular-animate/angular-animate.js"></script>
+    <script type="text/javascript" src="../../components/angular-touch/angular-touch.js"></script>
     <script type="text/javascript" src="../../components/bootstrap/dist/js/bootstrap.js"></script>
     <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap.js"></script>
     <script type="text/javascript" src="../../components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
@@ -135,6 +135,7 @@
     <script type="text/javascript" src="../../src/js/controllers/ctr-company-modals.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-company-users-modal.js"></script>
     <script type="text/javascript" src="../../src/js/controllers/ctr-user-settings-modal.js"></script>
+    <script type="text/javascript" src="../../src/js/ui-components/off-canvas-nav.js"></script>
     <script type="text/javascript" src="../../src/js/angular-scrollevents.js"></script>
     <script type="text/javascript" src="../../src/js/svc-util.js"></script>
     <script type="text/javascript" src="../../src/js/svc-geodata.js"></script>
@@ -181,7 +182,7 @@
     }
     </style>
     <script type="text/javascript">
-      angular.module("test-app", ["ngRoute", "risevision.common.header", "JSONedit"])
+      angular.module("test-app", ["ngRoute", "risevision.common.header", "JSONedit", "ngTouch"])
       .config(['$routeProvider', function($routeProvider) {
         $routeProvider.
           when('/users', {templateUrl: 'fake-google-users.html',   controller: "FakeGoogleUserController"}).
