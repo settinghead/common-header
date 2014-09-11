@@ -21,14 +21,14 @@
           <span class="item-name">User Settings</span>
         </a>
       </li>
-      <li class="divider"></li>
-      <li ng-show="userState.user.profile.username">
+      <li class="divider" ng-show="false"></li>
+      <li ng-show="false">
         <a href="" ng-click="paymentMethods()">
           <i class="glyphicons usd"></i>
           <span class="item-name">Payment Methods</span>
         </a>
       </li>
-      <li class="divider"></li>
+      <li class="divider" ng-show="userState.user.profile"></li>
       <li ng-show="userState.user.profile">
         <a href="" ng-click="logout()" class="sign-out-button">
           <i class="glyphicons log_out"></i>

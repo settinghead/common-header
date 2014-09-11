@@ -41,7 +41,13 @@ angular.module("risevision.common.header")
       $modal.open({
         template: $templateCache.get("company-users-modal.html"),
         controller: "CompanyUsersModalCtrl",
-        size: size
+        size: size,
+        backdrop: true,
+        resolve: {
+          companyId: function () {
+            return $scope.userState.selectedCompanyId;
+          }
+        }
       });
     };
 

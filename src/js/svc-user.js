@@ -3,16 +3,31 @@
   "use strict";
   angular.module("risevision.common.userprofile", [
   "risevision.common.gapi", "risevision.common.oauth2",
-  "risevision.common.cache"]).
-  factory("getUser", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
+  "risevision.common.cache"])
+
+  .value("userRoleMap", {
+    "ca": "Content Administrator",
+    "ce": "Content Editor",
+    "cp": "Content Publisher",
+    "da": "Display Administrator",
+    "ua": "User Administrator",
+    "sa": "System Administrator",
+    "pu": "Purchaser",
+    "ba": "Billing Administrator"
+  })
+
+  .factory("getUser", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
   "userState", "getOAuthUserInfo", "userInfoCache",
   function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
     userInfoCache) {
-    return function () {
+    return function (username) {
+      $log.debug("getUser", username);
       var deferred = $q.defer();
-      if(userInfoCache.get("profile")) {
+      var criteria = {};
+      if (username) {criteria.username = username; }
+      if(userInfoCache.get("profile-" + username)) {
         //skip if already exists
-        deferred.resolve(userInfoCache.get("profile"));
+        deferred.resolve(userInfoCache.get("profile-" + username));
       }
       else {
         $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
@@ -23,7 +38,7 @@
               picture: oauthUserInfo.picture
             };
           }
-          coreApi.user.get({}).execute(function (resp){
+          coreApi.user.get(criteria).execute(function (resp){
             if(resp.result === true) {
               $log.debug("getUser resp", resp);
                 angular.extend(userState.user.profile,
@@ -31,7 +46,7 @@
                     picture: oauthUserInfo.picture,
                     username: oauthUserInfo.email
                   }, resp.item));
-              userInfoCache.put("profile", resp.item);
+              userInfoCache.put("profile-" + username, resp.item);
               deferred.resolve(resp.item);
             }
             else {
@@ -44,18 +59,39 @@
     };
   }])
 
+  .factory("getUsers", ["$q", "coreAPILoader", "$log",
+  function ($q, coreAPILoader, $log) {
+    return function (opts) {
+      var deferred = $q.defer();
+      coreAPILoader().then(function (coreApi) {
+        var request = coreApi.user.list(opts);
+        request.execute(function (resp) {
+            $log.debug("getUsers resp", resp);
+            if(resp.result === true) {
+              deferred.resolve(resp.items);
+            }
+            else {
+              deferred.reject("getUsers");
+            }
+        });
+      });
+      return deferred.promise;
+    };
+
+  }])
+
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
   "userInfoCache", "userState", "getUser",
   function ($q, coreAPILoader, $log, userInfoCache, userState, getUser) {
-    return function (profile) {
+    return function (username, profile) {
       $log.debug("updateUser", profile);
       var deferred = $q.defer();
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.update(profile);
+        var request = coreApi.user.update({username: username, data: profile});
         request.execute(function (resp) {
             $log.debug("updateUser resp", resp);
             if(resp.result === true) {
-              userInfoCache.remove("profile");
+              userInfoCache.remove("profile-" + username);
               getUser().then(function() {deferred.resolve(resp);});
             }
             else {
@@ -63,6 +99,50 @@
             }
         });
       }, deferred.reject);
+      return deferred.promise;
+    };
+  }])
+
+  .factory("addUser", ["$q", "coreAPILoader", "$log",
+  function ($q, coreAPILoader, $log) {
+    return function (companyId, username, profile) {
+      var deferred = $q.defer();
+      coreAPILoader().then(function (coreApi) {
+        var request = coreApi.user.add({
+          username: username,
+          companyId: companyId,
+          data: profile});
+        request.execute(function (resp) {
+          $log.debug("addUser resp", resp);
+          if(resp.result === true) {
+            deferred.resolve(resp);
+          }
+          else {
+            deferred.reject("addUser");
+          }
+        });
+      });
+      return deferred.promise;
+    };
+  }])
+
+  .factory("deleteUser", ["$q", "coreAPILoader", "$log",
+  function ($q, coreAPILoader, $log) {
+    return function (username) {
+      var deferred = $q.defer();
+      coreAPILoader().then(function (coreApi) {
+        var request = coreApi.user.delete({
+          username: username});
+        request.execute(function (resp) {
+          $log.debug("deleteUser resp", resp);
+          if(resp.result === true) {
+            deferred.resolve(resp);
+          }
+          else {
+            deferred.reject("deleteUser");
+          }
+        });
+      });
       return deferred.promise;
     };
   }])
@@ -77,8 +157,7 @@
         request.execute(function (resp) {
             $log.debug("getUsers resp", resp);
             if(resp.result === true) {
-              $log.debug("getUser resp", resp);
-              deferred.resolve(resp.item);
+              deferred.resolve(resp.items);
             }
             else {
               deferred.reject("getUsers");

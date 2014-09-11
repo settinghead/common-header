@@ -76,4 +76,31 @@ angular.module("risevision.common.gapi", [])
       });
       return deferred.promise;
     };
+  }])
+  .factory("riseAPILoader", ["gapiLoader", "$q", "CORE_URL",
+    "$location", "$log",
+    function (gapiLoader, $q, CORE_URL, $location, $log) {
+    var deferred = $q.defer();
+    var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
+    return function () {
+      gapiLoader().then(function (gApi) {
+        if(gApi.client.rise){
+          //already loaded. return right away
+          deferred.resolve(gApi.client.rise);
+        }
+        else {
+          gApi.client.load("rise", "v0", function () {
+            if (gApi.client.core) {
+              $log.info("Rise API Loaded");
+              deferred.resolve(gApi.client.rise);
+            } else {
+              var errMsg = "Rise API Load Failed";
+              $log.error(errMsg);
+              deferred.reject(errMsg);
+            }
+          }, baseUrl);
+        }
+      });
+      return deferred.promise;
+    };
   }]);

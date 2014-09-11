@@ -63,27 +63,7 @@
     }
     fakeDb.companies = _.cloneDeep(gapiMockData.companies);
     fakeDb.accounts = _.cloneDeep(gapiMockData.accounts);
-    fakeDb.oauthAccounts = [{
-      "id":"1",
-      "name":"Michael Sanchez",
-      "email" :"michael.sanchez@awesome.io",
-      "picture" : "http://api.randomuser.me/portraits/med/men/22.jpg",
-      "given_name":"Michael",
-      "family_name":"Sanchez",
-      "link":"https://plus.google.com/1",
-      "gender":"male",
-      "locale":"en",
-      "result":{
-        "id":"1",
-        "name":"Michael Sanchez",
-        "given_name":"Michael",
-        "family_name":"Sanchez",
-        "link":"https://plus.google.com/1",
-        "picture":"",
-        "gender":"male",
-        "locale":"en"
-      }
-    }];
+    fakeDb.oauthAccounts = _.cloneDeep(gapiMockData.oauthAccounts);
 
     fakeDb.users = _.cloneDeep(gapiMockData.users);
     fakeDb.systemMessages = _.cloneDeep(systemMessages);
@@ -134,6 +114,16 @@
     };
   };
 
+  var respList = function (items) {
+    return {
+      "result": true,
+      "code": 200,
+      "message": "OK",
+      "items": _.cloneDeep(items),
+      "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
+    };
+  };
+
   var systemMessages = {
    "items": [
       {
@@ -168,6 +158,89 @@
     load: function(path, version, cb) {
       delayed(cb);
     },
+    rise: {
+      account: {
+        add: function () {
+          return {
+            execute: function (cb) {
+              var username = getCurrentUsername();
+              var existingAccount = _.findWhere(fakeDb.accounts, {username: username});
+              if(!existingAccount) {
+                //200 success
+                fakeDb.accounts.push({
+                  username: username,
+                  changeDate: new Date().toISOString(),
+                  changedBy: "bloosbrock@gmail.com"
+                });
+
+                var companyId = guid();
+                fakeDb.companies.push({
+                  name: username + "'s Company'",
+                  id: companyId,
+                  changeDate: new Date().toISOString(),
+                  changedBy: "bloosbrock@gmail.com"
+                });
+
+                var existingUser = _.findWhere(fakeDb.users, {username: username});
+                if(!existingUser) {
+                  fakeDb.users.push({
+                    username: username,
+                    changeDate: new Date().toISOString(),
+                    changedBy: "bloosbrock@gmail.com",
+                    companyId: companyId
+                  });
+                }
+
+                //200 success
+                delayed(cb, resp({}));
+              }
+              else {
+                delayed(cb, {
+                 "error": {
+                  "errors": [
+                   {
+                    "domain": "global",
+                    "reason": "conflict",
+                    "message": "User already has an account"
+                   }
+                  ],
+                  "code": 409,
+                  "message": "User already has an account"
+                 }
+                });
+              }
+            }
+          };
+        },
+        agreeToTerms: function () {
+          return {
+            execute: function (cb) {
+              var username = getCurrentUsername();
+              var user = _.findWhere(fakeDb.users, {username: username});
+              if(!user.termsAcceptanceDate) {
+                user.termsAcceptanceDate = new Date().toISOString();
+                delayed(cb, resp({}));
+              }
+              else {
+                delayed(cb, {
+                 "error": {
+                  "errors": [
+                   {
+                    "domain": "global",
+                    "reason": "conflict",
+                    "message": "User has already accepted the terms"
+                   }
+                  ],
+                  "code": 409,
+                  "message": "User has already accepted the terms"
+                 }
+               });
+              }
+            }
+          };
+        }
+      }
+    },
     core: {
       systemmessages: {
         list: function (obj) {
@@ -188,15 +261,11 @@
               var company;
               if(gapi.auth._token) {
                 if(obj && obj.id) {
-                  company = _.find(window.gapi._fakeDb.companies, function (company) {
-                    return company.id === obj.id;
-                  });
+                  company = _.findWhere(window.gapi._fakeDb.companies, {id: obj.id});
                 }
                 else if (getCurrentUser().companyId){
                   company =
-                  _.find(window.gapi._fakeDb.companies, function (company) {
-                    return company.id === getCurrentUser().companyId;
-                  });
+                  _.findWhere(window.gapi._fakeDb.companies, {id: getCurrentUser().companyId});
                 }
                 if(!company){
                   delayed(cb, {
@@ -275,7 +344,10 @@
         opt = _.extend({count: 20, cursor: 0}, opt);
         return {
           execute: function (cb) {
-            var companies = window.gapi._fakeDb.companies;
+            var currentUser = getCurrentUser();
+            var parentCompany = _.findWhere(window.gapi._fakeDb.companies, {id: currentUser.companyId});
+            var subcompanies = _.where(window.gapi._fakeDb.companies, {parentId: currentUser.companyId});
+            var companies = [parentCompany].concat(subcompanies);
             if(opt.search) {
               companies = _.filter(window.gapi._fakeDb.companies,
                 function (company) {
@@ -303,93 +375,19 @@
         };
       }
     },
-    account: {
-      add: function () {
-        return {
-          execute: function (cb) {
-            var username = getCurrentUsername();
-            var existingAccount = _.findWhere(fakeDb.accounts, {username: username});
-            if(!existingAccount) {
-              //200 success
-              fakeDb.accounts.push({
-                username: username,
-                changeDate: new Date().toISOString(),
-                changedBy: "bloosbrock@gmail.com"
-              });
-
-              var companyId = guid();
-              fakeDb.companies.push({
-                name: username + "'s Company'",
-                id: companyId,
-                changeDate: new Date().toISOString(),
-                changedBy: "bloosbrock@gmail.com"
-              });
-
-              var existingUser = _.findWhere(fakeDb.users, {username: username});
-              if(!existingUser) {
-                fakeDb.users.push({
-                  username: username,
-                  changeDate: new Date().toISOString(),
-                  changedBy: "bloosbrock@gmail.com",
-                  companyId: companyId
-                });
-              }
-
-              //200 success
-              delayed(cb, resp({}));
-            }
-            else {
-              delayed(cb, {
-               "error": {
-                "errors": [
-                 {
-                  "domain": "global",
-                  "reason": "conflict",
-                  "message": "User already has an account"
-                 }
-                ],
-                "code": 409,
-                "message": "User already has an account"
-               }
-              });
-            }
-          }
-        };
-      },
-      agreeToTerms: function () {
-        return {
-          execute: function (cb) {
-            var username = getCurrentUsername();
-            var user = _.findWhere(fakeDb.users, {username: username});
-            if(!user.termsAcceptanceDate) {
-              user.termsAcceptanceDate = new Date().toISOString();
-              delayed(cb, resp({}));
-            }
-            else {
-              delayed(cb, {
-               "error": {
-                "errors": [
-                 {
-                  "domain": "global",
-                  "reason": "conflict",
-                  "message": "User has already accepted the terms"
-                 }
-                ],
-                "code": 409,
-                "message": "User has already accepted the terms"
-               }
-             });
-            }
-          }
-        };
-      }
-    },
     user: {
-      get: function () {
+      get: function (obj) {
         return {
           execute: function (cb) {
+            obj = obj || {};
             if(gapi.auth._token){
-              var user = getCurrentUser();
+              var user;
+              if(obj.username) {
+                user = _.findWhere(fakeDb.users, {username: obj.username});
+              }
+              else {
+                user =  getCurrentUser();
+              }
               if(user) {
                 delayed(cb, resp(user));
               }
@@ -424,7 +422,7 @@
               user = getCurrentUser();
             }
             if(user) {
-              _.extend(user, obj);
+              _.extend(user, obj.data);
               return delayed(cb, resp(user));
             }
             else {
@@ -434,6 +432,97 @@
                 "message": "NOT FOUND"
               });
             }
+          }
+        };
+      },
+      delete: function (obj) {
+        return {
+          execute: function (cb) {
+            if(!obj || !obj.username) {
+              delayed(cb, {
+               "error": {
+                "errors": [
+                 {
+                  "domain": "global",
+                  "reason": "required",
+                  "message": "Required parameter: username",
+                  "locationType": "parameter",
+                  "location": "username"
+                 }
+                ],
+                "code": 400,
+                "message": "Required parameter: username"
+               }
+              });
+            }
+            else{
+              var user = _.findWhere(fakeDb.users, {username: obj.username});
+              if(!user) {
+                delayed(cb, {
+                 "error": {
+                  "errors": [
+                   {
+                    "domain": "global",
+                    "reason": "notFound",
+                    "message": "User not found."
+                   }
+                  ],
+                  "code": 404,
+                  "message": "User not found."
+                 }
+               });
+              }
+              else {
+                fakeDb.users = _.without(fakeDb.users, user);
+                delayed(cb, resp({}));
+              }
+            }
+          }
+        };
+      },
+      add: function (obj) {
+        return {
+          execute: function (cb) {
+            if(obj && obj.username || obj.companyId) {
+              var existingUser = _.findWhere(fakeDb.users, {username: obj.username});
+              if(existingUser) {
+                delayed(cb, {
+                  "result": false,
+                  "code": 400,
+                  "message": "USER ALREADY EXISTS"
+                });
+              }
+              else {
+                var user = _.extend({
+                  username: obj.username,
+                  companyId: obj.companyId
+                }, obj.data);
+                fakeDb.users.push(user);
+                delayed(cb, resp(user));
+              }
+            }
+            else {
+              delayed(cb, {
+                "result": false,
+                "code": 400,
+                "message": "USERNAME OR COMPANY ID MISSING"
+              });
+            }
+          }
+        };
+      },
+      list: function (obj) {
+        return {
+          execute: function (cb) {
+            if(!obj) {obj = {}; }
+            var users = fakeDb.users;
+            if(obj.companyId) {
+              users = _.where(users, {companyId: obj.companyId});
+            }
+            if(obj.count) {
+              users = users.slice(0, obj.count);
+            }
+            delayed(cb, respList(users));
           }
         };
       }
@@ -658,7 +747,8 @@ var googleAuthDialogTemplate = "<div class=\"modal\">" +
   "      <h4 class=\"modal-title\">Fake Google Cloud Login</h4>" +
   "    </div>" +
   "    <div class=\"modal-body\">" + "<p>Click one to Sign In, or cancel.</p>" +
-  "<ul>{{#accounts}}" + "<li><button class=\"login-account-button\" data-username=\"{{email}}\">{{email}}</button></li>" + "{{/accounts}}</ul>" +
+  "<ul>{{#accounts}}" + "<li><img src=\"{{picture}}\" style=\"width: 30px; height: 30px; \" />" +
+  "<button class=\"login-account-button\" data-username=\"{{email}}\">{{email}}</button></li>" + "{{/accounts}}</ul>" +
   "    </div>" +
   "    <div class=\"modal-footer\">" +
   "      <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>" +

@@ -1,9 +1,13 @@
 angular.module("risevision.common.header")
 .controller("SubCompanyModalCtrl", ["$scope", "$modalInstance", "$modal",
-  "$templateCache", "createCompany",
-  function($scope, $modalInstance, $modal, $templateCache, createCompany) {
+  "$templateCache", "createCompany", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
+  function($scope, $modalInstance, $modal, $templateCache, createCompany, COUNTRIES, REGIONS_CA, REGIONS_US) {
 
     $scope.company = {};
+    $scope.countries = COUNTRIES;
+    $scope.regionsCA = REGIONS_CA;
+    $scope.regionsUS = REGIONS_US;
+
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
@@ -25,20 +29,37 @@ angular.module("risevision.common.header")
   }
 ])
 
-.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance",
-  function($scope, $modalInstance) {
+.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance", "moveCompany",
+  function($scope, $modalInstance, moveCompany) {
+
+    $scope.company = {};
+
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
+    };
+
+    $scope.moveCompany = function () {
+      moveCompany($scope.companyId, $scope.parentCompanyId).then(function () {
+        alert("Success. The company has been moved under your company.");
+        $modalInstance.close("success");
+      }, function (err) {alert("Error: "  + err); });
+    };
+
+    $scope.getCompany = function () {
+
     };
   }
 ])
 
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
-  "companyService", "companyId", "COUNTRIES",
+  "companyService", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
   function($scope, $modalInstance, companyService, companyId,
-  COUNTRIES) {
+  COUNTRIES, REGIONS_CA, REGIONS_US) {
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
+    $scope.regionsCA = REGIONS_CA;
+    $scope.regionsUS = REGIONS_US;
+
     if(companyId) {
       companyService.getCompany(companyId).then(
         function (company) {
