@@ -259,13 +259,14 @@
           return {
             execute: function (cb) {
               var company;
+              obj = obj || {};
               if(gapi.auth._token) {
-                if(obj && obj.id) {
-                  company = _.findWhere(window.gapi._fakeDb.companies, {id: obj.id});
+                if(obj.id || obj.authKey) {
+                  company = _.findWhere(fakeDb.companies, obj);
                 }
                 else if (getCurrentUser().companyId){
                   company =
-                  _.findWhere(window.gapi._fakeDb.companies, {id: getCurrentUser().companyId});
+                  _.findWhere(fakeDb.companies, {id: getCurrentUser().companyId});
                 }
                 if(!company){
                   delayed(cb, {
@@ -294,6 +295,62 @@
           }
         };
       },
+      move: function (obj) {
+        return {
+          execute: function (cb) {
+            var company;
+            obj = obj || {};
+            if(gapi.auth._token) {
+              if(obj.authKey) {
+                if(obj.id || obj.authKey) {
+                  company = _.findWhere(window.gapi._fakeDb.companies, obj);
+                  company.parentId = getCurrentUser().companyId;
+                }
+                if(!company){
+                  delayed(cb, {
+                    "result": false,
+                    "code": 404,
+                    "message": "NOT FOUND"
+                  });
+                } else {
+                  delayed(cb, {
+                    "result": true,
+                    "code": 200,
+                    "message": "OK",
+                    "item": _.extend(_.cloneDeep(gapiMockData.companyRespSkeleton), company),
+                  "kind": "core#companyItem",
+                  "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
+                  });
+                }
+              }
+              else {
+                delayed(cb, {
+                 "error": {
+                  "errors": [
+                   {
+                    "domain": "global",
+                    "reason": "required",
+                    "message": "Required parameter: authKey",
+                    "locationType": "parameter",
+                    "location": "authKey"
+                   }
+                  ],
+                  "code": 400,
+                  "message": "Required parameter: authKey"
+                 }
+               });
+              }
+            }
+            else {
+              delayed(cb, {
+                "result": false,
+                "code": 401,
+                "message": "NOT LOGGED IN"
+              });
+            }
+        }
+      };
+    },
       add: function (fields) {
         return {
           execute: function (cb) {

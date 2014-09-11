@@ -23,7 +23,10 @@
           gApi.client.oauth2.userinfo.get().execute(function (resp){
             $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
             userInfoCache.put("oauth2UserInfo", resp);
-            if(resp.error) {
+            if(!resp) {
+              deferred.reject();
+            }
+            else if(resp.error) {
               deferred.reject(resp.error);
             }
             else {

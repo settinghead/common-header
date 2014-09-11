@@ -27,19 +27,54 @@
         browser.executeScript("localStorage.clear();");
 
         ptor.driver.navigate().refresh();
+        element(by.id("reset-db")).click();
       });
 
-      it("icon should not show when the user is not signed in", function() {
-        assert.eventually.isTrue(element(by.id("buy-product-1")).isDisplayed(), "Product 1 button should show");
-        assert.eventually.isTrue(element(by.id("buy-product-2")).isDisplayed(), "Product 2 button should show");
-        assert.eventually.isTrue(element(by.id("buy-product-3")).isDisplayed(), "Product 3 button should show");
-        assert.eventually.isFalse(element(by.css(".shopping-cart-button")).isDisplayed(), "Cart button should not show");
+      describe("Move company", function () {
+        it("Opens Move Company Dialog", function() {
+          element(by.css("a.sign-in")).click();
+          element(by.css(".authorize-button")).click();
+          element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
 
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
-        element(by.id("buy-product-2")).click();
-        assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Should not add to cart");
+          assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+
+          element(by.css(".company-buttons-icon")).click();
+
+          assert.eventually.isTrue(element(by.css(".move-company-menu-button")).isDisplayed(),
+            "Move company menu item should present");
+
+          element(by.css(".move-company-menu-button")).click();
+
+          assert.eventually.isTrue(element(by.css(".move-company-modal")).isDisplayed(),
+            "Move company dialog should show");
+        });
+
+        it("Shows error on invalid auth key", function () {
+          element(by.id("auth-key")).clear();
+          element(by.id("auth-key")).sendKeys("invalid-auth-key");
+          element(by.css(".retrieve-company-details-button")).click();
+          assert.eventually.isTrue(element(by.css(".alert.alert-danger")).isDisplayed(),
+            "Error message should show");
+
+        });
+
+        it("Retrieves Company Info", function () {
+          element(by.id("auth-key")).clear();
+          element(by.id("auth-key")).sendKeys("3509cd9b-e9ba-47d2-84bb-f954db4641b1");
+          element(by.css(".retrieve-company-details-button")).click();
+
+          assert.eventually.isTrue(element(by.css(".company-details-info")).isDisplayed(),
+            "Company details info should show");
+        });
+
+        it("Should Move Company", function () {
+          element(by.css(".move-company-button")).click();
+
+          assert.eventually.isTrue(element(by.css(".alert.alert-success")).isDisplayed(),
+            "Success message should show");
+
+        });
 
       });
-
   });
 })();
