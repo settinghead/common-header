@@ -101,17 +101,14 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .service("companyService", ["coreAPILoader", "$q", "$log",
-    function (coreAPILoader, $q, $log) {
+  .factory("getCompany", ["coreAPILoader", "$q", "$log",
+  function (coreAPILoader, $q, $log) {
+    return function (criteria) { //get a company either by id or authKey
+      $log.debug("getCompany resp", criteria);
 
-    this.getCompany = function (companyId) {
       var deferred = $q.defer();
-      if(companyId) {
-        var obj = {
-            "id": companyId
-        };
         coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.get(obj);
+          var request = coreApi.company.get(criteria);
           request.execute(function (resp) {
               $log.debug("getCompany resp", resp);
               if(resp.result) {
@@ -122,12 +119,32 @@ angular.module("risevision.common.company",
               }
           });
         });
-      }
-      else {
-        deferred.resolve({});
-      }
       return deferred.promise;
     };
+  }])
+
+  .factory("moveCompany", ["coreAPILoader", "$q", "$log",
+  function (coreAPILoader, $q, $log) {
+    return function (authKey) { //get a company either by id or authKey
+      var deferred = $q.defer();
+        coreAPILoader().then(function (coreApi) {
+          var request = coreApi.company.move({authKey: authKey});
+          request.execute(function (resp) {
+              $log.debug("moveCompany resp", resp);
+              if(resp.result) {
+                deferred.resolve(resp.item);
+              }
+              else {
+                deferred.reject(resp);
+              }
+          });
+        });
+      return deferred.promise;
+    };
+  }])
+
+  .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
+    function (coreAPILoader, $q, $log, getCompany) {
 
     this.getCompanies = function (companyId, search, cursor, count, sort) {
       var deferred = $q.defer();
@@ -153,7 +170,7 @@ angular.module("risevision.common.company",
         //this funtion assumes user and user.company are loaded
         var deferred = $q.defer();
         if (selectedCompanyId && selectedCompanyId !== userCompany.id) {
-            this.getCompany(selectedCompanyId).then(function(res) {
+            getCompany(selectedCompanyId).then(function(res) {
                 if (res.code === 0 && res.item) {
                     deferred.resolve(res.item);
                 } else {

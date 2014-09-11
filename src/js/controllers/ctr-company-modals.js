@@ -29,61 +29,6 @@ angular.module("risevision.common.header")
   }
 ])
 
-.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance", "moveCompany",
-  function($scope, $modalInstance, moveCompany) {
-
-    $scope.company = {};
-
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-    };
-
-    $scope.moveCompany = function () {
-      moveCompany($scope.companyId, $scope.parentCompanyId).then(function () {
-        alert("Success. The company has been moved under your company.");
-        $modalInstance.close("success");
-      }, function (err) {alert("Error: "  + err); });
-    };
-
-    $scope.getCompany = function () {
-
-    };
-  }
-])
-
-.controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
-  "companyService", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
-  function($scope, $modalInstance, companyService, companyId,
-  COUNTRIES, REGIONS_CA, REGIONS_US) {
-    $scope.company = {id: companyId};
-    $scope.countries = COUNTRIES;
-    $scope.regionsCA = REGIONS_CA;
-    $scope.regionsUS = REGIONS_US;
-
-    if(companyId) {
-      companyService.getCompany(companyId).then(
-        function (company) {
-          $scope.company = company;
-        },
-        function (resp) {
-          alert("An error has occurred.", resp.error);
-        });
-    }
-    $scope.closeModal = function() {
-      $modalInstance.dismiss("cancel");
-    };
-    $scope.save = function () {
-      companyService.updateCompany($scope.company).then(
-        function () {
-          $modalInstance.close("success");
-        },
-      function (error) {
-        alert("Error", error);
-      });
-    };
-  }
-])
-
 .controller("companySelectorCtr", ["$scope", "$modalInstance",
     "companyService", "companyId", "BaseList",
     function ($scope, $modalInstance, companyService,

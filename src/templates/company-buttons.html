@@ -1,4 +1,4 @@
-<a href="" class="dropdown-toggle">
+<a href="" class="dropdown-toggle company-buttons-icon">
   <i class="glyphicons cogwheel"></i>
 </a>
 <ul class="dropdown-menu">
@@ -40,6 +40,13 @@
     <a href="" data-toggle="modal" data-target="#subcompany-modal" ng-click="addSubCompany()">
       <i class="glyphicons plus"></i>
       <span class="item-name">Add Sub-Company</span>
+    </a>
+  </li>
+  <li ng-if="userState.roleMap.sa" class="divider"></li>
+  <li ng-if="userState.roleMap.sa">
+    <a href="" data-toggle="modal" ng-click="moveCompany()" class="move-company-menu-button">
+      <i class="glyphicons move"></i>
+      <span class="item-name">Move a Company under Your Company</span>
     </a>
   </li>
   <li ng-if="userState.roleMap.sa" class="divider"></li>

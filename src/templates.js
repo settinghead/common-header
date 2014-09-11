@@ -229,7 +229,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
-    "<a href=\"\" class=\"dropdown-toggle\">\n" +
+    "<a href=\"\" class=\"dropdown-toggle company-buttons-icon\">\n" +
     "  <i class=\"glyphicons cogwheel\"></i>\n" +
     "</a>\n" +
     "<ul class=\"dropdown-menu\">\n" +
@@ -271,6 +271,13 @@ app.run(["$templateCache", function($templateCache) {
     "    <a href=\"\" data-toggle=\"modal\" data-target=\"#subcompany-modal\" ng-click=\"addSubCompany()\">\n" +
     "      <i class=\"glyphicons plus\"></i>\n" +
     "      <span class=\"item-name\">Add Sub-Company</span>\n" +
+    "    </a>\n" +
+    "  </li>\n" +
+    "  <li ng-if=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
+    "  <li ng-if=\"userState.roleMap.sa\">\n" +
+    "    <a href=\"\" data-toggle=\"modal\" ng-click=\"moveCompany()\" class=\"move-company-menu-button\">\n" +
+    "      <i class=\"glyphicons move\"></i>\n" +
+    "      <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "    </a>\n" +
     "  </li>\n" +
     "  <li ng-if=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
@@ -760,7 +767,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"move-company-label\" class=\"modal-title\">Move Company</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body\">\n" +
+    "<div class=\"modal-body move-company-modal\">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"auth-key\">\n" +
@@ -768,42 +775,49 @@ app.run(["$templateCache", function($templateCache) {
     "      </label>\n" +
     "      <div class=\"row\">\n" +
     "        <div class=\"col-sm-6\">\n" +
-    "          <input id=\"auth-key\" type=\"text\" class=\"form-control\" ng-model=\"company.id\" />\n" +
+    "          <input id=\"auth-key\" type=\"text\" class=\"form-control\"\n" +
+    "          ng-model=\"company.authKey\" />\n" +
     "        </div>\n" +
     "        <div class=\"col-sm-6\">\n" +
-    "          <a href=\"\" ng-click=\"getCompany()\">Retrieve Company Details</a>\n" +
+    "          <a href=\"\" class=\"btn btn-secondary retrieve-company-details-button\"\n" +
+    "          ng-disabled=\"!company.authKey\"\n" +
+    "          ng-click=\"getCompany()\">Retrieve Company Details</a>\n" +
     "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </form>\n" +
-    "  <div ng-show=\"company.name\">\n" +
+    "  <div ng-show=\"company.name\" class=\"company-details-info\">\n" +
     "    <h3>Details of the Company You Want to Move</h3>\n" +
     "    <div>\n" +
     "      {{company.name}}<br>\n" +
     "      {{company.address}}\n" +
+    "      {{company.city}}, {{company.province}}, {{company.country}} {{company.postalCode}}\n" +
     "    </div>\n" +
     "    <h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
     "    <div class=\"to-company\">\n" +
-    "      Rise Display<br>\n" +
-    "      22019 W. 83rd St.<br>\n" +
-    "      Shawnee, KS 66226\n" +
+    "      {{userState.user.company.name}}<br>\n" +
+    "      {{userState.user.company.address}}<br>\n" +
+    "      {{userState.user.company.city}}, {{userState.user.company.province}},\n" +
+    "      {{userState.user.company.country}} {{userState.user.company.postalCode}}\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <div ng-show=\"showCompanyMessages\">\n" +
-    "    <div class=\"alert alert-success\">\n" +
-    "      The Company was moved successfully.\n" +
+    "  <div ng-show=\"errors.length > 0\">\n" +
+    "    <div class=\"alert alert-danger\" ng-repeat=\"error in errors\">\n" +
+    "      {{error}}\n" +
     "    </div>\n" +
-    "    <div class=\"alert alert-danger\">\n" +
-    "      There was a problem moving the Company. Please try again.\n" +
+    "  </div>\n" +
+    "  <div ng-show=\"messages.length > 0\">\n" +
+    "    <div class=\"alert alert-success\" ng-repeat=\"message in messages\">\n" +
+    "      {{message}}\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <button type=\"button\" class=\"btn btn-success\" ng-show=\"showMoveCompany\" ng-click=\"moveCompany()\">Move Company\n" +
+    "  <button type=\"button\" class=\"btn btn-success move-company-button\" ng-show=\"company.name\" ng-click=\"moveCompany()\">Move Company\n" +
     "    <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
     "  </button>\n" +
     "  <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
-    "    Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
+    "    Close <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
     "");

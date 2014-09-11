@@ -65,6 +65,16 @@ angular.module("risevision.common.header")
       modalInstance.result.then(switchCompany);
     };
 
+    // Show Move Company Modal
+    $scope.moveCompany = function(size) {
+      // var modalInstance =
+      $modal.open({
+        template: $templateCache.get("move-company-modal.html"),
+        controller: "MoveCompanyModalCtrl",
+        size: size
+      });
+    };
+
     $scope.resetCompany = function () {
       switchCompany($scope.userState.user.company);
     };

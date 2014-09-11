@@ -4,7 +4,7 @@
   </button>
   <h2 id="move-company-label" class="modal-title">Move Company</h2>
 </div>
-<div class="modal-body">
+<div class="modal-body move-company-modal">
   <form role="form">
     <div class="form-group">
       <label for="auth-key">
@@ -12,41 +12,48 @@
       </label>
       <div class="row">
         <div class="col-sm-6">
-          <input id="auth-key" type="text" class="form-control" ng-model="company.id" />
+          <input id="auth-key" type="text" class="form-control"
+          ng-model="company.authKey" />
         </div>
         <div class="col-sm-6">
-          <a href="" ng-click="getCompany()">Retrieve Company Details</a>
+          <a href="" class="btn btn-secondary retrieve-company-details-button"
+          ng-disabled="!company.authKey"
+          ng-click="getCompany()">Retrieve Company Details</a>
         </div>
       </div>
     </div>
   </form>
-  <div ng-show="company.name">
+  <div ng-show="company.name" class="company-details-info">
     <h3>Details of the Company You Want to Move</h3>
     <div>
       {{company.name}}<br>
       {{company.address}}
+      {{company.city}}, {{company.province}}, {{company.country}} {{company.postalCode}}
     </div>
     <h3>Details of the Company You Are Moving the Above Company Under</h3>
     <div class="to-company">
-      Rise Display<br>
-      22019 W. 83rd St.<br>
-      Shawnee, KS 66226
+      {{userState.user.company.name}}<br>
+      {{userState.user.company.address}}<br>
+      {{userState.user.company.city}}, {{userState.user.company.province}},
+      {{userState.user.company.country}} {{userState.user.company.postalCode}}
     </div>
   </div>
-  <div ng-show="showCompanyMessages">
-    <div class="alert alert-success">
-      The Company was moved successfully.
+  <div ng-show="errors.length > 0">
+    <div class="alert alert-danger" ng-repeat="error in errors">
+      {{error}}
     </div>
-    <div class="alert alert-danger">
-      There was a problem moving the Company. Please try again.
+  </div>
+  <div ng-show="messages.length > 0">
+    <div class="alert alert-success" ng-repeat="message in messages">
+      {{message}}
     </div>
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-success" ng-show="showMoveCompany" ng-click="moveCompany()">Move Company
+  <button type="button" class="btn btn-success move-company-button" ng-show="company.name" ng-click="moveCompany()">Move Company
     <i class="glyphicons white ok_2 icon-right"></i>
   </button>
   <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="closeModal()">
-    Cancel <i class="glyphicons white remove_2 icon-right"></i>
+    Close <i class="glyphicons white remove_2 icon-right"></i>
   </button>
 </div>
