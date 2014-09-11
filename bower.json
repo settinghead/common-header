@@ -35,7 +35,8 @@
     "q": "1.0.1",
     "ng-biscuit": "~0.2.1",
     "mustache": "~0.8.2",
-    "ng-csv": "~0.2.3"
+    "ng-csv": "~0.2.3",
+    "angular-touch": "1.2.23"
   },
   "devDependencies": {
     "lodash": "~2.4.1",
