@@ -216,7 +216,7 @@ app.run(["$templateCache", function($templateCache) {
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
     "\n" +
-    "\n" +
+    "<!-- Off Canvas Version of the Nav -->\n" +
     "<nav class=\"off-canvas--nav\" off-canvas-nav>\n" +
     "  <ul class=\"nav nav-pills nav-stacked\">\n" +
     "  	<li off-canvas-toggle>\n" +

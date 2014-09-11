@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html ng-app="test-app">
+  <head>
+    <!-- <link href="//s3.amazonaws.com/rise-common-test/styles/glyphicons/glyphicons.min.css" rel="stylesheet" type="text/css"> -->
+
+    <link rel="stylesheet" href="css/style.css"/>
+  </head>
+  <body ng-controller="MainController">
+    <common-header
+      nav-options="navOptions"
+      auth-status="0"
+      is-admin="true"
+      sub-company-selected="true"
+      company-loaded="true"
+      selected-company-name="'Rise Vision'"
+      user-profile-picture="'http://api.randomuser.me/portraits/med/men/33.jpg'"
+      user-profile-name="'Alfredo Sanchez'"
+      user-profile-email="'alfredo.sanchez90@example.com'"
+      messages="messages"
+    ></common-header>
+
+      This app was built for the sole purpose of testing &amp; demoing common header.
+      Set server latency to <input type="number" ng-model="db.serverDelay" id="server-delay" /> ms.
+      <button class="btn" ng-click="resetDb()" id="reset-db">Reset DB</button>
+
+    <ng-view off-canvas-content>Loading...</ng-view>
+
+    <script type="text/ng-template" id="fake-google-companies.html">
+      <h1>Fake Google Cloud Server - Companies</h1>
+      <div class="container">
+        <div class="row">
+          <div class="jsonView col-md-3" defocus>
+          </div>
+          <div class="col-md-6 jsonView" defocus>
+            <h3 class="inline">All Companies in Fake Google DB</h3>
+            <button class="btn" ng-click="clearCompanies()">Clear</button>
+            <button class="btn" ng-click="resetCompanies()">Reset</button>
+            <div><json child="db.companies" default-collapsed="false" type="'array'">
+            </json></div>
+          </div>
+          <div class="col-md-3 jsonView" defocus>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/ng-template" id="fake-google-system-messages.html">
+      <h1>Fake Google Cloud Server - System Messages</h1>
+      <div class="container" id="companies">
+      <div class="row">
+        <div class="jsonView col-md-3"></div>
+        <div class="jsonView col-md-6">
+          <h3 class="inline">System Messages</h3>
+          <button class="btn" ng-click="clearSystemMessages()">Clear</button>
+          <button class="btn" ng-click="resetSystemMessages()">Reset</button>
+          <div><json child="db.systemMessages.items" default-collapsed="false" type="'object'">
+          </json></div>
+        </div>
+        <div class="jsonView col-md-3"></div>
+      </div>
+      <div class="tab-pane container" id="system-messages">
+      </div>
+    </script>
+
+    <script type="text/ng-template" id="fake-google-users.html">
+      <h1>Fake Google Cloud Server - Users</h1>
+      <div class="container" id="users">
+        <div class="row">
+          <div class="jsonView col-md-6">
+            <h3 class="inline">Current Accounts in Fake Google DB</h3>
+            <button class="btn" ng-click="clearAccounts()" id="clear-accounts">Clear</button>
+            <button class="btn" ng-click="resetAccounts()" id="reset-account">Reset</button>
+            <div>
+              <json child="db.accounts"
+                default-collapsed="false"
+                type="'array'"></json>
+            </div>
+          </div>
+          <div class="jsonView col-md-6">
+            <h3 class="inline">User Profiles in Fake Google DB</h3>
+            <button class="btn" id="clear-users" ng-click="clearUsers()">Clear</button>
+            <button class="btn" id="reset-users" ng-click="resetUsers()">Reset</button>
+            <div><json child="db.users" default-collapsed="false" type="'array'">
+            </json></div>
+            </div>
+        </div>
+      </div>
+
+    </script>
+
+    <script type="text/ng-template" id="fake-store.html">
+    <h1>Store!</h1>
+
+    <button class="btn" id="buy-product-1" ng-click="buyProduct('p1')">Put Product 1 to Cart</button>
+    <button class="btn" id="buy-product-2" ng-click="buyProduct('p2')">Put Product 2 to Cart</button>
+    <button class="btn" id="buy-product-3" ng-click="buyProduct('p3')">Put Product 3 to Cart</button>
+
+    <br /><br />
+    <button class="btn" id="clear-cart" ng-click="clearCart()">Clear Cart</button>
+
+    </script>
+
+    <script src="js/main.js"></script>
+
+    <style>
+
+    .jsonView .deleteKeyBtn, .jsonView .moveArrayItemBtn {
+      z-index: 800;
+    }
+
+    .inline {
+      display: inline-block;
+    }
+    </style>
+    <script type="text/javascript">
+      angular.module("test-app", ["ngRoute", "risevision.common.header", "JSONedit", "ngTouch"])
+      .config(['$routeProvider', function($routeProvider) {
+        $routeProvider.
+          when('/users', {templateUrl: 'fake-google-users.html',   controller: "FakeGoogleUserController"}).
+          when('/companies', {templateUrl: 'fake-google-companies.html',   controller: "FakeGoogleCompanyController"}).
+          when('/system-messages', {templateUrl: 'fake-google-system-messages.html',   controller: "FakeGoogleSystemMessagesController"}).
+          when('/fake-store', {templateUrl: 'fake-store.html',   controller: "FakeStoreController"}).
+          otherwise({redirectTo: '/users'});
+      }])
+
+      .controller("MainController", function($rootScope, $scope) {
+        $rootScope.navOptions = [{
+          title: 'Accounts & Users',
+          link: '#/users'
+        },
+        {
+          title: 'Companies',
+          link: '#/companies'
+        },
+        {
+          title: 'System Messages',
+          link: '#/system-messages'
+        }
+        , {
+          title: 'Fake Store',
+          link: '#/fake-store'
+        }];
+
+        $scope.db = window.gapi._fakeDb;
+
+        $scope.resetDb = function () {
+          window.gapi.resetDb();
+        }
+        $scope.$watch("db", function (newVal) {
+          localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal));
+        }, true);
+      })
+
+      .controller("FakeGoogleUserController", function ($scope, $rootScope) {
+
+          $scope.clearUsers = function () {
+            window.gapi.clearUsers();
+          }
+          $scope.clearAccounts = function () {
+            window.gapi.clearAccounts();
+          }
+          $scope.resetAccounts = function () {
+            window.gapi.resetAccounts();
+          }
+          $scope.resetUsers = function () {
+            window.gapi.resetUsers();
+          }
+      })
+
+      .controller("FakeGoogleCompanyController", function ($scope, $rootScope) {
+        $scope.resetCompanies = function () {
+          window.gapi.resetCompanies();
+        }
+        $scope.clearCompanies = function () {
+          window.gapi.clearCompanies();
+        }
+      })
+
+      .controller("FakeGoogleSystemMessagesController", function ($scope, $rootScope) {
+        $scope.resetSystemMessages = function () {
+          window.gapi.resetSystemMessages();
+        }
+        $scope.clearSystemMessages = function () {
+          window.gapi.clearSystemMessages();
+        }
+      })
+
+      .controller("FakeStoreController", function ($scope, shoppingCart) {
+        $scope.buyProduct = function (id) {
+          shoppingCart.addItem({id: id, orderedPricing: [200]}, 1, 0);
+        };
+
+        $scope.clearCart = function () {
+          shoppingCart.clear();
+        }
+      });
+
+
+    </script>
+
+  </body>
+</html>
