@@ -1,47 +1,27 @@
+<!-- Desktop and tablet -->
+<li class="dropdown hidden-xs" ng-show="userState.user.profile">
+  <a href="" class="dropdown-toggle">
+    <img ng-src="{{userState.user.profile.picture}}"
+      class="profile-pic" width="30" height="30" alt="User" />
+  </a>
+  <ul class="dropdown-menu">
+    <ng-include
+      src="'auth-buttons-menu.html'"
+      replace-include
+    ></ng-include>
+  </ul>
+</li>
+<!-- Mobile -->
+<li class="visible-xs-inline-block" ng-show="userState.user.profile">
+  <a href="" class="dropdown-toggle" action-sheet="'auth-buttons-menu.html'" title="'User Settings'">
+    <img ng-src="{{userState.user.picture}}"
+      class="profile-pic" width="30" height="30" alt="User" />
+  </a>
+</li>
 <!-- If User NOT Authenticated -->
-<ul class="nav navbar-nav navbar-right actions-nav"
-  style="min-width: 80px; min-height: 41px;">
-
-  <li class="dropdown" ng-show="userState.user.profile">
-    <a href="" class="dropdown-toggle">
-      <img ng-src="{{userState.user.picture}}"
-        class="profile-pic" width="30" height="30" alt="User" />
-    </a>
-    <ul class="dropdown-menu">
-      <li class="dropdown-header dropdown-title">
-        {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}
-      </li>
-      <li class="dropdown-header">
-        {{userState.user.profile.email}}
-      </li>
-      <li class="divider" ng-show="userState.user.profile.username"></li>
-      <li ng-show="userState.user.profile.username">
-        <a href="" ng-click="userSettings()" class="user-settings-button">
-          <i class="glyphicons cogwheels"></i>
-          <span class="item-name">User Settings</span>
-        </a>
-      </li>
-      <li class="divider" ng-show="false"></li>
-      <li ng-show="false">
-        <a href="" ng-click="paymentMethods()">
-          <i class="glyphicons usd"></i>
-          <span class="item-name">Payment Methods</span>
-        </a>
-      </li>
-      <li class="divider" ng-show="userState.user.profile"></li>
-      <li ng-show="userState.user.profile">
-        <a href="" ng-click="logout()" class="sign-out-button">
-          <i class="glyphicons log_out"></i>
-          <span class="item-name">Sign Out</span>
-        </a>
-      </li>
-    </ul>
-  </li>
-  <li ng-show="!userState.user.profile">
-    <a href="" class="sign-in" ng-click="loginModal()">
-      <span>Sign In</span>
-      <i class="glyphicons log_in"></i>
-    </a>
-  </li>
-</ul>
+<li ng-show="!userState.user.profile">
+  <a href="" class="sign-in" ng-click="loginModal()">
+    <span>Sign In</span>
+    <i class="glyphicons log_in"></i>
+  </a>
 </li>

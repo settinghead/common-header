@@ -2,7 +2,8 @@
 <nav class="navbar navbar-default navbar-static-top"
 	ng-class="{'double-margin': userState.subCompanySelected}" role="navigation">
 	<div class="container">
-		<div class="navbar-header">
+
+		<div class="navbar-header" style="width: 100%;">
 			<a class="navbar-brand visible-lg" href="http://www.risevision.com/" target="_blank">
 				<img src="//s3.amazonaws.com/rise-common/images/logo-small.png" class="img-responsive logo-small" width="113" height="42" alt="Rise Vision">
 			</a>
@@ -10,121 +11,128 @@
 				href="" off-canvas-toggle>
 				<img src="//s3.amazonaws.com/rise-common/images/logo-small.png" class="img-responsive logo-small" width="113" height="42" alt="Rise Vision">
 			</a>
-		</div>
-		<div class="collapse navbar-collapse navbar-left">
-			<ul class="nav navbar-nav">
-				<li ng-repeat="opt in navOptions">
-					<a ng-href="{{opt.link}}" target="{{opt.target}}">{{opt.title}}</a>
+
+			<!-- If User Authenticated -->
+			<!-- Action Nav -->
+			<ul class="nav navbar-nav navbar-right actions-nav pull-right">
+				<!-- Notifications -->
+				<li class="dropdown" class="system-messages"
+				  ng-show="userState.user.profile.username"
+					ng-controller="SystemMessagesButtonCtrl"
+					ng-include="'system-messages-button.html'">
 				</li>
-				<li class="dropdown">
-					<a href="" class="dropdown-toggle remove-radius">
-						Help
+				<!-- Shopping Cart -->
+				<li class="shopping-cart"
+				  ng-controller="ShoppingCartButtonCtrl"
+					ng-show="userState.shoppingCart.items !== null"
+					ng-include="'shoppingcart-button.html'">
+				</li>
+				<!-- Current App -->
+				<li class="dropdown" ng-show="false">
+					<a href="" class="dropdown-toggle">
+						<i class="glyphicons show_thumbnails"></i>
 					</a>
-					<ul class="dropdown-menu">
-						<li>
-							<a href="http://community.risevision.com/rise_vision_inc" class="item-name" target="_blank">Community</a>
+					<ul class="dropdown-menu company-menu">
+						<li class="dropdown-header dropdown-title">
+							Current App
+						</li>
+						<li class="dropdown-header">
+							<i class="glyphicons shop"></i> Store
 						</li>
 						<li class="divider"></li>
 						<li>
-							<a href="http://www.risevision.com/user-training/" class="item-name" target="_blank">Training</a>
+							<div class="menu-box pull-left">
+								<a href="">
+									<i class="glyphicons picture"></i>
+									<span>Displays</span>
+								</a>
+							</div>
+							<div class="menu-box pull-right">
+								<a href="">
+									<i class="glyphicons picture"></i>
+									<span>Scheduler</span>
+								</a>
+							</div>
 						</li>
-						<li class="divider"></li>
 						<li>
-							<a href="http://www.risevision.com/help/users/" class="item-name" target="_blank">Documentation</a>
+							<div class="menu-box pull-left">
+								<a href="">
+									<i class="glyphicons picture"></i>
+									<span>Editor</span>
+								</a>
+							</div>
+							<div class="menu-box pull-right">
+								<a href="">
+									<i class="glyphicons picture"></i>
+									<span>Storage</span>
+								</a>
+							</div>
+						</li>
+						<li>
+							<div class="menu-box pull-left">
+								<a href="">
+									<i class="glyphicons picture"></i>
+									<span>Bulletin</span>
+								</a>
+							</div>
+							<div class="menu-box pull-right">
+								<a href="">
+									<i class="glyphicons picture"></i>
+									<span>Player</span>
+								</a>
+							</div>
 						</li>
 					</ul>
 				</li>
-			</ul>
-		</div>
+				<!-- END Current App -->
+				<!-- Company Dropdown -->
+				<li class="dropdown" ng-show="userState.user.profile.username"
+					ng-controller="CompanyButtonsCtrl"
+					ng-include="'company-buttons.html'"
+				></li>
 
-		<!-- If User Authenticated -->
-		<ul class="nav navbar-nav navbar-right actions-nav">
-			<!-- Notifications -->
-			<li class="dropdown" class="system-messages"
-			  ng-show="userState.user.profile.username"
-				ng-controller="SystemMessagesButtonCtrl"
-				ng-include="'system-messages-button.html'">
-			</li>
-			<!-- Shopping Cart -->
-			<li class="shopping-cart"
-			  ng-controller="ShoppingCartButtonCtrl"
-				ng-show="userState.shoppingCart.items !== null"
-				ng-include="'shoppingcart-button.html'">
-			</li>
-			<!-- Current App -->
-			<li class="dropdown" ng-show="false">
-				<a href="" class="dropdown-toggle">
-					<i class="glyphicons show_thumbnails"></i>
-				</a>
-				<ul class="dropdown-menu company-menu">
-					<li class="dropdown-header dropdown-title">
-						Current App
+				<ng-include
+					replace-include
+				  ng-controller="AuthButtonsCtr"
+					src="'auth-buttons.html'"
+					rv-spinner="spinnerOptions"
+					rv-spinner-key="auth-buttons"
+					rv-spinner-start-active="1"
+				></ng-include>
+			</ul>
+			<!-- END Action Nav -->
+
+			<!-- Nav Links -->
+			<div class="navbar-collapse navbar-left hidden-xs hidden-sm hidden-md">
+				<ul class="nav navbar-nav">
+					<li ng-repeat="opt in navOptions">
+						<a ng-href="{{opt.link}}" target="{{opt.target}}">{{opt.title}}</a>
 					</li>
-					<li class="dropdown-header">
-						<i class="glyphicons shop"></i> Store
-					</li>
-					<li class="divider"></li>
-					<li>
-						<div class="menu-box pull-left">
-							<a href="">
-								<i class="glyphicons picture"></i>
-								<span>Displays</span>
-							</a>
-						</div>
-						<div class="menu-box pull-right">
-							<a href="">
-								<i class="glyphicons picture"></i>
-								<span>Scheduler</span>
-							</a>
-						</div>
-					</li>
-					<li>
-						<div class="menu-box pull-left">
-							<a href="">
-								<i class="glyphicons picture"></i>
-								<span>Editor</span>
-							</a>
-						</div>
-						<div class="menu-box pull-right">
-							<a href="">
-								<i class="glyphicons picture"></i>
-								<span>Storage</span>
-							</a>
-						</div>
-					</li>
-					<li>
-						<div class="menu-box pull-left">
-							<a href="">
-								<i class="glyphicons picture"></i>
-								<span>Bulletin</span>
-							</a>
-						</div>
-						<div class="menu-box pull-right">
-							<a href="">
-								<i class="glyphicons picture"></i>
-								<span>Player</span>
-							</a>
-						</div>
+					<li class="dropdown">
+						<a href="" class="dropdown-toggle remove-radius">
+							Help
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="http://community.risevision.com/rise_vision_inc" class="item-name" target="_blank">Community</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="http://www.risevision.com/user-training/" class="item-name" target="_blank">Training</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="http://www.risevision.com/help/users/" class="item-name" target="_blank">Documentation</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
-			</li>
-			<!-- END Current App -->
-			<!-- Company Dropdown -->
-			<li class="dropdown" ng-show="userState.user.profile.username"
-				ng-controller="CompanyButtonsCtrl"
-				ng-include="'company-buttons.html'"
-			></li>
-
-			<li
-			  ng-controller="AuthButtonsCtr"
-				ng-include="'auth-buttons.html'"
-				rv-spinner="spinnerOptions"
-				rv-spinner-key="auth-buttons"
-				rv-spinner-start-active="1"
-			></li>
-		</ul>
+			</div>
+			<!-- END Nav Links -->
+		</div>
 
 	</div>
+
 	<div ng-if="userState.subCompanySelected"
 	  class="sub-company-alert">
 		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}

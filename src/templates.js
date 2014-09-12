@@ -3,53 +3,69 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("auth-buttons-menu.html",
+    "<li class=\"dropdown-header dropdown-title\">\n" +
+    "  {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}\n" +
+    "</li>\n" +
+    "<li class=\"dropdown-header\">\n" +
+    "  {{userState.user.profile.email}}\n" +
+    "</li>\n" +
+    "<li class=\"divider\" ng-show=\"userState.user.profile.username\"></li>\n" +
+    "<li ng-show=\"userState.user.profile.username\">\n" +
+    "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button\">\n" +
+    "    <i class=\"fa fa-cogs\"></i>\n" +
+    "    <span class=\"item-name\">User Settings</span>\n" +
+    "  </a>\n" +
+    "</li>\n" +
+    "<li class=\"divider\" ng-show=\"false\"></li>\n" +
+    "<li ng-show=\"false\">\n" +
+    "  <a href=\"\" ng-click=\"paymentMethods()\">\n" +
+    "    <i class=\"glyphicons usd\"></i>\n" +
+    "    <span class=\"item-name\">Payment Methods</span>\n" +
+    "  </a>\n" +
+    "</li>\n" +
+    "<li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
+    "<li ng-show=\"userState.user.profile\">\n" +
+    "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
+    "    <i class=\"fa fa-sign-out\"></i>\n" +
+    "    <span class=\"item-name\">Sign Out</span>\n" +
+    "  </a>\n" +
+    "</li>");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("auth-buttons.html",
+    "<!-- Desktop and tablet -->\n" +
+    "<li class=\"dropdown hidden-xs\" ng-show=\"userState.user.profile\">\n" +
+    "  <a href=\"\" class=\"dropdown-toggle\">\n" +
+    "    <img ng-src=\"{{userState.user.profile.picture}}\"\n" +
+    "      class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "  </a>\n" +
+    "  <ul class=\"dropdown-menu\">\n" +
+    "    <ng-include\n" +
+    "      src=\"'auth-buttons-menu.html'\"\n" +
+    "      replace-include\n" +
+    "    ></ng-include>\n" +
+    "  </ul>\n" +
+    "</li>\n" +
+    "<!-- Mobile -->\n" +
+    "<li class=\"visible-xs-inline-block\" ng-show=\"userState.user.profile\">\n" +
+    "  <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\" title=\"'User Settings'\">\n" +
+    "    <img ng-src=\"{{userState.user.picture}}\"\n" +
+    "      class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "  </a>\n" +
+    "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<ul class=\"nav navbar-nav navbar-right actions-nav\"\n" +
-    "  style=\"min-width: 80px; min-height: 41px;\">\n" +
-    "\n" +
-    "  <li class=\"dropdown\" ng-show=\"userState.user.profile\">\n" +
-    "    <a href=\"\" class=\"dropdown-toggle\">\n" +
-    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
-    "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
-    "    </a>\n" +
-    "    <ul class=\"dropdown-menu\">\n" +
-    "      <li class=\"dropdown-header dropdown-title\">\n" +
-    "        {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}\n" +
-    "      </li>\n" +
-    "      <li class=\"dropdown-header\">\n" +
-    "        {{userState.user.profile.email}}\n" +
-    "      </li>\n" +
-    "      <li class=\"divider\" ng-show=\"userState.user.profile.username\"></li>\n" +
-    "      <li ng-show=\"userState.user.profile.username\">\n" +
-    "        <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button\">\n" +
-    "          <i class=\"glyphicons cogwheels\"></i>\n" +
-    "          <span class=\"item-name\">User Settings</span>\n" +
-    "        </a>\n" +
-    "      </li>\n" +
-    "      <li class=\"divider\" ng-show=\"false\"></li>\n" +
-    "      <li ng-show=\"false\">\n" +
-    "        <a href=\"\" ng-click=\"paymentMethods()\">\n" +
-    "          <i class=\"glyphicons usd\"></i>\n" +
-    "          <span class=\"item-name\">Payment Methods</span>\n" +
-    "        </a>\n" +
-    "      </li>\n" +
-    "      <li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
-    "      <li ng-show=\"userState.user.profile\">\n" +
-    "        <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button\">\n" +
-    "          <i class=\"glyphicons log_out\"></i>\n" +
-    "          <span class=\"item-name\">Sign Out</span>\n" +
-    "        </a>\n" +
-    "      </li>\n" +
-    "    </ul>\n" +
-    "  </li>\n" +
-    "  <li ng-show=\"!userState.user.profile\">\n" +
-    "    <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
-    "      <span>Sign In</span>\n" +
-    "      <i class=\"glyphicons log_in\"></i>\n" +
-    "    </a>\n" +
-    "  </li>\n" +
-    "</ul>\n" +
+    "<li ng-show=\"!userState.user.profile\">\n" +
+    "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
+    "    <span>Sign In</span>\n" +
+    "    <i class=\"glyphicons log_in\"></i>\n" +
+    "  </a>\n" +
     "</li>\n" +
     "");
 }]);
@@ -90,7 +106,8 @@ app.run(["$templateCache", function($templateCache) {
     "<nav class=\"navbar navbar-default navbar-static-top\"\n" +
     "	ng-class=\"{'double-margin': userState.subCompanySelected}\" role=\"navigation\">\n" +
     "	<div class=\"container\">\n" +
-    "		<div class=\"navbar-header\">\n" +
+    "\n" +
+    "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
     "			<a class=\"navbar-brand visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
@@ -98,121 +115,128 @@ app.run(["$templateCache", function($templateCache) {
     "				href=\"\" off-canvas-toggle>\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
-    "		</div>\n" +
-    "		<div class=\"collapse navbar-collapse navbar-left\">\n" +
-    "			<ul class=\"nav navbar-nav\">\n" +
-    "				<li ng-repeat=\"opt in navOptions\">\n" +
-    "					<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
+    "\n" +
+    "			<!-- If User Authenticated -->\n" +
+    "			<!-- Action Nav -->\n" +
+    "			<ul class=\"nav navbar-nav navbar-right actions-nav pull-right\">\n" +
+    "				<!-- Notifications -->\n" +
+    "				<li class=\"dropdown\" class=\"system-messages\"\n" +
+    "				  ng-show=\"userState.user.profile.username\"\n" +
+    "					ng-controller=\"SystemMessagesButtonCtrl\"\n" +
+    "					ng-include=\"'system-messages-button.html'\">\n" +
     "				</li>\n" +
-    "				<li class=\"dropdown\">\n" +
-    "					<a href=\"\" class=\"dropdown-toggle remove-radius\">\n" +
-    "						Help\n" +
+    "				<!-- Shopping Cart -->\n" +
+    "				<li class=\"shopping-cart\"\n" +
+    "				  ng-controller=\"ShoppingCartButtonCtrl\"\n" +
+    "					ng-show=\"userState.shoppingCart.items !== null\"\n" +
+    "					ng-include=\"'shoppingcart-button.html'\">\n" +
+    "				</li>\n" +
+    "				<!-- Current App -->\n" +
+    "				<li class=\"dropdown\" ng-show=\"false\">\n" +
+    "					<a href=\"\" class=\"dropdown-toggle\">\n" +
+    "						<i class=\"glyphicons show_thumbnails\"></i>\n" +
     "					</a>\n" +
-    "					<ul class=\"dropdown-menu\">\n" +
-    "						<li>\n" +
-    "							<a href=\"http://community.risevision.com/rise_vision_inc\" class=\"item-name\" target=\"_blank\">Community</a>\n" +
+    "					<ul class=\"dropdown-menu company-menu\">\n" +
+    "						<li class=\"dropdown-header dropdown-title\">\n" +
+    "							Current App\n" +
+    "						</li>\n" +
+    "						<li class=\"dropdown-header\">\n" +
+    "							<i class=\"glyphicons shop\"></i> Store\n" +
     "						</li>\n" +
     "						<li class=\"divider\"></li>\n" +
     "						<li>\n" +
-    "							<a href=\"http://www.risevision.com/user-training/\" class=\"item-name\" target=\"_blank\">Training</a>\n" +
+    "							<div class=\"menu-box pull-left\">\n" +
+    "								<a href=\"\">\n" +
+    "									<i class=\"glyphicons picture\"></i>\n" +
+    "									<span>Displays</span>\n" +
+    "								</a>\n" +
+    "							</div>\n" +
+    "							<div class=\"menu-box pull-right\">\n" +
+    "								<a href=\"\">\n" +
+    "									<i class=\"glyphicons picture\"></i>\n" +
+    "									<span>Scheduler</span>\n" +
+    "								</a>\n" +
+    "							</div>\n" +
     "						</li>\n" +
-    "						<li class=\"divider\"></li>\n" +
     "						<li>\n" +
-    "							<a href=\"http://www.risevision.com/help/users/\" class=\"item-name\" target=\"_blank\">Documentation</a>\n" +
+    "							<div class=\"menu-box pull-left\">\n" +
+    "								<a href=\"\">\n" +
+    "									<i class=\"glyphicons picture\"></i>\n" +
+    "									<span>Editor</span>\n" +
+    "								</a>\n" +
+    "							</div>\n" +
+    "							<div class=\"menu-box pull-right\">\n" +
+    "								<a href=\"\">\n" +
+    "									<i class=\"glyphicons picture\"></i>\n" +
+    "									<span>Storage</span>\n" +
+    "								</a>\n" +
+    "							</div>\n" +
+    "						</li>\n" +
+    "						<li>\n" +
+    "							<div class=\"menu-box pull-left\">\n" +
+    "								<a href=\"\">\n" +
+    "									<i class=\"glyphicons picture\"></i>\n" +
+    "									<span>Bulletin</span>\n" +
+    "								</a>\n" +
+    "							</div>\n" +
+    "							<div class=\"menu-box pull-right\">\n" +
+    "								<a href=\"\">\n" +
+    "									<i class=\"glyphicons picture\"></i>\n" +
+    "									<span>Player</span>\n" +
+    "								</a>\n" +
+    "							</div>\n" +
     "						</li>\n" +
     "					</ul>\n" +
     "				</li>\n" +
-    "			</ul>\n" +
-    "		</div>\n" +
+    "				<!-- END Current App -->\n" +
+    "				<!-- Company Dropdown -->\n" +
+    "				<li class=\"dropdown\" ng-show=\"userState.user.profile.username\"\n" +
+    "					ng-controller=\"CompanyButtonsCtrl\"\n" +
+    "					ng-include=\"'company-buttons.html'\"\n" +
+    "				></li>\n" +
     "\n" +
-    "		<!-- If User Authenticated -->\n" +
-    "		<ul class=\"nav navbar-nav navbar-right actions-nav\">\n" +
-    "			<!-- Notifications -->\n" +
-    "			<li class=\"dropdown\" class=\"system-messages\"\n" +
-    "			  ng-show=\"userState.user.profile.username\"\n" +
-    "				ng-controller=\"SystemMessagesButtonCtrl\"\n" +
-    "				ng-include=\"'system-messages-button.html'\">\n" +
-    "			</li>\n" +
-    "			<!-- Shopping Cart -->\n" +
-    "			<li class=\"shopping-cart\"\n" +
-    "			  ng-controller=\"ShoppingCartButtonCtrl\"\n" +
-    "				ng-show=\"userState.shoppingCart.items !== null\"\n" +
-    "				ng-include=\"'shoppingcart-button.html'\">\n" +
-    "			</li>\n" +
-    "			<!-- Current App -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"false\">\n" +
-    "				<a href=\"\" class=\"dropdown-toggle\">\n" +
-    "					<i class=\"glyphicons show_thumbnails\"></i>\n" +
-    "				</a>\n" +
-    "				<ul class=\"dropdown-menu company-menu\">\n" +
-    "					<li class=\"dropdown-header dropdown-title\">\n" +
-    "						Current App\n" +
+    "				<ng-include\n" +
+    "					replace-include\n" +
+    "				  ng-controller=\"AuthButtonsCtr\"\n" +
+    "					src=\"'auth-buttons.html'\"\n" +
+    "					rv-spinner=\"spinnerOptions\"\n" +
+    "					rv-spinner-key=\"auth-buttons\"\n" +
+    "					rv-spinner-start-active=\"1\"\n" +
+    "				></ng-include>\n" +
+    "			</ul>\n" +
+    "			<!-- END Action Nav -->\n" +
+    "\n" +
+    "			<!-- Nav Links -->\n" +
+    "			<div class=\"navbar-collapse navbar-left hidden-xs hidden-sm hidden-md\">\n" +
+    "				<ul class=\"nav navbar-nav\">\n" +
+    "					<li ng-repeat=\"opt in navOptions\">\n" +
+    "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "					</li>\n" +
-    "					<li class=\"dropdown-header\">\n" +
-    "						<i class=\"glyphicons shop\"></i> Store\n" +
-    "					</li>\n" +
-    "					<li class=\"divider\"></li>\n" +
-    "					<li>\n" +
-    "						<div class=\"menu-box pull-left\">\n" +
-    "							<a href=\"\">\n" +
-    "								<i class=\"glyphicons picture\"></i>\n" +
-    "								<span>Displays</span>\n" +
-    "							</a>\n" +
-    "						</div>\n" +
-    "						<div class=\"menu-box pull-right\">\n" +
-    "							<a href=\"\">\n" +
-    "								<i class=\"glyphicons picture\"></i>\n" +
-    "								<span>Scheduler</span>\n" +
-    "							</a>\n" +
-    "						</div>\n" +
-    "					</li>\n" +
-    "					<li>\n" +
-    "						<div class=\"menu-box pull-left\">\n" +
-    "							<a href=\"\">\n" +
-    "								<i class=\"glyphicons picture\"></i>\n" +
-    "								<span>Editor</span>\n" +
-    "							</a>\n" +
-    "						</div>\n" +
-    "						<div class=\"menu-box pull-right\">\n" +
-    "							<a href=\"\">\n" +
-    "								<i class=\"glyphicons picture\"></i>\n" +
-    "								<span>Storage</span>\n" +
-    "							</a>\n" +
-    "						</div>\n" +
-    "					</li>\n" +
-    "					<li>\n" +
-    "						<div class=\"menu-box pull-left\">\n" +
-    "							<a href=\"\">\n" +
-    "								<i class=\"glyphicons picture\"></i>\n" +
-    "								<span>Bulletin</span>\n" +
-    "							</a>\n" +
-    "						</div>\n" +
-    "						<div class=\"menu-box pull-right\">\n" +
-    "							<a href=\"\">\n" +
-    "								<i class=\"glyphicons picture\"></i>\n" +
-    "								<span>Player</span>\n" +
-    "							</a>\n" +
-    "						</div>\n" +
+    "					<li class=\"dropdown\">\n" +
+    "						<a href=\"\" class=\"dropdown-toggle remove-radius\">\n" +
+    "							Help\n" +
+    "						</a>\n" +
+    "						<ul class=\"dropdown-menu\">\n" +
+    "							<li>\n" +
+    "								<a href=\"http://community.risevision.com/rise_vision_inc\" class=\"item-name\" target=\"_blank\">Community</a>\n" +
+    "							</li>\n" +
+    "							<li class=\"divider\"></li>\n" +
+    "							<li>\n" +
+    "								<a href=\"http://www.risevision.com/user-training/\" class=\"item-name\" target=\"_blank\">Training</a>\n" +
+    "							</li>\n" +
+    "							<li class=\"divider\"></li>\n" +
+    "							<li>\n" +
+    "								<a href=\"http://www.risevision.com/help/users/\" class=\"item-name\" target=\"_blank\">Documentation</a>\n" +
+    "							</li>\n" +
+    "						</ul>\n" +
     "					</li>\n" +
     "				</ul>\n" +
-    "			</li>\n" +
-    "			<!-- END Current App -->\n" +
-    "			<!-- Company Dropdown -->\n" +
-    "			<li class=\"dropdown\" ng-show=\"userState.user.profile.username\"\n" +
-    "				ng-controller=\"CompanyButtonsCtrl\"\n" +
-    "				ng-include=\"'company-buttons.html'\"\n" +
-    "			></li>\n" +
-    "\n" +
-    "			<li\n" +
-    "			  ng-controller=\"AuthButtonsCtr\"\n" +
-    "				ng-include=\"'auth-buttons.html'\"\n" +
-    "				rv-spinner=\"spinnerOptions\"\n" +
-    "				rv-spinner-key=\"auth-buttons\"\n" +
-    "				rv-spinner-start-active=\"1\"\n" +
-    "			></li>\n" +
-    "		</ul>\n" +
+    "			</div>\n" +
+    "			<!-- END Nav Links -->\n" +
+    "		</div>\n" +
     "\n" +
     "	</div>\n" +
+    "\n" +
     "	<div ng-if=\"userState.subCompanySelected\"\n" +
     "	  class=\"sub-company-alert\">\n" +
     "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}\n" +
