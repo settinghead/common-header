@@ -1,4 +1,4 @@
-Rise Vision Common Header
+Rise Vision Common Header [![Build Status](http://devtools1.risevision.com:8080/job/Common-Header-PR/badge/icon)](http://devtools1.risevision.com:8080/job/Common-Header-PR/)
 ==============
 
 **Copyright © 2014 - Rise Vision Incorporated.**
