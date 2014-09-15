@@ -2,6 +2,7 @@ angular.module("risevision.common.header")
 .controller("AuthModalCtrl", ["$scope", "$modalInstance", "$window",
   "authenticate", "$rootScope", "$loading",
   function($scope, $modalInstance, $window, authenticate, $rootScope, $loading) {
+    $loading.stop("authenticate-button");
 
     $scope.authenticate = function() {
       $loading.start("authenticate-button");

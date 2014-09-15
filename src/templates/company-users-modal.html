@@ -4,7 +4,7 @@
   </button>
   <h2 id="company-users-label" class="modal-title">Company Users</h2>
 </div>
-<div class="modal-body">
+<div class="modal-body company-users-modal">
   <div class="row action-bar">
     <div class="col-md-8 sort">
     <ul class="nav nav-pills nav-justified">
@@ -21,7 +21,7 @@
     </div>
     <div class="col-md-4 text-right">
       <button class="btn btn-secondary" ng-csv="users"
-      filename="users.csv">Download to CSV</button>
+      filename="users.csv" ng-if="false">Download to CSV</button>
     </div>
   </div>
   <div class="list-group scrollable-list">
@@ -53,7 +53,7 @@
     ng-click="addUser()">Add User
     <i class="glyphicons white plus icon-right"></i>
   </button>
-  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="closeModal()">
+  <button type="button" class="btn btn-primary close-company-users-button" data-dismiss="modal" ng-click="closeModal()">
     Cancel <i class="glyphicons white remove_2 icon-right"></i>
   </button>
 </div>
