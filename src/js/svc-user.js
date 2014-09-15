@@ -86,6 +86,11 @@
       $log.debug("updateUser", profile);
       var deferred = $q.defer();
       profile = angular.copy(profile);
+      delete profile.id; delete profile.changedBy;
+      delete profile.changeDate; delete profile.status;
+      delete profile.companyId; delete profile.username;
+      delete profile.creationDate; delete profile.lastLogin;
+      delete profile.termsAcceptanceDate; delete profile.showTutorial;
       if(angular.isDefined(profile.mailSyncEnabled) && typeof profile.mailSyncEnabled === "boolean") {
         //covert boolean to string
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";

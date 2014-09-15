@@ -25,15 +25,19 @@
 
         //clear local storage
         browser.executeScript("localStorage.clear();");
-
         ptor.driver.navigate().refresh();
         element(by.id("reset-db")).click();
+
       });
 
       it("should show user settings modal and update settings", function() {
         //log in
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
+        var availableElement = by.css(".login-account-button[data-username='michael.sanchez@awesome.io']");
+        browser.wait(function() {
+          return ptor.isElementPresent(availableElement);
+        }, 10000);
         element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
 
         //reset db
@@ -97,7 +101,7 @@
         expect(profilePromise).to.eventually.have.property("firstName", "John");
         expect(profilePromise).to.eventually.have.property("lastName", "Doe");
         expect(profilePromise).to.eventually.have.property("email", "testmail@testmail.com");
-        expect(profilePromise).to.eventually.have.property("phone", "000-000-0000");
+        expect(profilePromise).to.eventually.have.property("telephone", "000-000-0000");
 
         //TODO test roles
       });

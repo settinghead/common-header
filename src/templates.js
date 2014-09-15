@@ -221,7 +221,7 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- END Common Header Navbar -->\n" +
     "\n" +
     "<!-- Off Canvas Version of the Nav -->\n" +
-    "<nav class=\"off-canvas--nav\" off-canvas-nav>\n" +
+    "<nav class=\"off-canvas-nav\" off-canvas-nav>\n" +
     "  <ul class=\"nav nav-pills nav-stacked\">\n" +
     "  	<li off-canvas-toggle>\n" +
     "  		<i class=\"fa fa-times fa-2x pull-right\"></i>\n" +
@@ -1137,7 +1137,7 @@ app.run(["$templateCache", function($templateCache) {
     "        id=\"user-settings-phone\"\n" +
     "        type=\"tel\"\n" +
     "        class=\"form-control\"\n" +
-    "        ng-model=\"user.phone\"\n" +
+    "        ng-model=\"user.telephone\"\n" +
     "         />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
