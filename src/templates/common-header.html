@@ -16,11 +16,11 @@
 			<!-- Action Nav -->
 			<ul class="nav navbar-nav navbar-right actions-nav pull-right">
 				<!-- Notifications -->
-				<li class="dropdown" class="system-messages"
-				  ng-show="userState.user.profile.username"
-					ng-controller="SystemMessagesButtonCtrl"
-					ng-include="'system-messages-button.html'">
-				</li>
+				<ng-include
+					replace-include
+				  ng-controller="SystemMessagesButtonCtrl"
+					src="'system-messages-button.html'"
+				></ng-include>
 				<!-- Shopping Cart -->
 				<li class="shopping-cart"
 				  ng-controller="ShoppingCartButtonCtrl"
@@ -30,7 +30,7 @@
 				<!-- Current App -->
 				<li class="dropdown" ng-show="false">
 					<a href="" class="dropdown-toggle">
-						<i class="glyphicons show_thumbnails"></i>
+						<i class="fa fa-th"></i>
 					</a>
 					<ul class="dropdown-menu company-menu">
 						<li class="dropdown-header dropdown-title">
@@ -86,18 +86,16 @@
 				</li>
 				<!-- END Current App -->
 				<!-- Company Dropdown -->
-				<li class="dropdown" ng-show="userState.user.profile.username"
-					ng-controller="CompanyButtonsCtrl"
-					ng-include="'company-buttons.html'"
-				></li>
-
+				<ng-include
+					replace-include
+				  ng-controller="CompanyButtonsCtrl"
+					src="'company-buttons.html'"
+				></ng-include>
+				<!-- Auth -->
 				<ng-include
 					replace-include
 				  ng-controller="AuthButtonsCtr"
 					src="'auth-buttons.html'"
-					rv-spinner="spinnerOptions"
-					rv-spinner-key="auth-buttons"
-					rv-spinner-start-active="1"
 				></ng-include>
 			</ul>
 			<!-- END Action Nav -->

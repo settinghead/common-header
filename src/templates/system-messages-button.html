@@ -1,14 +1,22 @@
-<a href="" class="dropdown-toggle system-messages-button">
-  <i class="glyphicons bell"></i>
-  <span class="label label-danger system-messages-badge">{{messages.length}}</span>
-</a>
-<ul class="dropdown-menu system-messages">
-  <li class="dropdown-header dropdown-title">
-    System Message
-  </li>
-  <li class="divider"></li>
-  <li class="system-message"
-    ng-repeat="message in messages"
-    ng-bind-html="renderHtml(message.text)">
-  </li>
-</ul>
+<!-- Desktop and tablet -->
+<li class="dropdown system-messages hidden-xs" ng-show="userState.user.profile.username">
+  <a href="" class="dropdown-toggle system-messages-button">
+    <i class="fa fa-bell"></i>
+    <span class="label label-danger system-messages-badge">{{messages.length}}</span>
+  </a>
+  <ul class="dropdown-menu system-messages">
+    <ng-include
+      src="'system-messages-button-menu.html'"
+    ></ng-include>
+  </ul>
+</li>
+
+<!-- Mobile -->
+<li class="system-messages visible-xs-inline-block" ng-show="userState.user.profile.username">
+  <a href=""
+    class="system-messages-button"
+    action-sheet="'system-messages-button-menu.html'">
+      <i class="fa fa-bell"></i>
+      <span class="label label-danger system-messages-badge">{{messages.length}}</span>
+  </a>
+</li>

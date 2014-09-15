@@ -6,21 +6,21 @@
 </li>
 <li class="divider" ng-show="userState.user.profile.username"></li>
 <li ng-show="userState.user.profile.username">
-  <a href="" ng-click="userSettings()" class="user-settings-button">
+  <a href="" ng-click="userSettings()" class="user-settings-button action">
     <i class="fa fa-cogs"></i>
     <span class="item-name">User Settings</span>
   </a>
 </li>
 <li class="divider" ng-show="false"></li>
 <li ng-show="false">
-  <a href="" ng-click="paymentMethods()">
+  <a href="" class="action" ng-click="paymentMethods()">
     <i class="glyphicons usd"></i>
     <span class="item-name">Payment Methods</span>
   </a>
 </li>
 <li class="divider" ng-show="userState.user.profile"></li>
 <li ng-show="userState.user.profile">
-  <a href="" ng-click="logout()" class="sign-out-button">
+  <a href="" ng-click="logout()" class="sign-out-button action">
     <i class="fa fa-sign-out"></i>
     <span class="item-name">Sign Out</span>
   </a>

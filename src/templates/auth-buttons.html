@@ -1,22 +1,33 @@
 <!-- Desktop and tablet -->
-<li class="dropdown hidden-xs" ng-show="userState.user.profile">
-  <a href="" class="dropdown-toggle">
-    <img ng-src="{{userState.user.profile.picture}}"
-      class="profile-pic" width="30" height="30" alt="User" />
-  </a>
-  <ul class="dropdown-menu">
-    <ng-include
-      src="'auth-buttons-menu.html'"
-      replace-include
-    ></ng-include>
-  </ul>
+<li
+  class="dropdown"
+  ng-class="{'hidden-xs': userState.user.profile}"
+  ng-show="userState.user.profile"
+  rv-spinner="spinnerOptions"
+  rv-spinner-key="auth-buttons"
+  rv-spinner-start-active="1">
+    <a href="" class="dropdown-toggle">
+      <img ng-src="{{userState.user.profile.picture}}"
+        class="profile-pic" width="30" height="30" alt="User" />
+    </a>
+    <ul class="dropdown-menu">
+      <ng-include
+        src="'auth-buttons-menu.html'"
+        replace-include
+      ></ng-include>
+    </ul>
 </li>
 <!-- Mobile -->
-<li class="visible-xs-inline-block" ng-show="userState.user.profile">
-  <a href="" class="dropdown-toggle" action-sheet="'auth-buttons-menu.html'" title="'User Settings'">
-    <img ng-src="{{userState.user.picture}}"
-      class="profile-pic" width="30" height="30" alt="User" />
-  </a>
+<li
+  ng-class="{'visible-xs-inline-block': userState.user.profile}"
+  ng-show="userState.user.profile"
+  rv-spinner="spinnerOptions"
+  rv-spinner-key="auth-buttons"
+  rv-spinner-start-active="1">
+    <a href="" class="dropdown-toggle" action-sheet="'auth-buttons-menu.html'">
+      <img ng-src="{{userState.user.profile.picture}}"
+        class="profile-pic" width="30" height="30" alt="User" />
+    </a>
 </li>
 <!-- If User NOT Authenticated -->
 <li ng-show="!userState.user.profile">
