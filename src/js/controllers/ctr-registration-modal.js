@@ -1,10 +1,8 @@
 angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
-  "$scope", "$modalInstance", "$rootScope",
-  "updateUser", "getUser",
+  "$scope", "$modalInstance", "$rootScope", "getUser",
   "$loading", "registerAccount", "$log", "cookieStore",
-  function($scope, $modalInstance, $rootScope,
-    updateUser, getUser, $loading,
+  function($scope, $modalInstance, $rootScope, getUser, $loading,
     registerAccount, $log, cookieStore) {
 
     var userState = $rootScope.userState;
@@ -12,8 +10,8 @@ angular.module("risevision.common.header")
       if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
         userState.user.profile.mailSyncEnabled = false;
       }
-      if(!angular.isDefined(userState.user.profile.accepted)) {
-        userState.user.profile.accepted = false;
+      if(!angular.isDefined(userState.user.accepted)) {
+        userState.user.accepted = false;
       }
     });
 

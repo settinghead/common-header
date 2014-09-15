@@ -24,11 +24,13 @@
       messages="messages"
     ></common-header>
 
+    <div ng-if="db">
       This app was built for the sole purpose of testing &amp; demoing common header.
       Set server latency to <input type="number" ng-model="db.serverDelay" id="server-delay" /> ms.
       <button class="btn" ng-click="resetDb()" id="reset-db">Reset DB</button>
 
-    <ng-view off-canvas-content>Loading...</ng-view>
+      <ng-view off-canvas-content>Loading...</ng-view>
+    </div>
 
     <script type="text/ng-template" id="fake-google-companies.html">
       <h1>Fake Google Cloud Server - Companies</h1>
@@ -105,7 +107,7 @@
 
     </script>
 
-    <!-- build:js js/main.js -->
+    <!-- build:js js/common-header.js -->
     <script type="text/javascript" src="../../components/jQuery/dist/jquery.js"></script>
     <script type="text/javascript" src="../../components/angular/angular.js"></script>
     <script type="text/javascript" src="../../components/angular-route/angular-route.js"></script>
@@ -157,9 +159,9 @@
     <script type="text/javascript" src="../../components/angular-ui-sortable/sortable.js"></script>
     <script type="text/javascript" src="../../components/jquery-ui/ui/jquery-ui.js"></script>
     <script type="text/javascript" src="../../components/ng-csv/build/ng-csv.js"></script>
+    <!-- endbuild -->
 
-
-    <!-- <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientJSLoad"></script> -->
+    <!-- // <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientJSLoad"></script> -->
 
     <script type="text/javascript" src="../../components/JSONedit/js/JSONEdit.js"></script>
     <script type="text/javascript" src="../gapi-mock/data.js"></script>
@@ -169,7 +171,6 @@
     <script type="text/javascript" src="../../components/mustache/mustache.js"></script>
     <script type="text/javascript" src="../gapi-mock.js"></script>
 
-    <!-- endbuild -->
 
     <style>
 
@@ -210,7 +211,9 @@
           link: '#/fake-store'
         }];
 
-        $scope.db = window.gapi._fakeDb;
+        if(window.gapi && window.gapi._fakeDb) {
+          $scope.db = window.gapi._fakeDb;
+        }
 
         $scope.resetDb = function () {
           window.gapi.resetDb();

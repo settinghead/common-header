@@ -19,11 +19,13 @@
       messages="messages"
     ></common-header>
 
+    <div ng-if="db">
       This app was built for the sole purpose of testing &amp; demoing common header.
       Set server latency to <input type="number" ng-model="db.serverDelay" id="server-delay" /> ms.
       <button class="btn" ng-click="resetDb()" id="reset-db">Reset DB</button>
 
-    <ng-view off-canvas-content>Loading...</ng-view>
+      <ng-view off-canvas-content>Loading...</ng-view>
+    </div>
 
     <script type="text/ng-template" id="fake-google-companies.html">
       <h1>Fake Google Cloud Server - Companies</h1>
@@ -100,7 +102,18 @@
 
     </script>
 
-    <script src="js/main.js"></script>
+    <script src="js/common-header.js"></script>
+
+    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientJSLoad"></script>
+
+    <script type="text/javascript" src="../../components/JSONedit/js/JSONEdit.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data/users.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data/companies.js"></script>
+    <script type="text/javascript" src="../gapi-mock/data/accounts.js"></script>
+    <script type="text/javascript" src="../../components/mustache/mustache.js"></script>
+    <!--script type="text/javascript" src="../gapi-mock.js"></script-->
+
 
     <style>
 
@@ -141,7 +154,9 @@
           link: '#/fake-store'
         }];
 
-        $scope.db = window.gapi._fakeDb;
+        if(window.gapi && window.gapi._fakeDb) {
+          $scope.db = window.gapi._fakeDb;
+        }
 
         $scope.resetDb = function () {
           window.gapi.resetDb();

@@ -10,7 +10,7 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "  <li class=\"dropdown\" ng-show=\"userState.user.profile\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
-    "      <img ng-src=\"{{userState.user.profile.picture}}\"\n" +
+    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "    <ul class=\"dropdown-menu\">\n" +
@@ -66,7 +66,11 @@ app.run(["$templateCache", function($templateCache) {
     "  		<i class=\"glyphicons remove_2\"></i>\n" +
     "  	</button>\n" +
     "</div>\n" +
-    "<div class=\"modal-body authorization-modal\">\n" +
+    "<div class=\"modal-body authorization-modal\"\n" +
+    "  rv-spinner=\"spinnerOptions\"\n" +
+    "  rv-spinner-key=\"authenticate-button\"\n" +
+    "  rv-spinner-start-active=\"0\"\n" +
+    ">\n" +
     "  <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\" class=\"profile-img\">\n" +
     "  <p>Please authorize your Google Account to register with Rise Vision.</p>\n" +
     "  <button type=\"button\" ng-click=\"authenticate(true)\"\n" +
@@ -929,7 +933,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
     "      <label>\n" +
     "      <input type=\"checkbox\" name=\"accepted\"\n" +
-    "        ng-model=\"userState.user.profile.accepted\"\n" +
+    "        ng-model=\"userState.user.accepted\"\n" +
     "        class=\"accept-terms-checkbox\" required />\n" +
     "      I accept the terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
     "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\" class=\"help-block\">You must accept terms and condtions.</p>\n" +

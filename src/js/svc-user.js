@@ -34,23 +34,22 @@
           var coreApi = results[1];
           var oauthUserInfo = results[2];
           if(oauthUserInfo.email) {
-            userState.user.profile = {
-              picture: oauthUserInfo.picture
-            };
+            userState.user.profile = {};
+            userState.user.picture = oauthUserInfo.picture;
+
           }
           coreApi.user.get(criteria).execute(function (resp){
-            if(resp.result === true) {
+            if (resp.error || !resp.result) {
+              deferred.reject(resp);
+            }
+            else {
               $log.debug("getUser resp", resp);
                 angular.extend(userState.user.profile,
                   angular.extend({
-                    picture: oauthUserInfo.picture,
                     username: oauthUserInfo.email
                   }, resp.item));
               userInfoCache.put("profile-" + username, resp.item);
               deferred.resolve(resp.item);
-            }
-            else {
-              deferred.reject(resp);
             }
           });
         }, deferred.reject);
@@ -86,11 +85,19 @@
     return function (username, profile) {
       $log.debug("updateUser", profile);
       var deferred = $q.defer();
+      profile = angular.copy(profile);
+      if(angular.isDefined(profile.mailSyncEnabled) && typeof profile.mailSyncEnabled === "boolean") {
+        //covert boolean to string
+        profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
+      }
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.update({username: username, data: profile});
+        var request = coreApi.user.update({username: username, data: JSON.stringify(profile)});
         request.execute(function (resp) {
             $log.debug("updateUser resp", resp);
-            if(resp.result === true) {
+            if(resp.error) {
+              deferred.reject(resp);
+            }
+            else if (resp.result) {
               userInfoCache.remove("profile-" + username);
               getUser().then(function() {deferred.resolve(resp);});
             }

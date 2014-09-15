@@ -35,19 +35,14 @@
     return function (username, basicProfile) {
       $log.debug("registerAccount called.");
       var deferred = $q.defer();
-      if(basicProfile.accepted) {
-        addAccount().then().finally(function () {
-          agreeToTerms().then().finally(function () {
-            updateUser(username, basicProfile).then(function (resp) {
-              if(resp.result === true) { deferred.resolve(); }
-              else { deferred.reject(); }
-            }, deferred.reject);
-          });
+      addAccount().then().finally(function () {
+        agreeToTerms().then().finally(function () {
+          updateUser(username, basicProfile).then(function (resp) {
+            if(resp.result === true) { deferred.resolve(); }
+            else { deferred.reject(); }
+          }, deferred.reject);
         });
-      }
-      else {
-        deferred.reject("You need to accept terms and conditions first in order to register for an account.");
-      }
+      });
       return deferred.promise;
     };
   }])
