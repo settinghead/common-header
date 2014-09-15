@@ -64,8 +64,13 @@ angular.module("risevision.common.company",
         var request = client.company.list({});
         request.execute(function (resp) {
           $log.debug("client.company.list resp", resp);
-          if(resp.result === true) {
-            deferred.resolve(resp);
+          if(resp.error){
+            delete userState.selectedCompanyName;
+            delete userState.selectedCompanyId;
+            deferred.reject();
+          }
+          else {
+            deferred.resolve(resp.items || []);
             //update user state if supplied
             var updateState = function (c) {
               $log.debug("selectedCompany", c);
@@ -90,11 +95,6 @@ angular.module("risevision.common.company",
               }, deferred.reject);
             }
           }
-          else {
-            delete userState.selectedCompanyName;
-            delete userState.selectedCompanyId;
-            deferred.reject();
-          }
         });
       }, deferred.reject);
       return deferred.promise;
@@ -103,14 +103,38 @@ angular.module("risevision.common.company",
 
   .factory("getCompany", ["coreAPILoader", "$q", "$log",
   function (coreAPILoader, $q, $log) {
-    return function (criteria) { //get a company either by id or authKey
-      $log.debug("getCompany resp", criteria);
+    return function (id) { //get a company either by id or authKey
+      $log.debug("getCompany called", id);
 
       var deferred = $q.defer();
         coreAPILoader().then(function (coreApi) {
+          var criteria = {};
+          if(id) {criteria.id = id; }
           var request = coreApi.company.get(criteria);
           request.execute(function (resp) {
               $log.debug("getCompany resp", resp);
+              if(resp.result) {
+                deferred.resolve(resp.item);
+              }
+              else {
+                deferred.reject(resp);
+              }
+          });
+        });
+      return deferred.promise;
+    };
+  }])
+
+  .factory("lookupCompany", ["coreAPILoader", "$q", "$log",
+  function (coreAPILoader, $q, $log) {
+    return function (authKey) { //get a company either by id or authKey
+      $log.debug("lookupCompany called", authKey);
+
+      var deferred = $q.defer();
+        coreAPILoader().then(function (coreApi) {
+          var request = coreApi.company.lookup({authKey: authKey});
+          request.execute(function (resp) {
+              $log.debug("lookupCompany resp", resp);
               if(resp.result) {
                 deferred.resolve(resp.item);
               }

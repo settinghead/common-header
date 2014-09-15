@@ -1,7 +1,7 @@
 angular.module("risevision.common.header")
 
-.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance", "moveCompany", "getCompany",
-  function($scope, $modalInstance, moveCompany, getCompany) {
+.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance", "moveCompany", "lookupCompany",
+  function($scope, $modalInstance, moveCompany, lookupCompany) {
 
     $scope.company = {};
     $scope.errors = [];
@@ -20,7 +20,7 @@ angular.module("risevision.common.header")
 
     $scope.getCompany = function () {
       $scope.errors = []; $scope.messages = [];
-      getCompany({authKey: $scope.company.authKey}).then(function (resp) {
+      lookupCompany($scope.company.authKey).then(function (resp) {
         angular.extend($scope.company, resp);
       }, function (resp) {
         $scope.errors.push("Failed to retrieve company. " + resp.message);

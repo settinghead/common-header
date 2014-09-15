@@ -40,6 +40,7 @@
           cookieStore.put(
             "rv-token", JSON.stringify(obj));
         }
+
         return gapiLoader().then(function (gApi) {
           gApi.auth.setToken(obj);
         });

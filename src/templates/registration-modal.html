@@ -27,7 +27,7 @@ rv-spinner-start-active="1">
     <div class="checkbox form-group" ng-class="{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }">
       <label>
       <input type="checkbox" name="accepted"
-        ng-model="userState.user.profile.accepted"
+        ng-model="userState.user.accepted"
         class="accept-terms-checkbox" required />
       I accept the terms of <a href="http://www.risevision.com/terms-service-privacy/" target="_blank">Service and Privacy</a>
       <p ng-show="registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine" class="help-block">You must accept terms and condtions.</p>
