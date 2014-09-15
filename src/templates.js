@@ -305,7 +305,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </li>\n" +
     "  <li ng-if=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
     "  <li ng-show=\"userState.roleMap.sa\">\n" +
-    "    <a href=\"\" data-toggle=\"modal\"\n" +
+    "    <a href=\"\" data-toggle=\"modal\" class=\"company-users-menu-button\"\n" +
     "    data-target=\"#company-users-modal\" ng-click=\"companyUsers()\">\n" +
     "      <i class=\"glyphicons group\"></i>\n" +
     "      <span class=\"item-name\">Company Users</span>\n" +
@@ -581,7 +581,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"company-users-label\" class=\"modal-title\">Company Users</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body\">\n" +
+    "<div class=\"modal-body company-users-modal\">\n" +
     "  <div class=\"row action-bar\">\n" +
     "    <div class=\"col-md-8 sort\">\n" +
     "    <ul class=\"nav nav-pills nav-justified\">\n" +
@@ -598,7 +598,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <div class=\"col-md-4 text-right\">\n" +
     "      <button class=\"btn btn-secondary\" ng-csv=\"users\"\n" +
-    "      filename=\"users.csv\">Download to CSV</button>\n" +
+    "      filename=\"users.csv\" ng-if=\"false\">Download to CSV</button>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"list-group scrollable-list\">\n" +
@@ -630,7 +630,7 @@ app.run(["$templateCache", function($templateCache) {
     "    ng-click=\"addUser()\">Add User\n" +
     "    <i class=\"glyphicons white plus icon-right\"></i>\n" +
     "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
+    "  <button type=\"button\" class=\"btn btn-primary close-company-users-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
@@ -832,7 +832,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <button type=\"button\" class=\"btn btn-success move-company-button\" ng-show=\"company.name\" ng-click=\"moveCompany()\">Move Company\n" +
     "    <i class=\"glyphicons white ok_2 icon-right\"></i>\n" +
     "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
+    "  <button type=\"button\" class=\"btn btn-primary close-move-company-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
     "    Close <i class=\"glyphicons white remove_2 icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +

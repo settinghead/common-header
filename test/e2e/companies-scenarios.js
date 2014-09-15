@@ -69,12 +69,32 @@
 
         it("Should Move Company", function () {
           element(by.css(".move-company-button")).click();
-
           assert.eventually.isTrue(element(by.css(".alert.alert-success")).isDisplayed(),
             "Success message should show");
-
         });
 
+        it("Move Company Dialog Should Close", function () {
+          element(by.css("button.close-move-company-button")).click();
+          assert.eventually.isFalse(element(by.css(".move-company-modal")).isPresent(),
+            "Move company dialog should hide");
+        });
+      });
+
+      describe("Company Users", function () {
+        it("Opens Company Users Dialog", function() {
+          element(by.css(".company-buttons-icon")).click();
+          assert.eventually.isTrue(element(by.css(".company-users-menu-button")).isDisplayed(),
+            "Company users menu item should present");
+          element(by.css(".company-users-menu-button")).click();
+          assert.eventually.isTrue(element(by.css(".company-users-modal")).isDisplayed(),
+            "Company users dialog should show");
+        });
+
+        it("Company Users Dialog Should Close", function () {
+          element(by.css("button.close-company-users-button")).click();
+          assert.eventually.isFalse(element(by.css(".company-users-modal")).isPresent(),
+            "Company Users dialog should hide");
+        });
       });
   });
 })();
