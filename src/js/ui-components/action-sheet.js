@@ -51,7 +51,7 @@ angular.module("risevision.common.header")
     return {
       require: "ngInclude",
       restrict: "A",
-      link: function (scope, el, attrs) {
+      link: function (scope, el) {
         el.replaceWith(el.children());
       }
     };
