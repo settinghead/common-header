@@ -24,10 +24,8 @@
         browser.get("/test/e2e/index.html#");
 
         //clear local storage
-        browser.executeScript("localStorage.clear();");
-        ptor.driver.navigate().refresh();
         element(by.id("reset-db")).click();
-
+        ptor.driver.navigate().refresh();
       });
 
       it("should show user settings modal and update settings", function() {
