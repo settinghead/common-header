@@ -49,7 +49,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
-    "      <img ng-src=\"{{userState.user.profile.picture}}\"\n" +
+    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "    <ul class=\"dropdown-menu\">\n" +
@@ -67,7 +67,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
-    "      <img ng-src=\"{{userState.user.profile.picture}}\"\n" +
+    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "</li>\n" +
