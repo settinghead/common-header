@@ -2601,8 +2601,10 @@ angular.module("risevision.common.geodata", [])
       return function(forceAuth) {
         $log.debug("authentication called");
         var authenticateDeferred = $q.defer();
-        resetUserState();
-        userInfoCache.removeAll();
+        if(forceAuth) {
+          resetUserState();
+          userInfoCache.removeAll();
+        }
 
         // This flag indicates a potentially authenticated user.
         var accessToken = accessTokenKeeper.get();

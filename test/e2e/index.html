@@ -212,9 +212,7 @@
           window.gapi.resetDb();
         }
         $scope.$watch("db", function (newVal) {
-          if(newVal) {
-            localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal));
-          }
+          localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal || {}));
         }, true);
       })
 
