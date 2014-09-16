@@ -68,24 +68,24 @@
            element(by.id("user-settings-newsletter")).click();
         }
 
-        if ( !element(by.id("user-settings-editor")).isSelected() )
+        if ( !element(by.id("user-settings-ce")).isSelected() )
         {
-           element(by.id("user-settings-editor")).click();
+           element(by.id("user-settings-ce")).click();
         }
 
-        if ( element(by.id("user-settings-publisher")).isSelected() )
+        if ( element(by.id("user-settings-pu")).isSelected() )
         {
-           element(by.id("user-settings-publisher")).click();
+           element(by.id("user-settings-pu")).click();
         }
 
-        if ( !element(by.id("user-settings-display")).isSelected() )
+        if ( !element(by.id("user-settings-da")).isSelected() )
         {
-           element(by.id("user-settings-display")).click();
+           element(by.id("user-settings-da")).click();
         }
 
-        if ( element(by.id("user-settings-administrator")).isSelected() )
+        if ( element(by.id("user-settings-sa")).isSelected() )
         {
-           element(by.id("user-settings-administrator")).click();
+           element(by.id("user-settings-sa")).click();
         }
 
         //click save button

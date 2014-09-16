@@ -1,12 +1,25 @@
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "getUserCompanies", "$timeout", "switchCompany",
-  function($scope, $modal, $templateCache, getUserCompanies, $timeout, switchCompany) {
+  "switchCompany", "userState", "getCompany",
+  function($scope, $modal, $templateCache, switchCompany, userState, getCompany) {
+
+    getCompany().then(function (company) {
+      userState.user.company = company;
+    });
 
     //reload user companies when current username is changed
     $scope.$watch("userState.user.profile.username", function (newVal) {
       if(newVal) {
-        getUserCompanies();
+        getCompany().then(function (company) {
+          userState.user.company = company;
+        });
+      }
+    });
+
+    $scope.$watch("userState.user.company", function (newVal) {
+      if(newVal) {
+        userState.selectedCompanyId = newVal.id;
+        userState.selectedCompanyName = newVal.name;
       }
     });
 
@@ -28,7 +41,7 @@ angular.module("risevision.common.header")
           companyId: function () {
             var cId = companyId;
             if(!cId) {
-              cId = $scope.userState.selectedCompanyId;
+              cId = userState.selectedCompanyId || userState.user.company.id;
             }
             return cId;
           }
@@ -45,7 +58,7 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return $scope.userState.selectedCompanyId;
+            return userState.selectedCompanyId || userState.user.company.id;
           }
         }
       });
@@ -58,7 +71,7 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return $scope.userState.selectedCompanyId;
+            return userState.selectedCompanyId || userState.user.company.id;
           }
         }
       });

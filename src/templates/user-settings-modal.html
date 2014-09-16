@@ -66,44 +66,12 @@
       <label>
         Roles
       </label>
-      <div class="checkbox">
+      <div class="checkbox" ng-repeat="role in availableRoles">
         <label>
           <input type="checkbox"
-            id="user-settings-editor"
+            id="user-settings-{{role.key}}"
             checklist-model="user.roles"
-            checklist-value="'ce'"> Editor
-        </label>
-      </div>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"
-            id="user-settings-publisher"
-            checklist-model="user.roles"
-            checklist-value="'pu'"> Publisher
-        </label>
-      </div>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"
-            id="user-settings-display"
-            checklist-model="user.roles"
-            checklist-value="'da'"> Display
-        </label>
-      </div>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"
-            id="user-settings-administrator"
-            checklist-model="user.roles"
-            checklist-value="'ua'"> Administrator
-        </label>
-      </div>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"
-            id="user-settings-system"
-            checklist-model="user.roles"
-            checklist-value="'sa'"> System
+            checklist-value="role.key"> {{role.name}}
         </label>
       </div>
     </div>

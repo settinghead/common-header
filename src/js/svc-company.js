@@ -63,7 +63,7 @@ angular.module("risevision.common.company",
       coreAPILoader().then(function (client) {
         var request = client.company.list({});
         request.execute(function (resp) {
-          $log.debug("client.company.list resp", resp);
+          $log.debug("core.company.list resp", resp);
           if(resp.error){
             delete userState.selectedCompanyName;
             delete userState.selectedCompanyId;
@@ -240,10 +240,12 @@ angular.module("risevision.common.company",
         //     "province": company.province,
         //     "validate": validationRequired
         // };
+        $log.debug("updateCompany called", fields);
         fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
           var request = coreApi.company.update(fields);
           request.execute(function (resp) {
+            $log.debug("updateCompany resp", resp);
               deferred.resolve(resp);
           });
         });

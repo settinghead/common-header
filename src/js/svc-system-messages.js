@@ -9,7 +9,7 @@
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
-          var request = gApi.client.core.systemmessages.list(
+          var request = gApi.client.core.systemmessage.list(
             { "companyId": companyId });
           request.execute(function (resp) {
             $log.debug("getSystemMessage resp", resp.items);

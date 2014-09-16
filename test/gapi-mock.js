@@ -242,7 +242,7 @@
       }
     },
     core: {
-      systemmessages: {
+      systemmessage: {
         list: function (obj) {
           obj = obj || {};
           return {

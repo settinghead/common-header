@@ -11,7 +11,7 @@ angular.module("risevision.common.header")
     $scope.regionsUS = REGIONS_US;
 
     if(companyId) {
-      getCompany({id: companyId}).then(
+      getCompany(companyId).then(
         function (company) {
           $scope.company = company;
         },

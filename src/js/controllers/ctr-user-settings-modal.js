@@ -3,6 +3,8 @@ angular.module("risevision.common.header")
   .controller("AddUserModalCtrl", ["$scope", "addUser", "$modalInstance", "companyId",
   function ($scope, addUser, $modalInstance, companyId) {
     $scope.user = {};
+
+
     $scope.save = function () {
       addUser(companyId, $scope.user.email, $scope.user).then(
         function () {
@@ -20,8 +22,16 @@ angular.module("risevision.common.header")
   }])
 
   .controller("UserSettingsModalCtrl", [
-    "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser", "addUser", "username",
-    function($scope, $modalInstance, updateUser, getUser, deleteUser, addUser, username) {
+    "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser",
+    "addUser", "username", "userRoleMap",
+    function($scope, $modalInstance, updateUser, getUser, deleteUser,
+      addUser, username, userRoleMap) {
+
+      //push roles into array
+      $scope.availableRoles = [];
+      angular.forEach(userRoleMap, function (v, k) {
+        $scope.availableRoles.push({key: k, name: v});
+      });
 
       $scope.username = username;
 
@@ -45,7 +55,8 @@ angular.module("risevision.common.header")
             $modalInstance.close("success");
           },
           function (error) {
-            alert("Error", error);
+            console.log(error);
+            alert("Error: " + error.message);
           }
         );
       };
