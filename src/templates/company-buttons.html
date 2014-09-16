@@ -1,67 +1,21 @@
-<a href="" class="dropdown-toggle company-buttons-icon">
-  <i class="glyphicons cogwheel"></i>
-</a>
-<ul class="dropdown-menu">
-  <li class="dropdown-header dropdown-title"
-    ng-show="userState.user.company">
-    Current Company
-  </li>
-  <li class="dropdown-header" ng-show="userState.user.company">
-    <!-- home -->
-    <i ng-if="!userState.subCompanySelected" class="glyphicons home"></i>
-    <!-- warning -->
-    <i ng-if="userState.subCompanySelected" class="glyphicons warning_sign glyphicon-danger"></i>
-    {{userState.selectedCompanyName}}
-    <div ng-if="userState.subCompanySelected" class="danger">This is a Sub-Company of your Company.</div>
-  </li>
-  <li ng-if="userState.subCompanySelected" class="divider"></li>
-  <li ng-show="!userState.user.company">
-    <a href="" data-toggle="modal" data-target="#subcompany-modal"
-      ng-click="companySettings()">
-      <i class="glyphicons plus"></i>
-      <span class="item-name">Create a Company</span>
-    </a>
-  </li>
-  <li ng-if="userState.subCompanySelected">
-    <a href="" ng-click="resetCompany()">
-      <i class="glyphicons home"></i>
-      <span class="item-name">Switch To My Company</span>
-    </a>
-  </li>
-  <li class="divider"></li>
-  <li ng-show="userState.user.company">
-    <a href="" ng-click="switchCompany()">
-      <i class="glyphicons new_window"></i>
-      <span class="item-name">Select Sub-Company</span>
-    </a>
-  </li>
-  <li ng-if="userState.roleMap.sa" class="divider"></li>
-  <li ng-if="userState.roleMap.sa">
-    <a href="" data-toggle="modal" data-target="#subcompany-modal" ng-click="addSubCompany()">
-      <i class="glyphicons plus"></i>
-      <span class="item-name">Add Sub-Company</span>
-    </a>
-  </li>
-  <li ng-if="userState.roleMap.sa" class="divider"></li>
-  <li ng-if="userState.roleMap.sa">
-    <a href="" data-toggle="modal" ng-click="moveCompany()" class="move-company-menu-button">
-      <i class="glyphicons move"></i>
-      <span class="item-name">Move a Company under Your Company</span>
-    </a>
-  </li>
-  <li ng-if="userState.roleMap.sa" class="divider"></li>
-  <li ng-if="userState.roleMap.sa">
-    <a href="" ng-click="companySettings()">
-      <i class="glyphicons cogwheels"></i>
-      <span class="item-name">Company Settings</span>
-    </a>
-  </li>
-  <li ng-if="userState.roleMap.sa" class="divider"></li>
-  <li ng-show="userState.roleMap.sa">
-    <a href="" data-toggle="modal" class="company-users-menu-button"
-    data-target="#company-users-modal" ng-click="companyUsers()">
-      <i class="glyphicons group"></i>
-      <span class="item-name">Company Users</span>
-    </a>
-  </li>
-</ul>
+<!-- Desktop and tablet -->
+<li class="dropdown hidden-xs" ng-show="userState.user.profile.username">
+  <a href="" class="dropdown-toggle company-buttons-icon">
+    <i class="fa fa-cog"></i>
+  </a>
+  <ul class="dropdown-menu">
+    <ng-include
+      replace-include
+      src="'company-buttons-menu.html'"
+    ></ng-include>
+  </ul>
+</li>
+
+<!-- Mobile -->
+<li
+ ng-show="userState.user.profile.username"
+ ng-class="{'visible-xs-inline-block': userState.user.profile.username}">
+  <a href="" class="company-buttons-icon" action-sheet="'company-buttons-menu.html'">
+    <i class="fa fa-cog"></i>
+  </a>
+</li>
