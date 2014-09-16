@@ -68,7 +68,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-start-active=\"1\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
     "      <img ng-src=\"{{userState.user.picture}}\"\n" +
-    "        class=\"profile-pic-mobile\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
@@ -100,8 +100,10 @@ app.run(["$templateCache", function($templateCache) {
     ">\n" +
     "  <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\" class=\"profile-img\">\n" +
     "  <p>Please authorize your Google Account to register with Rise Vision.</p>\n" +
-    "  <button type=\"button\" ng-click=\"authenticate(true)\"\n" +
-    "    class=\"btn btn-success btn-block authorize-button\">Authorize</button>\n" +
+    "\n" +
+    "  <button type=\"button\" class=\"btn btn-success btn-fixed-width btn-block authorize-button\" ng-click=\"authenticate(true)\">\n" +
+    "    Authorize <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
+    "  </button>\n" +
     "</div>\n" +
     "");
 }]);
@@ -1160,13 +1162,16 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "\n" +
     "<!-- Mobile -->\n" +
-    "<li class=\"system-messages visible-xs-inline-block\" ng-show=\"userState.user.profile.username\">\n" +
-    "  <a href=\"\"\n" +
-    "    class=\"system-messages-button\"\n" +
-    "    action-sheet=\"'system-messages-button-menu.html'\">\n" +
-    "      <i class=\"fa fa-bell\"></i>\n" +
-    "      <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
-    "  </a>\n" +
+    "<li\n" +
+    "  class=\"system-messages\"\n" +
+    "  ng-show=\"userState.user.profile.username\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile.username}\">\n" +
+    "    <a href=\"\"\n" +
+    "      class=\"system-messages-button\"\n" +
+    "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
+    "        <i class=\"fa fa-bell\"></i>\n" +
+    "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
+    "    </a>\n" +
     "</li>");
 }]);
 })();
