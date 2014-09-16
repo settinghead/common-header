@@ -68,7 +68,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-start-active=\"1\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
     "      <img ng-src=\"{{userState.user.picture}}\"\n" +
-    "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "        class=\"profile-pic-mobile\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
@@ -287,7 +287,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
     "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompanyName}}\n" +
+    "  {{userState.selectedCompanyName || userState.user.company.name}}\n" +
     "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
     "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
@@ -338,7 +338,8 @@ app.run(["$templateCache", function($templateCache) {
     "    <i class=\"fa fa-users\"></i>\n" +
     "    <span class=\"item-name\">Company Users</span>\n" +
     "  </a>\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -365,10 +366,11 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     " ng-show=\"userState.user.profile.username\"\n" +
     " ng-class=\"{'visible-xs-inline-block': userState.user.profile.username}\">\n" +
-    "  <a href=\"\" class=\"company-buttons-icon\" action-sheet=\"'company-buttons-menu.html'\">\n" +
+    "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -1243,44 +1245,12 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Roles\n" +
     "      </label>\n" +
-    "      <div class=\"checkbox\">\n" +
+    "      <div class=\"checkbox\" ng-repeat=\"role in availableRoles\">\n" +
     "        <label>\n" +
     "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-editor\"\n" +
+    "            id=\"user-settings-{{role.key}}\"\n" +
     "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'ce'\"> Editor\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-publisher\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'pu'\"> Publisher\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-display\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'da'\"> Display\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-administrator\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'ua'\"> Administrator\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-system\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'sa'\"> System\n" +
+    "            checklist-value=\"role.key\"> {{role.name}}\n" +
     "        </label>\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -1489,13 +1459,19 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "getUserCompanies", "$timeout", "switchCompany",
-  function($scope, $modal, $templateCache, getUserCompanies, $timeout, switchCompany) {
+  "switchCompany", "userState", "getCompany",
+  function($scope, $modal, $templateCache, switchCompany, userState, getCompany) {
+
+    getCompany().then(function (company) {
+      userState.user.company = company;
+    });
 
     //reload user companies when current username is changed
     $scope.$watch("userState.user.profile.username", function (newVal) {
       if(newVal) {
-        getUserCompanies();
+        getCompany().then(function (company) {
+          userState.user.company = company;
+        });
       }
     });
 
@@ -1517,7 +1493,7 @@ angular.module("risevision.common.header")
           companyId: function () {
             var cId = companyId;
             if(!cId) {
-              cId = $scope.userState.selectedCompanyId;
+              cId = userState.selectedCompanyId || userState.user.company.id;
             }
             return cId;
           }
@@ -1534,7 +1510,7 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return $scope.userState.selectedCompanyId;
+            return userState.selectedCompanyId || userState.user.company.id;
           }
         }
       });
@@ -1547,7 +1523,7 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return $scope.userState.selectedCompanyId;
+            return userState.selectedCompanyId || userState.user.company.id;
           }
         }
       });
@@ -1772,7 +1748,7 @@ angular.module("risevision.common.header")
     $scope.regionsUS = REGIONS_US;
 
     if(companyId) {
-      getCompany({id: companyId}).then(
+      getCompany(companyId).then(
         function (company) {
           $scope.company = company;
         },
@@ -1946,6 +1922,8 @@ angular.module("risevision.common.header")
   .controller("AddUserModalCtrl", ["$scope", "addUser", "$modalInstance", "companyId",
   function ($scope, addUser, $modalInstance, companyId) {
     $scope.user = {};
+
+
     $scope.save = function () {
       addUser(companyId, $scope.user.email, $scope.user).then(
         function () {
@@ -1963,8 +1941,16 @@ angular.module("risevision.common.header")
   }])
 
   .controller("UserSettingsModalCtrl", [
-    "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser", "addUser", "username",
-    function($scope, $modalInstance, updateUser, getUser, deleteUser, addUser, username) {
+    "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser",
+    "addUser", "username", "userRoleMap",
+    function($scope, $modalInstance, updateUser, getUser, deleteUser,
+      addUser, username, userRoleMap) {
+
+      //push roles into array
+      $scope.availableRoles = [];
+      angular.forEach(userRoleMap, function (v, k) {
+        $scope.availableRoles.push({key: k, name: v});
+      });
 
       $scope.username = username;
 
@@ -1988,7 +1974,8 @@ angular.module("risevision.common.header")
             $modalInstance.close("success");
           },
           function (error) {
-            alert("Error", error);
+            console.log(error);
+            alert("Error: " + error.message);
           }
         );
       };
@@ -3417,7 +3404,7 @@ angular.module("risevision.common.geodata", [])
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
-          var request = gApi.client.core.systemmessages.list(
+          var request = gApi.client.core.systemmessage.list(
             { "companyId": companyId });
           request.execute(function (resp) {
             $log.debug("getSystemMessage resp", resp.items);
@@ -3539,7 +3526,7 @@ angular.module("risevision.common.company",
       coreAPILoader().then(function (client) {
         var request = client.company.list({});
         request.execute(function (resp) {
-          $log.debug("client.company.list resp", resp);
+          $log.debug("core.company.list resp", resp);
           if(resp.error){
             delete userState.selectedCompanyName;
             delete userState.selectedCompanyId;
@@ -3716,10 +3703,12 @@ angular.module("risevision.common.company",
         //     "province": company.province,
         //     "validate": validationRequired
         // };
+        $log.debug("updateCompany called", fields);
         fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
           var request = coreApi.company.update(fields);
           request.execute(function (resp) {
+            $log.debug("updateCompany resp", resp);
               deferred.resolve(resp);
           });
         });
@@ -3930,7 +3919,7 @@ angular.module("risevision.common.gapi", [])
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
-          var request = gApi.client.core.systemmessages.list(
+          var request = gApi.client.core.systemmessage.list(
             { "companyId": companyId });
           request.execute(function (resp) {
             $log.debug("getSystemMessage resp", resp.items);

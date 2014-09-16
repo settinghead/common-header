@@ -68,7 +68,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-start-active=\"1\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
     "      <img ng-src=\"{{userState.user.picture}}\"\n" +
-    "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
+    "        class=\"profile-pic-mobile\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
@@ -287,7 +287,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
     "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompanyName}}\n" +
+    "  {{userState.selectedCompanyName || userState.user.company.name}}\n" +
     "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
     "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
@@ -338,7 +338,8 @@ app.run(["$templateCache", function($templateCache) {
     "    <i class=\"fa fa-users\"></i>\n" +
     "    <span class=\"item-name\">Company Users</span>\n" +
     "  </a>\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -365,10 +366,11 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     " ng-show=\"userState.user.profile.username\"\n" +
     " ng-class=\"{'visible-xs-inline-block': userState.user.profile.username}\">\n" +
-    "  <a href=\"\" class=\"company-buttons-icon\" action-sheet=\"'company-buttons-menu.html'\">\n" +
+    "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -1243,44 +1245,12 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Roles\n" +
     "      </label>\n" +
-    "      <div class=\"checkbox\">\n" +
+    "      <div class=\"checkbox\" ng-repeat=\"role in availableRoles\">\n" +
     "        <label>\n" +
     "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-editor\"\n" +
+    "            id=\"user-settings-{{role.key}}\"\n" +
     "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'ce'\"> Editor\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-publisher\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'pu'\"> Publisher\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-display\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'da'\"> Display\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-administrator\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'ua'\"> Administrator\n" +
-    "        </label>\n" +
-    "      </div>\n" +
-    "      <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\"\n" +
-    "            id=\"user-settings-system\"\n" +
-    "            checklist-model=\"user.roles\"\n" +
-    "            checklist-value=\"'sa'\"> System\n" +
+    "            checklist-value=\"role.key\"> {{role.name}}\n" +
     "        </label>\n" +
     "      </div>\n" +
     "    </div>\n" +
