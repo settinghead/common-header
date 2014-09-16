@@ -104,6 +104,10 @@
     window.gapi._fakeDb.systemMessages = [];
   };
 
+  window.gapi.setPendingSignInUser = function (username) {
+    window.gapi._pendingUser = username;
+  };
+
   var resp = function (item) {
     return {
       "result": true,
@@ -895,26 +899,47 @@ gapi.auth = {
 
       var tokenResult;
 
-        var modal = $(modalStr).modal({
-          show: false, backdrop: "static"});
-        modal.find(".login-account-button").on("click", function (e) {
-          var username = $(e.target).data("username");
+        var signInAs = function (username, next) {
           tokenResult = generateToken(username);
-          modal.modal("hide");
-        });
-        modal.on("hidden.bs.modal", function () {
-          if(tokenResult) {
-            delayed(cb, tokenResult);
-          }
-          else {
-            delayed(cb, {error: "User cancelled login."});
-          }
+          next(function () {
+            if(!tokenResult) {
+              delayed(cb, {error: "User cancelled login."});
+            }
+            else {
+              delayed(cb, tokenResult);
+            }
+          });
+        };
 
-          //destroy modal
-          $(this).data("bs.modal", null);
-          modal.remove();
-        });
-        modal.modal("show");
+        if(window.gapi._pendingUser) {
+          signInAs(window.gapi._pendingUser, function(cb1) {
+            cb1();
+          });
+          delete window.gapi._pendingUser;
+        }
+        else {
+          var modal = $(modalStr).modal({
+            show: false, backdrop: "static"});
+          var returnResultCb;
+          modal.find(".login-account-button").on("click", function (e) {
+            var username = $(e.target).data("username");
+            signInAs(username, function (fn) {
+              returnResultCb = fn;
+            });
+
+            modal.modal("hide");
+          });
+          modal.on("hidden.bs.modal", function () {
+            //destroy modal
+            $(this).data("bs.modal", null);
+            modal.remove();
+            console.log(returnResultCb);
+            returnResultCb();
+          });
+          modal.modal("show");
+        }
+
+
     }
     else {
       delayed(cb, gapi.auth._token);

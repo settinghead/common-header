@@ -32,9 +32,9 @@
 
       describe("Move company", function () {
         it("Opens Move Company Dialog", function() {
+          browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
           element(by.css("a.sign-in")).click();
           element(by.css(".authorize-button")).click();
-          element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
 
           assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
 
