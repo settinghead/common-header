@@ -30,14 +30,9 @@
 
       it("should show user settings modal and update settings", function() {
         //log in
+        browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
-        var availableElement = by.css(".login-account-button[data-username='michael.sanchez@awesome.io']");
-        browser.wait(function() {
-          return ptor.isElementPresent(availableElement);
-        }, 10000);
-        element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
-
         //reset db
         assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
 

@@ -35,11 +35,9 @@
 
       it("should system messages when logged in", function() {
         //log in
+        browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
-        var availableElement = by.css(".login-account-button[data-username='michael.sanchez@awesome.io']");
-        browser.wait(function() { return ptor.isElementPresent(availableElement); }, 10000);
-        element(by.css(".login-account-button[data-username='michael.sanchez@awesome.io']")).click();
 
         assert.eventually.isTrue(element(by.css(".system-messages-button")).isDisplayed(), "Should show system messages icon");
         assert.eventually.strictEqual(element(by.css(".system-messages-badge")).getText(), "2", "Badge should show correct number of system messages");
