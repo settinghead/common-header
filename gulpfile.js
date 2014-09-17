@@ -42,7 +42,9 @@ gulp.task("fonts-copy", function () {
     gulp.src(["src/css/fonts/*"])
     .pipe(gulp.dest("./dist/css/fonts")),
     gulp.src(["src/css/fonts/*"])
-    .pipe(gulp.dest("./dist/fonts")));
+    .pipe(gulp.dest("./dist/fonts"))),
+    gulp.src(["components/font-awesome/fonts/*"])
+    .pipe(gulp.dest("./dist/fonts"));
 });
 
 gulp.task("lint", ["config", "fonts-copy"], function() {
@@ -107,8 +109,8 @@ var unitTestFiles = [
 gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: unitTestFiles}));
 gulp.task("test:unit-watch", ["config"], factory.testUnitAngular({testFiles: unitTestFiles, watch: true}));
 
-gulp.task("server", ["html2js", "config"], factory.testServer({https: false}));
-gulp.task("server-watch", ["html2js-watch", "config"], factory.testServer({https: false}));
+gulp.task("server", ["html2js", "config", "fonts-copy"], factory.testServer({https: false}));
+gulp.task("server-watch", ["html2js-watch", "config", "fonts-copy"], factory.testServer({https: false}));
 gulp.task("server-close", factory.testServerClose());
 gulp.task("test:webdrive_update", factory.webdriveUpdate());
 gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular({
