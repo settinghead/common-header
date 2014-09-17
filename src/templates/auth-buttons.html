@@ -30,7 +30,7 @@
     </a>
 </li>
 <!-- If User NOT Authenticated -->
-<li ng-show="!userState.user">
+<li ng-hide="userState.user">
   <a href="" class="sign-in" ng-click="loginModal()">
     <span>Sign In</span>
     <i class="fa fa-sign-in"></i>

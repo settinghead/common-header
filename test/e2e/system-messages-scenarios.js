@@ -25,6 +25,7 @@
         //clear local storage
         browser.executeScript("localStorage.clear();");
         ptor.driver.navigate().refresh();
+        element(by.id("reset-db")).click();
       });
 
       it("should not show system message icon when not logged in", function() {
@@ -33,7 +34,7 @@
         assert.eventually.strictEqual(element(by.css(".system-messages-badge")).getText(), "", "Should not show system message badge");
       });
 
-      it("should system messages when logged in", function() {
+      it("should show system messages when logged in", function() {
         //log in
         browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
         element(by.css("a.sign-in")).click();

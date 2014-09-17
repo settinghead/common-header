@@ -1,5 +1,5 @@
 <!-- Desktop and tablet -->
-<li class="dropdown hidden-xs" ng-show="userState.user.profile.username">
+<li class="dropdown hidden-xs" ng-show="userState.user.profile">
   <a href="" class="dropdown-toggle company-buttons-icon">
     <i class="fa fa-cog"></i>
   </a>
@@ -13,8 +13,8 @@
 
 <!-- Mobile -->
 <li
- ng-show="userState.user.profile.username"
- ng-class="{'visible-xs-inline-block': userState.user.profile.username}">
+ ng-show="userState.user.profile"
+ ng-class="{'visible-xs-inline-block': userState.user.profile}">
   <a href="" class="company-buttons-icon-mobile" action-sheet="'company-buttons-menu.html'">
     <i class="fa fa-cog"></i>
   </a>

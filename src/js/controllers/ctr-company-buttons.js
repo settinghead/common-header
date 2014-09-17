@@ -8,7 +8,7 @@ angular.module("risevision.common.header")
     });
 
     //reload user companies when current username is changed
-    $scope.$watch("userState.user.profile.username", function (newVal) {
+    $scope.$watch("userState.user.profile", function (newVal) {
       if(newVal) {
         getCompany().then(function (company) {
           userState.user.company = company;

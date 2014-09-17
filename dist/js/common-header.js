@@ -10,7 +10,7 @@ app.run(["$templateCache", function($templateCache) {
     "<li class=\"dropdown-header\">\n" +
     "  {{userState.user.profile.email}}\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user.profile.username\"></li>\n" +
+    "<li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
     "<li ng-show=\"userState.user.profile\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
     "    <i class=\"fa fa-cogs\"></i>\n" +
@@ -73,7 +73,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-show=\"!userState.user\">\n" +
+    "<li ng-hide=\"userState.user\">\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +
@@ -354,7 +354,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li class=\"dropdown hidden-xs\" ng-show=\"userState.user.profile.username\">\n" +
+    "<li class=\"dropdown hidden-xs\" ng-show=\"userState.user.profile\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle company-buttons-icon\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -368,8 +368,8 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    " ng-show=\"userState.user.profile.username\"\n" +
-    " ng-class=\"{'visible-xs-inline-block': userState.user.profile.username}\">\n" +
+    " ng-show=\"userState.user.profile\"\n" +
+    " ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
     "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -1151,7 +1151,8 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("system-messages-button.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li class=\"dropdown system-messages hidden-xs\" ng-show=\"userState.user.profile.username\">\n" +
+    "<li class=\"dropdown system-messages hidden-xs\"\n" +
+    "ng-show=\"userState.user.profile\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
     "    <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
@@ -1166,15 +1167,16 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Mobile -->\n" +
     "<li\n" +
     "  class=\"system-messages\"\n" +
-    "  ng-show=\"userState.user.profile.username\"\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile.username}\">\n" +
+    "  ng-show=\"userState.user.profile\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
     "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
     "    </a>\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -1474,7 +1476,7 @@ angular.module("risevision.common.header")
     });
 
     //reload user companies when current username is changed
-    $scope.$watch("userState.user.profile.username", function (newVal) {
+    $scope.$watch("userState.user.profile", function (newVal) {
       if(newVal) {
         getCompany().then(function (company) {
           userState.user.company = company;
@@ -1603,7 +1605,7 @@ angular.module("risevision.common.header")
       return STORE_URL + "#/shopping-cart";
     };
 
-    $scope.$watch("userState.user.profile.username", function (newVal) {
+    $scope.$watch("userState.user.profile", function (newVal) {
       if(newVal) {
         userState.shoppingCart.items = shoppingCart.initialize();
         $log.debug("Shopping cart populated.");
@@ -2766,9 +2768,10 @@ angular.module("risevision.common.geodata", [])
 
     .factory("authenticate", ["$log", "$q", "resetUserState",
       "userInfoCache", "userState", "CLIENT_ID", "SCOPES", "$location",
-      "getBaseDomain", "oauthAPILoader", "accessTokenKeeper",
+      "getBaseDomain", "oauthAPILoader", "accessTokenKeeper", "getOAuthUserInfo",
       function ($log, $q, resetUserState, userInfoCache, userState, CLIENT_ID,
-      SCOPES, $location, getBaseDomain, oauthAPILoader, accessTokenKeeper) {
+      SCOPES, $location, getBaseDomain, oauthAPILoader, accessTokenKeeper,
+      getOAuthUserInfo) {
         /*
         * Responsible for triggering the Google OAuth process.
         *
@@ -2795,7 +2798,10 @@ angular.module("risevision.common.geodata", [])
               $log.debug("authResult", authResult);
               if (authResult && !authResult.error) {
                 accessTokenKeeper.set(authResult);
-                authorizeDeferred.resolve(authResult);
+                getOAuthUserInfo().then(function (oauthUserInfo) {
+                  userState.user = {username: oauthUserInfo.email};
+                  authorizeDeferred.resolve(authResult);
+                }, authorizeDeferred.reject);
               }
               else {
                 authorizeDeferred.reject("not authorized");
@@ -3205,7 +3211,6 @@ angular.module("risevision.common.geodata", [])
           var coreApi = results[1];
           var oauthUserInfo = results[2];
           if(oauthUserInfo.email) {
-            userState.user = {username: oauthUserInfo.email};
             userState.user.picture = oauthUserInfo.picture;
 
           }
