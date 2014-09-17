@@ -20,7 +20,7 @@ angular.module("risevision.common.header")
       return STORE_URL + "#/shopping-cart";
     };
 
-    $scope.$watch("userState.user.profile.username", function (newVal) {
+    $scope.$watch("userState.user.profile", function (newVal) {
       if(newVal) {
         userState.shoppingCart.items = shoppingCart.initialize();
         $log.debug("Shopping cart populated.");

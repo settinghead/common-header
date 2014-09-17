@@ -97,9 +97,10 @@
 
     .factory("authenticate", ["$log", "$q", "resetUserState",
       "userInfoCache", "userState", "CLIENT_ID", "SCOPES", "$location",
-      "getBaseDomain", "oauthAPILoader", "accessTokenKeeper",
+      "getBaseDomain", "oauthAPILoader", "accessTokenKeeper", "getOAuthUserInfo",
       function ($log, $q, resetUserState, userInfoCache, userState, CLIENT_ID,
-      SCOPES, $location, getBaseDomain, oauthAPILoader, accessTokenKeeper) {
+      SCOPES, $location, getBaseDomain, oauthAPILoader, accessTokenKeeper,
+      getOAuthUserInfo) {
         /*
         * Responsible for triggering the Google OAuth process.
         *
@@ -126,7 +127,10 @@
               $log.debug("authResult", authResult);
               if (authResult && !authResult.error) {
                 accessTokenKeeper.set(authResult);
-                authorizeDeferred.resolve(authResult);
+                getOAuthUserInfo().then(function (oauthUserInfo) {
+                  userState.user = {username: oauthUserInfo.email};
+                  authorizeDeferred.resolve(authResult);
+                }, authorizeDeferred.reject);
               }
               else {
                 authorizeDeferred.reject("not authorized");

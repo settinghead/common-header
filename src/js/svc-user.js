@@ -34,7 +34,6 @@
           var coreApi = results[1];
           var oauthUserInfo = results[2];
           if(oauthUserInfo.email) {
-            userState.user = {username: oauthUserInfo.email};
             userState.user.picture = oauthUserInfo.picture;
 
           }
