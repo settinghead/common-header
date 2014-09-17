@@ -1,19 +1,27 @@
 angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
-  "$scope", "$modalInstance", "$rootScope", "getUser",
+  "$scope", "$modalInstance", "getUser",
   "$loading", "registerAccount", "$log", "cookieStore",
-  function($scope, $modalInstance, $rootScope, getUser, $loading,
-    registerAccount, $log, cookieStore) {
+  "userState", "pick",
+  function($scope, $modalInstance, getUser, $loading,
+    registerAccount, $log, cookieStore, userState, pick) {
 
-    var userState = $rootScope.userState;
-    getUser().finally(function () {
+
+    getUser().then().finally(function () {
+      if(!userState.profile) { userState.profile = {}; }
       if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
         userState.user.profile.mailSyncEnabled = false;
       }
       if(!angular.isDefined(userState.user.accepted)) {
         userState.user.accepted = false;
       }
+
+      $scope.profile = pick(userState.user.profile, "email", "mailSyncEnabled");
+      $scope.profile.accepted = userState.user.accepted;
+
     });
+
+    $scope.profile = {mailSyncEnabled: false};
 
     $scope.closeModal = function() {
       cookieStore.put("surpressRegistration", true);
@@ -39,11 +47,10 @@ angular.module("risevision.common.header")
 
     $scope.save = function () {
       //update terms and conditions date
-      registerAccount(userState.user.profile.username,
-        userState.user.profile).then(
+      registerAccount(userState.user.username, $scope.profile).then(
         function () {
           // $modalInstance.close("success");
-          userState.status = "pendingCheck";
+        userState.status = "pendingCheck";
         },
         function (err) {alert("Error: " + err);
         $log.error(err);});

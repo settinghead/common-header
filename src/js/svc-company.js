@@ -5,13 +5,13 @@ angular.module("risevision.common.company",
     "risevision.common.config",
     "risevision.common.gapi",
     "risevision.common.cache",
-    "risevision.common.oauth2"
+    "risevision.common.oauth2",
+    "risevision.common.util"
   ])
 
   .factory("switchCompany", ["userState", function (userState) {
     return function (company) {
-      userState.selectedCompanyId = company.id;
-      userState.selectedCompanyName = company.name;
+      userState.selectedCompany= company;
     };
   }])
 
@@ -65,8 +65,7 @@ angular.module("risevision.common.company",
         request.execute(function (resp) {
           $log.debug("core.company.list resp", resp);
           if(resp.error){
-            delete userState.selectedCompanyName;
-            delete userState.selectedCompanyId;
+            delete userState.selectedCompany;
             deferred.reject();
           }
           else {
@@ -75,15 +74,11 @@ angular.module("risevision.common.company",
             var updateState = function (c) {
               $log.debug("selectedCompany", c);
               userState.user.company = c;
-              userState.isAuthed = true;
-              userState.user.company = c;
 
               //release 1 simpification - everyone is Purchaser ("pu" role)
-              userState.isRiseUser = true;
               userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
 
-              userState.selectedCompanyName = c.name;
-              userState.selectedCompanyId = c.id;
+              userState.selectedCompany = c;
             };
             if (resp.items && resp.items.length > 0) {
               updateState(resp.items[0]);
@@ -167,6 +162,35 @@ angular.module("risevision.common.company",
     };
   }])
 
+  .factory("updateCompany", ["$q", "$log", "coreAPILoader", "pick",
+   function ($q, $log, coreAPILoader, pick){
+    return function (companyId, fields) {
+        var deferred = $q.defer();
+        // var obj = {
+        //     "id": company.id,
+        //     "street": company.street,
+        //     "unit": company.unit,
+        //     "city": company.city,
+        //     "country": company.country,
+        //     "postalCode": company.postalCode,
+        //     "province": company.province,
+        //     "validate": validationRequired
+        // };
+        fields = pick(fields, "street", "unit", "city", "country", "postalCode", "province");
+        $log.debug("updateCompany called", companyId, fields);
+        // fields.validate = validationRequired || false;
+        coreAPILoader().then(function (coreApi) {
+          var request = coreApi.company.update({id: companyId, data: JSON.stringify(fields)});
+          request.execute(function (resp) {
+            $log.debug("updateCompany resp", resp);
+              deferred.resolve(resp);
+          });
+        });
+
+        return deferred.promise;
+    };
+  }])
+
   .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
     function (coreAPILoader, $q, $log, getCompany) {
 
@@ -207,70 +231,60 @@ angular.module("risevision.common.company",
         return deferred.promise;
     };
 
-    this.validateAddressSimple = function(company) {
-        var errors = [];
-        if (!company.street) {
-            errors.push("Missing Address (Line 1)");
-        }
-        if (!company.city) {
-            errors.push("Missing City");
-        }
-        if (!company.country) {
-            errors.push("Missing Country");
-        }
-        if (!company.province) {
-            errors.push("Missing State / Province");
-        }
-        if (!company.postalCode) {
-            errors.push("Missing Zip / Postal Code");
-        }
-        return errors;
+    this.validateAddressSimple = function(company, contact) {
+      var errors = [];
+      if (contact) {
+          if (!contact.firstName) {
+              errors.push("Missing First Name");
+          }
+          if (!contact.lastName) {
+              errors.push("Missing Last Name");
+          }
+          if (!contact.email) {
+              errors.push("Missing Email");
+          } else {
+              var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+              if (!re.test(contact.email)) {
+                  errors.push("Invalid Email");
+              }
+          }
+      }
+      if (!company.street) {
+          errors.push("Missing Address (Line 1)");
+      }
+      if (!company.city) {
+          errors.push("Missing City");
+      }
+      if (!company.country) {
+          errors.push("Missing Country");
+      }
+      if (!company.province) {
+          errors.push("Missing State / Province");
+      }
+      if (!company.postalCode) {
+          errors.push("Missing Zip / Postal Code");
+      }
+      return errors;
     };
 
-
-    this.updateCompany = function (fields, validationRequired) {
-        var deferred = $q.defer();
-        // var obj = {
-        //     "id": company.id,
-        //     "street": company.street,
-        //     "unit": company.unit,
-        //     "city": company.city,
-        //     "country": company.country,
-        //     "postalCode": company.postalCode,
-        //     "province": company.province,
-        //     "validate": validationRequired
-        // };
-        $log.debug("updateCompany called", fields);
-        fields.validate = validationRequired || false;
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.update(fields);
-          request.execute(function (resp) {
-            $log.debug("updateCompany resp", resp);
-              deferred.resolve(resp);
-          });
-        });
-
-        return deferred.promise;
-    };
-
-    this.validateAddress = function (company) {
-        var deferred = $q.defer();
-        var obj = {
-            "street": company.street,
-            "unit": company.unit,
-            "city": company.city,
-            "country": company.country,
-            "postalCode": company.postalCode,
-            "province": company.province,
-        };
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.validateAddress(obj);
-          request.execute(function (resp) {
-              deferred.resolve(resp);
-          });
-        });
-
-        return deferred.promise;
-    };
+    // this.validateAddress = function (company) {
+    //     var deferred = $q.defer();
+    //     var obj = {
+    //         "street": company.street,
+    //         "unit": company.unit,
+    //         "city": company.city,
+    //         "country": company.country,
+    //         "postalCode": company.postalCode,
+    //         "province": company.province,
+    //     };
+    //     coreAPILoader().then(function (coreApi) {
+    //       var request = coreApi.company.validateAddress(obj);
+    //       request.execute(function (resp) {
+    //           deferred.resolve(resp);
+    //       });
+    //     });
+    //
+    //     return deferred.promise;
+    // };
 
   }]);

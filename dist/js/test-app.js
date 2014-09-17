@@ -276,7 +276,7 @@
       "firstName": "Michael",
       "lastName": "Sanchez",
       "email": "michael.sanchez@awesome.io",
-      "phone": "+1123-456-7890",
+      "telephone": "+1123-456-7890",
       "lastLogin": "2014-08-18T12:03:40.000Z",
       "status": 1,
       "roles": [
@@ -3103,18 +3103,18 @@ gapiMockData.companies = [
           }
         };
       },
-      update: function (fields) {
+      update: function (obj) {
         return {
           execute: function (cb) {
             var company;
-            if(fields.id) {
+            if(obj.id) {
               company = _.find(window.gapi._fakeDb.companies, function (company) {
-                return company.id === fields.id;
+                return company.id === obj.id;
               });
-              _.extend(company, fields);
+              _.extend(company, obj.data);
             }
             else {
-              company = _.cloneDeep(fields);
+              company = _.cloneDeep(obj.data);
               company.id = guid();
               window.gapi._fakeDb.companies.push(company);
             }
@@ -3202,7 +3202,7 @@ gapiMockData.companies = [
       update: function (obj) {
         return {
           execute: function (cb) {
-            if(!obj) {obj = {}; }
+            if (!obj) {obj = {}; }
             var user;
             if (obj.username) {
               user = _.find(fakeDb.users,
@@ -3211,9 +3211,9 @@ gapiMockData.companies = [
             else {
               user = getCurrentUser();
             }
-            if(user) {
+            if (user) {
               _.extend(user, JSON.parse(obj.data));
-              return delayed(cb, resp(user));
+              delayed(cb, resp(user));
             }
             else {
               delayed(cb, {
@@ -3622,7 +3622,6 @@ gapi.auth = {
             //destroy modal
             $(this).data("bs.modal", null);
             modal.remove();
-            console.log(returnResultCb);
             returnResultCb();
           });
           modal.modal("show");

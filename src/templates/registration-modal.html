@@ -20,14 +20,14 @@ rv-spinner-start-active="1">
       <input type="email" class="form-control email"
       name="email"
       id="email" placeholder="Enter email" required
-      ng-model="userState.user.profile.email">
+      ng-model="profile.email">
       <p ng-show="registrationForm.email.$invalid && !registrationForm.email.$pristine" class="help-block">Enter a valid email.</p>
     </div>
     <!-- Terms of Service and Privacy -->
     <div class="checkbox form-group" ng-class="{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }">
       <label>
       <input type="checkbox" name="accepted"
-        ng-model="userState.user.accepted"
+        ng-model="profile.accepted"
         class="accept-terms-checkbox" required />
       I accept the terms of <a href="http://www.risevision.com/terms-service-privacy/" target="_blank">Service and Privacy</a>
       <p ng-show="registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine" class="help-block">You must accept terms and condtions.</p>
@@ -36,7 +36,7 @@ rv-spinner-start-active="1">
     <!-- Newsletter -->
     <div class="checkbox form-group">
       <label>
-        <input type="checkbox" ng-model="userState.user.profile.mailSyncEnabled"> Sign up for our Newsletter
+        <input type="checkbox" ng-model="profile.mailSyncEnabled"> Sign up for our Newsletter
       </label>
     </div>
     <div class="form-group">

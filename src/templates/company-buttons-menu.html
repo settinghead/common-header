@@ -7,7 +7,7 @@
   <i ng-show="!userState.subCompanySelected" class="fa fa-home"></i>
   <!-- warning -->
   <i ng-show="userState.subCompanySelected" class="fa fa-warning glyphicon-danger"></i>
-  {{userState.selectedCompanyName || userState.user.company.name}}
+  {{userState.selectedCompany.name || userState.user.company.name}}
   <div ng-show="userState.subCompanySelected" class="danger">This is a Sub-Company of your Company.</div>
 </li>
 <li ng-show="userState.subCompanySelected" class="divider"></li>
@@ -45,9 +45,9 @@
     <span class="item-name">Move a Company under Your Company</span>
   </a>
 </li>
-<li ng-show="userState.roleMap.sa" class="divider"></li>
-<li ng-show="userState.roleMap.sa">
-  <a href="" ng-click="companySettings()" class="action">
+<li ng-show="userState.roleMap.pu" class="divider"></li>
+<li ng-show="userState.roleMap.pu">
+  <a href="" ng-click="companySettings()" class="action company-settings-menu-button">
     <i class="fa fa-cog"></i>
     <span class="item-name">Company Settings</span>
   </a>

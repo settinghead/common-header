@@ -33,14 +33,14 @@
   function ($q, $log, createCompany, addAccount, updateUser,
     agreeToTerms) {
     return function (username, basicProfile) {
-      $log.debug("registerAccount called.");
+      $log.debug("registerAccount called.", username, basicProfile);
       var deferred = $q.defer();
       addAccount().then().finally(function () {
         agreeToTerms().then().finally(function () {
           updateUser(username, basicProfile).then(function (resp) {
             if(resp.result === true) { deferred.resolve(); }
             else { deferred.reject(); }
-          }, deferred.reject);
+          }, deferred.reject).finally("registerAccount ended");
         });
       });
       return deferred.promise;
@@ -50,7 +50,7 @@
   .factory("addAccount", ["$q", "riseAPILoader", "$log",
   function ($q, riseAPILoader, $log) {
     return function () {
-      $log.debug("registerAccount called.");
+      $log.debug("addAccount called.");
       var deferred = $q.defer();
       riseAPILoader().then(function (coreApi) {
         var request = coreApi.account.add();

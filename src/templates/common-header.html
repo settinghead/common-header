@@ -88,6 +88,7 @@
 				<!-- Company Dropdown -->
 				<ng-include
 					replace-include
+					ng-if="userState.user.profile"
 				  ng-controller="CompanyButtonsCtrl"
 					src="'company-buttons.html'"
 				></ng-include>
@@ -133,7 +134,7 @@
 
 	<div ng-if="userState.subCompanySelected"
 	  class="sub-company-alert">
-		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}
+		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompany.name}}
 	</div>
 </nav>
 <!-- END Common Header Navbar -->

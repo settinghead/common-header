@@ -1,8 +1,8 @@
 <!-- Desktop and tablet -->
 <li
   class="dropdown"
-  ng-class="{'hidden-xs': userState.user.profile}"
-  ng-show="userState.user.profile"
+  ng-class="{'hidden-xs': userState.user}"
+  ng-show="userState.user"
   rv-spinner="spinnerOptions"
   rv-spinner-key="auth-buttons"
   rv-spinner-start-active="1">
@@ -19,8 +19,8 @@
 </li>
 <!-- Mobile -->
 <li
-  ng-class="{'visible-xs-inline-block': userState.user.profile}"
-  ng-show="userState.user.profile"
+  ng-class="{'visible-xs-inline-block': userState.user}"
+  ng-show="userState.user"
   rv-spinner="spinnerOptions"
   rv-spinner-key="auth-buttons"
   rv-spinner-start-active="1">
@@ -30,7 +30,7 @@
     </a>
 </li>
 <!-- If User NOT Authenticated -->
-<li ng-show="!userState.user.profile">
+<li ng-show="!userState.user">
   <a href="" class="sign-in" ng-click="loginModal()">
     <span>Sign In</span>
     <i class="fa fa-sign-in"></i>

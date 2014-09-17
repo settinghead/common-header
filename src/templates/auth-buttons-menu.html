@@ -5,7 +5,7 @@
   {{userState.user.profile.email}}
 </li>
 <li class="divider" ng-show="userState.user.profile.username"></li>
-<li ng-show="userState.user.profile.username">
+<li ng-show="userState.user.profile">
   <a href="" ng-click="userSettings()" class="user-settings-button action">
     <i class="fa fa-cogs"></i>
     <span class="item-name">User Settings</span>
@@ -18,8 +18,8 @@
     <span class="item-name">Payment Methods</span>
   </a>
 </li>
-<li class="divider" ng-show="userState.user.profile"></li>
-<li ng-show="userState.user.profile">
+<li class="divider" ng-show="userState.user"></li>
+<li ng-show="userState.user">
   <a href="" ng-click="logout()" class="sign-out-button action">
     <i class="fa fa-sign-out"></i>
     <span class="item-name">Sign Out</span>

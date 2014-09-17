@@ -11,7 +11,7 @@ app.run(["$templateCache", function($templateCache) {
     "  {{userState.user.profile.email}}\n" +
     "</li>\n" +
     "<li class=\"divider\" ng-show=\"userState.user.profile.username\"></li>\n" +
-    "<li ng-show=\"userState.user.profile.username\">\n" +
+    "<li ng-show=\"userState.user.profile\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
     "    <i class=\"fa fa-cogs\"></i>\n" +
     "    <span class=\"item-name\">User Settings</span>\n" +
@@ -24,13 +24,14 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Payment Methods</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
-    "<li ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"divider\" ng-show=\"userState.user\"></li>\n" +
+    "<li ng-show=\"userState.user\">\n" +
     "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button action\">\n" +
     "    <i class=\"fa fa-sign-out\"></i>\n" +
     "    <span class=\"item-name\">Sign Out</span>\n" +
     "  </a>\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -43,8 +44,8 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Desktop and tablet -->\n" +
     "<li\n" +
     "  class=\"dropdown\"\n" +
-    "  ng-class=\"{'hidden-xs': userState.user.profile}\"\n" +
-    "  ng-show=\"userState.user.profile\"\n" +
+    "  ng-class=\"{'hidden-xs': userState.user}\"\n" +
+    "  ng-show=\"userState.user\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
@@ -61,8 +62,8 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile}\"\n" +
-    "  ng-show=\"userState.user.profile\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': userState.user}\"\n" +
+    "  ng-show=\"userState.user\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
@@ -72,7 +73,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-show=\"!userState.user.profile\">\n" +
+    "<li ng-show=\"!userState.user\">\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +
@@ -205,6 +206,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
+    "					ng-if=\"userState.user.profile\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -250,7 +252,7 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	<div ng-if=\"userState.subCompanySelected\"\n" +
     "	  class=\"sub-company-alert\">\n" +
-    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}\n" +
+    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompany.name}}\n" +
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
@@ -289,7 +291,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
     "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompanyName || userState.user.company.name}}\n" +
+    "  {{userState.selectedCompany.name || userState.user.company.name}}\n" +
     "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
     "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
@@ -327,9 +329,9 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
-    "  <a href=\"\" ng-click=\"companySettings()\" class=\"action\">\n" +
+    "<li ng-show=\"userState.roleMap.pu\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"userState.roleMap.pu\">\n" +
+    "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
     "  </a>\n" +
@@ -439,7 +441,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"company-settings-label\" class=\"modal-title\">Company Settings</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body\">\n" +
+    "<div class=\"modal-body company-settings-modal\">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"company-settings-name\">\n" +
@@ -620,7 +622,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +
     "      Confirm Deletion <i class=\"fa fa-white fa-warning icon-right\"></i>\n" +
     "    </button>\n" +
-    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
+    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width close-company-settings-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
     "      <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "    </button>\n" +
     "  </div>\n" +
@@ -986,14 +988,14 @@ app.run(["$templateCache", function($templateCache) {
     "      <input type=\"email\" class=\"form-control email\"\n" +
     "      name=\"email\"\n" +
     "      id=\"email\" placeholder=\"Enter email\" required\n" +
-    "      ng-model=\"userState.user.profile.email\">\n" +
+    "      ng-model=\"profile.email\">\n" +
     "      <p ng-show=\"registrationForm.email.$invalid && !registrationForm.email.$pristine\" class=\"help-block\">Enter a valid email.</p>\n" +
     "    </div>\n" +
     "    <!-- Terms of Service and Privacy -->\n" +
     "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
     "      <label>\n" +
     "      <input type=\"checkbox\" name=\"accepted\"\n" +
-    "        ng-model=\"userState.user.accepted\"\n" +
+    "        ng-model=\"profile.accepted\"\n" +
     "        class=\"accept-terms-checkbox\" required />\n" +
     "      I accept the terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
     "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\" class=\"help-block\">You must accept terms and condtions.</p>\n" +
@@ -1002,7 +1004,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <!-- Newsletter -->\n" +
     "    <div class=\"checkbox form-group\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.mailSyncEnabled\"> Sign up for our Newsletter\n" +
+    "        <input type=\"checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our Newsletter\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
@@ -1030,7 +1032,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<a href=\"\" class=\"shopping-cart-button\">\n" +
+    "<a href=\"{{shoppingCartUrl()}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
     "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
@@ -1480,10 +1482,9 @@ angular.module("risevision.common.header")
       }
     });
 
-    $scope.$watch("userState.user.company", function (newVal) {
+    $scope.$watch("userState.user.company.id", function (newVal) {
       if(newVal) {
-        userState.selectedCompanyId = newVal.id;
-        userState.selectedCompanyName = newVal.name;
+        userState.selectedCompany = userState.user.company;
       }
     });
 
@@ -1505,7 +1506,12 @@ angular.module("risevision.common.header")
           companyId: function () {
             var cId = companyId;
             if(!cId) {
-              cId = userState.selectedCompanyId || userState.user.company.id;
+              if(userState.selectedCompany) {
+                cId = userState.selectedCompany.id;
+              }
+              else {
+                cId = userState.user.company.id;
+              }
             }
             return cId;
           }
@@ -1522,7 +1528,12 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return userState.selectedCompanyId || userState.user.company.id;
+            if(userState.selectedCompany) {
+              return userState.selectedCompany.id;
+            }
+            else {
+              return userState.user.company.id;
+            }
           }
         }
       });
@@ -1535,7 +1546,12 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return userState.selectedCompanyId || userState.user.company.id;
+            if(userState.selectedCompany) {
+              return userState.selectedCompany.id;
+            }
+            else {
+              return userState.user.company.id;
+            }
           }
         }
       });
@@ -1557,7 +1573,7 @@ angular.module("risevision.common.header")
     };
 
     //watch and monitor if current company is a subcompany
-    $scope.$watch("userState.selectedCompanyId", function (newVal) {
+    $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal && $scope.userState.user && $scope.userState.user.company) {
         $scope.userState.subCompanySelected = (newVal !== $scope.userState.user.company.id);
       }
@@ -1579,9 +1595,13 @@ angular.module("risevision.common.header")
 })
 
 .controller("ShoppingCartButtonCtrl", [
-  "$scope", "shoppingCart", "userState", "$log",
-  function($scope, shoppingCart, userState, $log) {
+  "$scope", "shoppingCart", "userState", "$log", "STORE_URL",
+  function($scope, shoppingCart, userState, $log, STORE_URL) {
     userState.shoppingCart = {};
+
+    $scope.shoppingCartUrl = function () {
+      return STORE_URL + "#/shopping-cart";
+    };
 
     $scope.$watch("userState.user.profile.username", function (newVal) {
       if(newVal) {
@@ -1605,7 +1625,7 @@ angular.module("risevision.common.header")
     {
         return $sce.trustAsHtml(html_code);
     };
-    $scope.$watch("userState.selectedCompanyId", function (newVal) {
+    $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal) {
         getSystemMessages(newVal).then(function (messages) {
           $scope.messages = messages;
@@ -1644,20 +1664,28 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
-  "$scope", "$modalInstance", "$rootScope", "getUser",
+  "$scope", "$modalInstance", "getUser",
   "$loading", "registerAccount", "$log", "cookieStore",
-  function($scope, $modalInstance, $rootScope, getUser, $loading,
-    registerAccount, $log, cookieStore) {
+  "userState", "pick",
+  function($scope, $modalInstance, getUser, $loading,
+    registerAccount, $log, cookieStore, userState, pick) {
 
-    var userState = $rootScope.userState;
-    getUser().finally(function () {
+
+    getUser().then().finally(function () {
+      if(!userState.profile) { userState.profile = {}; }
       if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
         userState.user.profile.mailSyncEnabled = false;
       }
       if(!angular.isDefined(userState.user.accepted)) {
         userState.user.accepted = false;
       }
+
+      $scope.profile = pick(userState.user.profile, "email", "mailSyncEnabled");
+      $scope.profile.accepted = userState.user.accepted;
+
     });
+
+    $scope.profile = {mailSyncEnabled: false};
 
     $scope.closeModal = function() {
       cookieStore.put("surpressRegistration", true);
@@ -1683,11 +1711,10 @@ angular.module("risevision.common.header")
 
     $scope.save = function () {
       //update terms and conditions date
-      registerAccount(userState.user.profile.username,
-        userState.user.profile).then(
+      registerAccount(userState.user.username, $scope.profile).then(
         function () {
           // $modalInstance.close("success");
-          userState.status = "pendingCheck";
+        userState.status = "pendingCheck";
         },
         function (err) {alert("Error: " + err);
         $log.error(err);});
@@ -1750,9 +1777,9 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
-  "companyService", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
+  "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
   "getCompany",
-  function($scope, $modalInstance, companyService, companyId,
+  function($scope, $modalInstance, updateCompany, companyId,
   COUNTRIES, REGIONS_CA, REGIONS_US, getCompany) {
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -1772,7 +1799,7 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
     $scope.save = function () {
-      companyService.updateCompany($scope.company).then(
+      updateCompany($scope.company.id, $scope.company).then(
         function () {
           $modalInstance.close("success");
         },
@@ -1954,9 +1981,9 @@ angular.module("risevision.common.header")
 
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser",
-    "addUser", "username", "userRoleMap",
+    "addUser", "username", "userRoleMap", "$log",
     function($scope, $modalInstance, updateUser, getUser, deleteUser,
-      addUser, username, userRoleMap) {
+      addUser, username, userRoleMap, $log) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -1986,7 +2013,7 @@ angular.module("risevision.common.header")
             $modalInstance.close("success");
           },
           function (error) {
-            console.log(error);
+            $log.debug(error);
             alert("Error: " + error.message);
           }
         );
@@ -2237,6 +2264,55 @@ angular.module("risevision.common.header")
       this.remove = function (index) {
           this.list.splice(index, 1);
       };
+  })
+  .factory("pick", function () {
+  var ArrayProto = Array.prototype;
+  var
+    slice            = ArrayProto.slice,
+    concat           = ArrayProto.concat;
+    // Internal function that returns an efficient (for current engines) version
+  // of the passed-in callback, to be repeatedly applied in other Underscore
+  // functions.
+  var createCallback = function(func, context, argCount) {
+    if (context === void 0) { return func; }
+    switch (argCount === null ? 3 : argCount) {
+      case 1: return function(value) {
+        return func.call(context, value);
+      };
+      case 2: return function(value, other) {
+        return func.call(context, value, other);
+      };
+      case 3: return function(value, index, collection) {
+        return func.call(context, value, index, collection);
+      };
+      case 4: return function(accumulator, value, index, collection) {
+        return func.call(context, accumulator, value, index, collection);
+      };
+    }
+    return function() {
+      return func.apply(context, arguments);
+    };
+  };
+
+    return function(obj, iteratee, context) {
+      var result = {}, key;
+      if (obj === null) {return result;}
+      if (angular.isFunction(iteratee)) {
+        iteratee = createCallback(iteratee, context);
+        for (key in obj) {
+          var value = obj[key];
+          if (iteratee(value, key, obj)) { result[key] = value; }
+        }
+      } else {
+        var keys = concat.apply([], slice.call(arguments, 1));
+        obj = new Object(obj);
+        for (var i = 0, length = keys.length; i < length; i++) {
+          key = keys[i];
+          if (key in obj) { result[key] = obj[key]; }
+        }
+      }
+      return result;
+    };
   })
 
   .factory("dateIsInRange", [ function () {
@@ -2681,16 +2757,9 @@ angular.module("risevision.common.geodata", [])
     .factory("resetUserState", ["$log", "userState",
      function ($log, userState){
       return function() {
-        angular.extend(userState, {
-          user: {
-            company: null
-          },
-          selectedCompanyId: null,
-          selectedCompany: null,
-          isRiseAdmin: false,
-          isRiseUser: false,
-          isAuthed: false
-        });
+        delete userState.user;
+        delete userState.selectedCompany;
+        delete userState.isRiseAdmin;
         $log.debug("User state has been reset.");
       };
     }])
@@ -2829,14 +2898,14 @@ angular.module("risevision.common.geodata", [])
   function ($q, $log, createCompany, addAccount, updateUser,
     agreeToTerms) {
     return function (username, basicProfile) {
-      $log.debug("registerAccount called.");
+      $log.debug("registerAccount called.", username, basicProfile);
       var deferred = $q.defer();
       addAccount().then().finally(function () {
         agreeToTerms().then().finally(function () {
           updateUser(username, basicProfile).then(function (resp) {
             if(resp.result === true) { deferred.resolve(); }
             else { deferred.reject(); }
-          }, deferred.reject);
+          }, deferred.reject).finally("registerAccount ended");
         });
       });
       return deferred.promise;
@@ -2846,7 +2915,7 @@ angular.module("risevision.common.geodata", [])
   .factory("addAccount", ["$q", "riseAPILoader", "$log",
   function ($q, riseAPILoader, $log) {
     return function () {
-      $log.debug("registerAccount called.");
+      $log.debug("addAccount called.");
       var deferred = $q.defer();
       riseAPILoader().then(function (coreApi) {
         var request = coreApi.account.add();
@@ -3057,7 +3126,7 @@ angular.module("risevision.common.geodata", [])
 
   angular.module("risevision.common.cache", [])
 
-    .constant("userState", { user: {} })
+    .constant("userState", { })
 
     .value("rvStorage", sessionStorage)
 
@@ -3105,7 +3174,7 @@ angular.module("risevision.common.geodata", [])
   "use strict";
   angular.module("risevision.common.userprofile", [
   "risevision.common.gapi", "risevision.common.oauth2",
-  "risevision.common.cache"])
+  "risevision.common.cache", "risevision.common.util"])
 
   .value("userRoleMap", {
     "ca": "Content Administrator",
@@ -3123,11 +3192,11 @@ angular.module("risevision.common.geodata", [])
   function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
-      $log.debug("getUser", username);
       var deferred = $q.defer();
       var criteria = {};
       if (username) {criteria.username = username; }
-      if(userInfoCache.get("profile-" + username)) {
+      $log.debug("getUser called", criteria);
+      if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
         //skip if already exists
         deferred.resolve(userInfoCache.get("profile-" + username));
       }
@@ -3136,7 +3205,7 @@ angular.module("risevision.common.geodata", [])
           var coreApi = results[1];
           var oauthUserInfo = results[2];
           if(oauthUserInfo.email) {
-            userState.user.profile = {};
+            userState.user = {username: oauthUserInfo.email};
             userState.user.picture = oauthUserInfo.picture;
 
           }
@@ -3146,11 +3215,11 @@ angular.module("risevision.common.geodata", [])
             }
             else {
               $log.debug("getUser resp", resp);
-                angular.extend(userState.user.profile,
-                  angular.extend({
-                    username: oauthUserInfo.email
-                  }, resp.item));
-              userInfoCache.put("profile-" + username, resp.item);
+                //get user profile
+                userState.user.profile = angular.extend({
+                  username: oauthUserInfo.email
+                }, resp.item);
+              userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
               deferred.resolve(resp.item);
             }
           });
@@ -3182,17 +3251,13 @@ angular.module("risevision.common.geodata", [])
   }])
 
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getUser",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser) {
+  "userInfoCache", "userState", "getUser", "pick",
+  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser, pick) {
     return function (username, profile) {
-      $log.debug("updateUser", profile);
+      $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
-      profile = angular.copy(profile);
-      delete profile.id; delete profile.changedBy;
-      delete profile.changeDate; delete profile.status;
-      delete profile.companyId; delete profile.username;
-      delete profile.creationDate; delete profile.lastLogin;
-      delete profile.termsAcceptanceDate; delete profile.showTutorial;
+      profile = pick(profile, "mailSyncEnabled",
+        "email", "firstName", "lastName", "telephone", "roles");
       if(angular.isDefined(profile.mailSyncEnabled) && typeof profile.mailSyncEnabled === "boolean") {
         //covert boolean to string
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
@@ -3480,13 +3545,13 @@ angular.module("risevision.common.company",
     "risevision.common.config",
     "risevision.common.gapi",
     "risevision.common.cache",
-    "risevision.common.oauth2"
+    "risevision.common.oauth2",
+    "risevision.common.util"
   ])
 
   .factory("switchCompany", ["userState", function (userState) {
     return function (company) {
-      userState.selectedCompanyId = company.id;
-      userState.selectedCompanyName = company.name;
+      userState.selectedCompany= company;
     };
   }])
 
@@ -3540,8 +3605,7 @@ angular.module("risevision.common.company",
         request.execute(function (resp) {
           $log.debug("core.company.list resp", resp);
           if(resp.error){
-            delete userState.selectedCompanyName;
-            delete userState.selectedCompanyId;
+            delete userState.selectedCompany;
             deferred.reject();
           }
           else {
@@ -3550,15 +3614,11 @@ angular.module("risevision.common.company",
             var updateState = function (c) {
               $log.debug("selectedCompany", c);
               userState.user.company = c;
-              userState.isAuthed = true;
-              userState.user.company = c;
 
               //release 1 simpification - everyone is Purchaser ("pu" role)
-              userState.isRiseUser = true;
               userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
 
-              userState.selectedCompanyName = c.name;
-              userState.selectedCompanyId = c.id;
+              userState.selectedCompany = c;
             };
             if (resp.items && resp.items.length > 0) {
               updateState(resp.items[0]);
@@ -3642,6 +3702,35 @@ angular.module("risevision.common.company",
     };
   }])
 
+  .factory("updateCompany", ["$q", "$log", "coreAPILoader", "pick",
+   function ($q, $log, coreAPILoader, pick){
+    return function (companyId, fields) {
+        var deferred = $q.defer();
+        // var obj = {
+        //     "id": company.id,
+        //     "street": company.street,
+        //     "unit": company.unit,
+        //     "city": company.city,
+        //     "country": company.country,
+        //     "postalCode": company.postalCode,
+        //     "province": company.province,
+        //     "validate": validationRequired
+        // };
+        fields = pick(fields, "street", "unit", "city", "country", "postalCode", "province");
+        $log.debug("updateCompany called", companyId, fields);
+        // fields.validate = validationRequired || false;
+        coreAPILoader().then(function (coreApi) {
+          var request = coreApi.company.update({id: companyId, data: JSON.stringify(fields)});
+          request.execute(function (resp) {
+            $log.debug("updateCompany resp", resp);
+              deferred.resolve(resp);
+          });
+        });
+
+        return deferred.promise;
+    };
+  }])
+
   .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
     function (coreAPILoader, $q, $log, getCompany) {
 
@@ -3682,71 +3771,61 @@ angular.module("risevision.common.company",
         return deferred.promise;
     };
 
-    this.validateAddressSimple = function(company) {
-        var errors = [];
-        if (!company.street) {
-            errors.push("Missing Address (Line 1)");
-        }
-        if (!company.city) {
-            errors.push("Missing City");
-        }
-        if (!company.country) {
-            errors.push("Missing Country");
-        }
-        if (!company.province) {
-            errors.push("Missing State / Province");
-        }
-        if (!company.postalCode) {
-            errors.push("Missing Zip / Postal Code");
-        }
-        return errors;
+    this.validateAddressSimple = function(company, contact) {
+      var errors = [];
+      if (contact) {
+          if (!contact.firstName) {
+              errors.push("Missing First Name");
+          }
+          if (!contact.lastName) {
+              errors.push("Missing Last Name");
+          }
+          if (!contact.email) {
+              errors.push("Missing Email");
+          } else {
+              var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+              if (!re.test(contact.email)) {
+                  errors.push("Invalid Email");
+              }
+          }
+      }
+      if (!company.street) {
+          errors.push("Missing Address (Line 1)");
+      }
+      if (!company.city) {
+          errors.push("Missing City");
+      }
+      if (!company.country) {
+          errors.push("Missing Country");
+      }
+      if (!company.province) {
+          errors.push("Missing State / Province");
+      }
+      if (!company.postalCode) {
+          errors.push("Missing Zip / Postal Code");
+      }
+      return errors;
     };
 
-
-    this.updateCompany = function (fields, validationRequired) {
-        var deferred = $q.defer();
-        // var obj = {
-        //     "id": company.id,
-        //     "street": company.street,
-        //     "unit": company.unit,
-        //     "city": company.city,
-        //     "country": company.country,
-        //     "postalCode": company.postalCode,
-        //     "province": company.province,
-        //     "validate": validationRequired
-        // };
-        $log.debug("updateCompany called", fields);
-        fields.validate = validationRequired || false;
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.update(fields);
-          request.execute(function (resp) {
-            $log.debug("updateCompany resp", resp);
-              deferred.resolve(resp);
-          });
-        });
-
-        return deferred.promise;
-    };
-
-    this.validateAddress = function (company) {
-        var deferred = $q.defer();
-        var obj = {
-            "street": company.street,
-            "unit": company.unit,
-            "city": company.city,
-            "country": company.country,
-            "postalCode": company.postalCode,
-            "province": company.province,
-        };
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.validateAddress(obj);
-          request.execute(function (resp) {
-              deferred.resolve(resp);
-          });
-        });
-
-        return deferred.promise;
-    };
+    // this.validateAddress = function (company) {
+    //     var deferred = $q.defer();
+    //     var obj = {
+    //         "street": company.street,
+    //         "unit": company.unit,
+    //         "city": company.city,
+    //         "country": company.country,
+    //         "postalCode": company.postalCode,
+    //         "province": company.province,
+    //     };
+    //     coreAPILoader().then(function (coreApi) {
+    //       var request = coreApi.company.validateAddress(obj);
+    //       request.execute(function (resp) {
+    //           deferred.resolve(resp);
+    //       });
+    //     });
+    //
+    //     return deferred.promise;
+    // };
 
   }]);
 
@@ -3768,6 +3847,7 @@ angular.module("risevision.common.company",
 
   angular.module("risevision.common.config", [])
     .value("CORE_URL", "https://rvacore-test.appspot.com/_ah/api")
+    .value("STORE_URL", "http://localhost:8000/")
   ;
 })(angular);
 

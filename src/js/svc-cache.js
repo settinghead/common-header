@@ -4,7 +4,7 @@
 
   angular.module("risevision.common.cache", [])
 
-    .constant("userState", { user: {} })
+    .constant("userState", { })
 
     .value("rvStorage", sessionStorage)
 

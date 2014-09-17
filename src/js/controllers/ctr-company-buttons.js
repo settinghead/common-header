@@ -16,10 +16,9 @@ angular.module("risevision.common.header")
       }
     });
 
-    $scope.$watch("userState.user.company", function (newVal) {
+    $scope.$watch("userState.user.company.id", function (newVal) {
       if(newVal) {
-        userState.selectedCompanyId = newVal.id;
-        userState.selectedCompanyName = newVal.name;
+        userState.selectedCompany = userState.user.company;
       }
     });
 
@@ -41,7 +40,12 @@ angular.module("risevision.common.header")
           companyId: function () {
             var cId = companyId;
             if(!cId) {
-              cId = userState.selectedCompanyId || userState.user.company.id;
+              if(userState.selectedCompany) {
+                cId = userState.selectedCompany.id;
+              }
+              else {
+                cId = userState.user.company.id;
+              }
             }
             return cId;
           }
@@ -58,7 +62,12 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return userState.selectedCompanyId || userState.user.company.id;
+            if(userState.selectedCompany) {
+              return userState.selectedCompany.id;
+            }
+            else {
+              return userState.user.company.id;
+            }
           }
         }
       });
@@ -71,7 +80,12 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            return userState.selectedCompanyId || userState.user.company.id;
+            if(userState.selectedCompany) {
+              return userState.selectedCompany.id;
+            }
+            else {
+              return userState.user.company.id;
+            }
           }
         }
       });
@@ -93,7 +107,7 @@ angular.module("risevision.common.header")
     };
 
     //watch and monitor if current company is a subcompany
-    $scope.$watch("userState.selectedCompanyId", function (newVal) {
+    $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal && $scope.userState.user && $scope.userState.user.company) {
         $scope.userState.subCompanySelected = (newVal !== $scope.userState.user.company.id);
       }

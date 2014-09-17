@@ -7,7 +7,7 @@ angular.module("risevision.common.header")
     {
         return $sce.trustAsHtml(html_code);
     };
-    $scope.$watch("userState.selectedCompanyId", function (newVal) {
+    $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal) {
         getSystemMessages(newVal).then(function (messages) {
           $scope.messages = messages;

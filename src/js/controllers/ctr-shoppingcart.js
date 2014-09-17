@@ -12,9 +12,13 @@ angular.module("risevision.common.header")
 })
 
 .controller("ShoppingCartButtonCtrl", [
-  "$scope", "shoppingCart", "userState", "$log",
-  function($scope, shoppingCart, userState, $log) {
+  "$scope", "shoppingCart", "userState", "$log", "STORE_URL",
+  function($scope, shoppingCart, userState, $log, STORE_URL) {
     userState.shoppingCart = {};
+
+    $scope.shoppingCartUrl = function () {
+      return STORE_URL + "#/shopping-cart";
+    };
 
     $scope.$watch("userState.user.profile.username", function (newVal) {
       if(newVal) {
