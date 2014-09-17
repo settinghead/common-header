@@ -3,7 +3,7 @@
   "use strict";
   angular.module("risevision.common.userprofile", [
   "risevision.common.gapi", "risevision.common.oauth2",
-  "risevision.common.cache"])
+  "risevision.common.cache", "risevision.common.util"])
 
   .value("userRoleMap", {
     "ca": "Content Administrator",
@@ -21,11 +21,11 @@
   function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
-      $log.debug("getUser", username);
       var deferred = $q.defer();
       var criteria = {};
       if (username) {criteria.username = username; }
-      if(userInfoCache.get("profile-" + username)) {
+      $log.debug("getUser called", criteria);
+      if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
         //skip if already exists
         deferred.resolve(userInfoCache.get("profile-" + username));
       }
@@ -34,7 +34,7 @@
           var coreApi = results[1];
           var oauthUserInfo = results[2];
           if(oauthUserInfo.email) {
-            userState.user.profile = {};
+            userState.user = {username: oauthUserInfo.email};
             userState.user.picture = oauthUserInfo.picture;
 
           }
@@ -44,11 +44,11 @@
             }
             else {
               $log.debug("getUser resp", resp);
-                angular.extend(userState.user.profile,
-                  angular.extend({
-                    username: oauthUserInfo.email
-                  }, resp.item));
-              userInfoCache.put("profile-" + username, resp.item);
+                //get user profile
+                userState.user.profile = angular.extend({
+                  username: oauthUserInfo.email
+                }, resp.item);
+              userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
               deferred.resolve(resp.item);
             }
           });
@@ -80,17 +80,13 @@
   }])
 
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getUser",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser) {
+  "userInfoCache", "userState", "getUser", "pick",
+  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser, pick) {
     return function (username, profile) {
-      $log.debug("updateUser", profile);
+      $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
-      profile = angular.copy(profile);
-      delete profile.id; delete profile.changedBy;
-      delete profile.changeDate; delete profile.status;
-      delete profile.companyId; delete profile.username;
-      delete profile.creationDate; delete profile.lastLogin;
-      delete profile.termsAcceptanceDate; delete profile.showTutorial;
+      profile = pick(profile, "mailSyncEnabled",
+        "email", "firstName", "lastName", "telephone", "roles");
       if(angular.isDefined(profile.mailSyncEnabled) && typeof profile.mailSyncEnabled === "boolean") {
         //covert boolean to string
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";

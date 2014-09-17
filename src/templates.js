@@ -11,7 +11,7 @@ app.run(["$templateCache", function($templateCache) {
     "  {{userState.user.profile.email}}\n" +
     "</li>\n" +
     "<li class=\"divider\" ng-show=\"userState.user.profile.username\"></li>\n" +
-    "<li ng-show=\"userState.user.profile.username\">\n" +
+    "<li ng-show=\"userState.user.profile\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
     "    <i class=\"fa fa-cogs\"></i>\n" +
     "    <span class=\"item-name\">User Settings</span>\n" +
@@ -24,13 +24,14 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Payment Methods</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
-    "<li ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"divider\" ng-show=\"userState.user\"></li>\n" +
+    "<li ng-show=\"userState.user\">\n" +
     "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button action\">\n" +
     "    <i class=\"fa fa-sign-out\"></i>\n" +
     "    <span class=\"item-name\">Sign Out</span>\n" +
     "  </a>\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -43,8 +44,8 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Desktop and tablet -->\n" +
     "<li\n" +
     "  class=\"dropdown\"\n" +
-    "  ng-class=\"{'hidden-xs': userState.user.profile}\"\n" +
-    "  ng-show=\"userState.user.profile\"\n" +
+    "  ng-class=\"{'hidden-xs': userState.user}\"\n" +
+    "  ng-show=\"userState.user\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
@@ -61,8 +62,8 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile}\"\n" +
-    "  ng-show=\"userState.user.profile\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': userState.user}\"\n" +
+    "  ng-show=\"userState.user\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
@@ -72,7 +73,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-show=\"!userState.user.profile\">\n" +
+    "<li ng-show=\"!userState.user\">\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +
@@ -205,6 +206,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
+    "					ng-if=\"userState.user.profile\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -250,7 +252,7 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	<div ng-if=\"userState.subCompanySelected\"\n" +
     "	  class=\"sub-company-alert\">\n" +
-    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompanyName}}\n" +
+    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompany.name}}\n" +
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
@@ -289,7 +291,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
     "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompanyName || userState.user.company.name}}\n" +
+    "  {{userState.selectedCompany.name || userState.user.company.name}}\n" +
     "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
     "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
@@ -327,9 +329,9 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
-    "  <a href=\"\" ng-click=\"companySettings()\" class=\"action\">\n" +
+    "<li ng-show=\"userState.roleMap.pu\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"userState.roleMap.pu\">\n" +
+    "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
     "  </a>\n" +
@@ -439,7 +441,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"company-settings-label\" class=\"modal-title\">Company Settings</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body\">\n" +
+    "<div class=\"modal-body company-settings-modal\">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"company-settings-name\">\n" +
@@ -620,7 +622,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +
     "      Confirm Deletion <i class=\"fa fa-white fa-warning icon-right\"></i>\n" +
     "    </button>\n" +
-    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
+    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width close-company-settings-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
     "      <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "    </button>\n" +
     "  </div>\n" +
@@ -986,14 +988,14 @@ app.run(["$templateCache", function($templateCache) {
     "      <input type=\"email\" class=\"form-control email\"\n" +
     "      name=\"email\"\n" +
     "      id=\"email\" placeholder=\"Enter email\" required\n" +
-    "      ng-model=\"userState.user.profile.email\">\n" +
+    "      ng-model=\"profile.email\">\n" +
     "      <p ng-show=\"registrationForm.email.$invalid && !registrationForm.email.$pristine\" class=\"help-block\">Enter a valid email.</p>\n" +
     "    </div>\n" +
     "    <!-- Terms of Service and Privacy -->\n" +
     "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
     "      <label>\n" +
     "      <input type=\"checkbox\" name=\"accepted\"\n" +
-    "        ng-model=\"userState.user.accepted\"\n" +
+    "        ng-model=\"profile.accepted\"\n" +
     "        class=\"accept-terms-checkbox\" required />\n" +
     "      I accept the terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
     "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\" class=\"help-block\">You must accept terms and condtions.</p>\n" +
@@ -1002,7 +1004,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <!-- Newsletter -->\n" +
     "    <div class=\"checkbox form-group\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"userState.user.profile.mailSyncEnabled\"> Sign up for our Newsletter\n" +
+    "        <input type=\"checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our Newsletter\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
@@ -1030,7 +1032,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<a href=\"\" class=\"shopping-cart-button\">\n" +
+    "<a href=\"{{shoppingCartUrl()}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
     "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +

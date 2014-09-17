@@ -88,16 +88,9 @@
     .factory("resetUserState", ["$log", "userState",
      function ($log, userState){
       return function() {
-        angular.extend(userState, {
-          user: {
-            company: null
-          },
-          selectedCompanyId: null,
-          selectedCompany: null,
-          isRiseAdmin: false,
-          isRiseUser: false,
-          isAuthed: false
-        });
+        delete userState.user;
+        delete userState.selectedCompany;
+        delete userState.isRiseAdmin;
         $log.debug("User state has been reset.");
       };
     }])

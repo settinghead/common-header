@@ -96,5 +96,23 @@
             "Company Users dialog should hide");
         });
       });
+
+      describe("Company Settings", function () {
+        it("Opens Company Settings Dialog", function() {
+          element(by.css(".company-buttons-icon")).click();
+          assert.eventually.isTrue(element(by.css(".company-settings-menu-button")).isDisplayed(),
+            "Company settings menu item should present");
+          element(by.css(".company-settings-menu-button")).click();
+          assert.eventually.isTrue(element(by.css(".company-settings-modal")).isDisplayed(),
+            "Company settings dialog should show");
+        });
+
+        it("Company Settings Dialog Should Close", function () {
+          element(by.css("button.close-company-settings-button")).click();
+          assert.eventually.isFalse(element(by.css(".company-settings-modal")).isPresent(),
+            "Company Settings dialog should hide");
+        });
+      });
+
   });
 })();

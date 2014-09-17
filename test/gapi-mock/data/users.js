@@ -7,7 +7,7 @@
       "firstName": "Michael",
       "lastName": "Sanchez",
       "email": "michael.sanchez@awesome.io",
-      "phone": "+1123-456-7890",
+      "telephone": "+1123-456-7890",
       "lastLogin": "2014-08-18T12:03:40.000Z",
       "status": 1,
       "roles": [

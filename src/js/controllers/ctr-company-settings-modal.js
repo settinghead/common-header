@@ -1,9 +1,9 @@
 angular.module("risevision.common.header")
 
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
-  "companyService", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
+  "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
   "getCompany",
-  function($scope, $modalInstance, companyService, companyId,
+  function($scope, $modalInstance, updateCompany, companyId,
   COUNTRIES, REGIONS_CA, REGIONS_US, getCompany) {
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -23,7 +23,7 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
     $scope.save = function () {
-      companyService.updateCompany($scope.company).then(
+      updateCompany($scope.company.id, $scope.company).then(
         function () {
           $modalInstance.close("success");
         },
