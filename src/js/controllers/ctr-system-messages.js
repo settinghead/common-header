@@ -9,7 +9,7 @@ angular.module("risevision.common.header")
     };
     $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal) {
-        getCoreSystemMessages(newVal);
+        getCoreSystemMessages(newVal).then($scope.digest);
       }
     });
   }
