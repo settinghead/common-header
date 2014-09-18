@@ -3,8 +3,8 @@
 
   angular.module("risevision.common.cache")
 
-  .factory("shoppingCart", ["rvStorage", "$log",
-    function (rvStorage, $log){
+  .factory("shoppingCart", ["rvStorage", "$log", "$q",
+    function (rvStorage, $log, $q){
     var items = null;
     var itemsMap = {};
 
@@ -27,26 +27,33 @@
         JSON.stringify({items: items, itemsMap: itemsMap}));
     };
 
+    var loadReady = $q.defer();
 
     return {
+      loadReady: loadReady.promise,
       getSubTotal: function (isCAD) {
         var shipping = 0;
         var subTotal = 0;
-        for (var i = 0; i < items.length; i++) {
-          var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-          var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
-          if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
-            shipping += shippingCost * items[i].quantity || 0;
-            subTotal += productCost * items[i].quantity || 0;
+        if(items) {
+          for (var i = 0; i < items.length; i++) {
+            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+            var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
+            if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
+              shipping += shippingCost * items[i].quantity || 0;
+              subTotal += productCost * items[i].quantity || 0;
+            }
           }
         }
+
         return subTotal + shipping;
       },
       getShippingTotal: function (isCAD) {
         var shipping = 0;
-        for (var i = 0; i < items.length; i++) {
-          var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-          shipping += shippingCost * items[i].quantity || 0;
+        if(items) {
+          for (var i = 0; i < items.length; i++) {
+            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+            shipping += shippingCost * items[i].quantity || 0;
+          }
         }
         return shipping;
       },
@@ -67,6 +74,7 @@
       initialize: function () {
         items = [];
         readFromStorage();
+        loadReady.resolve();
         return items;
       },
       getItemCount: function () {

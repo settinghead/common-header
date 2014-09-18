@@ -7,6 +7,15 @@ angular.module("risevision.common.header")
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
+    $scope.$watch("userState.status", function (newStatus){
+      if (newStatus === "pendingCheck") {
+        $loading.start("auth-buttons");
+      }
+      else {
+        $loading.stop("auth-buttons");
+      }
+    });
+
     // Login Modal
     $scope.loginModal = function(size) {
       // var modalInstance =
@@ -62,14 +71,7 @@ angular.module("risevision.common.header")
 
     authenticate(false).then(getUser);
 
-    $scope.$watch("userState.status", function (newStatus){
-      if (newStatus === "pendingCheck") {
-        $loading.start("auth-buttons");
-      }
-      else {
-        $loading.stop("auth-buttons");
-      }
-    });
+
 
     $scope.$watchCollection("userState.user.profile.roles", function (newVals) {
       if(newVals) {

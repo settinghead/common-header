@@ -24,8 +24,8 @@
         browser.get("/test/e2e/index.html#");
 
         //clear local storage
-        element(by.id("reset-db")).click();
         ptor.driver.navigate().refresh();
+        element(by.id("reset-db")).click();
       });
 
       it("should show user settings modal and update settings", function() {
@@ -33,7 +33,7 @@
         browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
         element(by.css("a.sign-in")).click();
         element(by.css(".authorize-button")).click();
-        //reset db
+
         assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
 
         element(by.css("img.profile-pic")).click();
