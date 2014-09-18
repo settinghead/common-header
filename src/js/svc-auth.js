@@ -188,6 +188,8 @@
           // The majority of state is in here
           resetUserState();
           shoppingCart.destroy();
+          //call google api to sign out
+          gapiLoader().then(function (gApi) {gApi.auth.signOut(); });
           cookieStore.remove("surpressRegistration");
           deferred.resolve();
           $log.debug("User is signed out.");
