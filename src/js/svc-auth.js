@@ -128,7 +128,12 @@
               if (authResult && !authResult.error) {
                 accessTokenKeeper.set(authResult);
                 getOAuthUserInfo().then(function (oauthUserInfo) {
-                  userState.user = {username: oauthUserInfo.email};
+                  if(!userState.user || userState.user.username !== oauthUserInfo.email) {
+                    userState.user  = {
+                      username: oauthUserInfo.email,
+                      picture: oauthUserInfo.picture
+                    };
+                  }
                   authorizeDeferred.resolve(authResult);
                 }, authorizeDeferred.reject);
               }

@@ -1389,6 +1389,15 @@ angular.module("risevision.common.header")
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
+    $scope.$watch("userState.status", function (newStatus){
+      if (newStatus === "pendingCheck") {
+        $loading.start("auth-buttons");
+      }
+      else {
+        $loading.stop("auth-buttons");
+      }
+    });
+
     // Login Modal
     $scope.loginModal = function(size) {
       // var modalInstance =
@@ -1444,14 +1453,7 @@ angular.module("risevision.common.header")
 
     authenticate(false).then(getUser);
 
-    $scope.$watch("userState.status", function (newStatus){
-      if (newStatus === "pendingCheck") {
-        $loading.start("auth-buttons");
-      }
-      else {
-        $loading.stop("auth-buttons");
-      }
-    });
+
 
     $scope.$watchCollection("userState.user.profile.roles", function (newVals) {
       if(newVals) {
@@ -2799,7 +2801,12 @@ angular.module("risevision.common.geodata", [])
               if (authResult && !authResult.error) {
                 accessTokenKeeper.set(authResult);
                 getOAuthUserInfo().then(function (oauthUserInfo) {
-                  userState.user = {username: oauthUserInfo.email};
+                  if(!userState.user || userState.user.username !== oauthUserInfo.email) {
+                    userState.user  = {
+                      username: oauthUserInfo.email,
+                      picture: oauthUserInfo.picture
+                    };
+                  }
                   authorizeDeferred.resolve(authResult);
                 }, authorizeDeferred.reject);
               }
@@ -3212,10 +3219,6 @@ angular.module("risevision.common.geodata", [])
         $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
           var coreApi = results[1];
           var oauthUserInfo = results[2];
-          if(oauthUserInfo.email) {
-            userState.user.picture = oauthUserInfo.picture;
-
-          }
           coreApi.user.get(criteria).execute(function (resp){
             if (resp.error || !resp.result) {
               deferred.reject(resp);
@@ -3361,8 +3364,8 @@ angular.module("risevision.common.geodata", [])
 
   angular.module("risevision.common.cache")
 
-  .factory("shoppingCart", ["rvStorage", "$log",
-    function (rvStorage, $log){
+  .factory("shoppingCart", ["rvStorage", "$log", "$q",
+    function (rvStorage, $log, $q){
     var items = null;
     var itemsMap = {};
 
@@ -3385,26 +3388,33 @@ angular.module("risevision.common.geodata", [])
         JSON.stringify({items: items, itemsMap: itemsMap}));
     };
 
+    var loadReady = $q.defer();
 
     return {
+      loadReady: loadReady.promise,
       getSubTotal: function (isCAD) {
         var shipping = 0;
         var subTotal = 0;
-        for (var i = 0; i < items.length; i++) {
-          var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-          var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
-          if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
-            shipping += shippingCost * items[i].quantity || 0;
-            subTotal += productCost * items[i].quantity || 0;
+        if(items) {
+          for (var i = 0; i < items.length; i++) {
+            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+            var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
+            if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
+              shipping += shippingCost * items[i].quantity || 0;
+              subTotal += productCost * items[i].quantity || 0;
+            }
           }
         }
+
         return subTotal + shipping;
       },
       getShippingTotal: function (isCAD) {
         var shipping = 0;
-        for (var i = 0; i < items.length; i++) {
-          var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-          shipping += shippingCost * items[i].quantity || 0;
+        if(items) {
+          for (var i = 0; i < items.length; i++) {
+            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+            shipping += shippingCost * items[i].quantity || 0;
+          }
         }
         return shipping;
       },
@@ -3425,6 +3435,7 @@ angular.module("risevision.common.geodata", [])
       initialize: function () {
         items = [];
         readFromStorage();
+        loadReady.resolve();
         return items;
       },
       getItemCount: function () {
@@ -3813,26 +3824,6 @@ angular.module("risevision.common.company",
       }
       return errors;
     };
-
-    // this.validateAddress = function (company) {
-    //     var deferred = $q.defer();
-    //     var obj = {
-    //         "street": company.street,
-    //         "unit": company.unit,
-    //         "city": company.city,
-    //         "country": company.country,
-    //         "postalCode": company.postalCode,
-    //         "province": company.province,
-    //     };
-    //     coreAPILoader().then(function (coreApi) {
-    //       var request = coreApi.company.validateAddress(obj);
-    //       request.execute(function (resp) {
-    //           deferred.resolve(resp);
-    //       });
-    //     });
-    //
-    //     return deferred.promise;
-    // };
 
   }]);
 

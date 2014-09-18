@@ -267,24 +267,4 @@ angular.module("risevision.common.company",
       return errors;
     };
 
-    // this.validateAddress = function (company) {
-    //     var deferred = $q.defer();
-    //     var obj = {
-    //         "street": company.street,
-    //         "unit": company.unit,
-    //         "city": company.city,
-    //         "country": company.country,
-    //         "postalCode": company.postalCode,
-    //         "province": company.province,
-    //     };
-    //     coreAPILoader().then(function (coreApi) {
-    //       var request = coreApi.company.validateAddress(obj);
-    //       request.execute(function (resp) {
-    //           deferred.resolve(resp);
-    //       });
-    //     });
-    //
-    //     return deferred.promise;
-    // };
-
   }]);

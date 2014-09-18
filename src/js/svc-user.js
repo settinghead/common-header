@@ -33,10 +33,6 @@
         $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
           var coreApi = results[1];
           var oauthUserInfo = results[2];
-          if(oauthUserInfo.email) {
-            userState.user.picture = oauthUserInfo.picture;
-
-          }
           coreApi.user.get(criteria).execute(function (resp){
             if (resp.error || !resp.result) {
               deferred.reject(resp);
