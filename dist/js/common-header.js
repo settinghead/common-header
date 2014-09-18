@@ -1632,7 +1632,7 @@ angular.module("risevision.common.header")
     };
     $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal) {
-        getCoreSystemMessages(newVal);
+        getCoreSystemMessages(newVal).then($scope.digest);
       }
     });
   }
@@ -3506,7 +3506,14 @@ angular.module("risevision.common.geodata", [])
           userState.messages = [];
         }
         messages.forEach(function (m) {
-          pushMessage(m, userState.messages);
+          //temporary logic to avoid duplicate messages
+          var duplicate = false;
+          userState.messages.forEach(function (um) {
+            if(um.text === m.text) {duplicate = true; }
+          });
+          if(!duplicate) {
+            pushMessage(m, userState.messages);
+          }
         });
       };
     }])
@@ -4038,7 +4045,14 @@ angular.module("risevision.common.gapi", [])
           userState.messages = [];
         }
         messages.forEach(function (m) {
-          pushMessage(m, userState.messages);
+          //temporary logic to avoid duplicate messages
+          var duplicate = false;
+          userState.messages.forEach(function (um) {
+            if(um.text === m.text) {duplicate = true; }
+          });
+          if(!duplicate) {
+            pushMessage(m, userState.messages);
+          }
         });
       };
     }])
