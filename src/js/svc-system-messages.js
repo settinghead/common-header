@@ -4,16 +4,45 @@
 
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
-    .factory("getSystemMessages", ["gapiLoader", "$q", "$log",
-    function (gapiLoader, $q, $log) {
+
+    .factory("addSystemMessages", ["userState", function (userState) {
+
+      function pushMessage (m, list) {
+        //TODO add more sophisticated, sorting-based logic here
+        list.push(m);
+      }
+
+      return function (messages) {
+        if(!userState.messages) {
+          userState.messages = [];
+        }
+        messages.forEach(function (m) {
+          //temporary logic to avoid duplicate messages
+          var duplicate = false;
+          userState.messages.forEach(function (um) {
+            if(um.text === m.text) {duplicate = true; }
+          });
+          if(!duplicate) {
+            pushMessage(m, userState.messages);
+          }
+        });
+      };
+    }])
+
+    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log", "userState",
+    "addSystemMessages",
+    function (gapiLoader, $q, $log, userState, addSystemMessages) {
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
           var request = gApi.client.core.systemmessage.list(
             { "companyId": companyId });
           request.execute(function (resp) {
-            $log.debug("getSystemMessage resp", resp.items);
-            deferred.resolve(resp.items);
+            var items = resp;
+            if(!(items instanceof Array) && items.items) { items = items.items; }
+            $log.debug("getCoreSystemMessage resp", items);
+            addSystemMessages(items);
+            deferred.resolve(items);
           });
         });
         return deferred.promise;
