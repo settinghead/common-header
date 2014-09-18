@@ -43,7 +43,7 @@
         element(by.css(".user-settings-button")).click();
 
         assert.eventually.isTrue(element(by.css(".user-settings-modal"))
-          .isDisplayed(), "User settings modal should show after clicking on sign in");
+          .isDisplayed(), "User settings modal should show after clicking on menu item");
 
 
         element(by.id("user-settings-first-name")).clear();

@@ -1138,9 +1138,10 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li class=\"system-message\"\n" +
-    "  ng-repeat=\"message in messages\"\n" +
+    "  ng-repeat=\"message in userState.messages\"\n" +
     "  ng-bind-html=\"renderHtml(message.text)\">\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -1155,7 +1156,7 @@ app.run(["$templateCache", function($templateCache) {
     "ng-show=\"userState.user.profile\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
-    "    <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
+    "    <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
     "  </a>\n" +
     "  <ul class=\"dropdown-menu system-messages\">\n" +
     "    <ng-include\n" +
@@ -1173,7 +1174,7 @@ app.run(["$templateCache", function($templateCache) {
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
-    "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
+    "        <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
     "    </a>\n" +
     "</li>\n" +
     "");

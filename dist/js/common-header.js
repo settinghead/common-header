@@ -1138,9 +1138,10 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li class=\"system-message\"\n" +
-    "  ng-repeat=\"message in messages\"\n" +
+    "  ng-repeat=\"message in userState.messages\"\n" +
     "  ng-bind-html=\"renderHtml(message.text)\">\n" +
-    "</li>");
+    "</li>\n" +
+    "");
 }]);
 })();
 
@@ -1155,7 +1156,7 @@ app.run(["$templateCache", function($templateCache) {
     "ng-show=\"userState.user.profile\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
-    "    <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
+    "    <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
     "  </a>\n" +
     "  <ul class=\"dropdown-menu system-messages\">\n" +
     "    <ng-include\n" +
@@ -1173,7 +1174,7 @@ app.run(["$templateCache", function($templateCache) {
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
-    "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
+    "        <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
     "    </a>\n" +
     "</li>\n" +
     "");
@@ -1623,17 +1624,15 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 
 .controller("SystemMessagesButtonCtrl", [
-  "$scope", "$log", "$sce", "getSystemMessages",
-  function($scope, $log, $sce, getSystemMessages) {
+  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages",
+  function($scope, userState, $log, $sce, getCoreSystemMessages) {
     $scope.renderHtml = function(html_code)
     {
         return $sce.trustAsHtml(html_code);
     };
     $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal) {
-        getSystemMessages(newVal).then(function (messages) {
-          $scope.messages = messages;
-        });
+        getCoreSystemMessages(newVal);
       }
     });
   }
@@ -3494,16 +3493,38 @@ angular.module("risevision.common.geodata", [])
 
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
-    .factory("getSystemMessages", ["gapiLoader", "$q", "$log",
-    function (gapiLoader, $q, $log) {
+
+    .factory("addSystemMessages", ["userState", function (userState) {
+
+      function pushMessage (m, list) {
+        //TODO add more sophisticated, sorting-based logic here
+        list.push(m);
+      }
+
+      return function (messages) {
+        if(!userState.messages) {
+          userState.messages = [];
+        }
+        messages.forEach(function (m) {
+          pushMessage(m, userState.messages);
+        });
+      };
+    }])
+
+    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log", "userState",
+    "addSystemMessages",
+    function (gapiLoader, $q, $log, userState, addSystemMessages) {
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
           var request = gApi.client.core.systemmessage.list(
             { "companyId": companyId });
           request.execute(function (resp) {
-            $log.debug("getSystemMessage resp", resp.items);
-            deferred.resolve(resp.items);
+            var items = resp;
+            if(!(items instanceof Array) && items.items) { items = items.items; }
+            $log.debug("getCoreSystemMessage resp", items);
+            addSystemMessages(items);
+            deferred.resolve(items);
           });
         });
         return deferred.promise;
@@ -4004,16 +4025,38 @@ angular.module("risevision.common.gapi", [])
 
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
-    .factory("getSystemMessages", ["gapiLoader", "$q", "$log",
-    function (gapiLoader, $q, $log) {
+
+    .factory("addSystemMessages", ["userState", function (userState) {
+
+      function pushMessage (m, list) {
+        //TODO add more sophisticated, sorting-based logic here
+        list.push(m);
+      }
+
+      return function (messages) {
+        if(!userState.messages) {
+          userState.messages = [];
+        }
+        messages.forEach(function (m) {
+          pushMessage(m, userState.messages);
+        });
+      };
+    }])
+
+    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log", "userState",
+    "addSystemMessages",
+    function (gapiLoader, $q, $log, userState, addSystemMessages) {
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
           var request = gApi.client.core.systemmessage.list(
             { "companyId": companyId });
           request.execute(function (resp) {
-            $log.debug("getSystemMessage resp", resp.items);
-            deferred.resolve(resp.items);
+            var items = resp;
+            if(!(items instanceof Array) && items.items) { items = items.items; }
+            $log.debug("getCoreSystemMessage resp", items);
+            addSystemMessages(items);
+            deferred.resolve(items);
           });
         });
         return deferred.promise;
