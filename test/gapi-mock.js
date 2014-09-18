@@ -944,6 +944,12 @@ gapi.auth = {
       delayed(cb, gapi.auth._token);
     }
   },
+  signOut: function (cb) {
+    this.setToken(null);
+    if(cb) {
+      delayed(cb);
+    }
+  },
   setToken: function (token) {
     gapi.auth._token = token;
   },
