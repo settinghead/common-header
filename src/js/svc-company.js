@@ -9,6 +9,34 @@ angular.module("risevision.common.company",
     "risevision.common.util"
   ])
 
+    .factory("validateAddress", ["$q", "storeAPILoader", "$log",
+  function ($q, storeAPILoader, $log) {
+      return function (company) {
+
+        var deferred = $q.defer();
+        $log.debug("validateAddress called", company);
+
+        var obj = {
+            "street": company.street,
+            "unit": company.unit,
+            "city": company.city,
+            "country": company.country,
+            "postalCode": company.postalCode,
+            "province": company.province,
+        };
+
+        storeAPILoader.get().then(function (storeApi) {
+          var request = storeApi.company.validateAddress(obj);
+          request.execute(function (resp) {
+              $log.debug("validateAddress resp", resp);
+              deferred.resolve(resp);
+          });
+        });
+
+        return deferred.promise;
+    };
+  }])
+
   .factory("switchCompany", ["userState", function (userState) {
     return function (company) {
       userState.selectedCompany= company;

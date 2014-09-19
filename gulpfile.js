@@ -97,11 +97,15 @@ gulp.task("config", function() {
 var unitTestFiles = [
   "components/jquery/dist/jquery.js",
   "components/angular/angular.js",
+  "components/q/q.js",
+  "components/ngstorage/ngStorage.js",
   "components/angular-bootstrap/ui-bootstrap-tpls.js",
   "components/angular-mocks/angular-mocks.js",
   "components/angular-spinner/angular-spinner.js",
-  "web/components/ngstorage/ngStorage.js",
+  "components/ngstorage/ngStorage.js",
+  "components/ng-biscuit/dist/ng-biscuit.js",
   "src/js/config/config.js",
+  "test/unit/fixtures/*.js",
   "src/js/*.js",
   "test/unit/*spec.js"
   ];

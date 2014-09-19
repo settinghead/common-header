@@ -4,7 +4,7 @@
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
       "risevision.common.config", "risevision.common.cache",
-      "ngBiscuit"
+      "risevision.common.oauth2", "ngBiscuit"
     ])
 
     // Some constants
