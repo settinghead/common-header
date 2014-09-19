@@ -3286,7 +3286,7 @@ gapiMockData.companies = [
                 var user = _.extend({
                   username: obj.username,
                   companyId: obj.companyId
-                }, obj.data);
+                }, JSON.parse(obj.data));
                 fakeDb.users.push(user);
                 delayed(cb, resp(user));
               }

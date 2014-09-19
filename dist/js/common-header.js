@@ -1624,15 +1624,16 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 
 .controller("SystemMessagesButtonCtrl", [
-  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages",
-  function($scope, userState, $log, $sce, getCoreSystemMessages) {
+  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages", "addSystemMessages",
+  function($scope, userState, $log, $sce, getCoreSystemMessages,
+    addSystemMessages) {
     $scope.renderHtml = function(html_code)
     {
         return $sce.trustAsHtml(html_code);
     };
     $scope.$watch("userState.selectedCompany.id", function (newVal) {
       if(newVal) {
-        getCoreSystemMessages(newVal).then($scope.digest);
+        getCoreSystemMessages(newVal).then(addSystemMessages);
       }
     });
   }
@@ -1913,6 +1914,7 @@ angular.module("risevision.common.header")
         field: "username",
         descending: false
       };
+
       $scope.changeSorting = function(field) {
         var sort = $scope.sort;
 
@@ -2676,7 +2678,7 @@ angular.module("risevision.common.geodata", [])
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
       "risevision.common.config", "risevision.common.cache",
-      "ngBiscuit"
+      "risevision.common.oauth2", "ngBiscuit"
     ])
 
     // Some constants
@@ -3272,7 +3274,8 @@ angular.module("risevision.common.geodata", [])
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
       }
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.update({username: username, data: JSON.stringify(profile)});
+        var request = coreApi.user.update({
+          username: username, data: JSON.stringify(profile)});
         request.execute(function (resp) {
             $log.debug("updateUser resp", resp);
             if(resp.error) {
@@ -3299,7 +3302,7 @@ angular.module("risevision.common.geodata", [])
         var request = coreApi.user.add({
           username: username,
           companyId: companyId,
-          data: profile});
+          data: JSON.stringify(profile)});
         request.execute(function (resp) {
           $log.debug("addUser resp", resp);
           if(resp.result === true) {
@@ -3518,9 +3521,8 @@ angular.module("risevision.common.geodata", [])
       };
     }])
 
-    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log", "userState",
-    "addSystemMessages",
-    function (gapiLoader, $q, $log, userState, addSystemMessages) {
+    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",
+    function (gapiLoader, $q, $log) {
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
@@ -3530,7 +3532,6 @@ angular.module("risevision.common.geodata", [])
             var items = resp;
             if(!(items instanceof Array) && items.items) { items = items.items; }
             $log.debug("getCoreSystemMessage resp", items);
-            addSystemMessages(items);
             deferred.resolve(items);
           });
         });
@@ -3594,6 +3595,34 @@ angular.module("risevision.common.company",
     "risevision.common.oauth2",
     "risevision.common.util"
   ])
+
+    .factory("validateAddress", ["$q", "storeAPILoader", "$log",
+  function ($q, storeAPILoader, $log) {
+      return function (company) {
+
+        var deferred = $q.defer();
+        $log.debug("validateAddress called", company);
+
+        var obj = {
+            "street": company.street,
+            "unit": company.unit,
+            "city": company.city,
+            "country": company.country,
+            "postalCode": company.postalCode,
+            "province": company.province,
+        };
+
+        storeAPILoader.get().then(function (storeApi) {
+          var request = storeApi.company.validateAddress(obj);
+          request.execute(function (resp) {
+              $log.debug("validateAddress resp", resp);
+              deferred.resolve(resp);
+          });
+        });
+
+        return deferred.promise;
+    };
+  }])
 
   .factory("switchCompany", ["userState", function (userState) {
     return function (company) {
@@ -3752,17 +3781,8 @@ angular.module("risevision.common.company",
    function ($q, $log, coreAPILoader, pick){
     return function (companyId, fields) {
         var deferred = $q.defer();
-        // var obj = {
-        //     "id": company.id,
-        //     "street": company.street,
-        //     "unit": company.unit,
-        //     "city": company.city,
-        //     "country": company.country,
-        //     "postalCode": company.postalCode,
-        //     "province": company.province,
-        //     "validate": validationRequired
-        // };
-        fields = pick(fields, "street", "unit", "city", "country", "postalCode", "province");
+        fields = pick(
+          fields, "street", "unit", "city", "country", "postalCode", "province");
         $log.debug("updateCompany called", companyId, fields);
         // fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
@@ -3871,7 +3891,7 @@ angular.module("risevision.common.company",
   try { angular.module("risevision.common.config"); }
   catch(err) { angular.module("risevision.common.config", []); }
 
-  angular.module("risevision.common.config", [])
+  angular.module("risevision.common.config")
     .value("CORE_URL", "https://rvacore-test.appspot.com/_ah/api")
     .value("STORE_URL", "http://localhost:8000/")
   ;
@@ -4057,9 +4077,8 @@ angular.module("risevision.common.gapi", [])
       };
     }])
 
-    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log", "userState",
-    "addSystemMessages",
-    function (gapiLoader, $q, $log, userState, addSystemMessages) {
+    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",
+    function (gapiLoader, $q, $log) {
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
@@ -4069,7 +4088,6 @@ angular.module("risevision.common.gapi", [])
             var items = resp;
             if(!(items instanceof Array) && items.items) { items = items.items; }
             $log.debug("getCoreSystemMessage resp", items);
-            addSystemMessages(items);
             deferred.resolve(items);
           });
         });
