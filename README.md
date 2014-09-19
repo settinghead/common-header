@@ -120,6 +120,33 @@ If you encounter problems or find defects we really want to hear about them. If 
 
 **Expected Results**
 
+``` bash
+npm run test
+```
+
+#### Unit Testing
+``` bash
+gulp test:unit
+```
+
+#### Protractor End-to-End Testing
+A mock Google API server is included for End-to-End testing. To run tests, do
+
+``` bash
+gulp test:e2e
+```
+
+## Submitting Issues
+If you encounter problems or find defects we really want to hear about them. If you could take the time to add them as issues to this Repository it would be most appreciated. When reporting issues please use the following format where applicable:
+
+**Reproduction Steps**
+
+1. did this
+2. then that
+3. followed by this (screenshots / video captures always help)
+
+**Expected Results**
+
 What you expected to happen.
 
 **Actual Results**
