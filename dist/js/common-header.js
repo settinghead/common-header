@@ -393,30 +393,25 @@ app.run(["$templateCache", function($templateCache) {
     "		<h2 id=\"switch-company\" class=\"modal-title\">\n" +
     "			Select Sub-Company\n" +
     "		</h2>\n" +
-    "		<div class=\"input-group company-search\">\n" +
-    "			<input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
-    "			  placeholder=\"Search Companies\"\n" +
-    "				ng-model=\"search.searchString\" ng-enter=\"doSearch()\">\n" +
-    "			<span class=\"input-group-btn\">\n" +
-    "				<button class=\"btn btn-primary\" type=\"submit\" ng-click=\"doSearch()\">\n" +
-    "					<i class=\"fa fa-white fa-search\"></i>\n" +
-    "				</button>\n" +
-    "			</span>\n" +
-    "		</div>\n" +
     "	</div>\n" +
     "	<div class=\"modal-body jfk-scrollbar\"\n" +
     "	  ng-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
+    "	  <!-- Search -->\n" +
+    "		<div class=\"input-group company-search add-bottom\">\n" +
+    "			<input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
+    "				placeholder=\"Search Companies\"\n" +
+    "				ng-model=\"search.searchString\"\n" +
+    "				ng-enter=\"doSearch()\">\n" +
+    "		    <span class=\"input-group-addon primary-bg\" ng-click=\"doSearch()\">\n" +
+    "		      <i class=\"fa fa-search\"></i>\n" +
+    "		    </span>\n" +
+    "		</div>\n" +
+    "		<!-- List of Companies -->\n" +
     "		<div class=\"list-group scrollable-list\">\n" +
-    "			<a href=\"#\" class=\"list-group-item\" ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
-    "				<div class=\"row\">\n" +
-    "					<div class=\"col-md-7\">\n" +
-    "						{{company.name}}\n" +
-    "					</div>\n" +
-    "					<div class=\"col-md-5 text-right\">\n" +
-    "						{{company.fullAddress}}\n" +
-    "					</div>\n" +
-    "				</div>\n" +
-    "			</a>\n" +
+    "			<div class=\"list-group-item\"  ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
+    "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{company.fullAddress}}</small>\n" +
+    "				</p>\n" +
+    "			</div>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "	<div class=\"modal-footer\">\n" +
@@ -644,46 +639,24 @@ app.run(["$templateCache", function($templateCache) {
     "  <h2 id=\"company-users-label\" class=\"modal-title\">Company Users</h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body company-users-modal\">\n" +
-    "  <div class=\"row action-bar\">\n" +
-    "    <div class=\"col-md-8 sort\">\n" +
-    "    <ul class=\"nav nav-pills nav-justified\">\n" +
-    "      <li ng-class=\"{active: sort.field === 'username'}\">\n" +
-    "        <a href=\"\" ng-click=\"changeSorting('username')\">Username\n" +
-    "          <span ng-class=\"{caret: sort.descending, }\" ng-show=\"sort.field === 'username'\"></span></a></li>\n" +
-    "      <li ng-class=\"{active: sort.field === 'firstName'}\">\n" +
-    "        <a href=\"\" ng-click=\"changeSorting('firstName')\">Name\n" +
-    "          <span ng-class=\"caret\" ng-show=\"sort.field === 'firstName'\"></span></a></li>\n" +
-    "      <li ng-class=\"{active: sort.field === 'lastLogin'}\">\n" +
-    "        <a href=\"\" ng-click=\"changeSorting('lastLogin')\">Last Login\n" +
-    "          <span ng-class=\"caret\" ng-show=\"sort.field === 'lastLogin'\"></span></a></li>\n" +
-    "    </ul>\n" +
-    "    </div>\n" +
-    "    <div class=\"col-md-4 text-right\">\n" +
-    "      <button class=\"btn btn-secondary\" ng-csv=\"users\"\n" +
-    "      filename=\"users.csv\" ng-if=\"false\">Download to CSV</button>\n" +
-    "    </div>\n" +
+    "  <!-- CSV Button -->\n" +
+    "  <div class=\"row action-bar add-bottom\" ng-if=\"false\">\n" +
+    "    <button class=\"btn btn-secondary\" ng-csv=\"users\"\n" +
+    "      filename=\"users.csv\">Download to CSV</button>\n" +
     "  </div>\n" +
+    "  <!-- Search -->\n" +
+    "  <div class=\"input-group company-search add-bottom\">\n" +
+    "    <input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
+    "      placeholder=\"Search Companies\"\n" +
+    "      ng-model=\"userSearchString\">\n" +
+    "      <span class=\"input-group-addon primary-bg\">\n" +
+    "        <i class=\"fa fa-search\"></i>\n" +
+    "      </span>\n" +
+    "  </div>\n" +
+    "  <!-- List of Users -->\n" +
     "  <div class=\"list-group scrollable-list\">\n" +
-    "    <div class=\"list-group-item\" ng-repeat=\"user in users | orderBy:sort.field:sort.descending\">\n" +
-    "      <div class=\"row\">\n" +
-    "        <div class=\"col-sm-10\">\n" +
-    "          <h3 class=\"list-group-item-heading\">\n" +
-    "            <a href=\"\"  ng-click=\"editUser(user.username)\">\n" +
-    "              {{user.email}}\n" +
-    "            </a>\n" +
-    "          </h3>\n" +
-    "        </div>\n" +
-    "        <div class=\"col-sm-2 edit\">\n" +
-    "          <a href=\"\" ng-click=\"editUser(user.username)\">\n" +
-    "            Edit\n" +
-    "          </a>\n" +
-    "        </div>\n" +
-    "      </div>\n" +
-    "      <div class=\"list-group-item-text\">\n" +
-    "        <h5>{{user.firstName}} {{user.lastName}}</h5>\n" +
-    "        <span ng-repeat=\"role in user.roles\">{{role | roleLabel}},&nbsp;</span>\n" +
-    "        Last Logged In {{user.lastLogin}}\n" +
-    "      </div>\n" +
+    "    <div class=\"list-group-item\" ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
+    "      <p class=\"list-group-item-text\"><strong>{{user.firstName}} {{user.lastName}}</strong> <small class=\"text-muted\">{{user.email}}</small></p>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n" +
@@ -1277,20 +1250,19 @@ app.run(["$templateCache", function($templateCache) {
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
+    "  <!-- Save -->\n" +
     "  <button type=\"button\"\n" +
-    "    class=\"btn btn-primary btn-fixed-width\"\n" +
+    "    class=\"btn btn-success btn-fixed-width\"\n" +
     "    data-dismiss=\"modal\"\n" +
     "    ng-click=\"save()\" id=\"save-button\">\n" +
     "    Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
-    "  </button>\n" +
-    "\n" +
-    "  <button type=\"button\" class=\"btn btn-danger btn-fixed-width\"\n" +
+    "  </button><!-- Cancel\n" +
+    "  --><button type=\"button\" class=\"btn btn-danger btn-fixed-width\"\n" +
     "    ng-if=\"username\"\n" +
     "    ng-click=\"deleteUser()\">\n" +
     "		Delete <i class=\"fa fa-white fa-trash-o icon-right\"></i>\n" +
-    "	</button>\n" +
-    "\n" +
-    "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
+    "	</button><!-- Delete\n" +
+    "   --><button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +

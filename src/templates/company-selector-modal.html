@@ -7,30 +7,25 @@
 		<h2 id="switch-company" class="modal-title">
 			Select Sub-Company
 		</h2>
-		<div class="input-group company-search">
-			<input id="csSearch" type="text" class="form-control"
-			  placeholder="Search Companies"
-				ng-model="search.searchString" ng-enter="doSearch()">
-			<span class="input-group-btn">
-				<button class="btn btn-primary" type="submit" ng-click="doSearch()">
-					<i class="fa fa-white fa-search"></i>
-				</button>
-			</span>
-		</div>
 	</div>
 	<div class="modal-body jfk-scrollbar"
 	  ng-scroll-event="handleScroll($event, isEndEvent)">
+	  <!-- Search -->
+		<div class="input-group company-search add-bottom">
+			<input id="csSearch" type="text" class="form-control"
+				placeholder="Search Companies"
+				ng-model="search.searchString"
+				ng-enter="doSearch()">
+		    <span class="input-group-addon primary-bg" ng-click="doSearch()">
+		      <i class="fa fa-search"></i>
+		    </span>
+		</div>
+		<!-- List of Companies -->
 		<div class="list-group scrollable-list">
-			<a href="#" class="list-group-item" ng-repeat="company in companies.list" ng-click="setCompany(company)">
-				<div class="row">
-					<div class="col-md-7">
-						{{company.name}}
-					</div>
-					<div class="col-md-5 text-right">
-						{{company.fullAddress}}
-					</div>
-				</div>
-			</a>
+			<div class="list-group-item"  ng-repeat="company in companies.list" ng-click="setCompany(company)">
+				<p class="list-group-item-text"><strong>{{company.name}}</strong><br/><small class="text-muted">{{company.fullAddress}}</small>
+				</p>
+			</div>
 		</div>
 	</div>
 	<div class="modal-footer">

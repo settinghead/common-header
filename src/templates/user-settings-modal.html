@@ -88,20 +88,19 @@
   </form>
 </div>
 <div class="modal-footer">
+  <!-- Save -->
   <button type="button"
-    class="btn btn-primary btn-fixed-width"
+    class="btn btn-success btn-fixed-width"
     data-dismiss="modal"
     ng-click="save()" id="save-button">
     Save <i class="fa fa-white fa-check icon-right"></i>
-  </button>
-
-  <button type="button" class="btn btn-danger btn-fixed-width"
+  </button><!-- Cancel
+  --><button type="button" class="btn btn-danger btn-fixed-width"
     ng-if="username"
     ng-click="deleteUser()">
 		Delete <i class="fa fa-white fa-trash-o icon-right"></i>
-	</button>
-
-  <button type="button" class="btn btn-primary btn-fixed-width" data-dismiss="modal" ng-click="closeModal()">
+	</button><!-- Delete
+   --><button type="button" class="btn btn-primary btn-fixed-width" ng-click="closeModal()">
     Cancel <i class="fa fa-white fa-times icon-right"></i>
   </button>
 </div>
