@@ -29,9 +29,8 @@
       };
     }])
 
-    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log", "userState",
-    "addSystemMessages",
-    function (gapiLoader, $q, $log, userState, addSystemMessages) {
+    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",
+    function (gapiLoader, $q, $log) {
       return function (companyId) {
         var deferred = $q.defer();
         gapiLoader().then(function (gApi) {
@@ -41,7 +40,6 @@
             var items = resp;
             if(!(items instanceof Array) && items.items) { items = items.items; }
             $log.debug("getCoreSystemMessage resp", items);
-            addSystemMessages(items);
             deferred.resolve(items);
           });
         });

@@ -14,6 +14,7 @@ angular.module("risevision.common.header")
         field: "username",
         descending: false
       };
+
       $scope.changeSorting = function(field) {
         var sort = $scope.sort;
 
