@@ -87,7 +87,8 @@
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
       }
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.update({username: username, data: JSON.stringify(profile)});
+        var request = coreApi.user.update({
+          username: username, data: JSON.stringify(profile)});
         request.execute(function (resp) {
             $log.debug("updateUser resp", resp);
             if(resp.error) {
@@ -114,7 +115,7 @@
         var request = coreApi.user.add({
           username: username,
           companyId: companyId,
-          data: profile});
+          data: JSON.stringify(profile)});
         request.execute(function (resp) {
           $log.debug("addUser resp", resp);
           if(resp.result === true) {

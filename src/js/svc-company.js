@@ -166,17 +166,8 @@ angular.module("risevision.common.company",
    function ($q, $log, coreAPILoader, pick){
     return function (companyId, fields) {
         var deferred = $q.defer();
-        // var obj = {
-        //     "id": company.id,
-        //     "street": company.street,
-        //     "unit": company.unit,
-        //     "city": company.city,
-        //     "country": company.country,
-        //     "postalCode": company.postalCode,
-        //     "province": company.province,
-        //     "validate": validationRequired
-        // };
-        fields = pick(fields, "street", "unit", "city", "country", "postalCode", "province");
+        fields = pick(
+          fields, "street", "unit", "city", "country", "postalCode", "province");
         $log.debug("updateCompany called", companyId, fields);
         // fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
