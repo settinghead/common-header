@@ -1,20 +1,68 @@
 Rise Vision Common Header [![Build Status](http://devtools1.risevision.com:8080/job/Common-Header-PR/badge/icon)](http://devtools1.risevision.com:8080/job/Common-Header-PR/)
 ==============
+![](screenshots/header.png)
 
-**Copyright © 2014 - Rise Vision Incorporated.**
+## Introduction
 
-*Use of this software is governed by the GPLv3 license (available in the LICENSE file).*
+A responsive AngularJS-based common header implementation to be used across Rise Vision web applications and pages.
 
-## Documentation
+<!-- Include a description of Project Name and what it's purpose is.
+This does this to achieve this for you.
+Do not use acronyms.
+If applicable include screenshots and other images,
+links to demonstration examples,
+user documentation and any other applicable reference materials.
+-->
 
-### bower.json
+Rise Vision Common Header works in conjunction with [Rise Vision](http://www.risevision.com), the [digital signage management application](http://rva.risevision.com/) that runs on [Google Cloud](https://cloud.google.com).
+
+At this time Chrome is the only browser that this project and Rise Vision supports.
+
+## Built With
+<!-- example list follows, replace with actual tools used -->
+
+- [NPM (node package manager)](https://www.npmjs.org/)
+- [Bower](http://bower.io/)
+- [AngularJS](https://https://angularjs.org/)
+- [Gulp](http://gulpjs.com/)
+- [Karma](https://github.com/karma-runner/karma) and [Protractor](https://github.com/angular/protractor) for testing
+- [Rise Vision Gulp Factory](github.com/Rise-Vision/widget-tester.git)
+
+## Usage
+<!-- TODO -->
+
+## Development
+
+### Prerequisites
+- [NPM (node package manager)](https://www.npmjs.org/)
+- [Bower](http://bower.io/)
+- (Optional) [Karma](https://github.com/karma-runner/karma) and [Protractor](https://github.com/angular/protractor) for running tests
+
+
+### Local Development Environment Setup and Installation
+<!--provide exact details on how to setup the local environment for at least Windows, and if doable, Linux and Mac-->
+
+``` bash
+npm run dev-install
+```
+
+### Run Local
+<!--include how to run the application locally if applicable-->
+
+``` bash
+gulp server-watch
+```
+
+### Usage
+
+#### bower.json
 ``` js
 "dependencies": {
-  "common-header": "https://github.com/Rise-Vision/common-header.git"
+  "rise-vision-common-header": "https://github.com/Rise-Vision/common-header.git"
 }
 ```
 
-### html
+#### html
 Be sure to load angular first.  Then....
 ``` html
     <!-- build:js script/common-header.min.js -->
@@ -26,33 +74,89 @@ Be sure to load angular first.  Then....
     <!-- endbuild -->
 ```
 
-### gulpfile.js
+#### gulpfile.js
 For the build output, process the html file with gulp-usemin, ensuring the js
 target is included and the jsdev target is ignored so that it gets removed from the html file.
 ...
+
 ``` js
 .pipe(usemin({
   js: [uglify({mangle:false, outSourceMap: true})]
 })
-.pipe(gulp.dest(dist/");
+.pipe(gulp.dest("dist/");
 ```
 
+### Dependencies
+*include and describe all dependencies*
+
+### Testing
+
+To run all tests at once, do
+
+``` bash
+npm run test
+```
+
+#### Unit Testing
+``` bash
+gulp test:unit
+```
+
+#### Protractor End-to-End Testing
+A mock Google API server is included for End-to-End testing. To run tests, do
+
+``` bash
+gulp test:e2e
+```
+
+## Submitting Issues
+If you encounter problems or find defects we really want to hear about them. If you could take the time to add them as issues to this Repository it would be most appreciated. When reporting issues please use the following format where applicable:
+
+**Reproduction Steps**
+
+1. did this
+2. then that
+3. followed by this (screenshots / video captures always help)
+
+**Expected Results**
+
+What you expected to happen.
+
+**Actual Results**
+
+What actually happened. (screenshots / video captures always help)
+
+## Contributing
+All contributions are greatly appreciated and welcome! If you would first like to sound out your contribution ideas please post your thoughts to our [community](http://community.risevision.com), otherwise submit a pull request and we will do our best to incorporate it
+
+### Languages
+<!--*If this Project supports Internationalization include this section:*
+
+If you would like translate the user interface for this product to another language please complete the following:
+- Download the english translation file from this repository.
+- Download and install POEdit. This is software that you can use to write translations into another language.
+- Open the translation file in the [POEdit](http://www.poedit.net/) program and set the language for which you are writing a translation.
+- In the Source text window, you will see the English word or phrase to be translated. You can provide a translation for it in the Translation window.
+- When the translation is complete, save it with a .po extension and email the file to support@risevision.com. Please be sure to indicate the Widget or app the translation file is for, as well as the language that it has been translated into, and we will integrate it after the translation has been verified.
+
+*if the Project does not support Internationalization include this section and include this need in our suggested contributions*-->
+
+In order to support languages i18n needs to be added to this repository.  Please refer to our Suggested Contributions.
+
+### Suggested Contributions
+- *we need this*
+- *and we need that*
+- *we could really use this*
+- *and if we don't already have it (see above), we could use i18n Language Support*
+
+## Resources
 If you have any questions or problems please don't hesitate to join our lively and responsive community at http://community.risevision.com.
 
 If you are looking for user documentation on Rise Vision please see http://www.risevision.com/help/users/
 
 If you would like more information on developing applications for Rise Vision please visit http://www.risevision.com/help/developers/.
 
+**Facilitator**
 
-## Contribution
-If you are considering contributing to this open source project, our favourite option, we have 3 good reasons why we released this code under version 3 of the GNU General Public License, and we think they are 3 good reasons for why you should get involved too:
-
-1. Together we can make something far better than we could on our own.
-
-2. If you want to use our code to make something that is specific to you, and that doesn’t fit with what we want to do, we don’t want to get in your way. Take our code and make just what you need.
-
-3. We know that some of you nervous types worry about what happens if our company gets taken out in the zombie apocalypse. We get it, and neither one of us wants to deal with that delicate question of software escrow agreements for the “just in case we kick the bucket scenario”. No worries! We made it easy. No fuss, no cost, no lawyers! We published the software here. Have at it.
-
-Are we missing something? Something could be better? Jump in, branch our code, make what you want, and send us a Pull Request. If it fits for both of us then of course we will accept it, maybe with a tweak or two, test it, and deploy it. If it doesn’t fit, no worries, just Fork our code and create your own specialized application for your specific needs. Or, if you’re just feeling paranoid, download the code, and put it under your mattress.
-
-**Either way, welcome to our project!**
+* [Xiyang Chen](https://github.com/settinghead "Xiyang Chen")
+* [Varun Vachhar](https://github.com/winkervsbecks "Varun Vachhar")
