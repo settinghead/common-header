@@ -25,7 +25,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </a>\n" +
     "</li>\n" +
     "<li class=\"divider\" ng-show=\"userState.user\"></li>\n" +
-    "<li ng-show=\"userState.user\">\n" +
+    "<li ng-show=\"userState.user.username\">\n" +
     "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button action\">\n" +
     "    <i class=\"fa fa-sign-out\"></i>\n" +
     "    <span class=\"item-name\">Sign Out</span>\n" +
@@ -291,7 +291,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
     "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompany.name || userState.user.company.name}}\n" +
+    "  {{userState.selectedCompany.name}}\n" +
     "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
     "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
@@ -1032,7 +1032,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<a href=\"{{shoppingCartUrl()}}\" class=\"shopping-cart-button\">\n" +
+    "<a href=\"{{shoppingCartUrl}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
     "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
@@ -1193,7 +1193,11 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"user-settings-label\" class=\"modal-title\">User Settings</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body user-settings-modal\">\n" +
+    "<div class=\"modal-body user-settings-modal\"\n" +
+    "  rv-spinner=\"spinnerOptions\"\n" +
+    "  rv-spinner-key=\"user-settings\"\n" +
+    "  rv-spinner-start-active=\"0\"\n" +
+    ">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\" ng-if=\"user.username\">\n" +
     "      <label>\n" +

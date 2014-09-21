@@ -27,6 +27,7 @@
       $log.debug("getUser called", criteria);
       if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
         //skip if already exists
+        $log.debug("getUser resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
         deferred.resolve(userInfoCache.get("profile-" + username));
       }
       else {

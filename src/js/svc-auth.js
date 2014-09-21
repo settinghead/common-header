@@ -4,7 +4,8 @@
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
       "risevision.common.config", "risevision.common.cache",
-      "risevision.common.oauth2", "ngBiscuit"
+      "risevision.common.oauth2", "ngBiscuit",
+      "risevision.common.util"
     ])
 
     // Some constants
@@ -12,8 +13,8 @@
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
     .service("accessTokenKeeper", ["$log", "getBaseDomain", "cookieStore",
-      "gapiLoader",
-      function ($log, getBaseDomain, cookieStore, gapiLoader) {
+      "gapiLoader", "pick",
+      function ($log, getBaseDomain, cookieStore, gapiLoader, pick) {
 
       //load token from cookie
 
@@ -33,10 +34,10 @@
 
       this.set = function (obj) {
         if(typeof obj === "object") {
+          //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
+          obj = pick(obj, "access_token", "state");
           cookieStore.put(
-            "rv-token", JSON.stringify(obj),
-            {domain: "." + getBaseDomain()}
-            );
+            "rv-token", JSON.stringify(obj), {domain: "." + getBaseDomain()});
           cookieStore.put(
             "rv-token", JSON.stringify(obj));
         }

@@ -25,7 +25,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </a>\n" +
     "</li>\n" +
     "<li class=\"divider\" ng-show=\"userState.user\"></li>\n" +
-    "<li ng-show=\"userState.user\">\n" +
+    "<li ng-show=\"userState.user.username\">\n" +
     "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button action\">\n" +
     "    <i class=\"fa fa-sign-out\"></i>\n" +
     "    <span class=\"item-name\">Sign Out</span>\n" +
@@ -291,7 +291,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
     "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompany.name || userState.user.company.name}}\n" +
+    "  {{userState.selectedCompany.name}}\n" +
     "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
     "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
@@ -1032,7 +1032,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<a href=\"{{shoppingCartUrl()}}\" class=\"shopping-cart-button\">\n" +
+    "<a href=\"{{shoppingCartUrl}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
     "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
@@ -1193,7 +1193,11 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"user-settings-label\" class=\"modal-title\">User Settings</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body user-settings-modal\">\n" +
+    "<div class=\"modal-body user-settings-modal\"\n" +
+    "  rv-spinner=\"spinnerOptions\"\n" +
+    "  rv-spinner-key=\"user-settings\"\n" +
+    "  rv-spinner-start-active=\"0\"\n" +
+    ">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\" ng-if=\"user.username\">\n" +
     "      <label>\n" +
@@ -1438,7 +1442,7 @@ angular.module("risevision.common.header")
         template: $templateCache.get("user-settings-modal.html"),
         controller: "UserSettingsModalCtrl",
         size: size,
-        resolve: {username: function () {return;},
+        resolve: {username: function () {return userState.user.username;},
         add: function () {return false; }}
       });
     };
@@ -1986,9 +1990,9 @@ angular.module("risevision.common.header")
 
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser",
-    "addUser", "username", "userRoleMap", "$log",
+    "addUser", "username", "userRoleMap", "$log", "$loading",
     function($scope, $modalInstance, updateUser, getUser, deleteUser,
-      addUser, username, userRoleMap, $log) {
+      addUser, username, userRoleMap, $log, $loading) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -2013,6 +2017,8 @@ angular.module("risevision.common.header")
       };
 
       $scope.save = function () {
+        $loading.start("user-settings-modal");
+
         updateUser(username, $scope.user).then(
           function () {
             $modalInstance.close("success");
@@ -2021,7 +2027,7 @@ angular.module("risevision.common.header")
             $log.debug(error);
             alert("Error: " + error.message);
           }
-        );
+        ).finally(function (){$loading.stop("user-settings-modal");});
       };
     }
   ]);
@@ -2678,7 +2684,8 @@ angular.module("risevision.common.geodata", [])
   angular.module("risevision.common.auth",
     ["risevision.common.gapi", "risevision.common.localstorage",
       "risevision.common.config", "risevision.common.cache",
-      "risevision.common.oauth2", "ngBiscuit"
+      "risevision.common.oauth2", "ngBiscuit",
+      "risevision.common.util"
     ])
 
     // Some constants
@@ -2686,8 +2693,8 @@ angular.module("risevision.common.geodata", [])
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
     .service("accessTokenKeeper", ["$log", "getBaseDomain", "cookieStore",
-      "gapiLoader",
-      function ($log, getBaseDomain, cookieStore, gapiLoader) {
+      "gapiLoader", "pick",
+      function ($log, getBaseDomain, cookieStore, gapiLoader, pick) {
 
       //load token from cookie
 
@@ -2707,10 +2714,10 @@ angular.module("risevision.common.geodata", [])
 
       this.set = function (obj) {
         if(typeof obj === "object") {
+          //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
+          obj = pick(obj, "access_token", "state");
           cookieStore.put(
-            "rv-token", JSON.stringify(obj),
-            {domain: "." + getBaseDomain()}
-            );
+            "rv-token", JSON.stringify(obj), {domain: "." + getBaseDomain()});
           cookieStore.put(
             "rv-token", JSON.stringify(obj));
         }
@@ -3214,6 +3221,7 @@ angular.module("risevision.common.geodata", [])
       $log.debug("getUser called", criteria);
       if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
         //skip if already exists
+        $log.debug("getUser resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
         deferred.resolve(userInfoCache.get("profile-" + username));
       }
       else {

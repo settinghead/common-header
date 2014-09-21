@@ -23,9 +23,9 @@ angular.module("risevision.common.header")
 
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser",
-    "addUser", "username", "userRoleMap", "$log",
+    "addUser", "username", "userRoleMap", "$log", "$loading",
     function($scope, $modalInstance, updateUser, getUser, deleteUser,
-      addUser, username, userRoleMap, $log) {
+      addUser, username, userRoleMap, $log, $loading) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -50,6 +50,8 @@ angular.module("risevision.common.header")
       };
 
       $scope.save = function () {
+        $loading.start("user-settings-modal");
+
         updateUser(username, $scope.user).then(
           function () {
             $modalInstance.close("success");
@@ -58,7 +60,7 @@ angular.module("risevision.common.header")
             $log.debug(error);
             alert("Error: " + error.message);
           }
-        );
+        ).finally(function (){$loading.stop("user-settings-modal");});
       };
     }
   ]);

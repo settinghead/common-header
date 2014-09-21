@@ -13,7 +13,7 @@
 
   var fs = require("fs");
 
-  browser.driver.manage().window().setSize(1024, 768);
+  browser.driver.manage().window().setSize(1280, 768);
 
   describe("Registration", function() {
   var ptor;
