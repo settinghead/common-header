@@ -55,7 +55,7 @@ angular.module("risevision.common.header")
         template: $templateCache.get("user-settings-modal.html"),
         controller: "UserSettingsModalCtrl",
         size: size,
-        resolve: {username: function () {return;},
+        resolve: {username: function () {return userState.user.username;},
         add: function () {return false; }}
       });
     };

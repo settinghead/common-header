@@ -12,9 +12,13 @@
   </head>
   <body ng-controller="MainController">
     <common-header nav-options="navOptions"></common-header>
+    <button ng-show="realGapiLoaded" ng-click="loadFakeGAPI()" class="btn btn-secondary">Load Fake GAPI</button>
     <div ng-if="db">
       This app was built for the sole purpose of testing &amp; demoing common header.
       Set server latency to <input type="number" ng-model="db.serverDelay" id="server-delay" /> ms.
+
+      <button class="btn" ng-click="loadRealGAPI()" id="load-real-gapi">Load Actual GAPI</button>
+
       <button class="btn" ng-click="resetDb()" id="reset-db">Reset DB</button>
 
       <ng-view off-canvas-content>Loading...</ng-view>
@@ -154,8 +158,6 @@
     <script type="text/javascript" src="../../src/js/svc-system-messages.js"></script>
     <!-- endbuild -->
 
-    <!-- // <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientJSLoad"></script> -->
-
     <!-- build:js js/test-app.js -->
     <script type="text/javascript" src="../../components/JSONedit/js/JSONEdit.js"></script>
     <script type="text/javascript" src="../gapi-mock/data.js"></script>
@@ -165,7 +167,6 @@
     <script type="text/javascript" src="../../components/mustache/mustache.js"></script>
     <script type="text/javascript" src="../gapi-mock.js"></script>
     <!-- endbuild -->
-
     <style>
 
     .jsonView .deleteKeyBtn, .jsonView .moveArrayItemBtn {
@@ -176,6 +177,7 @@
       display: inline-block;
     }
     </style>
+
     <script type="text/javascript">
       angular.module("test-app", ["ngRoute", "risevision.common.header", "JSONedit"])
       .config(['$routeProvider', function($routeProvider) {
@@ -212,9 +214,73 @@
         $scope.resetDb = function () {
           window.gapi.resetDb();
         }
-        $scope.$watch("db", function (newVal) {
-          localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal || {}));
-        }, true);
+
+        $scope.realGapiLoaded = window.realGapiLoaded;
+
+        function deleteAllCookies() {
+            var cookies = document.cookie.split(";");
+
+            for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i];
+              var eqPos = cookie.indexOf("=");
+              var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+              document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+        }
+
+        $scope.loadFakeGAPI = function () {
+          deleteAllCookies();
+          function deleteParam(key)
+          {
+              key = encodeURI(key);
+              var kvp = document.location.search.substr(1).split('&');
+              var i=kvp.length; var x; while(i--)
+              {
+                  x = kvp[i].split('=');
+                  if (x[0]==key)
+                  {
+                      kvp.splice(i, 1);
+                      break;
+                  }
+              }
+              //this will reload the page, it's likely better to store this until finished
+              document.location.search = kvp.join('&');
+          }
+          deleteAllCookies();
+          deleteParam("realGapi");
+
+        }
+        $scope.loadRealGAPI = function (){
+          function insertParam(key, value)
+          {
+              key = encodeURI(key); value = encodeURI(value);
+              var kvp = document.location.search.substr(1).split('&');
+              var i=kvp.length; var x; while(i--)
+              {
+                  x = kvp[i].split('=');
+                  if (x[0]==key)
+                  {
+                      x[1] = value;
+                      kvp[i] = x.join('=');
+                      break;
+                  }
+              }
+              if(i<0) {kvp[kvp.length] = [key,value].join('=');}
+              //this will reload the page, it's likely better to store this until finished
+              document.location.search = kvp.join('&');
+          }
+
+          deleteAllCookies();
+
+          insertParam("realGapi", 1);
+        }
+
+        if(!$scope.realGapiLoaded) {
+          $scope.$watch("db", function (newVal) {
+            localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal || {}));
+          }, true);
+        }
+
       })
 
       .controller("FakeGoogleUserController", function ($scope, $rootScope) {

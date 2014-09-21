@@ -4,7 +4,11 @@
   </button>
   <h2 id="user-settings-label" class="modal-title">User Settings</h2>
 </div>
-<div class="modal-body user-settings-modal">
+<div class="modal-body user-settings-modal"
+  rv-spinner="spinnerOptions"
+  rv-spinner-key="user-settings"
+  rv-spinner-start-active="0"
+>
   <form role="form">
     <div class="form-group" ng-if="user.username">
       <label>
