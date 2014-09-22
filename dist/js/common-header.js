@@ -122,10 +122,10 @@ app.run(["$templateCache", function($templateCache) {
     "	<div class=\"container\">\n" +
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
-    "			<a class=\"navbar-brand visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
+    "			<a class=\"navbar-brand visible-md visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
-    "			<a class=\"navbar-brand hidden-lg\"\n" +
+    "			<a class=\"navbar-brand hidden-md hidden-lg\"\n" +
     "				href=\"\" off-canvas-toggle>\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
@@ -220,7 +220,7 @@ app.run(["$templateCache", function($templateCache) {
     "			<!-- END Action Nav -->\n" +
     "\n" +
     "			<!-- Nav Links -->\n" +
-    "			<div class=\"navbar-collapse navbar-left hidden-xs hidden-sm hidden-md\">\n" +
+    "			<div class=\"navbar-collapse navbar-left hidden-xs hidden-sm\">\n" +
     "				<ul class=\"nav navbar-nav\">\n" +
     "					<li ng-repeat=\"opt in navOptions\">\n" +
     "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
