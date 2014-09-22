@@ -125,9 +125,9 @@ app.run(["$templateCache", function($templateCache) {
     "			<a class=\"navbar-brand visible-md visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
-    "			<a class=\"navbar-brand hidden-md hidden-lg\"\n" +
+    "			<a class=\"navbar-brand hidden-md hidden-lg text-center\"\n" +
     "				href=\"\" off-canvas-toggle>\n" +
-    "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
+    "				<i class=\"fa fa-bars\"></i>\n" +
     "			</a>\n" +
     "\n" +
     "			<!-- If User Authenticated -->\n" +
@@ -500,7 +500,7 @@ app.run(["$templateCache", function($templateCache) {
     "        Send Monitoring Emails To\n" +
     "      </label>\n" +
     "      <input id=\"company-settings-monitoring\"\n" +
-    "        type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com\"/>\n" +
+    "        type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
@@ -1081,7 +1081,7 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"sub-company-monitoring\">\n" +
     "        Send Monitoring Emails To\n" +
     "      </label>\n" +
-    "      <input id=\"sub-company-monitoring\" type=\"email\" class=\"form-control\" />\n" +
+    "      <input id=\"sub-company-monitoring\" type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <a href=\"\" data-dismiss=\"modal\" data-toggle=\"modal\" ng-click=\"moveCompany()\">Move a Company Under Your Company</a>\n" +
