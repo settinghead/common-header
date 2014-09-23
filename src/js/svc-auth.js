@@ -60,21 +60,34 @@
     }])
 
     .factory("getBaseDomain", ["$log", "$location", function ($log, $location) {
-
       var result;
-
+      function looksLikeIp(addr)
+      {
+       if (/^([0-9])+\.([0-9])+\.([0-9])+\.([0-9])+$/.test(addr))
+        {
+          return (true);
+        }
+        return (false);
+      }
       return function getBaseDomain() {
         if(!result) {
           var hostname = $location.host();
           var port = $location.port() ? ":" + $location.port() : "";
-          var parts = hostname.split(".");
-          if(parts.length > 1) {
-            //localhost
-            result = parts.slice(parts.length -2).join(".") + port;
-          }
-          else {
+
+          if(looksLikeIp(hostname)) {
             result = hostname + port;
           }
+          else {
+            var parts = hostname.split(".");
+            if(parts.length > 1) {
+              //localhost
+              result = parts.slice(parts.length -2).join(".") + port;
+            }
+            else {
+              result = hostname + port;
+            }
+          }
+
           $log.debug("baseDomain", result);
         }
         return result;
