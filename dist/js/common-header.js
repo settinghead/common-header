@@ -5,13 +5,13 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\">\n" +
-    "  {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}\n" +
+    "  {{elizaState.user.profile.firstName}} {{elizaState.user.profile.lastName}}\n" +
     "</li>\n" +
     "<li class=\"dropdown-header\">\n" +
-    "  {{userState.user.profile.email}}\n" +
+    "  {{elizaState.user.profile.email}}\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
-    "<li ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"divider\" ng-show=\"elizaState.user.profile\"></li>\n" +
+    "<li ng-show=\"elizaState.user.profile\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
     "    <i class=\"fa fa-cogs\"></i>\n" +
     "    <span class=\"item-name\">User Settings</span>\n" +
@@ -24,8 +24,8 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Payment Methods</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user\"></li>\n" +
-    "<li ng-show=\"userState.user.username\">\n" +
+    "<li class=\"divider\" ng-show=\"elizaState.user\"></li>\n" +
+    "<li ng-show=\"elizaState.user.username\">\n" +
     "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button action\">\n" +
     "    <i class=\"fa fa-sign-out\"></i>\n" +
     "    <span class=\"item-name\">Sign Out</span>\n" +
@@ -44,13 +44,13 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Desktop and tablet -->\n" +
     "<li\n" +
     "  class=\"dropdown\"\n" +
-    "  ng-class=\"{'hidden-xs': userState.user}\"\n" +
-    "  ng-show=\"userState.user\"\n" +
+    "  ng-class=\"{'hidden-xs': elizaState.user}\"\n" +
+    "  ng-show=\"elizaState.user\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
-    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
+    "      <img ng-src=\"{{elizaState.user.picture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "    <ul class=\"dropdown-menu\">\n" +
@@ -62,18 +62,18 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user}\"\n" +
-    "  ng-show=\"userState.user\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': elizaState.user}\"\n" +
+    "  ng-show=\"elizaState.user\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
-    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
+    "      <img ng-src=\"{{elizaState.user.picture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-hide=\"userState.user\">\n" +
+    "<li ng-hide=\"elizaState.user\">\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +
@@ -118,7 +118,7 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("common-header.html",
     "<!-- Common Header Navbar -->\n" +
     "<nav class=\"navbar navbar-default navbar-static-top\"\n" +
-    "	ng-class=\"{'double-margin': userState.subCompanySelected}\" role=\"navigation\">\n" +
+    "	ng-class=\"{'double-margin': elizaState.subCompanySelected}\" role=\"navigation\">\n" +
     "	<div class=\"container\">\n" +
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
@@ -142,7 +142,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Shopping Cart -->\n" +
     "				<li class=\"shopping-cart\"\n" +
     "				  ng-controller=\"ShoppingCartButtonCtrl\"\n" +
-    "					ng-show=\"userState.shoppingCart.items !== null\"\n" +
+    "					ng-show=\"elizaState.shoppingCart.items !== null\"\n" +
     "					ng-include=\"'shoppingcart-button.html'\">\n" +
     "				</li>\n" +
     "				<!-- Current App -->\n" +
@@ -206,7 +206,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
-    "					ng-if=\"userState.user.profile\"\n" +
+    "					ng-if=\"elizaState.user.profile\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -250,9 +250,9 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-if=\"userState.subCompanySelected\"\n" +
+    "	<div ng-if=\"elizaState.subCompanySelected\"\n" +
     "	  class=\"sub-company-alert\">\n" +
-    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompany.name}}\n" +
+    "		You're in a Sub-Company of your Company. Current Company - {{elizaState.selectedCompany.name}}\n" +
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
@@ -283,61 +283,61 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\"\n" +
-    "  ng-show=\"userState.user.company\">\n" +
+    "  ng-show=\"elizaState.user.company\">\n" +
     "  Current Company\n" +
     "</li>\n" +
-    "<li class=\"dropdown-header\" ng-show=\"userState.user.company\">\n" +
+    "<li class=\"dropdown-header\" ng-show=\"elizaState.user.company\">\n" +
     "  <!-- home -->\n" +
-    "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
+    "  <i ng-show=\"!elizaState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
-    "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompany.name}}\n" +
-    "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
+    "  <i ng-show=\"elizaState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
+    "  {{elizaState.selectedCompany.name}}\n" +
+    "  <div ng-show=\"elizaState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"!userState.user.company\">\n" +
+    "<li ng-show=\"elizaState.subCompanySelected\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"!elizaState.user.company\">\n" +
     "  <a class=\"action\" href=\"\"\n" +
     "    ng-click=\"companySettings()\">\n" +
     "    <i class=\"fa fa-plus\"></i>\n" +
     "    <span class=\"item-name\">Create a Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.subCompanySelected\">\n" +
+    "<li ng-show=\"elizaState.subCompanySelected\">\n" +
     "  <a href=\"\" ng-click=\"resetCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-home\"></i>\n" +
     "    <span class=\"item-name\">Switch To My Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.user.company\">\n" +
+    "<li ng-show=\"elizaState.user.company\">\n" +
     "  <a href=\"\" ng-click=\"switchCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-share-square-o\"></i>\n" +
     "    <span class=\"item-name\">Select Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"elizaState.roleMap.sa\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"elizaState.roleMap.sa\">\n" +
     "  <a href=\"\" ng-click=\"addSubCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-plus\"></i>\n" +
     "    <span class=\"item-name\">Add Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"elizaState.roleMap.sa\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"elizaState.roleMap.sa\">\n" +
     "  <a href=\"\" ng-click=\"moveCompany()\" class=\"move-company-menu-button action\">\n" +
     "    <i class=\"fa fa-arrows\"></i>\n" +
     "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.pu\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.pu\">\n" +
+    "<li ng-show=\"elizaState.roleMap.pu\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"elizaState.roleMap.pu\">\n" +
     "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"elizaState.roleMap.sa\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"elizaState.roleMap.sa\">\n" +
     "  <a href=\"\" data-toggle=\"modal\" ng-click=\"companyUsers()\" class=\"action company-users-menu-button\">\n" +
     "    <i class=\"fa fa-users\"></i>\n" +
     "    <span class=\"item-name\">Company Users</span>\n" +
@@ -354,7 +354,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li class=\"dropdown hidden-xs\" ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"dropdown hidden-xs\" ng-show=\"elizaState.user.profile\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle company-buttons-icon\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -368,8 +368,8 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    " ng-show=\"userState.user.profile\"\n" +
-    " ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
+    " ng-show=\"elizaState.user.profile\"\n" +
+    " ng-class=\"{'visible-xs-inline-block': elizaState.user.profile}\">\n" +
     "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -873,10 +873,10 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
     "    <div class=\"to-company\">\n" +
-    "      {{userState.user.company.name}}<br>\n" +
-    "      {{userState.user.company.address}}<br>\n" +
-    "      {{userState.user.company.city}}, {{userState.user.company.province}},\n" +
-    "      {{userState.user.company.country}} {{userState.user.company.postalCode}}\n" +
+    "      {{elizaState.user.company.name}}<br>\n" +
+    "      {{elizaState.user.company.address}}<br>\n" +
+    "      {{elizaState.user.company.city}}, {{elizaState.user.company.province}},\n" +
+    "      {{elizaState.user.company.country}} {{elizaState.user.company.postalCode}}\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div ng-show=\"errors.length > 0\">\n" +
@@ -1034,7 +1034,7 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("shoppingcart-button.html",
     "<a href=\"{{shoppingCartUrl}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
-    "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
+    "  <span id=\"cartBadge\" class=\"label label-primary\">{{elizaState.shoppingCart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
     "");
 }]);
@@ -1138,7 +1138,7 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li class=\"system-message\"\n" +
-    "  ng-repeat=\"message in userState.messages\"\n" +
+    "  ng-repeat=\"message in elizaState.messages\"\n" +
     "  ng-bind-html=\"renderHtml(message.text)\">\n" +
     "</li>\n" +
     "");
@@ -1153,10 +1153,10 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("system-messages-button.html",
     "<!-- Desktop and tablet -->\n" +
     "<li class=\"dropdown system-messages hidden-xs\"\n" +
-    "ng-show=\"userState.user.profile\">\n" +
+    "ng-show=\"elizaState.user.profile\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
-    "    <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
+    "    <span class=\"label label-danger system-messages-badge\">{{elizaState.messages.length}}</span>\n" +
     "  </a>\n" +
     "  <ul class=\"dropdown-menu system-messages\">\n" +
     "    <ng-include\n" +
@@ -1168,13 +1168,13 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Mobile -->\n" +
     "<li\n" +
     "  class=\"system-messages\"\n" +
-    "  ng-show=\"userState.user.profile\"\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
+    "  ng-show=\"elizaState.user.profile\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': elizaState.user.profile}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
-    "        <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
+    "        <span class=\"label label-danger system-messages-badge\">{{elizaState.messages.length}}</span>\n" +
     "    </a>\n" +
     "</li>\n" +
     "");
@@ -1320,10 +1320,10 @@ angular.module("risevision.common.header", [
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
     "$templateCache", "userStatusDependencies", "checkUserStatus",
-    "userState",
+    "elizaState",
   function($modal, $rootScope, $q, $loading, $interval,
     oauthAPILoader, $log, $templateCache,
-    dependencies, checkUserStatus, userState) {
+    dependencies, checkUserStatus, elizaState) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
@@ -1339,7 +1339,7 @@ angular.module("risevision.common.header", [
             backdrop: "static"
           });
           modalInstance.result.finally(function (){
-            userState.status = "pendingCheck";
+            elizaState.status = "pendingCheck";
           });
         };
 
@@ -1364,7 +1364,7 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $rootScope.$watch("userState.status", function (newStatus, oldStatus){
+        $rootScope.$watch("elizaState.status", function (newStatus, oldStatus){
           if(newStatus) {
             $log.debug("status changed from", oldStatus, "to", newStatus);
             //render a dialog based on the state user is in
@@ -1377,8 +1377,8 @@ angular.module("risevision.common.header", [
           }
         });
 
-        $rootScope.userState = userState;
-        userState.status = "pendingCheck";
+        $rootScope.elizaState = elizaState;
+        elizaState.status = "pendingCheck";
 
       }
     };
@@ -1387,14 +1387,14 @@ angular.module("risevision.common.header", [
 
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$rootScope", "$loading", "authenticate",
+  "elizaState", "$rootScope", "$loading", "authenticate",
   "signOut", "$log", "getUser", "cookieStore",
-  function($scope, $modal, $templateCache, userState, $rootScope,
+  function($scope, $modal, $templateCache, elizaState, $rootScope,
   $loading, authenticate, signOut, $log, getUser, cookieStore) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
-    $scope.$watch("userState.status", function (newStatus){
+    $scope.$watch("elizaState.status", function (newStatus){
       if (newStatus === "pendingCheck") {
         $loading.start("auth-buttons");
       }
@@ -1415,20 +1415,20 @@ angular.module("risevision.common.header")
 
     $scope.authenticate = function() {
       authenticate(true).finally(function(){
-        userState.status = "pendingCheck";
+        elizaState.status = "pendingCheck";
         $loading.start("auth-buttons");
       });
     };
 
     $scope.register = function () {
       cookieStore.remove("surpressRegistration");
-      userState.status = "pendingCheck";
+      elizaState.status = "pendingCheck";
     };
 
     $scope.logout = function () {
       signOut().then(function (){
         alert("If you are using a public computer, please do not forget to log out of Google Account, or close your browser window if you are using Incognito mode. ");
-        userState.status = "pendingCheck";
+        elizaState.status = "pendingCheck";
         $loading.start("auth-buttons");
       }, function (err) {
         $log.error("sign out failed", err);
@@ -1442,7 +1442,7 @@ angular.module("risevision.common.header")
         template: $templateCache.get("user-settings-modal.html"),
         controller: "UserSettingsModalCtrl",
         size: size,
-        resolve: {username: function () {return userState.user.username;},
+        resolve: {username: function () {return elizaState.user.username;},
         add: function () {return false; }}
       });
     };
@@ -1460,13 +1460,13 @@ angular.module("risevision.common.header")
 
 
 
-    $scope.$watchCollection("userState.user.profile.roles", function (newVals) {
+    $scope.$watchCollection("elizaState.user.profile.roles", function (newVals) {
       if(newVals) {
-        if(!userState.roleMap) {
-          userState.roleMap = {};
+        if(!elizaState.roleMap) {
+          elizaState.roleMap = {};
         }
         newVals.forEach(function (val){
-          userState.roleMap[val] = true;
+          elizaState.roleMap[val] = true;
         });
       }
     });
@@ -1475,25 +1475,25 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "switchCompany", "userState", "getCompany",
-  function($scope, $modal, $templateCache, switchCompany, userState, getCompany) {
+  "switchCompany", "elizaState", "getCompany",
+  function($scope, $modal, $templateCache, switchCompany, elizaState, getCompany) {
 
     getCompany().then(function (company) {
-      userState.user.company = company;
+      elizaState.user.company = company;
     });
 
     //reload user companies when current username is changed
-    $scope.$watch("userState.user.profile", function (newVal) {
+    $scope.$watch("elizaState.user.profile", function (newVal) {
       if(newVal) {
         getCompany().then(function (company) {
-          userState.user.company = company;
+          elizaState.user.company = company;
         });
       }
     });
 
-    $scope.$watch("userState.user.company.id", function (newVal) {
+    $scope.$watch("elizaState.user.company.id", function (newVal) {
       if(newVal) {
-        userState.selectedCompany = userState.user.company;
+        elizaState.selectedCompany = elizaState.user.company;
       }
     });
 
@@ -1515,11 +1515,11 @@ angular.module("risevision.common.header")
           companyId: function () {
             var cId = companyId;
             if(!cId) {
-              if(userState.selectedCompany) {
-                cId = userState.selectedCompany.id;
+              if(elizaState.selectedCompany) {
+                cId = elizaState.selectedCompany.id;
               }
               else {
-                cId = userState.user.company.id;
+                cId = elizaState.user.company.id;
               }
             }
             return cId;
@@ -1537,11 +1537,11 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
+            if(elizaState.selectedCompany) {
+              return elizaState.selectedCompany.id;
             }
             else {
-              return userState.user.company.id;
+              return elizaState.user.company.id;
             }
           }
         }
@@ -1555,11 +1555,11 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
+            if(elizaState.selectedCompany) {
+              return elizaState.selectedCompany.id;
             }
             else {
-              return userState.user.company.id;
+              return elizaState.user.company.id;
             }
           }
         }
@@ -1578,13 +1578,13 @@ angular.module("risevision.common.header")
     };
 
     $scope.resetCompany = function () {
-      switchCompany($scope.userState.user.company);
+      switchCompany($scope.elizaState.user.company);
     };
 
     //watch and monitor if current company is a subcompany
-    $scope.$watch("userState.selectedCompany.id", function (newVal) {
-      if(newVal && $scope.userState.user && $scope.userState.user.company) {
-        $scope.userState.subCompanySelected = (newVal !== $scope.userState.user.company.id);
+    $scope.$watch("elizaState.selectedCompany.id", function (newVal) {
+      if(newVal && $scope.elizaState.user && $scope.elizaState.user.company) {
+        $scope.elizaState.subCompanySelected = (newVal !== $scope.elizaState.user.company.id);
       }
     });
   }
@@ -1604,22 +1604,21 @@ angular.module("risevision.common.header")
 })
 
 .controller("ShoppingCartButtonCtrl", [
-  "$scope", "shoppingCart", "userState", "$log", "STORE_URL",
-  function($scope, shoppingCart, userState, $log, STORE_URL) {
-    userState.shoppingCart = {};
+  "$scope", "shoppingCart", "elizaState", "$log", "STORE_URL",
+  function($scope, shoppingCart, elizaState, $log, STORE_URL) {
+    elizaState.shoppingCart = {};
 
-    $scope.shoppingCartUrl = function () {
-      return STORE_URL + "#/shopping-cart";
-    };
+    $scope.shoppingCartUrl = STORE_URL + "#/shopping-cart";
 
-    $scope.$watch("userState.user.profile", function (newVal) {
+    $scope.$watch("elizaState.user.profile", function (newVal) {
       if(newVal) {
-        userState.shoppingCart.items = shoppingCart.initialize();
-        $log.debug("Shopping cart populated.");
+        elizaState.shoppingCart.items = shoppingCart.initialize();
+        $log.debug("Shopping cart populated.", elizaState.shoppingCart.items);
       }
       else {
         //clear cart on scope
-        userState.shoppingCart.items = null;
+        elizaState.shoppingCart.items = null;
+        $log.debug("Shopping cart cleared.");
       }
     });
   }
@@ -1628,14 +1627,14 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 
 .controller("SystemMessagesButtonCtrl", [
-  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages", "addSystemMessages",
-  function($scope, userState, $log, $sce, getCoreSystemMessages,
+  "$scope", "elizaState", "$log", "$sce", "getCoreSystemMessages", "addSystemMessages",
+  function($scope, elizaState, $log, $sce, getCoreSystemMessages,
     addSystemMessages) {
     $scope.renderHtml = function(html_code)
     {
         return $sce.trustAsHtml(html_code);
     };
-    $scope.$watch("userState.selectedCompany.id", function (newVal) {
+    $scope.$watch("elizaState.selectedCompany.id", function (newVal) {
       if(newVal) {
         getCoreSystemMessages(newVal).then(addSystemMessages);
       }
@@ -1674,22 +1673,22 @@ angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
   "$scope", "$modalInstance", "getUser",
   "$loading", "registerAccount", "$log", "cookieStore",
-  "userState", "pick",
+  "elizaState", "pick",
   function($scope, $modalInstance, getUser, $loading,
-    registerAccount, $log, cookieStore, userState, pick) {
+    registerAccount, $log, cookieStore, elizaState, pick) {
 
 
     getUser().then().finally(function () {
-      if(!userState.profile) { userState.profile = {}; }
-      if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
-        userState.user.profile.mailSyncEnabled = false;
+      if(!elizaState.profile) { elizaState.profile = {}; }
+      if(!angular.isDefined(elizaState.user.profile.mailSyncEnabled)) {
+        elizaState.user.profile.mailSyncEnabled = false;
       }
-      if(!angular.isDefined(userState.user.accepted)) {
-        userState.user.accepted = false;
+      if(!angular.isDefined(elizaState.user.accepted)) {
+        elizaState.user.accepted = false;
       }
 
-      $scope.profile = pick(userState.user.profile, "email", "mailSyncEnabled");
-      $scope.profile.accepted = userState.user.accepted;
+      $scope.profile = pick(elizaState.user.profile, "email", "mailSyncEnabled");
+      $scope.profile.accepted = elizaState.user.accepted;
 
     });
 
@@ -1700,7 +1699,7 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
 
-    var watch = $scope.$watch("userState.status", function (newVal) {
+    var watch = $scope.$watch("elizaState.status", function (newVal) {
       if(newVal) {
         if(newVal === "pendingCheck") {
           //start the spinner
@@ -1708,7 +1707,7 @@ angular.module("risevision.common.header")
         }
         else {
           $loading.stop("registration-modal");
-          if(userState.status !== "basicProfileCreated") {
+          if(elizaState.status !== "basicProfileCreated") {
             $modalInstance.close("success");
             //stop the watch
             watch();
@@ -1719,10 +1718,10 @@ angular.module("risevision.common.header")
 
     $scope.save = function () {
       //update terms and conditions date
-      registerAccount(userState.user.username, $scope.profile).then(
+      registerAccount(elizaState.user.username, $scope.profile).then(
         function () {
           // $modalInstance.close("success");
-        userState.status = "pendingCheck";
+        elizaState.status = "pendingCheck";
         },
         function (err) {alert("Error: " + err);
         $log.error(err);});
@@ -1739,7 +1738,7 @@ angular.module("risevision.common.header")
     $scope.authenticate = function() {
       $loading.start("authenticate-button");
       authenticate(true).finally(function(){
-        $rootScope.userState.status = "pendingCheck";
+        $rootScope.elizaState.status = "pendingCheck";
         $modalInstance.close("success");
         $loading.stop("authenticate-button");
       });
@@ -2692,9 +2691,129 @@ angular.module("risevision.common.geodata", [])
     .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
     .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
-    .service("accessTokenKeeper", ["$log", "getBaseDomain", "cookieStore",
+    .service("auth", ["$log", "$q", "userInfoCache", "_accessTokenKeeper",
+    "gapiLoader", "cookieStore", "CLIENT_ID", "SCOPES", "$location", "oauthAPILoader",
+    "getOAuthUserInfo", "getBaseDomain",
+      function ($log, $q, userInfoCache, _accessTokenKeeper, gapiLoader,
+      cookieStore, CLIENT_ID, SCOPES, $location, oauthAPILoader,
+      getOAuthUserInfo, getBaseDomain) {
+
+      var self = this;
+
+      var _user = {};
+      var _username = null;
+      var _picture = null;
+      var _profile = {};
+      var _selectedCompany = {};
+      var _cart = {};
+
+      var clearObj = function (obj) {
+        for (var prop in obj) { if (obj.hasOwnProperty(prop)) { delete obj[prop]; } }
+      };
+
+      this.reset = function () {
+        clearObj(_user); clearObj(_profile); clearObj(_selectedCompany);
+        clearObj(_cart);
+      };
+
+      this.getUsername = function () {
+        return _username;
+      };
+
+      this.signOut = function() {
+        var deferred = $q.defer();
+        userInfoCache.removeAll();
+        // The flag the indicates a user is potentially
+        // authenticated already, must be destroyed.
+        _accessTokenKeeper.clear().then(function () {
+          //clear auth token
+          // The majority of state is in here
+          shoppingCart.destroy();
+          //call google api to sign out
+          gapiLoader().then(function (gApi) {gApi.auth.signOut(); });
+          cookieStore.remove("surpressRegistration");
+          deferred.resolve();
+          $log.debug("User is signed out.");
+        }, deferred.reject);
+        return deferred.promise;
+      };
+
+      var authorize = function(attemptImmediate) {
+        var authorizeDeferred = $q.defer();
+
+        var opts = {
+          client_id: CLIENT_ID,
+          scope: SCOPES,
+          cookie_policy: $location.protocol() + "://" + "." +
+            getBaseDomain()
+        };
+
+        if (attemptImmediate) {
+          opts.immediate = true;
+        }
+        else {
+          opts.prompt = "select_account";
+        }
+
+        oauthAPILoader().then(function (gApi) {
+          gApi.auth.authorize(opts, function (authResult) {
+            $log.debug("authResult", authResult);
+            if (authResult && !authResult.error) {
+              _accessTokenKeeper.set(authResult);
+              getOAuthUserInfo().then(function (oauthUserInfo) {
+                if(_username !== oauthUserInfo.email) {
+                    _username = oauthUserInfo.email;
+                    _picture = oauthUserInfo.picture;
+                }
+                authorizeDeferred.resolve(authResult);
+              }, authorizeDeferred.reject);
+            }
+            else {
+              authorizeDeferred.reject("not authorized");
+            }
+          });
+        }, authorizeDeferred.reject);
+        return authorizeDeferred.promise;
+      };
+
+      this.authenticate = function(forceAuth) {
+        $log.debug("authentication called");
+        var authenticateDeferred = $q.defer();
+        if(forceAuth) {
+          self.reset();
+          userInfoCache.removeAll();
+        }
+
+        // This flag indicates a potentially authenticated user.
+        var accessToken = _accessTokenKeeper.get();
+        var userAuthed = (angular.isDefined(accessToken) && accessToken !== null);
+        $log.debug("userAuthed", userAuthed);
+
+        if (forceAuth || userAuthed === true) {
+          authorize(userAuthed === true && !forceAuth)
+          .then(function(authResult) {
+            if (authResult && ! authResult.error) {
+              authenticateDeferred.resolve();
+            }
+            else {
+              authenticateDeferred.reject("Authentication Error: " + authResult.error);
+            }
+          });
+        }
+        else {
+          var msg = "user is not authenticated";
+          $log.info(msg);
+          authenticateDeferred.reject(msg);
+        }
+
+        return authenticateDeferred.promise;
+      };
+
+    }])
+
+    .service("_accessTokenKeeper", ["$log", "$q", "getBaseDomain", "cookieStore",
       "gapiLoader", "pick",
-      function ($log, getBaseDomain, cookieStore, gapiLoader, pick) {
+      function ($log, $q, getBaseDomain, cookieStore, gapiLoader, pick) {
 
       //load token from cookie
 
@@ -2737,6 +2856,7 @@ angular.module("risevision.common.geodata", [])
           gApi.auth.setToken();
         });
       };
+
     }])
 
     .factory("getBaseDomain", ["$log", "$location", function ($log, $location) {
@@ -2758,129 +2878,6 @@ angular.module("risevision.common.geodata", [])
           $log.debug("baseDomain", result);
         }
         return result;
-      };
-    }])
-
-    /**
-    * A Convenience method for the app to
-    * get the userState object.
-    *
-    */
-    .factory("resetUserState", ["$log", "userState",
-     function ($log, userState){
-      return function() {
-        delete userState.user;
-        delete userState.selectedCompany;
-        delete userState.isRiseAdmin;
-        $log.debug("User state has been reset.");
-      };
-    }])
-
-    .factory("authenticate", ["$log", "$q", "resetUserState",
-      "userInfoCache", "userState", "CLIENT_ID", "SCOPES", "$location",
-      "getBaseDomain", "oauthAPILoader", "accessTokenKeeper", "getOAuthUserInfo",
-      function ($log, $q, resetUserState, userInfoCache, userState, CLIENT_ID,
-      SCOPES, $location, getBaseDomain, oauthAPILoader, accessTokenKeeper,
-      getOAuthUserInfo) {
-        /*
-        * Responsible for triggering the Google OAuth process.
-        *
-        */
-        var authorize = function(attemptImmediate) {
-          var authorizeDeferred = $q.defer();
-
-          var opts = {
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            cookie_policy: $location.protocol() + "://" + "." +
-              getBaseDomain()
-          };
-
-          if (attemptImmediate) {
-            opts.immediate = true;
-          }
-          else {
-            opts.prompt = "select_account";
-          }
-
-          oauthAPILoader().then(function (gApi) {
-            gApi.auth.authorize(opts, function (authResult) {
-              $log.debug("authResult", authResult);
-              if (authResult && !authResult.error) {
-                accessTokenKeeper.set(authResult);
-                getOAuthUserInfo().then(function (oauthUserInfo) {
-                  if(!userState.user || userState.user.username !== oauthUserInfo.email) {
-                    userState.user  = {
-                      username: oauthUserInfo.email,
-                      picture: oauthUserInfo.picture
-                    };
-                  }
-                  authorizeDeferred.resolve(authResult);
-                }, authorizeDeferred.reject);
-              }
-              else {
-                authorizeDeferred.reject("not authorized");
-              }
-            });
-          }, authorizeDeferred.reject);
-          return authorizeDeferred.promise;
-        };
-
-      return function(forceAuth) {
-        $log.debug("authentication called");
-        var authenticateDeferred = $q.defer();
-        if(forceAuth) {
-          resetUserState();
-          userInfoCache.removeAll();
-        }
-
-        // This flag indicates a potentially authenticated user.
-        var accessToken = accessTokenKeeper.get();
-        var userAuthed = (angular.isDefined(accessToken) && accessToken !== null);
-        $log.debug("userAuthed", userAuthed);
-
-        if (forceAuth || userAuthed === true) {
-          authorize(userAuthed === true && !forceAuth)
-          .then(function(authResult) {
-            if (authResult && ! authResult.error) {
-              authenticateDeferred.resolve();
-            }
-            else {
-              authenticateDeferred.reject("Authentication Error: " + authResult.error);
-            }
-          });
-        }
-        else {
-          var msg = "user is not authenticated";
-          $log.info(msg);
-          authenticateDeferred.reject(msg);
-        }
-
-        return authenticateDeferred.promise;
-      };
-    }])
-
-    .factory("signOut", ["$q", "$log", "gapiLoader", "cookieStore", "getBaseDomain",
-    "userInfoCache", "accessTokenKeeper", "resetUserState", "shoppingCart",
-     function ($q, $log, gapiLoader, cookieStore, getBaseDomain, userInfoCache,
-       accessTokenKeeper, resetUserState, shoppingCart) {
-      return function() {
-        var deferred = $q.defer();
-        userInfoCache.removeAll();
-        // The flag the indicates a user is potentially
-        // authenticated already, must be destroyed.
-        accessTokenKeeper.clear().then(function () {
-          //clear auth token
-          // The majority of state is in here
-          resetUserState();
-          shoppingCart.destroy();
-          //call google api to sign out
-          gapiLoader().then(function (gApi) {gApi.auth.signOut(); });
-          cookieStore.remove("surpressRegistration");
-          deferred.resolve();
-          $log.debug("User is signed out.");
-        }, deferred.reject);
-        return deferred.promise;
       };
     }]);
 
@@ -2970,8 +2967,8 @@ angular.module("risevision.common.geodata", [])
   })
 
   .factory("checkUserStatus", [
-    "userStatusDependencies", "$injector", "$q", "$log", "userState",
-    function (userStatusDependencies, $injector, $q, $log, userState) {
+    "userStatusDependencies", "$injector", "$q", "$log", "elizaState",
+    function (userStatusDependencies, $injector, $q, $log, elizaState) {
 
       var attemptStatus = function(status){
         var lastD;
@@ -3036,12 +3033,12 @@ angular.module("risevision.common.geodata", [])
         if(!desiredStatus) {desiredStatus = "acceptableState"; }
         return attemptStatus(desiredStatus).then(
           function () {
-            userState.status = desiredStatus;
+            elizaState.status = desiredStatus;
           },
           function (status) {
             // if rejected at any given step,
             // show the dialog of that relevant step
-            userState.status = status;
+            elizaState.status = status;
           });
       };
   }])
@@ -3149,8 +3146,6 @@ angular.module("risevision.common.geodata", [])
 
   angular.module("risevision.common.cache", [])
 
-    .constant("userState", { })
-
     .value("rvStorage", sessionStorage)
 
     .factory("userInfoCache", ["$cacheFactory", function ($cacheFactory) {
@@ -3211,15 +3206,15 @@ angular.module("risevision.common.geodata", [])
   })
 
   .factory("getUser", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
-  "userState", "getOAuthUserInfo", "userInfoCache",
-  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
+  "elizaState", "getOAuthUserInfo", "userInfoCache",
+  function (oauthAPILoader, coreAPILoader, $q, $log, elizaState, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
       var deferred = $q.defer();
       var criteria = {};
       if (username) {criteria.username = username; }
       $log.debug("getUser called", criteria);
-      if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
+      if(userInfoCache.get("profile-" + username || (elizaState.user && elizaState.user.username))) {
         //skip if already exists
         $log.debug("getUser resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
         deferred.resolve(userInfoCache.get("profile-" + username));
@@ -3235,7 +3230,7 @@ angular.module("risevision.common.geodata", [])
             else {
               $log.debug("getUser resp", resp);
                 //get user profile
-                userState.user.profile = angular.extend({
+                elizaState.user.profile = angular.extend({
                   username: oauthUserInfo.email
                 }, resp.item);
               userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
@@ -3270,8 +3265,8 @@ angular.module("risevision.common.geodata", [])
   }])
 
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getUser", "pick",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser, pick) {
+  "userInfoCache", "elizaState", "getUser", "pick",
+  function ($q, coreAPILoader, $log, userInfoCache, elizaState, getUser, pick) {
     return function (username, profile) {
       $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
@@ -3407,9 +3402,9 @@ angular.module("risevision.common.geodata", [])
         var subTotal = 0;
         if(items) {
           for (var i = 0; i < items.length; i++) {
-            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-            var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
-            if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
+            var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
+            var productCost = (isCAD) ? items[i].selected.priceCAD : items[i].selected.priceUSD;
+            if (items[i].paymentTerms !== "Metered" && items[i].paymentTerms !== "Subscription") {
               shipping += shippingCost * items[i].quantity || 0;
               subTotal += productCost * items[i].quantity || 0;
             }
@@ -3422,7 +3417,7 @@ angular.module("risevision.common.geodata", [])
         var shipping = 0;
         if(items) {
           for (var i = 0; i < items.length; i++) {
-            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+            var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
             shipping += shippingCost * items[i].quantity || 0;
           }
         }
@@ -3455,7 +3450,7 @@ angular.module("risevision.common.geodata", [])
         if (itemToRemove && itemsMap[itemToRemove.id]) {
           delete itemsMap[itemToRemove.id];
           for (var i = 0; i < items.length; i++) {
-            if (items[i].item.id === itemToRemove.id) {
+            if (items[i].id === itemToRemove.id) {
               items.splice(i, 1);
               delete itemsMap[itemToRemove.id];
               break;
@@ -3468,7 +3463,7 @@ angular.module("risevision.common.geodata", [])
         if (itemToAdjust && $.isNumeric(qty) && itemsMap[itemToAdjust.id]) {
           if (qty > 0) {
             itemsMap[itemToAdjust.id].quantity = qty;
-            itemsMap[itemToAdjust.id].item.qty = qty;
+            itemsMap[itemToAdjust.id].qty = qty;
             persistToStorage();
           }
           else {
@@ -3477,21 +3472,25 @@ angular.module("risevision.common.geodata", [])
         }
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
+
+        if (itemsMap[itemToAdd.productId] && (itemToAdd.paymentTerms === "Subscription" || itemToAdd.paymentTerms === "Metered")) {
+          return;
+        }
+
         if (items && itemToAdd && angular.isNumber(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
-          if (itemsMap[itemToAdd.id]) {
+          if (itemsMap[itemToAdd.productId]) {
             // qty for existing item is increased
-            itemsMap[itemToAdd.id].quantity += qty;
-            itemsMap[itemToAdd.id].item.qty += qty;
+            itemsMap[itemToAdd.productId].qty = parseInt(qty) + parseInt(itemsMap[itemToAdd.productId].quantity);
           }
           else {
             // item is not already in the cart
-            itemsMap[itemToAdd.id] = {item: angular.copy(itemToAdd), quantity: qty};
-            itemsMap[itemToAdd.id].item.qty = qty;
-            items.push(itemsMap[itemToAdd.id]);
+            itemsMap[itemToAdd.productId] = angular.copy(itemToAdd);
+            itemsMap[itemToAdd.productId].qty = qty;
+            items.push(itemsMap[itemToAdd.productId]);
           }
-          itemsMap[itemToAdd.id].item.selected = itemToAdd.orderedPricing[pricingIndex];
+          itemsMap[itemToAdd.productId].selected = itemToAdd.orderedPricing[pricingIndex];
           persistToStorage();
-          $log.debug("Item", itemToAdd.id, "added to cart", itemToAdd);
+          $log.debug("Item", itemToAdd.productId, "added to cart", itemToAdd);
         }
       }
     };
@@ -3505,7 +3504,7 @@ angular.module("risevision.common.geodata", [])
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
 
-    .factory("addSystemMessages", ["userState", function (userState) {
+    .factory("addSystemMessages", ["elizaState", function (elizaState) {
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
@@ -3513,17 +3512,17 @@ angular.module("risevision.common.geodata", [])
       }
 
       return function (messages) {
-        if(!userState.messages) {
-          userState.messages = [];
+        if(!elizaState.messages) {
+          elizaState.messages = [];
         }
         messages.forEach(function (m) {
           //temporary logic to avoid duplicate messages
           var duplicate = false;
-          userState.messages.forEach(function (um) {
+          elizaState.messages.forEach(function (um) {
             if(um.text === m.text) {duplicate = true; }
           });
           if(!duplicate) {
-            pushMessage(m, userState.messages);
+            pushMessage(m, elizaState.messages);
           }
         });
       };
@@ -3573,7 +3572,6 @@ angular.module("risevision.common.geodata", [])
         oauthAPILoader().then(function (gApi){
           gApi.client.oauth2.userinfo.get().execute(function (resp){
             $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
-            userInfoCache.put("oauth2UserInfo", resp);
             if(!resp) {
               deferred.reject();
             }
@@ -3581,6 +3579,7 @@ angular.module("risevision.common.geodata", [])
               deferred.reject(resp.error);
             }
             else {
+              userInfoCache.put("oauth2UserInfo", resp);
               deferred.resolve(resp);
             }
           });
@@ -3632,9 +3631,9 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("switchCompany", ["userState", function (userState) {
+  .factory("switchCompany", ["elizaState", function (elizaState) {
     return function (company) {
-      userState.selectedCompany= company;
+      elizaState.selectedCompany= company;
     };
   }])
 
@@ -3676,9 +3675,9 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "userState",
+  .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "elizaState",
   "getOAuthUserInfo", "createCompany",
-  function ($q, $log, coreAPILoader, userState, getOAuthUserInfo, createCompany) {
+  function ($q, $log, coreAPILoader, elizaState, getOAuthUserInfo, createCompany) {
     return function () {
       var deferred = $q.defer();
       $log.debug("getUserCompanies called");
@@ -3688,7 +3687,7 @@ angular.module("risevision.common.company",
         request.execute(function (resp) {
           $log.debug("core.company.list resp", resp);
           if(resp.error){
-            delete userState.selectedCompany;
+            delete elizaState.selectedCompany;
             deferred.reject();
           }
           else {
@@ -3696,12 +3695,12 @@ angular.module("risevision.common.company",
             //update user state if supplied
             var updateState = function (c) {
               $log.debug("selectedCompany", c);
-              userState.user.company = c;
+              elizaState.user.company = c;
 
               //release 1 simpification - everyone is Purchaser ("pu" role)
-              userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
+              elizaState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
 
-              userState.selectedCompany = c;
+              elizaState.selectedCompany = c;
             };
             if (resp.items && resp.items.length > 0) {
               updateState(resp.items[0]);
@@ -4061,7 +4060,7 @@ angular.module("risevision.common.gapi", [])
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
 
-    .factory("addSystemMessages", ["userState", function (userState) {
+    .factory("addSystemMessages", ["elizaState", function (elizaState) {
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
@@ -4069,17 +4068,17 @@ angular.module("risevision.common.gapi", [])
       }
 
       return function (messages) {
-        if(!userState.messages) {
-          userState.messages = [];
+        if(!elizaState.messages) {
+          elizaState.messages = [];
         }
         messages.forEach(function (m) {
           //temporary logic to avoid duplicate messages
           var duplicate = false;
-          userState.messages.forEach(function (um) {
+          elizaState.messages.forEach(function (um) {
             if(um.text === m.text) {duplicate = true; }
           });
           if(!duplicate) {
-            pushMessage(m, userState.messages);
+            pushMessage(m, elizaState.messages);
           }
         });
       };

@@ -6,17 +6,17 @@ angular.module("risevision.common.header")
   function($scope, $modalInstance, getUser, $loading,
     registerAccount, $log, cookieStore, userState, pick) {
 
+    $scope.profile = {};
 
     getUser().then().finally(function () {
-      if(!userState.profile) { userState.profile = {}; }
-      if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
-        userState.user.profile.mailSyncEnabled = false;
+      if(!angular.isDefined($scope.profile.mailSyncEnabled)) {
+        $scope.profile.mailSyncEnabled = false;
       }
-      if(!angular.isDefined(userState.user.accepted)) {
-        userState.user.accepted = false;
+      if(!angular.isDefined(userState.profile.accepted)) {
+        $scope.profile.accepted = false;
       }
 
-      $scope.profile = pick(userState.user.profile, "email", "mailSyncEnabled");
+      $scope.profile = pick(userState.profile, "email", "mailSyncEnabled");
       $scope.profile.accepted = userState.user.accepted;
 
     });
@@ -28,7 +28,7 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
 
-    var watch = $scope.$watch("userState.status", function (newVal) {
+    var watch = $scope.$watch("elizaState.status", function (newVal) {
       if(newVal) {
         if(newVal === "pendingCheck") {
           //start the spinner
@@ -36,7 +36,7 @@ angular.module("risevision.common.header")
         }
         else {
           $loading.stop("registration-modal");
-          if(userState.status !== "basicProfileCreated") {
+          if(elizaState.status !== "basicProfileCreated") {
             $modalInstance.close("success");
             //stop the watch
             watch();
@@ -47,10 +47,10 @@ angular.module("risevision.common.header")
 
     $scope.save = function () {
       //update terms and conditions date
-      registerAccount(userState.user.username, $scope.profile).then(
+      registerAccount(elizaState.user.username, $scope.profile).then(
         function () {
           // $modalInstance.close("success");
-        userState.status = "pendingCheck";
+        elizaState.status = "pendingCheck";
         },
         function (err) {alert("Error: " + err);
         $log.error(err);});

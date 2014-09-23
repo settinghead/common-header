@@ -5,7 +5,7 @@
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
 
-    .factory("addSystemMessages", ["userState", function (userState) {
+    .factory("addSystemMessages", ["elizaState", function (elizaState) {
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
@@ -13,17 +13,17 @@
       }
 
       return function (messages) {
-        if(!userState.messages) {
-          userState.messages = [];
+        if(!elizaState.messages) {
+          elizaState.messages = [];
         }
         messages.forEach(function (m) {
           //temporary logic to avoid duplicate messages
           var duplicate = false;
-          userState.messages.forEach(function (um) {
+          elizaState.messages.forEach(function (um) {
             if(um.text === m.text) {duplicate = true; }
           });
           if(!duplicate) {
-            pushMessage(m, userState.messages);
+            pushMessage(m, elizaState.messages);
           }
         });
       };

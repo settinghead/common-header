@@ -17,15 +17,15 @@
   })
 
   .factory("getUser", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
-  "userState", "getOAuthUserInfo", "userInfoCache",
-  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
+  "elizaState", "getOAuthUserInfo", "userInfoCache",
+  function (oauthAPILoader, coreAPILoader, $q, $log, elizaState, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
       var deferred = $q.defer();
       var criteria = {};
       if (username) {criteria.username = username; }
       $log.debug("getUser called", criteria);
-      if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
+      if(userInfoCache.get("profile-" + username || (elizaState.user && elizaState.user.username))) {
         //skip if already exists
         $log.debug("getUser resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
         deferred.resolve(userInfoCache.get("profile-" + username));
@@ -41,7 +41,7 @@
             else {
               $log.debug("getUser resp", resp);
                 //get user profile
-                userState.user.profile = angular.extend({
+                elizaState.user.profile = angular.extend({
                   username: oauthUserInfo.email
                 }, resp.item);
               userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
@@ -76,8 +76,8 @@
   }])
 
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getUser", "pick",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser, pick) {
+  "userInfoCache", "elizaState", "getUser", "pick",
+  function ($q, coreAPILoader, $log, userInfoCache, elizaState, getUser, pick) {
     return function (username, profile) {
       $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();

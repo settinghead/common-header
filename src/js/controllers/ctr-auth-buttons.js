@@ -1,13 +1,13 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$rootScope", "$loading", "authenticate",
+  "elizaState", "$rootScope", "$loading", "authenticate",
   "signOut", "$log", "getUser", "cookieStore",
-  function($scope, $modal, $templateCache, userState, $rootScope,
+  function($scope, $modal, $templateCache, elizaState, $rootScope,
   $loading, authenticate, signOut, $log, getUser, cookieStore) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
-    $scope.$watch("userState.status", function (newStatus){
+    $scope.$watch("elizaState.status", function (newStatus){
       if (newStatus === "pendingCheck") {
         $loading.start("auth-buttons");
       }
@@ -28,20 +28,20 @@ angular.module("risevision.common.header")
 
     $scope.authenticate = function() {
       authenticate(true).finally(function(){
-        userState.status = "pendingCheck";
+        elizaState.status = "pendingCheck";
         $loading.start("auth-buttons");
       });
     };
 
     $scope.register = function () {
       cookieStore.remove("surpressRegistration");
-      userState.status = "pendingCheck";
+      elizaState.status = "pendingCheck";
     };
 
     $scope.logout = function () {
       signOut().then(function (){
         alert("If you are using a public computer, please do not forget to log out of Google Account, or close your browser window if you are using Incognito mode. ");
-        userState.status = "pendingCheck";
+        elizaState.status = "pendingCheck";
         $loading.start("auth-buttons");
       }, function (err) {
         $log.error("sign out failed", err);
@@ -55,7 +55,7 @@ angular.module("risevision.common.header")
         template: $templateCache.get("user-settings-modal.html"),
         controller: "UserSettingsModalCtrl",
         size: size,
-        resolve: {username: function () {return userState.user.username;},
+        resolve: {username: function () {return elizaState.user.username;},
         add: function () {return false; }}
       });
     };
@@ -73,13 +73,13 @@ angular.module("risevision.common.header")
 
 
 
-    $scope.$watchCollection("userState.user.profile.roles", function (newVals) {
+    $scope.$watchCollection("elizaState.user.profile.roles", function (newVals) {
       if(newVals) {
-        if(!userState.roleMap) {
-          userState.roleMap = {};
+        if(!elizaState.roleMap) {
+          elizaState.roleMap = {};
         }
         newVals.forEach(function (val){
-          userState.roleMap[val] = true;
+          elizaState.roleMap[val] = true;
         });
       }
     });

@@ -1,24 +1,24 @@
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "switchCompany", "userState", "getCompany",
-  function($scope, $modal, $templateCache, switchCompany, userState, getCompany) {
+  "switchCompany", "elizaState", "getCompany",
+  function($scope, $modal, $templateCache, switchCompany, elizaState, getCompany) {
 
     getCompany().then(function (company) {
-      userState.user.company = company;
+      elizaState.user.company = company;
     });
 
     //reload user companies when current username is changed
-    $scope.$watch("userState.user.profile", function (newVal) {
+    $scope.$watch("elizaState.user.profile", function (newVal) {
       if(newVal) {
         getCompany().then(function (company) {
-          userState.user.company = company;
+          elizaState.user.company = company;
         });
       }
     });
 
-    $scope.$watch("userState.user.company.id", function (newVal) {
+    $scope.$watch("elizaState.user.company.id", function (newVal) {
       if(newVal) {
-        userState.selectedCompany = userState.user.company;
+        elizaState.selectedCompany = elizaState.user.company;
       }
     });
 
@@ -40,11 +40,11 @@ angular.module("risevision.common.header")
           companyId: function () {
             var cId = companyId;
             if(!cId) {
-              if(userState.selectedCompany) {
-                cId = userState.selectedCompany.id;
+              if(elizaState.selectedCompany) {
+                cId = elizaState.selectedCompany.id;
               }
               else {
-                cId = userState.user.company.id;
+                cId = elizaState.user.company.id;
               }
             }
             return cId;
@@ -62,11 +62,11 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
+            if(elizaState.selectedCompany) {
+              return elizaState.selectedCompany.id;
             }
             else {
-              return userState.user.company.id;
+              return elizaState.user.company.id;
             }
           }
         }
@@ -80,11 +80,11 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
+            if(elizaState.selectedCompany) {
+              return elizaState.selectedCompany.id;
             }
             else {
-              return userState.user.company.id;
+              return elizaState.user.company.id;
             }
           }
         }
@@ -103,13 +103,13 @@ angular.module("risevision.common.header")
     };
 
     $scope.resetCompany = function () {
-      switchCompany($scope.userState.user.company);
+      switchCompany($scope.elizaState.user.company);
     };
 
     //watch and monitor if current company is a subcompany
-    $scope.$watch("userState.selectedCompany.id", function (newVal) {
-      if(newVal && $scope.userState.user && $scope.userState.user.company) {
-        $scope.userState.subCompanySelected = (newVal !== $scope.userState.user.company.id);
+    $scope.$watch("elizaState.selectedCompany.id", function (newVal) {
+      if(newVal && $scope.elizaState.user && $scope.elizaState.user.company) {
+        $scope.elizaState.subCompanySelected = (newVal !== $scope.elizaState.user.company.id);
       }
     });
   }

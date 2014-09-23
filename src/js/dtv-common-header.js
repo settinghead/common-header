@@ -20,10 +20,10 @@ angular.module("risevision.common.header", [
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
     "$templateCache", "userStatusDependencies", "checkUserStatus",
-    "userState",
+    "elizaState",
   function($modal, $rootScope, $q, $loading, $interval,
     oauthAPILoader, $log, $templateCache,
-    dependencies, checkUserStatus, userState) {
+    dependencies, checkUserStatus, elizaState) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
@@ -39,7 +39,7 @@ angular.module("risevision.common.header", [
             backdrop: "static"
           });
           modalInstance.result.finally(function (){
-            userState.status = "pendingCheck";
+            elizaState.status = "pendingCheck";
           });
         };
 
@@ -64,7 +64,7 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $rootScope.$watch("userState.status", function (newStatus, oldStatus){
+        $rootScope.$watch("elizaState.status", function (newStatus, oldStatus){
           if(newStatus) {
             $log.debug("status changed from", oldStatus, "to", newStatus);
             //render a dialog based on the state user is in
@@ -77,8 +77,8 @@ angular.module("risevision.common.header", [
           }
         });
 
-        $rootScope.userState = userState;
-        userState.status = "pendingCheck";
+        $rootScope.elizaState = elizaState;
+        elizaState.status = "pendingCheck";
 
       }
     };

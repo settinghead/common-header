@@ -36,9 +36,9 @@
         var subTotal = 0;
         if(items) {
           for (var i = 0; i < items.length; i++) {
-            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-            var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
-            if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
+            var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
+            var productCost = (isCAD) ? items[i].selected.priceCAD : items[i].selected.priceUSD;
+            if (items[i].paymentTerms !== "Metered" && items[i].paymentTerms !== "Subscription") {
               shipping += shippingCost * items[i].quantity || 0;
               subTotal += productCost * items[i].quantity || 0;
             }
@@ -51,7 +51,7 @@
         var shipping = 0;
         if(items) {
           for (var i = 0; i < items.length; i++) {
-            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
+            var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
             shipping += shippingCost * items[i].quantity || 0;
           }
         }
@@ -84,7 +84,7 @@
         if (itemToRemove && itemsMap[itemToRemove.id]) {
           delete itemsMap[itemToRemove.id];
           for (var i = 0; i < items.length; i++) {
-            if (items[i].item.id === itemToRemove.id) {
+            if (items[i].id === itemToRemove.id) {
               items.splice(i, 1);
               delete itemsMap[itemToRemove.id];
               break;
@@ -97,7 +97,7 @@
         if (itemToAdjust && $.isNumeric(qty) && itemsMap[itemToAdjust.id]) {
           if (qty > 0) {
             itemsMap[itemToAdjust.id].quantity = qty;
-            itemsMap[itemToAdjust.id].item.qty = qty;
+            itemsMap[itemToAdjust.id].qty = qty;
             persistToStorage();
           }
           else {
@@ -106,21 +106,25 @@
         }
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
+
+        if (itemsMap[itemToAdd.productId] && (itemToAdd.paymentTerms === "Subscription" || itemToAdd.paymentTerms === "Metered")) {
+          return;
+        }
+
         if (items && itemToAdd && angular.isNumber(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
-          if (itemsMap[itemToAdd.id]) {
+          if (itemsMap[itemToAdd.productId]) {
             // qty for existing item is increased
-            itemsMap[itemToAdd.id].quantity += qty;
-            itemsMap[itemToAdd.id].item.qty += qty;
+            itemsMap[itemToAdd.productId].qty = parseInt(qty) + parseInt(itemsMap[itemToAdd.productId].quantity);
           }
           else {
             // item is not already in the cart
-            itemsMap[itemToAdd.id] = {item: angular.copy(itemToAdd), quantity: qty};
-            itemsMap[itemToAdd.id].item.qty = qty;
-            items.push(itemsMap[itemToAdd.id]);
+            itemsMap[itemToAdd.productId] = angular.copy(itemToAdd);
+            itemsMap[itemToAdd.productId].qty = qty;
+            items.push(itemsMap[itemToAdd.productId]);
           }
-          itemsMap[itemToAdd.id].item.selected = itemToAdd.orderedPricing[pricingIndex];
+          itemsMap[itemToAdd.productId].selected = itemToAdd.orderedPricing[pricingIndex];
           persistToStorage();
-          $log.debug("Item", itemToAdd.id, "added to cart", itemToAdd);
+          $log.debug("Item", itemToAdd.productId, "added to cart", itemToAdd);
         }
       }
     };

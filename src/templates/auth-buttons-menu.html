@@ -1,11 +1,11 @@
 <li class="dropdown-header dropdown-title">
-  {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}
+  {{elizaState.user.profile.firstName}} {{elizaState.user.profile.lastName}}
 </li>
 <li class="dropdown-header">
-  {{userState.user.profile.email}}
+  {{elizaState.user.profile.email}}
 </li>
-<li class="divider" ng-show="userState.user.profile"></li>
-<li ng-show="userState.user.profile">
+<li class="divider" ng-show="elizaState.user.profile"></li>
+<li ng-show="elizaState.user.profile">
   <a href="" ng-click="userSettings()" class="user-settings-button action">
     <i class="fa fa-cogs"></i>
     <span class="item-name">User Settings</span>
@@ -18,8 +18,8 @@
     <span class="item-name">Payment Methods</span>
   </a>
 </li>
-<li class="divider" ng-show="userState.user"></li>
-<li ng-show="userState.user.username">
+<li class="divider" ng-show="elizaState.user"></li>
+<li ng-show="elizaState.user.username">
   <a href="" ng-click="logout()" class="sign-out-button action">
     <i class="fa fa-sign-out"></i>
     <span class="item-name">Sign Out</span>

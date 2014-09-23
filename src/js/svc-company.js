@@ -37,9 +37,9 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("switchCompany", ["userState", function (userState) {
+  .factory("switchCompany", ["elizaState", function (elizaState) {
     return function (company) {
-      userState.selectedCompany= company;
+      elizaState.selectedCompany= company;
     };
   }])
 
@@ -81,9 +81,9 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "userState",
+  .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "elizaState",
   "getOAuthUserInfo", "createCompany",
-  function ($q, $log, coreAPILoader, userState, getOAuthUserInfo, createCompany) {
+  function ($q, $log, coreAPILoader, elizaState, getOAuthUserInfo, createCompany) {
     return function () {
       var deferred = $q.defer();
       $log.debug("getUserCompanies called");
@@ -93,7 +93,7 @@ angular.module("risevision.common.company",
         request.execute(function (resp) {
           $log.debug("core.company.list resp", resp);
           if(resp.error){
-            delete userState.selectedCompany;
+            delete elizaState.selectedCompany;
             deferred.reject();
           }
           else {
@@ -101,12 +101,12 @@ angular.module("risevision.common.company",
             //update user state if supplied
             var updateState = function (c) {
               $log.debug("selectedCompany", c);
-              userState.user.company = c;
+              elizaState.user.company = c;
 
               //release 1 simpification - everyone is Purchaser ("pu" role)
-              userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
+              elizaState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
 
-              userState.selectedCompany = c;
+              elizaState.selectedCompany = c;
             };
             if (resp.items && resp.items.length > 0) {
               updateState(resp.items[0]);

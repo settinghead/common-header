@@ -1,6 +1,6 @@
 <!-- Common Header Navbar -->
 <nav class="navbar navbar-default navbar-static-top"
-	ng-class="{'double-margin': userState.subCompanySelected}" role="navigation">
+	ng-class="{'double-margin': elizaState.subCompanySelected}" role="navigation">
 	<div class="container">
 
 		<div class="navbar-header" style="width: 100%;">
@@ -24,7 +24,7 @@
 				<!-- Shopping Cart -->
 				<li class="shopping-cart"
 				  ng-controller="ShoppingCartButtonCtrl"
-					ng-show="userState.shoppingCart.items !== null"
+					ng-show="elizaState.shoppingCart.items !== null"
 					ng-include="'shoppingcart-button.html'">
 				</li>
 				<!-- Current App -->
@@ -88,7 +88,7 @@
 				<!-- Company Dropdown -->
 				<ng-include
 					replace-include
-					ng-if="userState.user.profile"
+					ng-if="elizaState.user.profile"
 				  ng-controller="CompanyButtonsCtrl"
 					src="'company-buttons.html'"
 				></ng-include>
@@ -132,9 +132,9 @@
 
 	</div>
 
-	<div ng-if="userState.subCompanySelected"
+	<div ng-if="elizaState.subCompanySelected"
 	  class="sub-company-alert">
-		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompany.name}}
+		You're in a Sub-Company of your Company. Current Company - {{elizaState.selectedCompany.name}}
 	</div>
 </nav>
 <!-- END Common Header Navbar -->

@@ -10,8 +10,8 @@
   })
 
   .factory("checkUserStatus", [
-    "userStatusDependencies", "$injector", "$q", "$log", "userState",
-    function (userStatusDependencies, $injector, $q, $log, userState) {
+    "userStatusDependencies", "$injector", "$q", "$log", "elizaState",
+    function (userStatusDependencies, $injector, $q, $log, elizaState) {
 
       var attemptStatus = function(status){
         var lastD;
@@ -76,12 +76,12 @@
         if(!desiredStatus) {desiredStatus = "acceptableState"; }
         return attemptStatus(desiredStatus).then(
           function () {
-            userState.status = desiredStatus;
+            elizaState.status = desiredStatus;
           },
           function (status) {
             // if rejected at any given step,
             // show the dialog of that relevant step
-            userState.status = status;
+            elizaState.status = status;
           });
       };
   }])

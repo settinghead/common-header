@@ -7,7 +7,7 @@ angular.module("risevision.common.header")
     $scope.authenticate = function() {
       $loading.start("authenticate-button");
       authenticate(true).finally(function(){
-        $rootScope.userState.status = "pendingCheck";
+        $rootScope.elizaState.status = "pendingCheck";
         $modalInstance.close("success");
         $loading.stop("authenticate-button");
       });
