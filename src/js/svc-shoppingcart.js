@@ -15,7 +15,6 @@
         var res = JSON.parse(storedCartContents);
         if (res && res.items && res.itemsMap) {
           while(items.length > 0) { items.pop(); } //clear all items
-          res.items.forEach(function (item) {items.push(item); });
           items = res.items;
           itemsMap = res.itemsMap;
         }
@@ -36,12 +35,12 @@
         var subTotal = 0;
         if(items) {
           for (var i = 0; i < items.length; i++) {
-            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-            var productCost = (isCAD) ? items[i].item.selected.priceCAD : items[i].item.selected.priceUSD;
-            if (items[i].item.paymentTerms !== "Metered" && items[i].item.paymentTerms !== "Subscription") {
-              shipping += shippingCost * items[i].quantity || 0;
-              subTotal += productCost * items[i].quantity || 0;
-            }
+              var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
+              var productCost = (isCAD) ? items[i].selected.priceCAD : items[i].selected.priceUSD;
+              if (items[i].paymentTerms !== "Metered") {
+                shipping += shippingCost * items[i].qty || 0;
+                subTotal += productCost * items[i].qty || 0;
+              }
           }
         }
 
@@ -51,8 +50,10 @@
         var shipping = 0;
         if(items) {
           for (var i = 0; i < items.length; i++) {
-            var shippingCost = (isCAD) ? items[i].item.selected.shippingCAD : items[i].item.selected.shippingUSD;
-            shipping += shippingCost * items[i].quantity || 0;
+              if (items[i].paymentTerms !== "Metered") {
+                var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
+                shipping += shippingCost * items[i].qty || 0;
+              }
           }
         }
         return shipping;
@@ -81,12 +82,12 @@
         return items.length;
       },
       removeItem: function(itemToRemove) {
-        if (itemToRemove && itemsMap[itemToRemove.id]) {
-          delete itemsMap[itemToRemove.id];
+        if (itemToRemove && itemsMap[itemToRemove.productId]) {
+          delete itemsMap[itemToRemove.productId];
           for (var i = 0; i < items.length; i++) {
-            if (items[i].item.id === itemToRemove.id) {
+            if (items[i].productId === itemToRemove.productId) {
               items.splice(i, 1);
-              delete itemsMap[itemToRemove.id];
+              delete itemsMap[itemToRemove.productId];
               break;
             }
           }
@@ -106,21 +107,23 @@
         }
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
-        if (items && itemToAdd && angular.isNumber(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
-          if (itemsMap[itemToAdd.id]) {
+        if (itemsMap[itemToAdd.productId] && (itemToAdd.paymentTerms === "Subscription" || itemToAdd.paymentTerms === "Metered")) {
+          return;
+        }
+
+        if (itemToAdd && $.isNumeric(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
+          if (itemsMap[itemToAdd.productId]) {
             // qty for existing item is increased
-            itemsMap[itemToAdd.id].quantity += qty;
-            itemsMap[itemToAdd.id].item.qty += qty;
+            itemsMap[itemToAdd.productId].qty = parseInt(itemsMap[itemToAdd.productId].qty) + parseInt(qty);
           }
           else {
             // item is not already in the cart
-            itemsMap[itemToAdd.id] = {item: angular.copy(itemToAdd), quantity: qty};
-            itemsMap[itemToAdd.id].item.qty = qty;
-            items.push(itemsMap[itemToAdd.id]);
+            itemsMap[itemToAdd.productId] = angular.copy(itemToAdd);
+            itemsMap[itemToAdd.productId].qty = qty;
+            items.push(itemsMap[itemToAdd.productId]);
           }
-          itemsMap[itemToAdd.id].item.selected = itemToAdd.orderedPricing[pricingIndex];
+          itemsMap[itemToAdd.productId].selected = itemToAdd.orderedPricing[pricingIndex];
           persistToStorage();
-          $log.debug("Item", itemToAdd.id, "added to cart", itemToAdd);
         }
       }
     };
