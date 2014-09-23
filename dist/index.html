@@ -250,7 +250,7 @@
 
       .controller("FakeStoreController", function ($scope, shoppingCart) {
         $scope.buyProduct = function (id) {
-          shoppingCart.addItem({id: id, orderedPricing: [200]}, 1, 0);
+          shoppingCart.addItem({productId: id, orderedPricing: [200]}, 1, 0);
         };
 
         $scope.clearCart = function () {
