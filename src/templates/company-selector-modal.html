@@ -8,8 +8,7 @@
 			Select Sub-Company
 		</h2>
 	</div>
-	<div class="modal-body jfk-scrollbar"
-	  ng-scroll-event="handleScroll($event, isEndEvent)">
+	<div class="modal-body jfk-scrollbar">
 	  <!-- Search -->
 		<div class="input-group company-search add-bottom">
 			<input id="csSearch" type="text" class="form-control"
@@ -21,7 +20,7 @@
 		    </span>
 		</div>
 		<!-- List of Companies -->
-		<div class="list-group scrollable-list">
+		<div class="list-group scrollable-list" rv-scroll-event="handleScroll($event, isEndEvent)">
 			<div class="list-group-item"  ng-repeat="company in companies.list" ng-click="setCompany(company)">
 				<p class="list-group-item-text"><strong>{{company.name}}</strong><br/><small class="text-muted">{{company.fullAddress}}</small>
 				</p>

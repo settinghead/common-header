@@ -394,8 +394,7 @@ app.run(["$templateCache", function($templateCache) {
     "			Select Sub-Company\n" +
     "		</h2>\n" +
     "	</div>\n" +
-    "	<div class=\"modal-body jfk-scrollbar\"\n" +
-    "	  ng-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
+    "	<div class=\"modal-body jfk-scrollbar\">\n" +
     "	  <!-- Search -->\n" +
     "		<div class=\"input-group company-search add-bottom\">\n" +
     "			<input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
@@ -407,7 +406,7 @@ app.run(["$templateCache", function($templateCache) {
     "		    </span>\n" +
     "		</div>\n" +
     "		<!-- List of Companies -->\n" +
-    "		<div class=\"list-group scrollable-list\">\n" +
+    "		<div class=\"list-group scrollable-list\" rv-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
     "			<div class=\"list-group-item\"  ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
     "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{company.fullAddress}}</small>\n" +
     "				</p>\n" +

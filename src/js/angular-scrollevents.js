@@ -4,11 +4,12 @@
 
     var INTERVAL_DELAY = 150;
 
-    angular.module("ngScrollEvent", [])
-    .directive("ngScrollEvent", ["$parse", "$window", function($parse, $window) {
-        return function(scope, element, attr) {
-          var fn = $parse(attr.ngScrollEvent);
-
+    angular.module("rvScrollEvent", [])
+    .directive("rvScrollEvent", ["$parse", "$window", function($parse, $window) {
+        return {
+          scope: false,
+          link: function(scope, element, attr) {
+          var fn = $parse(attr.rvScrollEvent);
             var interval,
             handler,
             el = element[0],
@@ -20,6 +21,7 @@
 
             var bindScroll = function() {
                 handler = function(event) {
+
                     scrollPosition.x = el.scrollLeft;
                     scrollPosition.y = el.scrollTop;
 
@@ -27,6 +29,7 @@
                     unbindScroll();
                     scrollTrigger(event, false);
                 };
+
 
                 element.bind(scrollEvent, handler);
             };
@@ -56,6 +59,7 @@
             };
 
             bindScroll();
-        };
+        }
+      };
     }]);
 })(angular);

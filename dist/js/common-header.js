@@ -394,8 +394,7 @@ app.run(["$templateCache", function($templateCache) {
     "			Select Sub-Company\n" +
     "		</h2>\n" +
     "	</div>\n" +
-    "	<div class=\"modal-body jfk-scrollbar\"\n" +
-    "	  ng-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
+    "	<div class=\"modal-body jfk-scrollbar\">\n" +
     "	  <!-- Search -->\n" +
     "		<div class=\"input-group company-search add-bottom\">\n" +
     "			<input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
@@ -407,7 +406,7 @@ app.run(["$templateCache", function($templateCache) {
     "		    </span>\n" +
     "		</div>\n" +
     "		<!-- List of Companies -->\n" +
-    "		<div class=\"list-group scrollable-list\">\n" +
+    "		<div class=\"list-group scrollable-list\" rv-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
     "			<div class=\"list-group-item\"  ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
     "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{company.fullAddress}}</small>\n" +
     "				</p>\n" +
@@ -1286,7 +1285,7 @@ angular.module("risevision.common.header", [
   "risevision.common.util",
   "risevision.common.userprofile",
   "checklist-model",
-  "ui.bootstrap", "ngSanitize", "ngScrollEvent", "ngCsv", "ngTouch"
+  "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
@@ -1863,7 +1862,7 @@ angular.module("risevision.common.header")
     };
 
     $scope.handleScroll = function (event, isEndEvent) {
-      // console.log(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
+      console.log(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
       if (isEndEvent) {
         if ((event.target.scrollHeight - event.target.clientHeight - event.target.scrollTop) < 20) {
           //load more rows if less than 20px left to the bottom
@@ -2161,11 +2160,12 @@ angular.module("risevision.common.header")
 
     var INTERVAL_DELAY = 150;
 
-    angular.module("ngScrollEvent", [])
-    .directive("ngScrollEvent", ["$parse", "$window", function($parse, $window) {
-        return function(scope, element, attr) {
-          var fn = $parse(attr.ngScrollEvent);
-
+    angular.module("rvScrollEvent", [])
+    .directive("rvScrollEvent", ["$parse", "$window", function($parse, $window) {
+        return {
+          scope: false,
+          link: function(scope, element, attr) {
+          var fn = $parse(attr.rvScrollEvent);
             var interval,
             handler,
             el = element[0],
@@ -2177,6 +2177,7 @@ angular.module("risevision.common.header")
 
             var bindScroll = function() {
                 handler = function(event) {
+
                     scrollPosition.x = el.scrollLeft;
                     scrollPosition.y = el.scrollTop;
 
@@ -2184,6 +2185,7 @@ angular.module("risevision.common.header")
                     unbindScroll();
                     scrollTrigger(event, false);
                 };
+
 
                 element.bind(scrollEvent, handler);
             };
@@ -2213,7 +2215,8 @@ angular.module("risevision.common.header")
             };
 
             bindScroll();
-        };
+        }
+      };
     }]);
 })(angular);
 
