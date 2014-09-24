@@ -21,9 +21,10 @@
       before(function() {
         ptor = protractor.getInstance();
         ptor.manage().deleteAllCookies();
-        browser.get("/test/e2e/index.html#");
+        browser.get("/test/e2e/index.html#/");
 
         //clear local storage
+        browser.executeScript("localStorage.clear();");
         ptor.driver.navigate().refresh();
         element(by.id("reset-db")).click();
       });

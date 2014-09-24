@@ -83,6 +83,12 @@ gulp.task("html2js-watch", function() {
   });
 });
 
+gulp.task("build-watch", function() {
+  watch({glob: ["src/js/**/*", "src/templates/**/*"]}, function () {
+    return runSequence("html", "html2js");
+  });
+});
+
 
 /* Task: config
  * Copies configuration file in place based on the current

@@ -33,8 +33,10 @@ angular.module("risevision.common.gapi", [])
 
   }])
   .factory("gapiLoader", ["$q", "$window", function ($q, $window) {
+    var deferred = $q.defer();
+
     return function () {
-      var deferred = $q.defer(), gapiLoaded;
+      var gapiLoaded;
 
       if($window.gapiLoadingStatus === "loaded") {
         deferred.resolve($window.gapi);
@@ -44,7 +46,7 @@ angular.module("risevision.common.gapi", [])
         $window.gapiLoadingStatus = "loading";
 
         var src = $window.gapiSrc || "//apis.google.com/js/client.js?onload=handleClientJSLoad";
-        var fileref=document.createElement("script");
+        var fileref = document.createElement("script");
         fileref.setAttribute("type","text/javascript");
         fileref.setAttribute("src", src);
         if (typeof fileref!=="undefined") {
