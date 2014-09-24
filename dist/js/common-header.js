@@ -73,7 +73,10 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-hide=\"userState.user\">\n" +
+    "<li ng-hide=\"userState.user\"\n" +
+    "  rv-spinner=\"spinnerOptions\"\n" +
+    "  rv-spinner-key=\"auth-buttons\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +
@@ -1387,7 +1390,6 @@ angular.module("risevision.common.header")
     $scope.authenticate = function() {
       authenticate(true).finally(function(){
         userState.status = "pendingCheck";
-        $loading.start("auth-buttons");
       });
     };
 
@@ -1400,7 +1402,6 @@ angular.module("risevision.common.header")
       signOut().then(function (){
         alert("If you are using a public computer, please do not forget to log out of Google Account, or close your browser window if you are using Incognito mode. ");
         userState.status = "pendingCheck";
-        $loading.start("auth-buttons");
       }, function (err) {
         $log.error("sign out failed", err);
       });
@@ -3938,8 +3939,10 @@ angular.module("risevision.common.gapi", [])
 
   }])
   .factory("gapiLoader", ["$q", "$window", function ($q, $window) {
+    var deferred = $q.defer();
+
     return function () {
-      var deferred = $q.defer(), gapiLoaded;
+      var gapiLoaded;
 
       if($window.gapiLoadingStatus === "loaded") {
         deferred.resolve($window.gapi);
@@ -3949,7 +3952,7 @@ angular.module("risevision.common.gapi", [])
         $window.gapiLoadingStatus = "loading";
 
         var src = $window.gapiSrc || "//apis.google.com/js/client.js?onload=handleClientJSLoad";
-        var fileref=document.createElement("script");
+        var fileref = document.createElement("script");
         fileref.setAttribute("type","text/javascript");
         fileref.setAttribute("src", src);
         if (typeof fileref!=="undefined") {

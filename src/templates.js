@@ -73,7 +73,10 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-hide=\"userState.user\">\n" +
+    "<li ng-hide=\"userState.user\"\n" +
+    "  rv-spinner=\"spinnerOptions\"\n" +
+    "  rv-spinner-key=\"auth-buttons\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +

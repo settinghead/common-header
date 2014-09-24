@@ -29,7 +29,6 @@ angular.module("risevision.common.header")
     $scope.authenticate = function() {
       authenticate(true).finally(function(){
         userState.status = "pendingCheck";
-        $loading.start("auth-buttons");
       });
     };
 
@@ -42,7 +41,6 @@ angular.module("risevision.common.header")
       signOut().then(function (){
         alert("If you are using a public computer, please do not forget to log out of Google Account, or close your browser window if you are using Incognito mode. ");
         userState.status = "pendingCheck";
-        $loading.start("auth-buttons");
       }, function (err) {
         $log.error("sign out failed", err);
       });
