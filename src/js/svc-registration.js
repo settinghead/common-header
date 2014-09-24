@@ -120,7 +120,6 @@
     };
   }])
 
-
   .factory("basicProfileCreated", ["$q", "getUser", "cookieStore", "$log",
   function ($q, getUser, cookieStore, $log) {
     return function () {
