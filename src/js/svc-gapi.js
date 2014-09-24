@@ -1,7 +1,7 @@
 /* jshint ignore:start */
-var isClientJS = false;
+var gapiLoadingStatus = null;
 function handleClientJSLoad() {
-    isClientJS = true;
+    gapiLoadingStatus = "loaded";
     console.log("ClientJS is loaded.");
     //Ready: create a generic event
     var evt = document.createEvent("Events");
@@ -36,11 +36,21 @@ angular.module("risevision.common.gapi", [])
     return function () {
       var deferred = $q.defer(), gapiLoaded;
 
-      if($window.isClientJS) {
+      if($window.gapiLoadingStatus === "loaded") {
         deferred.resolve($window.gapi);
       }
 
-      else {
+      else if(!$window.gapiLoadingStatus) {
+        $window.gapiLoadingStatus = "loading";
+
+        var src = $window.gapiSrc || "//apis.google.com/js/client.js?onload=handleClientJSLoad";
+        var fileref=document.createElement("script");
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src", src);
+        if (typeof fileref!=="undefined") {
+          document.getElementsByTagName("body")[0].appendChild(fileref);
+        }
+
         gapiLoaded = function () {
           deferred.resolve($window.gapi);
           $window.removeEventListener("gapi.loaded", gapiLoaded, false);

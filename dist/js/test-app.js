@@ -2704,17 +2704,14 @@ gapiMockData.companies = [
   }
 
   if(real) {
-    //load real GAPI
-    var src = "https://apis.google.com/js/client.js?onload=handleClientJSLoad";
-    var fileref=document.createElement("script");
-    fileref.setAttribute("type","text/javascript");
-    fileref.setAttribute("src", src);
-    if (typeof fileref!=="undefined") {
-      document.getElementsByTagName("body")[0].appendChild(fileref);
-    }
+
+    //mark as real GAPI (actual GAPI is loaded by common header)
+
     window.realGapiLoaded = true;
   }
   else {
+
+    window.gapiLoadingStatus = "loaded"; //surpress the loading of real gapi
     window.gapi = {};
 
     var delayed = function () {
