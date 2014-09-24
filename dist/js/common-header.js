@@ -2689,7 +2689,7 @@ angular.module("risevision.common.geodata", [])
           //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
           obj = pick(obj, "access_token", "state");
           cookieStore.put(
-            "rv-token", JSON.stringify(obj), {domain: "." + getBaseDomain()});
+            "rv-token", JSON.stringify(obj), {domain: getBaseDomain()});
           cookieStore.put(
             "rv-token", JSON.stringify(obj));
         }
@@ -2733,10 +2733,10 @@ angular.module("risevision.common.geodata", [])
             var parts = hostname.split(".");
             if(parts.length > 1) {
               //localhost
-              result = parts.slice(parts.length -2).join(".") + port;
+              result = "." + parts.slice(parts.length -2).join(".") + port;
             }
             else {
-              result = hostname + port;
+              result = "." + hostname + port;
             }
           }
 
@@ -2777,7 +2777,7 @@ angular.module("risevision.common.geodata", [])
           var opts = {
             client_id: CLIENT_ID,
             scope: SCOPES,
-            cookie_policy: $location.protocol() + "://" + "." +
+            cookie_policy: $location.protocol() + "://" +
               getBaseDomain()
           };
 
@@ -2795,7 +2795,7 @@ angular.module("risevision.common.geodata", [])
                 accessTokenKeeper.set(authResult);
                 getOAuthUserInfo().then(function (oauthUserInfo) {
                   if(!userState.user || userState.user.username !== oauthUserInfo.email) {
-                    userState.user  = {
+                    userState.user = {
                       username: oauthUserInfo.email,
                       picture: oauthUserInfo.picture
                     };
