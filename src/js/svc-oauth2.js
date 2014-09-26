@@ -26,7 +26,7 @@
             if(!resp) {
               deferred.reject();
             }
-            else if(resp.error) {
+            else if(resp.hasOwnProperty("error")) {
               deferred.reject(resp.error);
             }
             else {

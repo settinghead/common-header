@@ -94,17 +94,19 @@
     };
   }])
 
-  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo",
-  function ($q, getOAuthUserInfo) {
+  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "authenticate",
+  function ($q, getOAuthUserInfo, authenticate) {
     return function () {
       var deferred = $q.defer();
-      getOAuthUserInfo().then(
-        function () {
-          deferred.resolve();
-          },
-        function () {
-          deferred.reject("signedInWithGoogle");
+      authenticate().then().finally(function () {
+        getOAuthUserInfo().then(
+          function () {
+            deferred.resolve();
+            },
+          function () {
+            deferred.reject("signedInWithGoogle");
           });
+      });
       return deferred.promise;
     };
   }])
@@ -165,16 +167,6 @@
               deferred.reject("companyCreated");
             }
         });
-      });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("profileLoaded", ["$q", "getUser", function ($q, getUser) {
-    return function () {
-      var deferred = $q.defer();
-      getUser().then(deferred.resolve, function (){
-        deferred.reject("profileLoaded");
       });
       return deferred.promise;
     };

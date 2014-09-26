@@ -1793,7 +1793,9 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 .controller("SubCompanyModalCtrl", ["$scope", "$modalInstance", "$modal",
   "$templateCache", "createCompany", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
-  function($scope, $modalInstance, $modal, $templateCache, createCompany, COUNTRIES, REGIONS_CA, REGIONS_US) {
+  "userState",
+  function($scope, $modalInstance, $modal, $templateCache,
+    createCompany, COUNTRIES, REGIONS_CA, REGIONS_US, userState) {
 
     $scope.company = {};
     $scope.countries = COUNTRIES;
@@ -1805,9 +1807,10 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
     $scope.save = function () {
-      createCompany($scope.company).then(function () {
+      createCompany(userState.selectedCompany.id,
+        $scope.company).then(function () {
         $modalInstance.close("success");
-      });
+      }, function (err) {alert(err); });
     };
     // Show Move Company Modal
     $scope.moveCompany = function(size) {
@@ -3043,17 +3046,19 @@ angular.module("risevision.common.geodata", [])
     };
   }])
 
-  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo",
-  function ($q, getOAuthUserInfo) {
+  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "authenticate",
+  function ($q, getOAuthUserInfo, authenticate) {
     return function () {
       var deferred = $q.defer();
-      getOAuthUserInfo().then(
-        function () {
-          deferred.resolve();
-          },
-        function () {
-          deferred.reject("signedInWithGoogle");
+      authenticate().then().finally(function () {
+        getOAuthUserInfo().then(
+          function () {
+            deferred.resolve();
+            },
+          function () {
+            deferred.reject("signedInWithGoogle");
           });
+      });
       return deferred.promise;
     };
   }])
@@ -3114,16 +3119,6 @@ angular.module("risevision.common.geodata", [])
               deferred.reject("companyCreated");
             }
         });
-      });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("profileLoaded", ["$q", "getUser", function ($q, getUser) {
-    return function () {
-      var deferred = $q.defer();
-      getUser().then(deferred.resolve, function (){
-        deferred.reject("profileLoaded");
       });
       return deferred.promise;
     };
@@ -3507,16 +3502,18 @@ angular.module("risevision.common.geodata", [])
         if(!userState.messages) {
           userState.messages = [];
         }
-        messages.forEach(function (m) {
-          //temporary logic to avoid duplicate messages
-          var duplicate = false;
-          userState.messages.forEach(function (um) {
-            if(um.text === m.text) {duplicate = true; }
+        if(messages && messages instanceof Array) {
+          messages.forEach(function (m) {
+            //temporary logic to avoid duplicate messages
+            var duplicate = false;
+            userState.messages.forEach(function (um) {
+              if(um.text === m.text) {duplicate = true; }
+            });
+            if(!duplicate) {
+              pushMessage(m, userState.messages);
+            }
           });
-          if(!duplicate) {
-            pushMessage(m, userState.messages);
-          }
-        });
+        }
       };
     }])
 
@@ -3568,7 +3565,7 @@ angular.module("risevision.common.geodata", [])
             if(!resp) {
               deferred.reject();
             }
-            else if(resp.error) {
+            else if(resp.hasOwnProperty("error")) {
               deferred.reject(resp.error);
             }
             else {
@@ -3649,11 +3646,14 @@ angular.module("risevision.common.company",
   }])
 
   .factory("createCompany", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
-    return function (company) {
+    return function (parentCompanyId, company) {
       var deferred = $q.defer();
       company.validate = true;
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.company.add(company);
+        var request = coreApi.company.add({
+          parentId: parentCompanyId,
+          data: JSON.stringify(company)
+        });
         request.execute(function (resp) {
           if(resp.result) {
             deferred.resolve(resp.item);
@@ -3668,8 +3668,7 @@ angular.module("risevision.common.company",
   }])
 
   .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "userState",
-  "getOAuthUserInfo", "createCompany",
-  function ($q, $log, coreAPILoader, userState, getOAuthUserInfo, createCompany) {
+  function ($q, $log, coreAPILoader, userState) {
     return function () {
       var deferred = $q.defer();
       $log.debug("getUserCompanies called");
@@ -3698,10 +3697,7 @@ angular.module("risevision.common.company",
               updateState(resp.items[0]);
             }
             else {
-              getOAuthUserInfo().then(function (userInfo) {
-                createCompany({
-                  name: userInfo.email + "'s Company"}).then(updateState, deferred.reject);
-              }, deferred.reject);
+              deferred.reject();
             }
           }
         });
@@ -3884,15 +3880,14 @@ angular.module("risevision.common.company",
  *
  */
 (function (angular){
-
   "use strict";
 
   try { angular.module("risevision.common.config"); }
-  catch(err) { angular.module("risevision.common.config", []); }
+catch(err) { angular.module("risevision.common.config", []); }
 
   angular.module("risevision.common.config")
-    .value("CORE_URL", "https://rvacore-test.appspot.com/_ah/api")
-    .value("STORE_URL", "http://localhost:8000/")
+    .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
+    .value("STORE_URL", "http://store.risevision.com/")
   ;
 })(angular);
 
@@ -4075,16 +4070,18 @@ angular.module("risevision.common.gapi", [])
         if(!userState.messages) {
           userState.messages = [];
         }
-        messages.forEach(function (m) {
-          //temporary logic to avoid duplicate messages
-          var duplicate = false;
-          userState.messages.forEach(function (um) {
-            if(um.text === m.text) {duplicate = true; }
+        if(messages && messages instanceof Array) {
+          messages.forEach(function (m) {
+            //temporary logic to avoid duplicate messages
+            var duplicate = false;
+            userState.messages.forEach(function (um) {
+              if(um.text === m.text) {duplicate = true; }
+            });
+            if(!duplicate) {
+              pushMessage(m, userState.messages);
+            }
           });
-          if(!duplicate) {
-            pushMessage(m, userState.messages);
-          }
-        });
+        }
       };
     }])
 
