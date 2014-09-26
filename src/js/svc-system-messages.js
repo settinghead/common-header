@@ -16,16 +16,18 @@
         if(!userState.messages) {
           userState.messages = [];
         }
-        messages.forEach(function (m) {
-          //temporary logic to avoid duplicate messages
-          var duplicate = false;
-          userState.messages.forEach(function (um) {
-            if(um.text === m.text) {duplicate = true; }
+        if(messages && messages instanceof Array) {
+          messages.forEach(function (m) {
+            //temporary logic to avoid duplicate messages
+            var duplicate = false;
+            userState.messages.forEach(function (um) {
+              if(um.text === m.text) {duplicate = true; }
+            });
+            if(!duplicate) {
+              pushMessage(m, userState.messages);
+            }
           });
-          if(!duplicate) {
-            pushMessage(m, userState.messages);
-          }
-        });
+        }
       };
     }])
 

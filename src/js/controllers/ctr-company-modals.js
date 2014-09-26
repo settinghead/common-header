@@ -1,7 +1,9 @@
 angular.module("risevision.common.header")
 .controller("SubCompanyModalCtrl", ["$scope", "$modalInstance", "$modal",
   "$templateCache", "createCompany", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
-  function($scope, $modalInstance, $modal, $templateCache, createCompany, COUNTRIES, REGIONS_CA, REGIONS_US) {
+  "userState",
+  function($scope, $modalInstance, $modal, $templateCache,
+    createCompany, COUNTRIES, REGIONS_CA, REGIONS_US, userState) {
 
     $scope.company = {};
     $scope.countries = COUNTRIES;
@@ -13,9 +15,10 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
     $scope.save = function () {
-      createCompany($scope.company).then(function () {
+      createCompany(userState.selectedCompany.id,
+        $scope.company).then(function () {
         $modalInstance.close("success");
-      });
+      }, function (err) {alert(err); });
     };
     // Show Move Company Modal
     $scope.moveCompany = function(size) {

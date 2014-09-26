@@ -63,11 +63,14 @@ angular.module("risevision.common.company",
   }])
 
   .factory("createCompany", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
-    return function (company) {
+    return function (parentCompanyId, company) {
       var deferred = $q.defer();
       company.validate = true;
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.company.add(company);
+        var request = coreApi.company.add({
+          parentId: parentCompanyId,
+          data: JSON.stringify(company)
+        });
         request.execute(function (resp) {
           if(resp.result) {
             deferred.resolve(resp.item);
@@ -82,8 +85,7 @@ angular.module("risevision.common.company",
   }])
 
   .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "userState",
-  "getOAuthUserInfo", "createCompany",
-  function ($q, $log, coreAPILoader, userState, getOAuthUserInfo, createCompany) {
+  function ($q, $log, coreAPILoader, userState) {
     return function () {
       var deferred = $q.defer();
       $log.debug("getUserCompanies called");
@@ -112,10 +114,7 @@ angular.module("risevision.common.company",
               updateState(resp.items[0]);
             }
             else {
-              getOAuthUserInfo().then(function (userInfo) {
-                createCompany({
-                  name: userInfo.email + "'s Company"}).then(updateState, deferred.reject);
-              }, deferred.reject);
+              deferred.reject();
             }
           }
         });
