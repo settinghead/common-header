@@ -1,7 +1,7 @@
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "switchCompany", "userState", "getCompany",
-  function($scope, $modal, $templateCache, switchCompany, userState, getCompany) {
+  "switchCompany", "userState", "getCompany", "$log",
+  function($scope, $modal, $templateCache, switchCompany, userState, getCompany, $log) {
 
     getCompany().then(function (company) {
       userState.user.company = company;
@@ -19,6 +19,7 @@ angular.module("risevision.common.header")
     $scope.$watch("userState.user.company.id", function (newVal) {
       if(newVal) {
         userState.selectedCompany = userState.user.company;
+        $log.debug("Selected company changed to", userState.selectedCompany.name);
       }
     });
 
