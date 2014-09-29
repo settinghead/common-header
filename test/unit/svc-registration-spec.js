@@ -2,7 +2,7 @@
 
 describe("Services: Registration", function() {
 
-  beforeEach(module("risevision.common.registration"));
+  beforeEach(module("risevision.common.userstate"));
 
   it("should exist", function(done) {
     inject(function(userStatusDependencies) {

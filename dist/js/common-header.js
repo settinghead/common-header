@@ -1281,7 +1281,7 @@ angular.module("risevision.common.header", [
   "risevision.common.localstorage",
   "risevision.common.header.templates",
   "risevision.common.loading",
-  "risevision.common.registration",
+  "risevision.common.userstate",
   "risevision.common.systemmessages",
   "risevision.common.oauth2",
   "risevision.common.geodata",
@@ -2954,7 +2954,7 @@ angular.module("risevision.common.geodata", [])
 (function (angular) {
   "use strict";
 
-  angular.module("risevision.common.registration",
+  angular.module("risevision.common.userstate",
   ["risevision.common.userprofile"])
 
   .value("userStatusDependencies", {

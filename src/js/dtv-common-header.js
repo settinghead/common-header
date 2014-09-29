@@ -7,7 +7,7 @@ angular.module("risevision.common.header", [
   "risevision.common.localstorage",
   "risevision.common.header.templates",
   "risevision.common.loading",
-  "risevision.common.registration",
+  "risevision.common.userstate",
   "risevision.common.systemmessages",
   "risevision.common.oauth2",
   "risevision.common.geodata",
@@ -31,7 +31,7 @@ angular.module("risevision.common.header", [
       link: function(scope) {
         scope.navCollapsed = true;
 
-        var termsAndConditions = function (size) {
+        var showTermsAndConditions = function (size) {
           var modalInstance = $modal.open({
             template: $templateCache.get("registration-modal.html"),
             controller: "RegistrationModalCtrl",
@@ -69,7 +69,7 @@ angular.module("risevision.common.header", [
             $log.debug("status changed from", oldStatus, "to", newStatus);
             //render a dialog based on the state user is in
             if(newStatus === "basicProfileCreated") {
-              termsAndConditions();
+              showTermsAndConditions();
             }
             else if(newStatus !== "acceptableState") {
               checkUserStatus();
