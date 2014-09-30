@@ -1,13 +1,12 @@
 <!-- Desktop and tablet -->
 <li
   class="dropdown"
-  ng-class="{'hidden-xs': userState.user}"
-  ng-show="userState.user"
+  ng-class="{'hidden-xs': isLoggedIn}"
+  ng-show="isLoggedIn"
   rv-spinner="spinnerOptions"
-  rv-spinner-key="auth-buttons"
-  rv-spinner-start-active="1">
+  rv-spinner-key="auth-buttons">
     <a href="" class="dropdown-toggle">
-      <img ng-src="{{userState.user.picture}}"
+      <img ng-src="{{userPicture}}"
         class="profile-pic" width="30" height="30" alt="User" />
     </a>
     <ul class="dropdown-menu">
@@ -19,21 +18,21 @@
 </li>
 <!-- Mobile -->
 <li
-  ng-class="{'visible-xs-inline-block': userState.user}"
-  ng-show="userState.user"
+  ng-class="{'visible-xs-inline-block': isLoggedIn}"
+  ng-show="isLoggedIn"
   rv-spinner="spinnerOptions"
   rv-spinner-key="auth-buttons"
-  rv-spinner-start-active="1">
+  >
     <a href="" class="dropdown-toggle" action-sheet="'auth-buttons-menu.html'">
-      <img ng-src="{{userState.user.picture}}"
+      <img ng-src="{{userPicture}}"
         class="profile-pic" width="30" height="30" alt="User" />
     </a>
 </li>
 <!-- If User NOT Authenticated -->
-<li ng-hide="userState.user"
+<li ng-show="!undetermined && !isLoggedIn"
   rv-spinner="spinnerOptions"
   rv-spinner-key="auth-buttons"
-  rv-spinner-start-active="1">
+  >
   <a href="" class="sign-in" ng-click="loginModal()">
     <span>Sign In</span>
     <i class="fa fa-sign-in"></i>

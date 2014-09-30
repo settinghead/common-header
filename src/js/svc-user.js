@@ -3,7 +3,8 @@
   "use strict";
   angular.module("risevision.common.userprofile", [
   "risevision.common.gapi", "risevision.common.oauth2",
-  "risevision.common.cache", "risevision.common.util"])
+  "risevision.common.cache", "risevision.common.util",
+  "risevision.common.userstate"])
 
   .value("userRoleMap", {
     "ca": "Content Administrator",
@@ -16,18 +17,20 @@
     "ba": "Billing Administrator"
   })
 
-  .factory("getUser", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
-  "userState", "getOAuthUserInfo", "userInfoCache",
-  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
+  .factory("getUserProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
+  "getOAuthUserInfo", "userInfoCache",
+  function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
+
+      if(!username) { throw "getUserProfile failed: username param is required."; }
       var deferred = $q.defer();
       var criteria = {};
       if (username) {criteria.username = username; }
-      $log.debug("getUser called", criteria);
-      if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
+      $log.debug("getUserProfile called", criteria);
+      if(userInfoCache.get("profile-" +  username)) {
         //skip if already exists
-        $log.debug("getUser resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
+        $log.debug("getUserProfile resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
         deferred.resolve(userInfoCache.get("profile-" + username));
       }
       else {
@@ -41,9 +44,6 @@
             else {
               $log.debug("getUser resp", resp);
                 //get user profile
-                userState.user.profile = angular.extend({
-                  username: oauthUserInfo.email
-                }, resp.item);
               userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
               deferred.resolve(resp.item);
             }
@@ -76,8 +76,8 @@
   }])
 
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getUser", "pick",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser, pick) {
+  "userInfoCache", "userState", "getUserProfile", "pick",
+  function ($q, coreAPILoader, $log, userInfoCache, userState, getUserProfile, pick) {
     return function (username, profile) {
       $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
@@ -97,7 +97,7 @@
             }
             else if (resp.result) {
               userInfoCache.remove("profile-" + username);
-              getUser().then(function() {deferred.resolve(resp);});
+              getUserProfile(username).then(function() {deferred.resolve(resp);});
             }
             else {
               deferred.reject("updateUser");

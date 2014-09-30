@@ -4,8 +4,6 @@
 
   angular.module("risevision.common.cache", [])
 
-    .constant("userState", { })
-
     .value("rvStorage", sessionStorage)
 
     .factory("userInfoCache", ["$cacheFactory", function ($cacheFactory) {

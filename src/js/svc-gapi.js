@@ -23,7 +23,7 @@ angular.module("risevision.common.gapi", [])
         promise = deferred.promise;
         gapiLoader().then(function (gApi) {
           gApi.client.load("oauth2", "v2", function () {
-              $log.info("OAuth2 API is loaded");
+              $log.debug("OAuth2 API is loaded");
               deferred.resolve(gApi);
           });
         });
@@ -76,7 +76,7 @@ angular.module("risevision.common.gapi", [])
         else {
           gApi.client.load("core", "v0", function () {
             if (gApi.client.core) {
-              $log.info("Core API Loaded");
+              $log.debug("Core API Loaded");
               deferred.resolve(gApi.client.core);
             } else {
               var errMsg = "Core API Load Failed";
@@ -103,7 +103,7 @@ angular.module("risevision.common.gapi", [])
         else {
           gApi.client.load("rise", "v0", function () {
             if (gApi.client.core) {
-              $log.info("Rise API Loaded");
+              $log.debug("Rise API Loaded");
               deferred.resolve(gApi.client.rise);
             } else {
               var errMsg = "Rise API Load Failed";

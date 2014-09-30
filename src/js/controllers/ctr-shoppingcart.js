@@ -14,20 +14,18 @@ angular.module("risevision.common.header")
 .controller("ShoppingCartButtonCtrl", [
   "$scope", "shoppingCart", "userState", "$log", "STORE_URL",
   function($scope, shoppingCart, userState, $log, STORE_URL) {
-    userState.shoppingCart = {};
 
-    $scope.shoppingCartUrl = function () {
-      return STORE_URL + "#/shopping-cart";
-    };
+    $scope.shoppingCartUrl = STORE_URL + "#/shopping-cart";
+    $scope.items = null;
 
-    $scope.$watch("userState.user.profile", function (newVal) {
-      if(newVal) {
-        userState.shoppingCart.items = shoppingCart.initialize();
-        $log.debug("Shopping cart populated.");
+    $scope.$watch(function () {return userState.getUsername(); },
+    function (newUsername) {
+      if(newUsername && userState.isRiseVisionUser()) {
+        $scope.items  = shoppingCart.initialize();
+        $log.debug("Shopping cart initialized for user", newUsername, $scope.items);
       }
       else {
-        //clear cart on scope
-        userState.shoppingCart.items = null;
+        $scope.items = shoppingCart.destroy();
       }
     });
   }

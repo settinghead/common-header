@@ -32,10 +32,10 @@
     </div>
     <h3>Details of the Company You Are Moving the Above Company Under</h3>
     <div class="to-company">
-      {{userState.user.company.name}}<br>
-      {{userState.user.company.address}}<br>
-      {{userState.user.company.city}}, {{userState.user.company.province}},
-      {{userState.user.company.country}} {{userState.user.company.postalCode}}
+      {{userCompany.name}}<br>
+      {{userCompany.address}}<br>
+      {{userCompany.city}}, {{userCompany.province}},
+      {{userCompany.country}} {{userCompany.postalCode}}
     </div>
   </div>
   <div ng-show="errors.length > 0">

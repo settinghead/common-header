@@ -1,4 +1,6 @@
-<a href="{{shoppingCartUrl()}}" class="shopping-cart-button">
+<li class="shopping-cart" ng-show="items !== null">
+<a href="{{shoppingCartUrl}}" class="shopping-cart-button">
   <i class="fa fa-shopping-cart"></i>
-  <span id="cartBadge" class="label label-primary">{{userState.shoppingCart.items.length | surpressZero}}</span>
+  <span id="cartBadge" class="label label-primary">{{items.length | surpressZero}}</span>
 </a>
+</li>

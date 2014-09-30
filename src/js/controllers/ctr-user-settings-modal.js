@@ -22,9 +22,9 @@ angular.module("risevision.common.header")
   }])
 
   .controller("UserSettingsModalCtrl", [
-    "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser",
+    "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading",
-    function($scope, $modalInstance, updateUser, getUser, deleteUser,
+    function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
       addUser, username, userRoleMap, $log, $loading) {
 
       //push roles into array
@@ -35,7 +35,7 @@ angular.module("risevision.common.header")
 
       $scope.username = username;
 
-      getUser(username).then(function (user) {
+      getUserProfile(username).then(function (user) {
         $scope.user = user;
       });
 

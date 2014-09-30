@@ -5,30 +5,36 @@
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
 
-    .factory("addSystemMessages", ["userState", function (userState) {
+    .factory("systemMessages", [function () {
+
+      var messages = [];
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
         list.push(m);
       }
 
-      return function (messages) {
-        if(!userState.messages) {
-          userState.messages = [];
-        }
-        if(messages && messages instanceof Array) {
-          messages.forEach(function (m) {
+      messages.addMessages = function (newMessages) {
+        if(newMessages && newMessages instanceof Array) {
+          newMessages.forEach(function (m) {
             //temporary logic to avoid duplicate messages
             var duplicate = false;
-            userState.messages.forEach(function (um) {
+            messages.forEach(function (um) {
               if(um.text === m.text) {duplicate = true; }
             });
             if(!duplicate) {
-              pushMessage(m, userState.messages);
+              pushMessage(m, messages);
             }
           });
         }
       };
+
+      messages.clear = function () {
+        messages.length = 0;
+      };
+
+      return messages;
+
     }])
 
     .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",

@@ -71,6 +71,7 @@
       destroy: function () {
         this.clear();
         items = null;
+        return items;
       },
       initialize: function () {
         items = [];
@@ -79,7 +80,12 @@
         return items;
       },
       getItemCount: function () {
-        return items.length;
+        if(items !== null) {
+          return items.length;
+        }
+        else {
+          return 0;
+        }
       },
       removeItem: function(itemToRemove) {
         if (itemToRemove && itemsMap[itemToRemove.productId]) {
@@ -107,9 +113,13 @@
         }
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
+
+        if(!items) {return; }
+
         if (itemsMap[itemToAdd.productId] && (itemToAdd.paymentTerms === "Subscription" || itemToAdd.paymentTerms === "Metered")) {
           return;
         }
+
 
         if (itemToAdd && $.isNumeric(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
           if (itemsMap[itemToAdd.productId]) {

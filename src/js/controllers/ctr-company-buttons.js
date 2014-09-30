@@ -1,25 +1,22 @@
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "switchCompany", "userState", "getCompany", "$log",
-  function($scope, $modal, $templateCache, switchCompany, userState, getCompany, $log) {
+  "userState",
+  function($scope, $modal, $templateCache, userState) {
 
-    getCompany().then(function (company) {
-      userState.user.company = company;
-    });
-
-    //reload user companies when current username is changed
-    $scope.$watch("userState.user.profile", function (newVal) {
-      if(newVal) {
-        getCompany().then(function (company) {
-          userState.user.company = company;
-        });
+    $scope.$watch(function () {return userState.getSelectedCompanyId(); },
+    function (newCompanyId) {
+      if(newCompanyId) {
+        $scope.isSubcompanySelected = userState.isSubcompanySelected();
+        $scope.selectedCompanyName = userState.getSelectedCompanyName();
       }
     });
 
-    $scope.$watch("userState.user.company.id", function (newVal) {
-      if(newVal) {
-        userState.selectedCompany = userState.user.company;
-        $log.debug("Selected company changed to", userState.selectedCompany.name);
+    $scope.$watch(function () {return userState.isRiseVisionUser(); },
+    function (isRvUser) {
+      $scope.isRiseVisionUser = isRvUser;
+      if(isRvUser === true) {
+        $scope.isSystemAdmin = userState.hasRole("sa");
+        $scope.isPurchaser = userState.hasRole("pu");
       }
     });
 
@@ -39,16 +36,7 @@ angular.module("risevision.common.header")
         size: size,
         resolve: {
           companyId: function () {
-            var cId = companyId;
-            if(!cId) {
-              if(userState.selectedCompany) {
-                cId = userState.selectedCompany.id;
-              }
-              else {
-                cId = userState.user.company.id;
-              }
-            }
-            return cId;
+            return userState.getSelectedCompanyId();
           }
         }
       });
@@ -63,12 +51,7 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
-            }
-            else {
-              return userState.user.company.id;
-            }
+            return userState.getSelectedCompanyId();
           }
         }
       });
@@ -81,16 +64,11 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
-            }
-            else {
-              return userState.user.company.id;
-            }
+            return userState.getSelectedCompanyId();
           }
         }
       });
-      modalInstance.result.then(switchCompany);
+      modalInstance.result.then(userState.switchCompany);
     };
 
     // Show Move Company Modal
@@ -104,14 +82,8 @@ angular.module("risevision.common.header")
     };
 
     $scope.resetCompany = function () {
-      switchCompany($scope.userState.user.company);
+      userState.resetCompany();
     };
 
-    //watch and monitor if current company is a subcompany
-    $scope.$watch("userState.selectedCompany.id", function (newVal) {
-      if(newVal && $scope.userState.user && $scope.userState.user.company) {
-        $scope.userState.subCompanySelected = (newVal !== $scope.userState.user.company.id);
-      }
-    });
   }
 ]);

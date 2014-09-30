@@ -15,7 +15,7 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
     $scope.save = function () {
-      createCompany(userState.selectedCompany.id,
+      createCompany(userState.getSeelctedCompanyId(),
         $scope.company).then(function () {
         $modalInstance.close("success");
       }, function (err) {alert(err); });
