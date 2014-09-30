@@ -1,17 +1,28 @@
 angular.module("risevision.common.header")
 
 .controller("SystemMessagesButtonCtrl", [
-  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages", "addSystemMessages",
+  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages", "systemMessages",
   function($scope, userState, $log, $sce, getCoreSystemMessages,
-    addSystemMessages) {
+    systemMessages) {
+
+    $scope.messages = systemMessages;
+    $scope.$watch(function () {return userState.isRiseVisionUser();},
+      function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
     $scope.renderHtml = function(html_code)
-    {
-        return $sce.trustAsHtml(html_code);
-    };
-    $scope.$watch("userState.selectedCompany.id", function (newVal) {
-      if(newVal) {
-        getCoreSystemMessages(newVal).then(addSystemMessages);
-      }
+    { return $sce.trustAsHtml(html_code); };
+
+    $scope.$watch(
+      function () { return userState.getSelectedCompanyId(); },
+      function (newCompanyId) {
+        if(newCompanyId !== null) {
+          systemMessages.clear();
+          getCoreSystemMessages(newCompanyId).then(systemMessages.addMessages);
+        }
+        else {
+          systemMessages.clear();
+        }
     });
+
   }
 ]);

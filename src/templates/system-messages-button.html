@@ -1,9 +1,9 @@
 <!-- Desktop and tablet -->
 <li class="dropdown system-messages hidden-xs"
-ng-show="userState.user.profile">
+ng-show="isRiseVisionUser">
   <a href="" class="dropdown-toggle system-messages-button">
     <i class="fa fa-bell"></i>
-    <span class="label label-danger system-messages-badge">{{userState.messages.length}}</span>
+    <span class="label label-danger system-messages-badge">{{messages.length}}</span>
   </a>
   <ul class="dropdown-menu system-messages">
     <ng-include
@@ -15,12 +15,12 @@ ng-show="userState.user.profile">
 <!-- Mobile -->
 <li
   class="system-messages"
-  ng-show="userState.user.profile"
-  ng-class="{'visible-xs-inline-block': userState.user.profile}">
+  ng-show="isRiseVisionUser"
+  ng-class="{'visible-xs-inline-block': isRiseVisionUser}">
     <a href=""
       class="system-messages-button"
       action-sheet="'system-messages-button-menu.html'">
         <i class="fa fa-bell"></i>
-        <span class="label label-danger system-messages-badge">{{userState.messages.length}}</span>
+        <span class="label label-danger system-messages-badge">{{messages.length}}</span>
     </a>
 </li>

@@ -5,13 +5,13 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\">\n" +
-    "  {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}\n" +
+    "  {{profile.firstName}} {{profile.lastName}}\n" +
     "</li>\n" +
     "<li class=\"dropdown-header\">\n" +
-    "  {{userState.user.profile.email}}\n" +
+    "  {{profile.email}}\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
-    "<li ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"divider\" ng-show=\"isRiseVisionUser\"></li>\n" +
+    "<li ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
     "    <i class=\"fa fa-cogs\"></i>\n" +
     "    <span class=\"item-name\">User Settings</span>\n" +
@@ -24,8 +24,8 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Payment Methods</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user\"></li>\n" +
-    "<li ng-show=\"userState.user.username\">\n" +
+    "<li class=\"divider\" ng-show=\"isLoggedIn\"></li>\n" +
+    "<li ng-show=\"isLoggedIn\">\n" +
     "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button action\">\n" +
     "    <i class=\"fa fa-sign-out\"></i>\n" +
     "    <span class=\"item-name\">Sign Out</span>\n" +
@@ -44,13 +44,12 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Desktop and tablet -->\n" +
     "<li\n" +
     "  class=\"dropdown\"\n" +
-    "  ng-class=\"{'hidden-xs': userState.user}\"\n" +
-    "  ng-show=\"userState.user\"\n" +
+    "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
+    "  ng-show=\"isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\">\n" +
+    "  rv-spinner-key=\"auth-buttons\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
-    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
+    "      <img ng-src=\"{{userPicture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "    <ul class=\"dropdown-menu\">\n" +
@@ -62,21 +61,21 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user}\"\n" +
-    "  ng-show=\"userState.user\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
+    "  ng-show=\"isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\">\n" +
+    "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
-    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
+    "      <img ng-src=\"{{userPicture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-hide=\"userState.user\"\n" +
+    "<li ng-show=\"!undetermined && !isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\">\n" +
+    "  >\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +
@@ -121,12 +120,12 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("common-header.html",
     "<!-- Common Header Navbar -->\n" +
     "<nav class=\"navbar navbar-default navbar-static-top\"\n" +
-    "	ng-class=\"{'double-margin': userState.subCompanySelected}\" role=\"navigation\">\n" +
+    "	ng-class=\"{'double-margin': isSubcompanySelected}\" role=\"navigation\">\n" +
     "	<div class=\"container\">\n" +
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
     "			<a class=\"navbar-brand visible-md visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
-    "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
+    "				<!-- <img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\"> -->\n" +
     "			</a>\n" +
     "			<a class=\"navbar-brand hidden-md hidden-lg text-center\"\n" +
     "				href=\"\" off-canvas-toggle>\n" +
@@ -143,11 +142,11 @@ app.run(["$templateCache", function($templateCache) {
     "					src=\"'system-messages-button.html'\"\n" +
     "				></ng-include>\n" +
     "				<!-- Shopping Cart -->\n" +
-    "				<li class=\"shopping-cart\"\n" +
-    "				  ng-controller=\"ShoppingCartButtonCtrl\"\n" +
-    "					ng-show=\"userState.shoppingCart.items !== null\"\n" +
-    "					ng-include=\"'shoppingcart-button.html'\">\n" +
-    "				</li>\n" +
+    "				<ng-include\n" +
+    "					replace-include\n" +
+    "					ng-controller=\"ShoppingCartButtonCtrl\"\n" +
+    "					src=\"'shoppingcart-button.html'\"\n" +
+    "				></ng-include>\n" +
     "				<!-- Current App -->\n" +
     "				<li class=\"dropdown\" ng-show=\"false\">\n" +
     "					<a href=\"\" class=\"dropdown-toggle\">\n" +
@@ -209,7 +208,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
-    "					ng-if=\"userState.user.profile\"\n" +
+    "					ng-if=\"isRiseVisionUser\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -253,9 +252,9 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-if=\"userState.subCompanySelected\"\n" +
+    "	<div ng-if=\"isSubcompanySelected\"\n" +
     "	  class=\"sub-company-alert\">\n" +
-    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompany.name}}\n" +
+    "		You're in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}\n" +
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
@@ -265,7 +264,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <ul class=\"nav nav-pills nav-stacked\">\n" +
     "  	<li off-canvas-toggle>\n" +
     "  		<i class=\"fa fa-times fa-2x pull-right\"></i>\n" +
-    "  		<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
+    "  		<!-- <img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\"> -->\n" +
     "  	</li>\n" +
     "    <li ng-repeat=\"opt in navOptions\">\n" +
     "			<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
@@ -286,61 +285,54 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\"\n" +
-    "  ng-show=\"userState.user.company\">\n" +
+    "  ng-show=\"isRiseVisionUser\">\n" +
     "  Current Company\n" +
     "</li>\n" +
-    "<li class=\"dropdown-header\" ng-show=\"userState.user.company\">\n" +
+    "<li class=\"dropdown-header\" ng-show=\"isRiseVisionUser\">\n" +
     "  <!-- home -->\n" +
-    "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
+    "  <i ng-show=\"!isSubcompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
-    "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompany.name}}\n" +
-    "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
+    "  <i ng-show=\"isSubcompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
+    "  {{selectedCompanyName}}\n" +
+    "  <div ng-show=\"isSubcompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"!userState.user.company\">\n" +
-    "  <a class=\"action\" href=\"\"\n" +
-    "    ng-click=\"companySettings()\">\n" +
-    "    <i class=\"fa fa-plus\"></i>\n" +
-    "    <span class=\"item-name\">Create a Company</span>\n" +
-    "  </a>\n" +
-    "</li>\n" +
-    "<li ng-show=\"userState.subCompanySelected\">\n" +
+    "<li ng-show=\"isSubcompanySelected\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isSubcompanySelected\">\n" +
     "  <a href=\"\" ng-click=\"resetCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-home\"></i>\n" +
     "    <span class=\"item-name\">Switch To My Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.user.company\">\n" +
+    "<li ng-show=\"isRiseVisionUser && !isSubcompanySelected\">\n" +
     "  <a href=\"\" ng-click=\"switchCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-share-square-o\"></i>\n" +
     "    <span class=\"item-name\">Select Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"roleMap.sa\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"roleMap.sa\">\n" +
     "  <a href=\"\" ng-click=\"addSubCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-plus\"></i>\n" +
     "    <span class=\"item-name\">Add Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"isSystemAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isSystemAdmin\">\n" +
     "  <a href=\"\" ng-click=\"moveCompany()\" class=\"move-company-menu-button action\">\n" +
     "    <i class=\"fa fa-arrows\"></i>\n" +
     "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.pu\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.pu\">\n" +
+    "<li ng-show=\"isPurchaser\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isPurchaser\">\n" +
     "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"isSystemAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isSystemAdmin\">\n" +
     "  <a href=\"\" data-toggle=\"modal\" ng-click=\"companyUsers()\" class=\"action company-users-menu-button\">\n" +
     "    <i class=\"fa fa-users\"></i>\n" +
     "    <span class=\"item-name\">Company Users</span>\n" +
@@ -357,7 +349,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li class=\"dropdown hidden-xs\" ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"dropdown hidden-xs\" ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle company-buttons-icon\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -371,8 +363,8 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    " ng-show=\"userState.user.profile\"\n" +
-    " ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
+    " ng-show=\"isRiseVisionUser\"\n" +
+    " ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
     "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -848,10 +840,10 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
     "    <div class=\"to-company\">\n" +
-    "      {{userState.user.company.name}}<br>\n" +
-    "      {{userState.user.company.address}}<br>\n" +
-    "      {{userState.user.company.city}}, {{userState.user.company.province}},\n" +
-    "      {{userState.user.company.country}} {{userState.user.company.postalCode}}\n" +
+    "      {{userCompany.name}}<br>\n" +
+    "      {{userCompany.address}}<br>\n" +
+    "      {{userCompany.city}}, {{userCompany.province}},\n" +
+    "      {{userCompany.country}} {{userCompany.postalCode}}\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div ng-show=\"errors.length > 0\">\n" +
@@ -1007,10 +999,12 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<a href=\"{{shoppingCartUrl()}}\" class=\"shopping-cart-button\">\n" +
+    "<li class=\"shopping-cart\" ng-show=\"items !== null\">\n" +
+    "<a href=\"{{shoppingCartUrl}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
-    "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
+    "  <span id=\"cartBadge\" class=\"label label-primary\">{{items.length | surpressZero}}</span>\n" +
     "</a>\n" +
+    "</li>\n" +
     "");
 }]);
 })();
@@ -1113,7 +1107,7 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li class=\"system-message\"\n" +
-    "  ng-repeat=\"message in userState.messages\"\n" +
+    "  ng-repeat=\"message in messages\"\n" +
     "  ng-bind-html=\"renderHtml(message.text)\">\n" +
     "</li>\n" +
     "");
@@ -1128,10 +1122,10 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("system-messages-button.html",
     "<!-- Desktop and tablet -->\n" +
     "<li class=\"dropdown system-messages hidden-xs\"\n" +
-    "ng-show=\"userState.user.profile\">\n" +
+    "ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
-    "    <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
+    "    <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
     "  </a>\n" +
     "  <ul class=\"dropdown-menu system-messages\">\n" +
     "    <ng-include\n" +
@@ -1143,13 +1137,13 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Mobile -->\n" +
     "<li\n" +
     "  class=\"system-messages\"\n" +
-    "  ng-show=\"userState.user.profile\"\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
+    "  ng-show=\"isRiseVisionUser\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
-    "        <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
+    "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
     "    </a>\n" +
     "</li>\n" +
     "");
@@ -1273,7 +1267,7 @@ app.run(["$templateCache", function($templateCache) {
 })();
 
 angular.module("risevision.common.header", [
-  "risevision.common.auth",
+  "risevision.common.userstate",
   "risevision.common.account",
   "risevision.common.gapi",
   "risevision.common.cache",
@@ -1281,31 +1275,31 @@ angular.module("risevision.common.header", [
   "risevision.common.localstorage",
   "risevision.common.header.templates",
   "risevision.common.loading",
-  "risevision.common.registration",
+  "risevision.common.userstate",   "risevision.common.ui-status",
   "risevision.common.systemmessages",
   "risevision.common.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
   "risevision.common.userprofile",
+  "risevision.common.registration",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
-    "$templateCache", "userStatusDependencies", "checkUserStatus",
-    "userState",
+    "$templateCache",
+    "userState", "uiStatusManager",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache,
-    dependencies, checkUserStatus, userState) {
+    oauthAPILoader, $log, $templateCache, userState, uiStatusManager) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
-      link: function(scope) {
-        scope.navCollapsed = true;
+      link: function($scope) {
+        $scope.navCollapsed = true;
 
-        var termsAndConditions = function (size) {
+        var showTermsAndConditions = function (size) {
           var modalInstance = $modal.open({
             template: $templateCache.get("registration-modal.html"),
             controller: "RegistrationModalCtrl",
@@ -1313,13 +1307,13 @@ angular.module("risevision.common.header", [
             backdrop: "static"
           });
           modalInstance.result.finally(function (){
-            userState.status = "pendingCheck";
+            uiStatusManager.invalidateStatus();
           });
         };
 
         // If nav options not provided use defaults
-        if (!scope.navOptions) {
-          scope.navOptions = [{
+        if (!$scope.navOptions) {
+          $scope.navOptions = [{
             title: "Home",
             link: "#/"
           }, {
@@ -1338,21 +1332,32 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $rootScope.$watch("userState.status", function (newStatus, oldStatus){
+        $scope.$watch(function () { return userState.getSelectedCompanyId(); },
+        function (selectedCompanyId) {
+          if(selectedCompanyId) {
+            $scope.isSubcompanySelected = userState.isSubcompanySelected();
+            $scope.selectedCompanyName = userState.getSelectedCompanyName();
+          }
+        });
+
+        $scope.$watch(function () { return userState.isRiseVisionUser(); },
+        function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
+
+        $scope.$watch(function () { return uiStatusManager.getStatus(); },
+        function (newStatus, oldStatus){
           if(newStatus) {
             $log.debug("status changed from", oldStatus, "to", newStatus);
-            //render a dialog based on the state user is in
+
+            //render a dialog based on the status current UI is in
             if(newStatus === "basicProfileCreated") {
-              termsAndConditions();
-            }
-            else if(newStatus !== "acceptableState") {
-              checkUserStatus();
+              showTermsAndConditions();
             }
           }
         });
 
-        $rootScope.userState = userState;
-        userState.status = "pendingCheck";
+        //force a check
+        uiStatusManager.invalidateStatus();
 
       }
     };
@@ -1361,21 +1366,35 @@ angular.module("risevision.common.header", [
 
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$rootScope", "$loading", "authenticate",
-  "signOut", "$log", "getUser", "cookieStore",
+  "userState", "$rootScope", "$loading",
+  "$log", "uiStatusManager",
   function($scope, $modal, $templateCache, userState, $rootScope,
-  $loading, authenticate, signOut, $log, getUser, cookieStore) {
+  $loading, $log, uiStatusManager) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
-    $scope.$watch("userState.status", function (newStatus){
-      if (newStatus === "pendingCheck") {
-        $loading.start("auth-buttons");
-      }
-      else {
-        $loading.stop("auth-buttons");
-      }
+    //spinner
+    $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
+    function (undetermined){
+      $scope.undetermined = undetermined;
+      if (undetermined === true) { $loading.start("auth-buttons"); }
+      else { $loading.stop("auth-buttons"); }
     });
+
+    //watch on username change and populate onto scope variables requried
+    // for rendering UI
+
+    $scope.$watch(function () {return userState.isLoggedIn();},
+      function (loggedIn) { $scope.isLoggedIn = loggedIn;
+        if(loggedIn === true) { $scope.userPicture = userState.getUserPicture();}
+      });
+    $scope.$watch(function () {return userState.isRiseVisionUser();},
+      function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
+    //repopulate profile upon change of current user
+    $scope.$watch(function () {return userState.getUsername();},
+      function () {
+        $scope.profile = userState.getCopyOfProfile(); });
 
     // Login Modal
     $scope.loginModal = function(size) {
@@ -1388,20 +1407,14 @@ angular.module("risevision.common.header")
     };
 
     $scope.authenticate = function() {
-      authenticate(true).finally(function(){
-        userState.status = "pendingCheck";
+      userState.authenticate(true).then(function () {
+        uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
 
-    $scope.register = function () {
-      cookieStore.remove("surpressRegistration");
-      userState.status = "pendingCheck";
-    };
-
     $scope.logout = function () {
-      signOut().then(function (){
+      userState.signOut().then(function (){
         alert("If you are using a public computer, please do not forget to log out of Google Account, or close your browser window if you are using Incognito mode. ");
-        userState.status = "pendingCheck";
       }, function (err) {
         $log.error("sign out failed", err);
       });
@@ -1414,7 +1427,7 @@ angular.module("risevision.common.header")
         template: $templateCache.get("user-settings-modal.html"),
         controller: "UserSettingsModalCtrl",
         size: size,
-        resolve: {username: function () {return userState.user.username;},
+        resolve: {username: function () {return userState.getUsername();},
         add: function () {return false; }}
       });
     };
@@ -1428,45 +1441,29 @@ angular.module("risevision.common.header")
       });
     };
 
-    authenticate(false).then(getUser);
-
-
-
-    $scope.$watchCollection("userState.user.profile.roles", function (newVals) {
-      if(newVals) {
-        if(!userState.roleMap) {
-          userState.roleMap = {};
-        }
-        newVals.forEach(function (val){
-          userState.roleMap[val] = true;
-        });
-      }
-    });
+    userState.authenticate(false);
   }
 ]);
 
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "switchCompany", "userState", "getCompany", "$log",
-  function($scope, $modal, $templateCache, switchCompany, userState, getCompany, $log) {
+  "userState",
+  function($scope, $modal, $templateCache, userState) {
 
-    getCompany().then(function (company) {
-      userState.user.company = company;
-    });
-
-    //reload user companies when current username is changed
-    $scope.$watch("userState.user.profile", function (newVal) {
-      if(newVal) {
-        getCompany().then(function (company) {
-          userState.user.company = company;
-        });
+    $scope.$watch(function () {return userState.getSelectedCompanyId(); },
+    function (newCompanyId) {
+      if(newCompanyId) {
+        $scope.isSubcompanySelected = userState.isSubcompanySelected();
+        $scope.selectedCompanyName = userState.getSelectedCompanyName();
       }
     });
 
-    $scope.$watch("userState.user.company.id", function (newVal) {
-      if(newVal) {
-        userState.selectedCompany = userState.user.company;
-        $log.debug("Selected company changed to", userState.selectedCompany.name);
+    $scope.$watch(function () {return userState.isRiseVisionUser(); },
+    function (isRvUser) {
+      $scope.isRiseVisionUser = isRvUser;
+      if(isRvUser === true) {
+        $scope.isSystemAdmin = userState.hasRole("sa");
+        $scope.isPurchaser = userState.hasRole("pu");
       }
     });
 
@@ -1486,16 +1483,7 @@ angular.module("risevision.common.header")
         size: size,
         resolve: {
           companyId: function () {
-            var cId = companyId;
-            if(!cId) {
-              if(userState.selectedCompany) {
-                cId = userState.selectedCompany.id;
-              }
-              else {
-                cId = userState.user.company.id;
-              }
-            }
-            return cId;
+            return userState.getSelectedCompanyId();
           }
         }
       });
@@ -1510,12 +1498,7 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
-            }
-            else {
-              return userState.user.company.id;
-            }
+            return userState.getSelectedCompanyId();
           }
         }
       });
@@ -1528,16 +1511,11 @@ angular.module("risevision.common.header")
         backdrop: true,
         resolve: {
           companyId: function () {
-            if(userState.selectedCompany) {
-              return userState.selectedCompany.id;
-            }
-            else {
-              return userState.user.company.id;
-            }
+            return userState.getSelectedCompanyId();
           }
         }
       });
-      modalInstance.result.then(switchCompany);
+      modalInstance.result.then(userState.switchCompany);
     };
 
     // Show Move Company Modal
@@ -1551,15 +1529,9 @@ angular.module("risevision.common.header")
     };
 
     $scope.resetCompany = function () {
-      switchCompany($scope.userState.user.company);
+      userState.resetCompany();
     };
 
-    //watch and monitor if current company is a subcompany
-    $scope.$watch("userState.selectedCompany.id", function (newVal) {
-      if(newVal && $scope.userState.user && $scope.userState.user.company) {
-        $scope.userState.subCompanySelected = (newVal !== $scope.userState.user.company.id);
-      }
-    });
   }
 ]);
 
@@ -1579,20 +1551,18 @@ angular.module("risevision.common.header")
 .controller("ShoppingCartButtonCtrl", [
   "$scope", "shoppingCart", "userState", "$log", "STORE_URL",
   function($scope, shoppingCart, userState, $log, STORE_URL) {
-    userState.shoppingCart = {};
 
-    $scope.shoppingCartUrl = function () {
-      return STORE_URL + "#/shopping-cart";
-    };
+    $scope.shoppingCartUrl = STORE_URL + "#/shopping-cart";
+    $scope.items = null;
 
-    $scope.$watch("userState.user.profile", function (newVal) {
-      if(newVal) {
-        userState.shoppingCart.items = shoppingCart.initialize();
-        $log.debug("Shopping cart populated.");
+    $scope.$watch(function () {return userState.getUsername(); },
+    function (newUsername) {
+      if(newUsername && userState.isRiseVisionUser()) {
+        $scope.items  = shoppingCart.initialize();
+        $log.debug("Shopping cart initialized for user", newUsername, $scope.items);
       }
       else {
-        //clear cart on scope
-        userState.shoppingCart.items = null;
+        $scope.items = shoppingCart.destroy();
       }
     });
   }
@@ -1601,18 +1571,29 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 
 .controller("SystemMessagesButtonCtrl", [
-  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages", "addSystemMessages",
+  "$scope", "userState", "$log", "$sce", "getCoreSystemMessages", "systemMessages",
   function($scope, userState, $log, $sce, getCoreSystemMessages,
-    addSystemMessages) {
+    systemMessages) {
+
+    $scope.messages = systemMessages;
+    $scope.$watch(function () {return userState.isRiseVisionUser();},
+      function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
     $scope.renderHtml = function(html_code)
-    {
-        return $sce.trustAsHtml(html_code);
-    };
-    $scope.$watch("userState.selectedCompany.id", function (newVal) {
-      if(newVal) {
-        getCoreSystemMessages(newVal).then(addSystemMessages);
-      }
+    { return $sce.trustAsHtml(html_code); };
+
+    $scope.$watch(
+      function () { return userState.getSelectedCompanyId(); },
+      function (newCompanyId) {
+        if(newCompanyId !== null) {
+          systemMessages.clear();
+          getCoreSystemMessages(newCompanyId).then(systemMessages.addMessages);
+        }
+        else {
+          systemMessages.clear();
+        }
     });
+
   }
 ]);
 
@@ -1645,74 +1626,71 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
-  "$scope", "$modalInstance", "getUser",
+  "$scope", "$modalInstance",
   "$loading", "registerAccount", "$log", "cookieStore",
-  "userState", "pick",
-  function($scope, $modalInstance, getUser, $loading,
-    registerAccount, $log, cookieStore, userState, pick) {
+  "userState", "pick", "uiStatusManager",
+  function($scope, $modalInstance, $loading,
+    registerAccount, $log, cookieStore, userState, pick, uiStatusManager) {
 
+      var copyOfProfile = userState.getCopyOfProfile() || {};
 
-    getUser().then().finally(function () {
-      if(!userState.profile) { userState.profile = {}; }
-      if(!angular.isDefined(userState.user.profile.mailSyncEnabled)) {
-        userState.user.profile.mailSyncEnabled = false;
+      $scope.profile = pick(copyOfProfile, "email", "mailSyncEnabled");
+
+      $scope.profile.accepted =
+        angular.isDefined(copyOfProfile.termsAcceptanceDate) &&
+          copyOfProfile.termsAcceptanceDate !== null;
+
+      if(!angular.isDefined($scope.profile.mailSyncEnabled)) {
+        //"no sign up" by default
+        $scope.profile.mailSyncEnabled = false;
       }
-      if(!angular.isDefined(userState.user.accepted)) {
-        userState.user.accepted = false;
-      }
 
-      $scope.profile = pick(userState.user.profile, "email", "mailSyncEnabled");
-      $scope.profile.accepted = userState.user.accepted;
+      $scope.closeModal = function() {
+        cookieStore.put("surpressRegistration", true);
+        $modalInstance.dismiss("cancel");
+      };
 
-    });
-
-    $scope.profile = {mailSyncEnabled: false};
-
-    $scope.closeModal = function() {
-      cookieStore.put("surpressRegistration", true);
-      $modalInstance.dismiss("cancel");
-    };
-
-    var watch = $scope.$watch("userState.status", function (newVal) {
-      if(newVal) {
-        if(newVal === "pendingCheck") {
-          //start the spinner
-          $loading.start("registration-modal");
-        }
-        else {
-          $loading.stop("registration-modal");
-          if(userState.status !== "basicProfileCreated") {
-            $modalInstance.close("success");
-            //stop the watch
-            watch();
+      // check status, load spinner, or close dialog if registration is complete
+      var watch = $scope.$watch(
+        function () { return uiStatusManager.isStatusUndetermined(); },
+        function (undetermined) {
+          if(undetermined === true) {
+              //start the spinner
+              $loading.start("registration-modal");
           }
-        }
-      }
-    });
+          else if (undetermined === false) {
+          $loading.stop("registration-modal");
+            if(uiStatusManager.getStatus() === "registrationComplete") {
+              $modalInstance.close("success");
+              //stop the watch
+              watch();
+            }
+          }
+      });
 
-    $scope.save = function () {
-      //update terms and conditions date
-      registerAccount(userState.user.username, $scope.profile).then(
-        function () {
-          // $modalInstance.close("success");
-        userState.status = "pendingCheck";
-        },
-        function (err) {alert("Error: " + err);
-        $log.error(err);});
-    };
-  }
+      $scope.save = function () {
+        //update terms and conditions date
+        registerAccount(userState.getUsername(), $scope.profile).then(
+          function () {
+            $modalInstance.close("success");
+            uiStatusManager.invalidateStatus("registrationComplete");
+          },
+          function (err) {alert("Error: " + JSON.stringify(err));
+          $log.error(err);});
+      };
+    }
 ]);
 
 angular.module("risevision.common.header")
 .controller("AuthModalCtrl", ["$scope", "$modalInstance", "$window",
-  "authenticate", "$rootScope", "$loading",
-  function($scope, $modalInstance, $window, authenticate, $rootScope, $loading) {
+  "userState", "$rootScope", "$loading", "uiStatusManager",
+  function($scope, $modalInstance, $window, userState, $rootScope, $loading, uiStatusManager) {
     $loading.stop("authenticate-button");
 
     $scope.authenticate = function() {
       $loading.start("authenticate-button");
-      authenticate(true).finally(function(){
-        $rootScope.userState.status = "pendingCheck";
+      userState.authenticate(true).then().finally(function(){
+        uiStatusManager.invalidateStatus("registrationComplete");
         $modalInstance.close("success");
         $loading.stop("authenticate-button");
       });
@@ -1726,12 +1704,21 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 
-.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance", "moveCompany", "lookupCompany",
-  function($scope, $modalInstance, moveCompany, lookupCompany) {
+.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance",
+  "moveCompany", "lookupCompany", "userState",
+  function($scope, $modalInstance, moveCompany, lookupCompany, userState) {
 
     $scope.company = {};
     $scope.errors = [];
     $scope.messages = [];
+    $scope.$watch(
+      function () {return userState.getUsername(); },
+      function (newUsername) {
+        if(angular.isDefined(newUsername) && newUsername !== null) {
+          $scope.userCompany = userState.getCopyOfUserCompany();
+        }
+      }
+    );
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
@@ -1808,7 +1795,7 @@ angular.module("risevision.common.header")
       $modalInstance.dismiss("cancel");
     };
     $scope.save = function () {
-      createCompany(userState.selectedCompany.id,
+      createCompany(userState.getSeelctedCompanyId(),
         $scope.company).then(function () {
         $modalInstance.close("success");
       }, function (err) {alert(err); });
@@ -1965,9 +1952,9 @@ angular.module("risevision.common.header")
   }])
 
   .controller("UserSettingsModalCtrl", [
-    "$scope", "$modalInstance", "updateUser", "getUser", "deleteUser",
+    "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading",
-    function($scope, $modalInstance, updateUser, getUser, deleteUser,
+    function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
       addUser, username, userRoleMap, $log, $loading) {
 
       //push roles into array
@@ -1978,7 +1965,7 @@ angular.module("risevision.common.header")
 
       $scope.username = username;
 
-      getUser(username).then(function (user) {
+      getUserProfile(username).then(function (user) {
         $scope.user = user;
       });
 
@@ -2661,221 +2648,396 @@ angular.module("risevision.common.geodata", [])
 (function (angular) {
   "use strict";
 
-  angular.module("risevision.common.auth",
+  angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
-      "risevision.common.config", "risevision.common.cache",
-      "risevision.common.oauth2", "ngBiscuit",
-      "risevision.common.util"
-    ])
+    "risevision.common.config", "risevision.common.cache",
+    "risevision.common.oauth2", "ngBiscuit",
+    "risevision.common.util", "risevision.common.userprofile",
+    "risevision.common.company"
+  ])
 
-    // Some constants
-    .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
-    .value("SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
+  // constants (you can override them in your app as needed)
+  .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
+  .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
-    .service("accessTokenKeeper", ["$log", "getBaseDomain", "cookieStore",
-      "gapiLoader", "pick",
-      function ($log, getBaseDomain, cookieStore, gapiLoader, pick) {
+  .factory("userState", [
+    "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
+    "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
+    "getOAuthUserInfo", "getUserProfile", "getCompany",
+    function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
+    gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
+    getOAuthUserInfo, getUserProfile, getCompany) {
+    //singleton factory that represents userState throughout application
+    var _profile = null;
+    var _user = null;
+    var _userCompany = null;
+    var _selectedCompany = null;
+    var _roleMap = null;
+    var _accessToken = cookieStore.get("rv-token");
 
+    (function initializeAccessToken () {
       //load token from cookie
-
-      var accessToken = cookieStore.get("rv-token");
-      if(accessToken) {
-        accessToken = JSON.parse(accessToken);
+      if(_accessToken) {
+        _accessToken = JSON.parse(_accessToken);
         gapiLoader().then(function (gApi) {
-          gApi.auth.setToken(accessToken);
+          gApi.auth.setToken(_accessToken);
         });
       }
 
-      $log.debug("Access token", accessToken);
+      $log.debug("Access token", _accessToken);
+    })();
 
-      this.get = function () {
-        return accessToken;
-      };
 
-      this.set = function (obj) {
-        if(typeof obj === "object") {
-          //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
-          obj = pick(obj, "access_token", "state");
-          cookieStore.put(
-            "rv-token", JSON.stringify(obj), {domain: getBaseDomain()});
-          cookieStore.put(
-            "rv-token", JSON.stringify(obj));
-        }
+    var _setAccessToken = function (obj) {
+      if(typeof obj === "object") {
+        //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
+        obj = pick(obj, "access_token", "state");
+        cookieStore.put(
+          "rv-token", JSON.stringify(obj), {domain: _getBaseDomain()});
+        cookieStore.put(
+          "rv-token", JSON.stringify(obj));
+      }
 
-        return gapiLoader().then(function (gApi) {
-          gApi.auth.setToken(obj);
-        });
-      };
+      return gapiLoader().then(function (gApi) {
+        gApi.auth.setToken(obj);
+      });
+    };
 
-      this.clear = function () {
-        $log.debug("Clearing access token...");
-        accessToken = null;
-        cookieStore.remove("rv-token",
-          {domain: "." + getBaseDomain()});
-        cookieStore.remove("rv-token");
-        return gapiLoader().then(function (gApi) {
-          gApi.auth.setToken();
-        });
-      };
-    }])
+    var _clearAccessToken = function () {
+      $log.debug("Clearing access token...");
+      _accessToken = null;
+      cookieStore.remove("rv-token",
+        {domain: "." + _getBaseDomain()});
+      cookieStore.remove("rv-token");
+      return gapiLoader().then(function (gApi) {
+        gApi.auth.setToken();
+      });
+    };
 
-    .factory("getBaseDomain", ["$log", "$location", function ($log, $location) {
-      var result;
-      function looksLikeIp(addr)
+
+    var _looksLikeIp = function (addr)
+    {
+     if (/^([0-9])+\.([0-9])+\.([0-9])+\.([0-9])+$/.test(addr))
       {
-       if (/^([0-9])+\.([0-9])+\.([0-9])+\.([0-9])+$/.test(addr))
-        {
-          return (true);
-        }
-        return (false);
+        return (true);
       }
-      return function getBaseDomain() {
-        if(!result) {
-          var hostname = $location.host();
-          var port = $location.port() ? ":" + $location.port() : "";
+      return (false);
+    };
 
-          if(looksLikeIp(hostname)) {
-            result = hostname + port;
-          }
-          else {
-            var parts = hostname.split(".");
-            if(parts.length > 1) {
-              //localhost
-              result = "." + parts.slice(parts.length -2).join(".") + port;
-            }
-            else {
-              result = "." + hostname + port;
-            }
-          }
+    var _getBaseDomain = function () {
+      var result;
+      if(!result) {
+        var hostname = $location.host();
+        var port = $location.port() ? ":" + $location.port() : "";
 
-          $log.debug("baseDomain", result);
-        }
-        return result;
-      };
-    }])
-
-    /**
-    * A Convenience method for the app to
-    * get the userState object.
-    *
-    */
-    .factory("resetUserState", ["$log", "userState",
-     function ($log, userState){
-      return function() {
-        delete userState.user;
-        delete userState.selectedCompany;
-        delete userState.isRiseAdmin;
-        $log.debug("User state has been reset.");
-      };
-    }])
-
-    .factory("authenticate", ["$log", "$q", "resetUserState",
-      "userInfoCache", "userState", "CLIENT_ID", "SCOPES", "$location",
-      "getBaseDomain", "oauthAPILoader", "accessTokenKeeper", "getOAuthUserInfo",
-      function ($log, $q, resetUserState, userInfoCache, userState, CLIENT_ID,
-      SCOPES, $location, getBaseDomain, oauthAPILoader, accessTokenKeeper,
-      getOAuthUserInfo) {
-        /*
-        * Responsible for triggering the Google OAuth process.
-        *
-        */
-        var authorize = function(attemptImmediate) {
-          var authorizeDeferred = $q.defer();
-
-          var opts = {
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            cookie_policy: $location.protocol() + "://" +
-              getBaseDomain()
-          };
-
-          if (attemptImmediate) {
-            opts.immediate = true;
-          }
-          else {
-            opts.prompt = "select_account";
-          }
-
-          oauthAPILoader().then(function (gApi) {
-            gApi.auth.authorize(opts, function (authResult) {
-              $log.debug("authResult", authResult);
-              if (authResult && !authResult.error) {
-                accessTokenKeeper.set(authResult);
-                getOAuthUserInfo().then(function (oauthUserInfo) {
-                  if(!userState.user || userState.user.username !== oauthUserInfo.email) {
-                    userState.user = {
-                      username: oauthUserInfo.email,
-                      picture: oauthUserInfo.picture
-                    };
-                  }
-                  authorizeDeferred.resolve(authResult);
-                }, authorizeDeferred.reject);
-              }
-              else {
-                authorizeDeferred.reject("not authorized");
-              }
-            });
-          }, authorizeDeferred.reject);
-          return authorizeDeferred.promise;
-        };
-
-      return function(forceAuth) {
-        $log.debug("authentication called");
-        var authenticateDeferred = $q.defer();
-        if(forceAuth) {
-          resetUserState();
-          userInfoCache.removeAll();
-        }
-
-        // This flag indicates a potentially authenticated user.
-        var accessToken = accessTokenKeeper.get();
-        var userAuthed = (angular.isDefined(accessToken) && accessToken !== null);
-        $log.debug("userAuthed", userAuthed);
-
-        if (forceAuth || userAuthed === true) {
-          authorize(userAuthed === true && !forceAuth)
-          .then(function(authResult) {
-            if (authResult && ! authResult.error) {
-              authenticateDeferred.resolve();
-            }
-            else {
-              authenticateDeferred.reject("Authentication Error: " + authResult.error);
-            }
-          });
+        if(_looksLikeIp(hostname)) {
+          result = hostname + port;
         }
         else {
-          var msg = "user is not authenticated";
-          $log.info(msg);
-          authenticateDeferred.reject(msg);
+          var parts = hostname.split(".");
+          if(parts.length > 1) {
+            //localhost
+            result = "." + parts.slice(parts.length -2).join(".") + port;
+          }
+          else {
+            result = "." + hostname + port;
+          }
         }
 
-        return authenticateDeferred.promise;
-      };
-    }])
+        $log.debug("baseDomain", result);
+      }
+      return result;
+    };
 
-    .factory("signOut", ["$q", "$log", "gapiLoader", "cookieStore", "getBaseDomain",
-    "userInfoCache", "accessTokenKeeper", "resetUserState", "shoppingCart",
-     function ($q, $log, gapiLoader, cookieStore, getBaseDomain, userInfoCache,
-       accessTokenKeeper, resetUserState, shoppingCart) {
-      return function() {
-        var deferred = $q.defer();
-        userInfoCache.removeAll();
-        // The flag the indicates a user is potentially
-        // authenticated already, must be destroyed.
-        accessTokenKeeper.clear().then(function () {
-          //clear auth token
-          // The majority of state is in here
-          resetUserState();
-          shoppingCart.destroy();
-          //call google api to sign out
-          gapiLoader().then(function (gApi) {gApi.auth.signOut(); });
-          cookieStore.remove("surpressRegistration");
-          deferred.resolve();
-          $log.debug("User is signed out.");
-        }, deferred.reject);
-        return deferred.promise;
-      };
-    }]);
+    var _resetUserState = function (){
+       _user = null;
+       _selectedCompany = null;
+       _profile = null;
+       _userCompany = null;
+       _roleMap = null;
+       $log.debug("User state has been reset.");
+     };
+
+     /*
+     * Responsible for triggering the Google OAuth process.
+     *
+     */
+     var _authorize = function(attemptImmediate) {
+       var authorizeDeferred = $q.defer();
+
+       var opts = {
+         client_id: CLIENT_ID,
+         scope: OAUTH2_SCOPES,
+         cookie_policy: $location.protocol() + "://" +
+           _getBaseDomain()
+       };
+
+       if (attemptImmediate) {
+         opts.immediate = true;
+       }
+       else {
+         opts.prompt = "select_account";
+       }
+
+       oauthAPILoader().then(function (gApi) {
+         gApi.auth.authorize(opts, function (authResult) {
+           $log.debug("authResult", authResult);
+           if (authResult && !authResult.error) {
+             _setAccessToken(authResult);
+             getOAuthUserInfo().then(function (oauthUserInfo) {
+               if(!isLoggedIn() || _user.username !== oauthUserInfo.email) {
+
+                 //populate user
+                 _user = {
+                   username: oauthUserInfo.email,
+                   picture: oauthUserInfo.picture
+                 };
+
+                 //populate profile if the current user is a rise vision user
+                 getUserProfile(_user.username).then(
+                   function (profile) {
+                     _profile = angular.extend({
+                       username: oauthUserInfo.email
+                     }, profile);
+
+                     //set role map
+                     _roleMap = {};
+                     if(_profile.roles) {
+                        _profile.roles.forEach(function (val){
+                          _roleMap[val] = true;
+                        });
+                     }
+
+                     //populate userCompany
+                     return getCompany().then(function(company) {
+                       _selectedCompany = _userCompany = company;
+                     }, function () { _userCompany = null;
+                     }).finally(function () {
+                       authorizeDeferred.resolve(authResult);
+                     });
+                   },
+                   function () { _profile = null;
+                     authorizeDeferred.resolve(authResult);
+                   });
+               }
+             }, authorizeDeferred.reject);
+           }
+           else {
+             authorizeDeferred.reject("not authorized");
+           }
+         });
+       }, authorizeDeferred.reject);
+       return authorizeDeferred.promise;
+     };
+
+     var authenticate = function(forceAuth) {
+       $log.debug("authentication called");
+       var authenticateDeferred = $q.defer();
+       if(forceAuth) {
+         _resetUserState();
+         userInfoCache.removeAll();
+       }
+
+       // This flag indicates a potentially authenticated user.
+       var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
+       $log.debug("userAuthed", userAuthed);
+
+       if (forceAuth || userAuthed === true) {
+         _authorize(userAuthed === true && !forceAuth)
+         .then(function(authResult) {
+           if (authResult && ! authResult.error) {
+             authenticateDeferred.resolve();
+           }
+           else {
+             authenticateDeferred.reject("Authentication Error: " + authResult.error);
+           }
+         });
+       }
+       else {
+         var msg = "user is not authenticated";
+         $log.debug(msg);
+         authenticateDeferred.reject(msg);
+       }
+
+       return authenticateDeferred.promise;
+     };
+
+     var signOut = function() {
+       var deferred = $q.defer();
+       userInfoCache.removeAll();
+       // The flag the indicates a user is potentially
+       // authenticated already, must be destroyed.
+       _clearAccessToken().then(function () {
+         //clear auth token
+         // The majority of state is in here
+         _resetUserState();
+        //  TODO: shoppingCart.destroy();
+         //call google api to sign out
+         gapiLoader().then(function (gApi) {gApi.auth.signOut(); });
+         cookieStore.remove("surpressRegistration");
+         deferred.resolve();
+         $log.debug("User is signed out.");
+       }, function () {
+         deferred.reject();
+       });
+       return deferred.promise;
+     };
+
+    var isLoggedIn = function () {
+      if(_user === null) {return false; }
+      else if(_user === undefined) { return undefined; }
+      else { return true; }
+    };
+
+    var isRiseVisionUser = function () {
+      return _profile !== null;
+    };
+
+
+    var hasRole = function (role) {
+      return angular.isDefined(_roleMap[role]);
+    };
+
+
+    var userState = {
+      getSelectedCompanyId: function () {
+        return (_selectedCompany && _selectedCompany.id) || null; },
+      getSelectedCompanyName: function () {
+        return (_selectedCompany && _selectedCompany.id) || null;},
+      getUsername: function () {
+        return (_user && _user.username) || null; },
+      getCopyOfProfile: function () { return angular.copy(_profile); },
+      resetCompany: function () { _selectedCompany = _userCompany; },
+      getCopyOfUserCompany: function () { return angular.copy(_userCompany); },
+      switchCompany: function (company) { _selectedCompany = company; },
+      isSubcompanySelected: function () {
+        return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
+      getUserPicture: function () { return _user.picture; },
+      hasRole: hasRole,
+      isRiseVisionUser: isRiseVisionUser,
+      isLoggedIn: isLoggedIn,
+      authenticate: authenticate,
+      signOut: signOut,
+    };
+
+    //freeze userState
+    // if(Object.freeze) {
+    //   Object.freeze(userState);
+    // }
+    window.userState = userState;
+    return userState;
+  }]);
+
+})(angular);
+
+(function (angular) {
+  "use strict";
+
+angular.module("risevision.common.ui-status", [])
+
+.constant("uiStatusDependencies", {
+  _dependencies: {},
+  addDependencies: function (deps) {
+    angular.extend(this._dependencies, deps);
+  }
+})
+
+.factory("uiStatusManager", ["$log", "$q", "$injector", "uiStatusDependencies",
+  function ($log, $q, $injector, uiStatusDependencies) {
+
+  var _status;
+  var _dependencies = uiStatusDependencies._dependencies;
+
+  //internal method that attempt to reach a particular status
+  var _attemptStatus = function(status){
+    var lastD;
+    $log.debug("Attempting to reach status", status, "...");
+    var dependencies = _dependencies[status];
+
+    if(dependencies) {
+      if(!(dependencies instanceof Array)) {
+        dependencies = [dependencies];
+      }
+
+      var prevD = $q.defer(), firstD = prevD;
+
+      angular.forEach(dependencies, function(dep) {
+        var currentD = $q.defer();
+        prevD.promise.then(currentD.resolve, function () {
+          _attemptStatus(dep).then(function (){
+            //should go here if any of the dependencies is satisfied
+            if(_dependencies[dep]) {
+              $log.debug("Deps for status", dep, "satisfied.");
+            }
+            $injector.get(status)().then(
+              function () {
+                $log.debug("Status", status, "satisfied.");
+                currentD.resolve(true);
+              },
+              function () {
+                $log.debug("Status", status, "not satisfied.");
+                currentD.reject(dep);
+              }
+            ).finally(currentD.resolve);
+          }, function () {
+            $log.debug("Failed to reach status", dep, ".");
+            currentD.reject(dep);
+          });
+        });
+        lastD = prevD = currentD;
+      });
+
+      //commence the avalance
+      firstD.reject();
+    }
+    else {
+      //terminal
+      lastD = $q.defer();
+      $injector.get(status)().then(
+        function () {
+          $log.debug("Termination status", status, "satisfied.");
+          lastD.resolve(true);
+        },
+        function () {
+          $log.debug("Termination status", status, "not satisfied.");
+          lastD.reject(status);
+        }
+      );
+    }
+
+    return lastD.promise;
+  };
+
+  var _recheckStatus = function (desiredStatus) {
+    if(!desiredStatus) {desiredStatus = "registrationComplete"; }
+    return _attemptStatus(desiredStatus).then(
+      function () {
+        _status = desiredStatus;
+      },
+      function (status) {
+        // if rejected at any given step,
+        // show the dialog of that relevant step
+        _status = status;
+      });
+  };
+
+
+  var invalidateStatus = function (desiredStatus) {
+    _status = "pendingCheck";
+    return _recheckStatus(desiredStatus);
+  };
+
+  var uiStateManager = {
+    invalidateStatus: invalidateStatus,
+    getStatus: function () { return _status; },
+    isStatusUndetermined: function () { return _status === "pendingCheck"; }
+  };
+
+
+  window.state = uiStateManager;
+
+  return uiStateManager;
+}]);
 
 })(angular);
 
@@ -2955,91 +3117,17 @@ angular.module("risevision.common.geodata", [])
   "use strict";
 
   angular.module("risevision.common.registration",
-  ["risevision.common.userprofile"])
+  ["risevision.common.userstate", "risevision.common.ui-status",
+  "risevision.common.userprofile", "risevision.common.gapi"])
 
-  .value("userStatusDependencies", {
-    "basicProfileCreated" : "signedInWithGoogle",
-    "acceptableState": ["notLoggedIn", "basicProfileCreated"]
-  })
-
-  .factory("checkUserStatus", [
-    "userStatusDependencies", "$injector", "$q", "$log", "userState",
-    function (userStatusDependencies, $injector, $q, $log, userState) {
-
-      var attemptStatus = function(status){
-        var lastD;
-        $log.debug("Attempting to reach status", status, "...");
-        var dependencies = userStatusDependencies[status];
-
-        if(dependencies) {
-          if(!(dependencies instanceof Array)) {
-            dependencies = [dependencies];
-          }
-
-          var prevD = $q.defer(), firstD = prevD;
-
-          angular.forEach(dependencies, function(dep) {
-            var currentD = $q.defer();
-            prevD.promise.then(currentD.resolve, function () {
-              attemptStatus(dep).then(function (){
-                //should go here if any of the dependencies is satisfied
-                if(userStatusDependencies[dep]) {
-                  $log.debug("Deps for status", dep, "satisfied.");
-                }
-                $injector.get(status)().then(
-                  function () {
-                    $log.debug("Status", status, "satisfied.");
-                    currentD.resolve(true);
-                  },
-                  function () {
-                    $log.debug("Status", status, "not satisfied.");
-                    currentD.reject(dep);
-                  }
-                ).finally(currentD.resolve);
-              }, function () {
-                $log.debug("Failed to reach status", dep, ".");
-                currentD.reject(dep);
-              });
-            });
-            lastD = prevD = currentD;
-          });
-
-          //commence the avalance
-          firstD.reject();
-        }
-        else {
-          //terminal
-          lastD = $q.defer();
-          $injector.get(status)().then(
-            function () {
-              $log.debug("Terminal status", status, "satisfied.");
-              lastD.resolve(true);
-            },
-            function () {
-              $log.debug("Terminal status", status, "not satisfied.");
-              lastD.reject(status);
-            }
-          );
-        }
-
-        return lastD.promise;
-      };
-
-      return function (desiredStatus) {
-        if(!desiredStatus) {desiredStatus = "acceptableState"; }
-        return attemptStatus(desiredStatus).then(
-          function () {
-            userState.status = desiredStatus;
-          },
-          function (status) {
-            // if rejected at any given step,
-            // show the dialog of that relevant step
-            userState.status = status;
-          });
-      };
+  .run(["uiStatusDependencies", function (uiStatusDependencies) {
+    uiStatusDependencies.addDependencies({
+      "basicProfileCreated" : "signedInWithGoogle",
+      "registrationComplete": ["notLoggedIn", "basicProfileCreated"]
+    });
   }])
 
-  .factory("acceptableState", ["$q", function ($q) {
+  .factory("registrationComplete", ["$q", function ($q) {
     return function () {
       var deferred = $q.defer();
       deferred.resolve(true);
@@ -3047,19 +3135,18 @@ angular.module("risevision.common.geodata", [])
     };
   }])
 
-  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "authenticate",
-  function ($q, getOAuthUserInfo, authenticate) {
+  .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "userState",
+  function ($q, getOAuthUserInfo, userState) {
     return function () {
       var deferred = $q.defer();
-      authenticate().then().finally(function () {
-        getOAuthUserInfo().then(
-          function () {
-            deferred.resolve();
-            },
-          function () {
-            deferred.reject("signedInWithGoogle");
-          });
-      });
+      // userState.authenticate(false).then().finally(function () {
+        if(userState.isLoggedIn()){
+          deferred.resolve();
+        }
+        else {
+          deferred.reject("signedInWithGoogle");
+        }
+      // });
       return deferred.promise;
     };
   }])
@@ -3075,12 +3162,12 @@ angular.module("risevision.common.geodata", [])
     };
   }])
 
-  .factory("basicProfileCreated", ["$q", "getUser", "cookieStore", "$log",
-  function ($q, getUser, cookieStore, $log) {
+  .factory("basicProfileCreated", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
+  function ($q, getUserProfile, cookieStore, $log, userState) {
     return function () {
       var deferred = $q.defer();
 
-      getUser().then(function (profile) {
+      getUserProfile(userState.getUsername()).then(function (profile) {
         if(angular.isDefined(profile.email) &&
           angular.isDefined(profile.mailSyncEnabled)) {
           deferred.resolve(profile);
@@ -3103,26 +3190,6 @@ angular.module("risevision.common.geodata", [])
 
       return deferred.promise;
     };
-  }])
-
-  .factory("companyCreated", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
-    return function () {
-      var deferred = $q.defer();
-      coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.get();
-        request.execute(function (resp) {
-            $log.debug("companyCreated core.user.get() resp", resp);
-            if(resp.result === true && resp.item.companyId) {
-              deferred.resolve(resp);
-            }
-            else {
-              deferred.reject("companyCreated");
-            }
-        });
-      });
-      return deferred.promise;
-    };
   }]);
 
 })(angular);
@@ -3132,8 +3199,6 @@ angular.module("risevision.common.geodata", [])
   "use strict";
 
   angular.module("risevision.common.cache", [])
-
-    .constant("userState", { })
 
     .value("rvStorage", sessionStorage)
 
@@ -3181,7 +3246,8 @@ angular.module("risevision.common.geodata", [])
   "use strict";
   angular.module("risevision.common.userprofile", [
   "risevision.common.gapi", "risevision.common.oauth2",
-  "risevision.common.cache", "risevision.common.util"])
+  "risevision.common.cache", "risevision.common.util",
+  "risevision.common.userstate"])
 
   .value("userRoleMap", {
     "ca": "Content Administrator",
@@ -3194,18 +3260,20 @@ angular.module("risevision.common.geodata", [])
     "ba": "Billing Administrator"
   })
 
-  .factory("getUser", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
-  "userState", "getOAuthUserInfo", "userInfoCache",
-  function (oauthAPILoader, coreAPILoader, $q, $log, userState, getOAuthUserInfo,
+  .factory("getUserProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
+  "getOAuthUserInfo", "userInfoCache",
+  function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
+
+      if(!username) { throw "getUserProfile failed: username param is required."; }
       var deferred = $q.defer();
       var criteria = {};
       if (username) {criteria.username = username; }
-      $log.debug("getUser called", criteria);
-      if(userInfoCache.get("profile-" + username || (userState.user && userState.user.username))) {
+      $log.debug("getUserProfile called", criteria);
+      if(userInfoCache.get("profile-" +  username)) {
         //skip if already exists
-        $log.debug("getUser resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
+        $log.debug("getUserProfile resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
         deferred.resolve(userInfoCache.get("profile-" + username));
       }
       else {
@@ -3219,9 +3287,6 @@ angular.module("risevision.common.geodata", [])
             else {
               $log.debug("getUser resp", resp);
                 //get user profile
-                userState.user.profile = angular.extend({
-                  username: oauthUserInfo.email
-                }, resp.item);
               userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
               deferred.resolve(resp.item);
             }
@@ -3254,8 +3319,8 @@ angular.module("risevision.common.geodata", [])
   }])
 
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getUser", "pick",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getUser, pick) {
+  "userInfoCache", "userState", "getUserProfile", "pick",
+  function ($q, coreAPILoader, $log, userInfoCache, userState, getUserProfile, pick) {
     return function (username, profile) {
       $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
@@ -3275,7 +3340,7 @@ angular.module("risevision.common.geodata", [])
             }
             else if (resp.result) {
               userInfoCache.remove("profile-" + username);
-              getUser().then(function() {deferred.resolve(resp);});
+              getUserProfile(username).then(function() {deferred.resolve(resp);});
             }
             else {
               deferred.reject("updateUser");
@@ -3426,6 +3491,7 @@ angular.module("risevision.common.geodata", [])
       destroy: function () {
         this.clear();
         items = null;
+        return items;
       },
       initialize: function () {
         items = [];
@@ -3434,7 +3500,12 @@ angular.module("risevision.common.geodata", [])
         return items;
       },
       getItemCount: function () {
-        return items.length;
+        if(items !== null) {
+          return items.length;
+        }
+        else {
+          return 0;
+        }
       },
       removeItem: function(itemToRemove) {
         if (itemToRemove && itemsMap[itemToRemove.productId]) {
@@ -3462,9 +3533,13 @@ angular.module("risevision.common.geodata", [])
         }
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
+
+        if(!items) {return; }
+
         if (itemsMap[itemToAdd.productId] && (itemToAdd.paymentTerms === "Subscription" || itemToAdd.paymentTerms === "Metered")) {
           return;
         }
+
 
         if (itemToAdd && $.isNumeric(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
           if (itemsMap[itemToAdd.productId]) {
@@ -3492,30 +3567,36 @@ angular.module("risevision.common.geodata", [])
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
 
-    .factory("addSystemMessages", ["userState", function (userState) {
+    .factory("systemMessages", [function () {
+
+      var messages = [];
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
         list.push(m);
       }
 
-      return function (messages) {
-        if(!userState.messages) {
-          userState.messages = [];
-        }
-        if(messages && messages instanceof Array) {
-          messages.forEach(function (m) {
+      messages.addMessages = function (newMessages) {
+        if(newMessages && newMessages instanceof Array) {
+          newMessages.forEach(function (m) {
             //temporary logic to avoid duplicate messages
             var duplicate = false;
-            userState.messages.forEach(function (um) {
+            messages.forEach(function (um) {
               if(um.text === m.text) {duplicate = true; }
             });
             if(!duplicate) {
-              pushMessage(m, userState.messages);
+              pushMessage(m, messages);
             }
           });
         }
       };
+
+      messages.clear = function () {
+        messages.length = 0;
+      };
+
+      return messages;
+
     }])
 
     .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",
@@ -3589,7 +3670,6 @@ angular.module("risevision.common.company",
     "risevision.common.config",
     "risevision.common.gapi",
     "risevision.common.cache",
-    "risevision.common.oauth2",
     "risevision.common.util"
   ])
 
@@ -3618,12 +3698,6 @@ angular.module("risevision.common.company",
         });
 
         return deferred.promise;
-    };
-  }])
-
-  .factory("switchCompany", ["userState", function (userState) {
-    return function (company) {
-      userState.selectedCompany= company;
     };
   }])
 
@@ -3664,45 +3738,6 @@ angular.module("risevision.common.company",
           }
         }, deferred.reject);
       });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "userState",
-  function ($q, $log, coreAPILoader, userState) {
-    return function () {
-      var deferred = $q.defer();
-      $log.debug("getUserCompanies called");
-
-      coreAPILoader().then(function (client) {
-        var request = client.company.list({});
-        request.execute(function (resp) {
-          $log.debug("core.company.list resp", resp);
-          if(resp.error){
-            delete userState.selectedCompany;
-            deferred.reject();
-          }
-          else {
-            deferred.resolve(resp.items || []);
-            //update user state if supplied
-            var updateState = function (c) {
-              $log.debug("selectedCompany", c);
-              userState.user.company = c;
-
-              //release 1 simpification - everyone is Purchaser ("pu" role)
-              userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
-
-              userState.selectedCompany = c;
-            };
-            if (resp.items && resp.items.length > 0) {
-              updateState(resp.items[0]);
-            }
-            else {
-              deferred.reject();
-            }
-          }
-        });
-      }, deferred.reject);
       return deferred.promise;
     };
   }])
@@ -3881,14 +3916,15 @@ angular.module("risevision.common.company",
  *
  */
 (function (angular){
+
   "use strict";
 
   try { angular.module("risevision.common.config"); }
-catch(err) { angular.module("risevision.common.config", []); }
+  catch(err) { angular.module("risevision.common.config", []); }
 
   angular.module("risevision.common.config")
-    .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
-    .value("STORE_URL", "http://store.risevision.com/")
+    .value("CORE_URL", "https://rvacore-test.appspot.com/_ah/api")
+    .value("STORE_URL", "http://localhost:8000/")
   ;
 })(angular);
 
@@ -3925,7 +3961,7 @@ angular.module("risevision.common.gapi", [])
         promise = deferred.promise;
         gapiLoader().then(function (gApi) {
           gApi.client.load("oauth2", "v2", function () {
-              $log.info("OAuth2 API is loaded");
+              $log.debug("OAuth2 API is loaded");
               deferred.resolve(gApi);
           });
         });
@@ -3978,7 +4014,7 @@ angular.module("risevision.common.gapi", [])
         else {
           gApi.client.load("core", "v0", function () {
             if (gApi.client.core) {
-              $log.info("Core API Loaded");
+              $log.debug("Core API Loaded");
               deferred.resolve(gApi.client.core);
             } else {
               var errMsg = "Core API Load Failed";
@@ -4005,7 +4041,7 @@ angular.module("risevision.common.gapi", [])
         else {
           gApi.client.load("rise", "v0", function () {
             if (gApi.client.core) {
-              $log.info("Rise API Loaded");
+              $log.debug("Rise API Loaded");
               deferred.resolve(gApi.client.rise);
             } else {
               var errMsg = "Rise API Load Failed";
@@ -4060,30 +4096,36 @@ angular.module("risevision.common.gapi", [])
   angular.module("risevision.common.systemmessages",
   ["risevision.common.gapi"])
 
-    .factory("addSystemMessages", ["userState", function (userState) {
+    .factory("systemMessages", [function () {
+
+      var messages = [];
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
         list.push(m);
       }
 
-      return function (messages) {
-        if(!userState.messages) {
-          userState.messages = [];
-        }
-        if(messages && messages instanceof Array) {
-          messages.forEach(function (m) {
+      messages.addMessages = function (newMessages) {
+        if(newMessages && newMessages instanceof Array) {
+          newMessages.forEach(function (m) {
             //temporary logic to avoid duplicate messages
             var duplicate = false;
-            userState.messages.forEach(function (um) {
+            messages.forEach(function (um) {
               if(um.text === m.text) {duplicate = true; }
             });
             if(!duplicate) {
-              pushMessage(m, userState.messages);
+              pushMessage(m, messages);
             }
           });
         }
       };
+
+      messages.clear = function () {
+        messages.length = 0;
+      };
+
+      return messages;
+
     }])
 
     .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",

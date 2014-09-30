@@ -5,7 +5,6 @@ angular.module("risevision.common.company",
     "risevision.common.config",
     "risevision.common.gapi",
     "risevision.common.cache",
-    "risevision.common.oauth2",
     "risevision.common.util"
   ])
 
@@ -34,12 +33,6 @@ angular.module("risevision.common.company",
         });
 
         return deferred.promise;
-    };
-  }])
-
-  .factory("switchCompany", ["userState", function (userState) {
-    return function (company) {
-      userState.selectedCompany= company;
     };
   }])
 
@@ -80,45 +73,6 @@ angular.module("risevision.common.company",
           }
         }, deferred.reject);
       });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("getUserCompanies", ["$q", "$log", "coreAPILoader", "userState",
-  function ($q, $log, coreAPILoader, userState) {
-    return function () {
-      var deferred = $q.defer();
-      $log.debug("getUserCompanies called");
-
-      coreAPILoader().then(function (client) {
-        var request = client.company.list({});
-        request.execute(function (resp) {
-          $log.debug("core.company.list resp", resp);
-          if(resp.error){
-            delete userState.selectedCompany;
-            deferred.reject();
-          }
-          else {
-            deferred.resolve(resp.items || []);
-            //update user state if supplied
-            var updateState = function (c) {
-              $log.debug("selectedCompany", c);
-              userState.user.company = c;
-
-              //release 1 simpification - everyone is Purchaser ("pu" role)
-              userState.isRiseAdmin = c.userRoles && c.userRoles.indexOf("ba") > -1;
-
-              userState.selectedCompany = c;
-            };
-            if (resp.items && resp.items.length > 0) {
-              updateState(resp.items[0]);
-            }
-            else {
-              deferred.reject();
-            }
-          }
-        });
-      }, deferred.reject);
       return deferred.promise;
     };
   }])

@@ -5,13 +5,13 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\">\n" +
-    "  {{userState.user.profile.firstName}} {{userState.user.profile.lastName}}\n" +
+    "  {{profile.firstName}} {{profile.lastName}}\n" +
     "</li>\n" +
     "<li class=\"dropdown-header\">\n" +
-    "  {{userState.user.profile.email}}\n" +
+    "  {{profile.email}}\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user.profile\"></li>\n" +
-    "<li ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"divider\" ng-show=\"isRiseVisionUser\"></li>\n" +
+    "<li ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
     "    <i class=\"fa fa-cogs\"></i>\n" +
     "    <span class=\"item-name\">User Settings</span>\n" +
@@ -24,8 +24,8 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Payment Methods</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"userState.user\"></li>\n" +
-    "<li ng-show=\"userState.user.username\">\n" +
+    "<li class=\"divider\" ng-show=\"isLoggedIn\"></li>\n" +
+    "<li ng-show=\"isLoggedIn\">\n" +
     "  <a href=\"\" ng-click=\"logout()\" class=\"sign-out-button action\">\n" +
     "    <i class=\"fa fa-sign-out\"></i>\n" +
     "    <span class=\"item-name\">Sign Out</span>\n" +
@@ -44,13 +44,12 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Desktop and tablet -->\n" +
     "<li\n" +
     "  class=\"dropdown\"\n" +
-    "  ng-class=\"{'hidden-xs': userState.user}\"\n" +
-    "  ng-show=\"userState.user\"\n" +
+    "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
+    "  ng-show=\"isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\">\n" +
+    "  rv-spinner-key=\"auth-buttons\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
-    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
+    "      <img ng-src=\"{{userPicture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "    <ul class=\"dropdown-menu\">\n" +
@@ -62,21 +61,21 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user}\"\n" +
-    "  ng-show=\"userState.user\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
+    "  ng-show=\"isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\">\n" +
+    "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
-    "      <img ng-src=\"{{userState.user.picture}}\"\n" +
+    "      <img ng-src=\"{{userPicture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-hide=\"userState.user\"\n" +
+    "<li ng-show=\"!undetermined && !isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\">\n" +
+    "  >\n" +
     "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
     "    <span>Sign In</span>\n" +
     "    <i class=\"fa fa-sign-in\"></i>\n" +
@@ -121,7 +120,7 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("common-header.html",
     "<!-- Common Header Navbar -->\n" +
     "<nav class=\"navbar navbar-default navbar-static-top\"\n" +
-    "	ng-class=\"{'double-margin': userState.subCompanySelected}\" role=\"navigation\">\n" +
+    "	ng-class=\"{'double-margin': isSubcompanySelected}\" role=\"navigation\">\n" +
     "	<div class=\"container\">\n" +
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
@@ -143,11 +142,11 @@ app.run(["$templateCache", function($templateCache) {
     "					src=\"'system-messages-button.html'\"\n" +
     "				></ng-include>\n" +
     "				<!-- Shopping Cart -->\n" +
-    "				<li class=\"shopping-cart\"\n" +
-    "				  ng-controller=\"ShoppingCartButtonCtrl\"\n" +
-    "					ng-show=\"userState.shoppingCart.items !== null\"\n" +
-    "					ng-include=\"'shoppingcart-button.html'\">\n" +
-    "				</li>\n" +
+    "				<ng-include\n" +
+    "					replace-include\n" +
+    "					ng-controller=\"ShoppingCartButtonCtrl\"\n" +
+    "					src=\"'shoppingcart-button.html'\"\n" +
+    "				></ng-include>\n" +
     "				<!-- Current App -->\n" +
     "				<li class=\"dropdown\" ng-show=\"false\">\n" +
     "					<a href=\"\" class=\"dropdown-toggle\">\n" +
@@ -209,7 +208,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
-    "					ng-if=\"userState.user.profile\"\n" +
+    "					ng-if=\"isRiseVisionUser\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -253,9 +252,9 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-if=\"userState.subCompanySelected\"\n" +
+    "	<div ng-if=\"isSubcompanySelected\"\n" +
     "	  class=\"sub-company-alert\">\n" +
-    "		You're in a Sub-Company of your Company. Current Company - {{userState.selectedCompany.name}}\n" +
+    "		You're in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}\n" +
     "	</div>\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
@@ -286,61 +285,54 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\"\n" +
-    "  ng-show=\"userState.user.company\">\n" +
+    "  ng-show=\"isRiseVisionUser\">\n" +
     "  Current Company\n" +
     "</li>\n" +
-    "<li class=\"dropdown-header\" ng-show=\"userState.user.company\">\n" +
+    "<li class=\"dropdown-header\" ng-show=\"isRiseVisionUser\">\n" +
     "  <!-- home -->\n" +
-    "  <i ng-show=\"!userState.subCompanySelected\" class=\"fa fa-home\"></i>\n" +
+    "  <i ng-show=\"!isSubcompanySelected\" class=\"fa fa-home\"></i>\n" +
     "  <!-- warning -->\n" +
-    "  <i ng-show=\"userState.subCompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
-    "  {{userState.selectedCompany.name}}\n" +
-    "  <div ng-show=\"userState.subCompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
+    "  <i ng-show=\"isSubcompanySelected\" class=\"fa fa-warning glyphicon-danger\"></i>\n" +
+    "  {{selectedCompanyName}}\n" +
+    "  <div ng-show=\"isSubcompanySelected\" class=\"danger\">This is a Sub-Company of your Company.</div>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.subCompanySelected\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"!userState.user.company\">\n" +
-    "  <a class=\"action\" href=\"\"\n" +
-    "    ng-click=\"companySettings()\">\n" +
-    "    <i class=\"fa fa-plus\"></i>\n" +
-    "    <span class=\"item-name\">Create a Company</span>\n" +
-    "  </a>\n" +
-    "</li>\n" +
-    "<li ng-show=\"userState.subCompanySelected\">\n" +
+    "<li ng-show=\"isSubcompanySelected\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isSubcompanySelected\">\n" +
     "  <a href=\"\" ng-click=\"resetCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-home\"></i>\n" +
     "    <span class=\"item-name\">Switch To My Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.user.company\">\n" +
+    "<li ng-show=\"isRiseVisionUser && !isSubcompanySelected\">\n" +
     "  <a href=\"\" ng-click=\"switchCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-share-square-o\"></i>\n" +
     "    <span class=\"item-name\">Select Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"roleMap.sa\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"roleMap.sa\">\n" +
     "  <a href=\"\" ng-click=\"addSubCompany()\" class=\"action\">\n" +
     "    <i class=\"fa fa-plus\"></i>\n" +
     "    <span class=\"item-name\">Add Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"isSystemAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isSystemAdmin\">\n" +
     "  <a href=\"\" ng-click=\"moveCompany()\" class=\"move-company-menu-button action\">\n" +
     "    <i class=\"fa fa-arrows\"></i>\n" +
     "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.pu\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.pu\">\n" +
+    "<li ng-show=\"isPurchaser\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isPurchaser\">\n" +
     "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"userState.roleMap.sa\">\n" +
+    "<li ng-show=\"isSystemAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isSystemAdmin\">\n" +
     "  <a href=\"\" data-toggle=\"modal\" ng-click=\"companyUsers()\" class=\"action company-users-menu-button\">\n" +
     "    <i class=\"fa fa-users\"></i>\n" +
     "    <span class=\"item-name\">Company Users</span>\n" +
@@ -357,7 +349,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li class=\"dropdown hidden-xs\" ng-show=\"userState.user.profile\">\n" +
+    "<li class=\"dropdown hidden-xs\" ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle company-buttons-icon\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -371,8 +363,8 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    " ng-show=\"userState.user.profile\"\n" +
-    " ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
+    " ng-show=\"isRiseVisionUser\"\n" +
+    " ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
     "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -848,10 +840,10 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
     "    <div class=\"to-company\">\n" +
-    "      {{userState.user.company.name}}<br>\n" +
-    "      {{userState.user.company.address}}<br>\n" +
-    "      {{userState.user.company.city}}, {{userState.user.company.province}},\n" +
-    "      {{userState.user.company.country}} {{userState.user.company.postalCode}}\n" +
+    "      {{userCompany.name}}<br>\n" +
+    "      {{userCompany.address}}<br>\n" +
+    "      {{userCompany.city}}, {{userCompany.province}},\n" +
+    "      {{userCompany.country}} {{userCompany.postalCode}}\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div ng-show=\"errors.length > 0\">\n" +
@@ -1007,10 +999,12 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<a href=\"{{shoppingCartUrl()}}\" class=\"shopping-cart-button\">\n" +
+    "<li class=\"shopping-cart\" ng-show=\"items !== null\">\n" +
+    "<a href=\"{{shoppingCartUrl}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
-    "  <span id=\"cartBadge\" class=\"label label-primary\">{{userState.shoppingCart.items.length | surpressZero}}</span>\n" +
+    "  <span id=\"cartBadge\" class=\"label label-primary\">{{items.length | surpressZero}}</span>\n" +
     "</a>\n" +
+    "</li>\n" +
     "");
 }]);
 })();
@@ -1113,7 +1107,7 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li class=\"system-message\"\n" +
-    "  ng-repeat=\"message in userState.messages\"\n" +
+    "  ng-repeat=\"message in messages\"\n" +
     "  ng-bind-html=\"renderHtml(message.text)\">\n" +
     "</li>\n" +
     "");
@@ -1128,10 +1122,10 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("system-messages-button.html",
     "<!-- Desktop and tablet -->\n" +
     "<li class=\"dropdown system-messages hidden-xs\"\n" +
-    "ng-show=\"userState.user.profile\">\n" +
+    "ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
-    "    <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
+    "    <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
     "  </a>\n" +
     "  <ul class=\"dropdown-menu system-messages\">\n" +
     "    <ng-include\n" +
@@ -1143,13 +1137,13 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Mobile -->\n" +
     "<li\n" +
     "  class=\"system-messages\"\n" +
-    "  ng-show=\"userState.user.profile\"\n" +
-    "  ng-class=\"{'visible-xs-inline-block': userState.user.profile}\">\n" +
+    "  ng-show=\"isRiseVisionUser\"\n" +
+    "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
-    "        <span class=\"label label-danger system-messages-badge\">{{userState.messages.length}}</span>\n" +
+    "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
     "    </a>\n" +
     "</li>\n" +
     "");

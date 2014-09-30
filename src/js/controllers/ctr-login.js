@@ -1,13 +1,13 @@
 angular.module("risevision.common.header")
 .controller("AuthModalCtrl", ["$scope", "$modalInstance", "$window",
-  "authenticate", "$rootScope", "$loading",
-  function($scope, $modalInstance, $window, authenticate, $rootScope, $loading) {
+  "userState", "$rootScope", "$loading", "uiStatusManager",
+  function($scope, $modalInstance, $window, userState, $rootScope, $loading, uiStatusManager) {
     $loading.stop("authenticate-button");
 
     $scope.authenticate = function() {
       $loading.start("authenticate-button");
-      authenticate(true).finally(function(){
-        $rootScope.userState.status = "pendingCheck";
+      userState.authenticate(true).then().finally(function(){
+        uiStatusManager.invalidateStatus("registrationComplete");
         $modalInstance.close("success");
         $loading.stop("authenticate-button");
       });

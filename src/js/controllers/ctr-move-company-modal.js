@@ -1,11 +1,20 @@
 angular.module("risevision.common.header")
 
-.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance", "moveCompany", "lookupCompany",
-  function($scope, $modalInstance, moveCompany, lookupCompany) {
+.controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance",
+  "moveCompany", "lookupCompany", "userState",
+  function($scope, $modalInstance, moveCompany, lookupCompany, userState) {
 
     $scope.company = {};
     $scope.errors = [];
     $scope.messages = [];
+    $scope.$watch(
+      function () {return userState.getUsername(); },
+      function (newUsername) {
+        if(angular.isDefined(newUsername) && newUsername !== null) {
+          $scope.userCompany = userState.getCopyOfUserCompany();
+        }
+      }
+    );
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");

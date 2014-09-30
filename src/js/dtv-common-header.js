@@ -1,5 +1,5 @@
 angular.module("risevision.common.header", [
-  "risevision.common.auth",
+  "risevision.common.userstate",
   "risevision.common.account",
   "risevision.common.gapi",
   "risevision.common.cache",
@@ -7,31 +7,31 @@ angular.module("risevision.common.header", [
   "risevision.common.localstorage",
   "risevision.common.header.templates",
   "risevision.common.loading",
-  "risevision.common.registration",
+  "risevision.common.userstate",   "risevision.common.ui-status",
   "risevision.common.systemmessages",
   "risevision.common.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
   "risevision.common.userprofile",
+  "risevision.common.registration",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
-    "$templateCache", "userStatusDependencies", "checkUserStatus",
-    "userState",
+    "$templateCache",
+    "userState", "uiStatusManager",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache,
-    dependencies, checkUserStatus, userState) {
+    oauthAPILoader, $log, $templateCache, userState, uiStatusManager) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
-      link: function(scope) {
-        scope.navCollapsed = true;
+      link: function($scope) {
+        $scope.navCollapsed = true;
 
-        var termsAndConditions = function (size) {
+        var showTermsAndConditions = function (size) {
           var modalInstance = $modal.open({
             template: $templateCache.get("registration-modal.html"),
             controller: "RegistrationModalCtrl",
@@ -39,13 +39,13 @@ angular.module("risevision.common.header", [
             backdrop: "static"
           });
           modalInstance.result.finally(function (){
-            userState.status = "pendingCheck";
+            uiStatusManager.invalidateStatus();
           });
         };
 
         // If nav options not provided use defaults
-        if (!scope.navOptions) {
-          scope.navOptions = [{
+        if (!$scope.navOptions) {
+          $scope.navOptions = [{
             title: "Home",
             link: "#/"
           }, {
@@ -64,21 +64,32 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $rootScope.$watch("userState.status", function (newStatus, oldStatus){
+        $scope.$watch(function () { return userState.getSelectedCompanyId(); },
+        function (selectedCompanyId) {
+          if(selectedCompanyId) {
+            $scope.isSubcompanySelected = userState.isSubcompanySelected();
+            $scope.selectedCompanyName = userState.getSelectedCompanyName();
+          }
+        });
+
+        $scope.$watch(function () { return userState.isRiseVisionUser(); },
+        function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
+
+        $scope.$watch(function () { return uiStatusManager.getStatus(); },
+        function (newStatus, oldStatus){
           if(newStatus) {
             $log.debug("status changed from", oldStatus, "to", newStatus);
-            //render a dialog based on the state user is in
+
+            //render a dialog based on the status current UI is in
             if(newStatus === "basicProfileCreated") {
-              termsAndConditions();
-            }
-            else if(newStatus !== "acceptableState") {
-              checkUserStatus();
+              showTermsAndConditions();
             }
           }
         });
 
-        $rootScope.userState = userState;
-        userState.status = "pendingCheck";
+        //force a check
+        uiStatusManager.invalidateStatus();
 
       }
     };

@@ -1,20 +1,34 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$rootScope", "$loading", "authenticate",
-  "signOut", "$log", "getUser", "cookieStore",
+  "userState", "$rootScope", "$loading",
+  "$log", "uiStatusManager",
   function($scope, $modal, $templateCache, userState, $rootScope,
-  $loading, authenticate, signOut, $log, getUser, cookieStore) {
+  $loading, $log, uiStatusManager) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
-    $scope.$watch("userState.status", function (newStatus){
-      if (newStatus === "pendingCheck") {
-        $loading.start("auth-buttons");
-      }
-      else {
-        $loading.stop("auth-buttons");
-      }
+    //spinner
+    $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
+    function (undetermined){
+      $scope.undetermined = undetermined;
+      if (undetermined === true) { $loading.start("auth-buttons"); }
+      else { $loading.stop("auth-buttons"); }
     });
+
+    //watch on username change and populate onto scope variables requried
+    // for rendering UI
+
+    $scope.$watch(function () {return userState.isLoggedIn();},
+      function (loggedIn) { $scope.isLoggedIn = loggedIn;
+        if(loggedIn === true) { $scope.userPicture = userState.getUserPicture();}
+      });
+    $scope.$watch(function () {return userState.isRiseVisionUser();},
+      function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
+    //repopulate profile upon change of current user
+    $scope.$watch(function () {return userState.getUsername();},
+      function () {
+        $scope.profile = userState.getCopyOfProfile(); });
 
     // Login Modal
     $scope.loginModal = function(size) {
@@ -27,20 +41,14 @@ angular.module("risevision.common.header")
     };
 
     $scope.authenticate = function() {
-      authenticate(true).finally(function(){
-        userState.status = "pendingCheck";
+      userState.authenticate(true).then(function () {
+        uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
 
-    $scope.register = function () {
-      cookieStore.remove("surpressRegistration");
-      userState.status = "pendingCheck";
-    };
-
     $scope.logout = function () {
-      signOut().then(function (){
+      userState.signOut().then(function (){
         alert("If you are using a public computer, please do not forget to log out of Google Account, or close your browser window if you are using Incognito mode. ");
-        userState.status = "pendingCheck";
       }, function (err) {
         $log.error("sign out failed", err);
       });
@@ -53,7 +61,7 @@ angular.module("risevision.common.header")
         template: $templateCache.get("user-settings-modal.html"),
         controller: "UserSettingsModalCtrl",
         size: size,
-        resolve: {username: function () {return userState.user.username;},
+        resolve: {username: function () {return userState.getUsername();},
         add: function () {return false; }}
       });
     };
@@ -67,19 +75,6 @@ angular.module("risevision.common.header")
       });
     };
 
-    authenticate(false).then(getUser);
-
-
-
-    $scope.$watchCollection("userState.user.profile.roles", function (newVals) {
-      if(newVals) {
-        if(!userState.roleMap) {
-          userState.roleMap = {};
-        }
-        newVals.forEach(function (val){
-          userState.roleMap[val] = true;
-        });
-      }
-    });
+    userState.authenticate(false);
   }
 ]);
