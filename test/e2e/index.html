@@ -180,14 +180,16 @@
     </style>
 
     <script type="text/javascript">
-      angular.module("test-app", ["ngRoute", "risevision.common.header", "JSONedit"])
+      angular.module("test-app", ["ngRoute", "risevision.common.config", "risevision.common.header", "JSONedit"])
+      .value("STORE_URL", "/test/e2e/")
+
       .config(['$routeProvider', function($routeProvider) {
         $routeProvider.
           when('/users', {templateUrl: 'fake-google-users.html',   controller: "FakeGoogleUserController"}).
           when('/companies', {templateUrl: 'fake-google-companies.html',   controller: "FakeGoogleCompanyController"}).
           when('/system-messages', {templateUrl: 'fake-google-system-messages.html',   controller: "FakeGoogleSystemMessagesController"}).
-          when('/fake-store', {templateUrl: 'fake-store.html',   controller: "FakeStoreController"}).
-          otherwise({redirectTo: '/users'});
+          when('/shopping-cart', {templateUrl: 'fake-store.html',   controller: "FakeStoreController"}).
+          otherwise({redirectTo: '/shopping-cart'});
       }])
 
       .controller("MainController", function($rootScope, $scope) {
@@ -205,7 +207,7 @@
         }
         , {
           title: 'Fake Store',
-          link: '#/fake-store'
+          link: '#/shopping-cart'
         }];
 
         if(window.gapi && window.gapi._fakeDb) {
@@ -281,7 +283,6 @@
             localStorage.setItem("fakeGoogleDb", JSON.stringify(newVal || {}));
           }, true);
         }
-
       })
 
       .controller("FakeGoogleUserController", function ($scope, $rootScope) {

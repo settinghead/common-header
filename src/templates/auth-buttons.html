@@ -29,7 +29,7 @@
     </a>
 </li>
 <!-- If User NOT Authenticated -->
-<li ng-show="!undetermined && !isLoggedIn"
+<li ng-show="!undetermined && isLoggedIn === false"
   rv-spinner="spinnerOptions"
   rv-spinner-key="auth-buttons"
   >

@@ -1,7 +1,7 @@
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "userState",
-  function($scope, $modal, $templateCache, userState) {
+  "userState", "getCompany", "$location",
+  function($scope, $modal, $templateCache, userState, getCompany, $location) {
 
     $scope.$watch(function () {return userState.getSelectedCompanyId(); },
     function (newCompanyId) {
@@ -19,6 +19,19 @@ angular.module("risevision.common.header")
         $scope.isPurchaser = userState.hasRole("pu");
       }
     });
+
+    var updateSelectedCompanyFromUrl = function() {
+      var newCompanyId = $location.search().cid;
+      if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+        getCompany(newCompanyId).then(function (company) {
+          userState.switchCompany(company);
+        });
+      }
+    };
+
+    //detect selectCompany changes on route UI
+    $scope.$on("$routeChangeSuccess", updateSelectedCompanyFromUrl);
+    updateSelectedCompanyFromUrl();
 
     $scope.addSubCompany = function(size) {
       $modal.open({

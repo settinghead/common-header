@@ -22,33 +22,40 @@
   function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
-
-      if(!username) { throw "getUserProfile failed: username param is required."; }
       var deferred = $q.defer();
-      var criteria = {};
-      if (username) {criteria.username = username; }
-      $log.debug("getUserProfile called", criteria);
-      if(userInfoCache.get("profile-" +  username)) {
-        //skip if already exists
-        $log.debug("getUserProfile resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
-        deferred.resolve(userInfoCache.get("profile-" + username));
+
+      if(!username) {
+        deferred.reject("getUserProfile failed: username param is required.");
+        $log.debug("getUserProfile failed: username param is required.");
       }
+
       else {
-        $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
-          var coreApi = results[1];
-          var oauthUserInfo = results[2];
-          coreApi.user.get(criteria).execute(function (resp){
-            if (resp.error || !resp.result) {
-              deferred.reject(resp);
-            }
-            else {
-              $log.debug("getUser resp", resp);
-                //get user profile
-              userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
-              deferred.resolve(resp.item);
-            }
-          });
-        }, deferred.reject);
+        var criteria = {};
+        if (username) {criteria.username = username; }
+        $log.debug("getUserProfile called", criteria);
+        if(userInfoCache.get("profile-" +  username)) {
+          //skip if already exists
+          $log.debug("getUserProfile resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
+          deferred.resolve(userInfoCache.get("profile-" + username));
+        }
+        else {
+          $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
+            var coreApi = results[1];
+            var oauthUserInfo = results[2];
+            coreApi.user.get(criteria).execute(function (resp){
+              if (resp.error || !resp.result) {
+                deferred.reject(resp);
+              }
+              else {
+                $log.debug("getUser resp", resp);
+                  //get user profile
+                userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
+                deferred.resolve(resp.item);
+              }
+            });
+          }, deferred.reject);
+        }
+
       }
       return deferred.promise;
     };

@@ -21,7 +21,7 @@
       before(function() {
         ptor = protractor.getInstance();
         ptor.manage().deleteAllCookies();
-        browser.get("/test/e2e/index.html#/fake-store");
+        browser.get("/test/e2e/index.html#/shopping-cart");
         //clear local storage
         browser.executeScript("localStorage.clear();");
         ptor.driver.navigate().refresh();

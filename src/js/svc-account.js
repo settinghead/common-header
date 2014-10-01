@@ -38,7 +38,7 @@
       addAccount().then().finally(function () {
         agreeToTerms().then().finally(function () {
           updateUser(username, basicProfile).then(function (resp) {
-            if(resp.result === true) { deferred.resolve(); }
+            if(resp.result) { deferred.resolve(); }
             else { deferred.reject(); }
           }, deferred.reject).finally("registerAccount ended");
         });
