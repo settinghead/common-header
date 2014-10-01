@@ -129,21 +129,23 @@
     };
 
     var resp = function (item) {
+      var copyOfitem = _.cloneDeep(item);
       return {
-        "result": true,
+        "result": {item: copyOfitem},
         "code": 200,
         "message": "OK",
-        "item": _.cloneDeep(item),
+        "item": copyOfitem,
         "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
       };
     };
 
     var respList = function (items) {
+      var copyOfItems = _.cloneDeep(items);
       return {
-        "result": true,
+        "result": {items: copyOfItems},
         "code": 200,
         "message": "OK",
-        "items": _.cloneDeep(items),
+        "items": copyOfItems,
         "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
       };
     };

@@ -61,27 +61,6 @@
     };
   }])
 
-  .factory("getUsers", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
-    return function (opts) {
-      var deferred = $q.defer();
-      coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.list(opts);
-        request.execute(function (resp) {
-            $log.debug("getUsers resp", resp);
-            if(resp.result === true) {
-              deferred.resolve(resp.items);
-            }
-            else {
-              deferred.reject("getUsers");
-            }
-        });
-      });
-      return deferred.promise;
-    };
-
-  }])
-
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
   "userInfoCache", "userState", "getUserProfile", "pick",
   function ($q, coreAPILoader, $log, userInfoCache, userState, getUserProfile, pick) {
@@ -168,7 +147,7 @@
         var request = coreApi.user.list(criteria);
         request.execute(function (resp) {
             $log.debug("getUsers resp", resp);
-            if(resp.result === true) {
+            if(resp.result) {
               deferred.resolve(resp.items);
             }
             else {
