@@ -21,8 +21,8 @@
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope) {
     //singleton factory that represents userState throughout application
-    var _profile = null;
-    var _user;
+    var _profile = null; //Rise vision profile
+    var _user;  //Google user
     var _userCompany = null;
     var _selectedCompany = null;
     var _roleMap = null;

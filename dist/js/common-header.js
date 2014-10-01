@@ -10,6 +10,13 @@ app.run(["$templateCache", function($templateCache) {
     "<li class=\"dropdown-header\">\n" +
     "  {{profile.email}}\n" +
     "</li>\n" +
+    "<li class=\"divider\" ng-show=\"isLoggedIn && !isRiseVisionUser\"></li>\n" +
+    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "  <a href=\"\" ng-click=\"register()\" class=\"user-settings-button action\">\n" +
+    "    <i class=\"fa fa-cogs\"></i>\n" +
+    "    <span class=\"item-name\">Register</span>\n" +
+    "  </a>\n" +
+    "</li>\n" +
     "<li class=\"divider\" ng-show=\"isRiseVisionUser\"></li>\n" +
     "<li ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
@@ -642,15 +649,15 @@ app.run(["$templateCache", function($templateCache) {
     "  <!-- Search -->\n" +
     "  <div class=\"input-group company-search add-bottom\">\n" +
     "    <input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
-    "      placeholder=\"Search Companies\"\n" +
+    "      placeholder=\"Search Company Users\"\n" +
     "      ng-model=\"userSearchString\">\n" +
     "      <span class=\"input-group-addon primary-bg\">\n" +
     "        <i class=\"fa fa-search\"></i>\n" +
     "      </span>\n" +
     "  </div>\n" +
     "  <!-- List of Users -->\n" +
-    "  <div class=\"list-group scrollable-list\">\n" +
-    "    <div class=\"list-group-item\" ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
+    "  <div class=\"list-group scrollable-list company-users-list\">\n" +
+    "    <div class=\"list-group-item  company-users-list-item\" ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
     "      <p class=\"list-group-item-text\"><strong>{{user.firstName}} {{user.lastName}}</strong> <small class=\"text-muted\">{{user.email}}</small></p>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -2682,8 +2689,8 @@ angular.module("risevision.common.geodata", [])
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope) {
     //singleton factory that represents userState throughout application
-    var _profile = null;
-    var _user;
+    var _profile = null; //Rise vision profile
+    var _user;  //Google user
     var _userCompany = null;
     var _selectedCompany = null;
     var _roleMap = null;
@@ -3130,7 +3137,7 @@ angular.module("risevision.common.ui-status", [])
         var request = coreApi.account.add();
         request.execute(function (resp) {
             $log.debug("addAccount resp", resp);
-            if(resp.result === true) {
+            if(resp.result) {
               deferred.resolve();
             }
             else {
@@ -3313,9 +3320,9 @@ angular.module("risevision.common.ui-status", [])
           deferred.resolve(userInfoCache.get("profile-" + username));
         }
         else {
-          $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
+          $q.all([oauthAPILoader(), coreAPILoader()]).then(function (results){
             var coreApi = results[1];
-            var oauthUserInfo = results[2];
+            // var oauthUserInfo = results[2];
             coreApi.user.get(criteria).execute(function (resp){
               if (resp.error || !resp.result) {
                 deferred.reject(resp);
@@ -3323,7 +3330,7 @@ angular.module("risevision.common.ui-status", [])
               else {
                 $log.debug("getUser resp", resp);
                   //get user profile
-                userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
+                userInfoCache.put("profile-" + username, resp.item);
                 deferred.resolve(resp.item);
               }
             });
@@ -3730,25 +3737,6 @@ angular.module("risevision.common.company",
         });
 
         return deferred.promise;
-    };
-  }])
-
-  .factory("moveCompany", ["$q", "$log", "coreAPILoader",
-  function ($q, $log, coreAPILoader) {
-    return function (companyId, parentCompanyId) {
-      var deferred = $q.defer();
-      coreAPILoader().then(function (coreApi) {
-        var request = coreApi.company.move({id: companyId, newParentId: parentCompanyId});
-        request.execute(function (resp) {
-          if(resp.result) {
-            deferred.resolve(resp.item);
-          }
-          else {
-            deferred.reject(resp);
-          }
-        }, deferred.reject);
-      });
-      return deferred.promise;
     };
   }])
 
