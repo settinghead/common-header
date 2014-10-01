@@ -12,7 +12,7 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li class=\"divider\" ng-show=\"isLoggedIn && !isRiseVisionUser\"></li>\n" +
     "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
-    "  <a href=\"\" ng-click=\"register()\" class=\"user-settings-button action\">\n" +
+    "  <a href=\"\" ng-click=\"register()\" class=\"register-user-menu-button action\">\n" +
     "    <i class=\"fa fa-cogs\"></i>\n" +
     "    <span class=\"item-name\">Register</span>\n" +
     "  </a>\n" +
