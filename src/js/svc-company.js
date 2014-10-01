@@ -36,25 +36,6 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("moveCompany", ["$q", "$log", "coreAPILoader",
-  function ($q, $log, coreAPILoader) {
-    return function (companyId, parentCompanyId) {
-      var deferred = $q.defer();
-      coreAPILoader().then(function (coreApi) {
-        var request = coreApi.company.move({id: companyId, newParentId: parentCompanyId});
-        request.execute(function (resp) {
-          if(resp.result) {
-            deferred.resolve(resp.item);
-          }
-          else {
-            deferred.reject(resp);
-          }
-        }, deferred.reject);
-      });
-      return deferred.promise;
-    };
-  }])
-
   .factory("createCompany", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
     return function (parentCompanyId, company) {
       var deferred = $q.defer();

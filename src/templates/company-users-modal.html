@@ -13,9 +13,10 @@
   <!-- Search -->
   <div class="input-group company-search add-bottom">
     <input id="csSearch" type="text" class="form-control"
-      placeholder="Search Company Users"
-      ng-model="userSearchString">
-      <span class="input-group-addon primary-bg">
+      placeholder="Search Users"
+      ng-model="search.searchString"
+      ng-enter="doSearch()">
+      <span class="input-group-addon primary-bg" ng-click="doSearch()">
         <i class="fa fa-search"></i>
       </span>
   </div>

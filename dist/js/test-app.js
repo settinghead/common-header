@@ -2818,21 +2818,23 @@ gapiMockData.companies = [
     };
 
     var resp = function (item) {
+      var copyOfitem = _.cloneDeep(item);
       return {
-        "result": true,
+        "result": {item: copyOfitem},
         "code": 200,
         "message": "OK",
-        "item": _.cloneDeep(item),
+        "item": copyOfitem,
         "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
       };
     };
 
     var respList = function (items) {
+      var copyOfItems = _.cloneDeep(items);
       return {
-        "result": true,
+        "result": {items: copyOfItems},
         "code": 200,
         "message": "OK",
-        "items": _.cloneDeep(items),
+        "items": copyOfItems,
         "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/-QiBW2KeCQy_zrNjQ2_iN6pdhkg\""
       };
     };
@@ -3328,6 +3330,14 @@ gapiMockData.companies = [
               var users = fakeDb.users;
               if(obj.companyId) {
                 users = _.where(users, {companyId: obj.companyId});
+              }
+              if(obj.search) {
+                users = _.filter(users,
+                  function (user) {
+                    return (user.firstName || "").toLowerCase().indexOf(obj.search.toLowerCase()) >= 0 ||
+                    (user.lastName || "").toLowerCase().indexOf(obj.search.toLowerCase()) >= 0 ||
+                    user.email.toLowerCase().indexOf(obj.search.toLowerCase()) >= 0;
+                  });
               }
               if(obj.count) {
                 users = users.slice(0, obj.count);
