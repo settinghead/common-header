@@ -56,7 +56,7 @@
         var request = coreApi.account.add();
         request.execute(function (resp) {
             $log.debug("addAccount resp", resp);
-            if(resp.result === true) {
+            if(resp.result) {
               deferred.resolve();
             }
             else {

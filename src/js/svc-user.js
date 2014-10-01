@@ -39,9 +39,9 @@
           deferred.resolve(userInfoCache.get("profile-" + username));
         }
         else {
-          $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
+          $q.all([oauthAPILoader(), coreAPILoader()]).then(function (results){
             var coreApi = results[1];
-            var oauthUserInfo = results[2];
+            // var oauthUserInfo = results[2];
             coreApi.user.get(criteria).execute(function (resp){
               if (resp.error || !resp.result) {
                 deferred.reject(resp);
@@ -49,7 +49,7 @@
               else {
                 $log.debug("getUser resp", resp);
                   //get user profile
-                userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
+                userInfoCache.put("profile-" + username, resp.item);
                 deferred.resolve(resp.item);
               }
             });
@@ -126,7 +126,7 @@
           username: username});
         request.execute(function (resp) {
           $log.debug("deleteUser resp", resp);
-          if(resp.result === true) {
+          if(resp.result) {
             deferred.resolve(resp);
           }
           else {

@@ -15,6 +15,10 @@ angular.module("risevision.common.header")
         descending: false
       };
 
+      $scope.search = {
+          searchString: ""
+      };
+
       $scope.changeSorting = function(field) {
         var sort = $scope.sort;
 
@@ -27,7 +31,8 @@ angular.module("risevision.common.header")
       };
 
       var loadUsers = function () {
-        getUsers({companyId: companyId}).then(function (users) {
+        getUsers({companyId: companyId,
+          search: $scope.search.searchString}).then(function (users) {
           $scope.users = users;
         });
       };
@@ -57,6 +62,11 @@ angular.module("risevision.common.header")
 
       $scope.closeModal = function() {
         $modalInstance.dismiss("cancel");
+      };
+
+      $scope.doSearch = function () {
+        $scope.users = [];
+        loadUsers();
       };
     }
   ]);

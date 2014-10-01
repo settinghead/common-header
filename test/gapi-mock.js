@@ -642,6 +642,14 @@
               if(obj.companyId) {
                 users = _.where(users, {companyId: obj.companyId});
               }
+              if(obj.search) {
+                users = _.filter(users,
+                  function (user) {
+                    return (user.firstName || "").toLowerCase().indexOf(obj.search.toLowerCase()) >= 0 ||
+                    (user.lastName || "").toLowerCase().indexOf(obj.search.toLowerCase()) >= 0 ||
+                    user.email.toLowerCase().indexOf(obj.search.toLowerCase()) >= 0;
+                  });
+              }
               if(obj.count) {
                 users = users.slice(0, obj.count);
               }
