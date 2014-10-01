@@ -104,13 +104,18 @@
       });
 
       describe("Company Users", function () {
-        it("Opens Company Users Dialog", function() {
+        it("Opens Company Users Dialog and load company users", function() {
           element(by.css(".company-buttons-icon")).click();
           assert.eventually.isTrue(element(by.css(".company-users-menu-button")).isDisplayed(),
             "Company users menu item should present");
           element(by.css(".company-users-menu-button")).click();
           assert.eventually.isTrue(element(by.css(".company-users-modal")).isDisplayed(),
             "Company users dialog should show");
+        });
+
+        it("loads up a list of users for the company", function () {
+          assert.eventually.strictEqual(element.all(by.css(".company-users-list-item")).count(), 34,
+            "Loads up 34 users");
         });
 
         it("Company Users Dialog Should Close", function () {

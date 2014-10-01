@@ -124,7 +124,8 @@ app.run(["$templateCache", function($templateCache) {
     "	<div class=\"container\">\n" +
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
-    "			<a class=\"navbar-brand visible-md visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
+    "			<a class=\"navbar-brand visible-md visible-lg\"\n" +
+    "			  href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
     "			<a class=\"navbar-brand hidden-md hidden-lg text-center\"\n" +
@@ -3334,27 +3335,6 @@ angular.module("risevision.common.ui-status", [])
     };
   }])
 
-  .factory("getUsers", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
-    return function (opts) {
-      var deferred = $q.defer();
-      coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.list(opts);
-        request.execute(function (resp) {
-            $log.debug("getUsers resp", resp);
-            if(resp.result === true) {
-              deferred.resolve(resp.items);
-            }
-            else {
-              deferred.reject("getUsers");
-            }
-        });
-      });
-      return deferred.promise;
-    };
-
-  }])
-
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
   "userInfoCache", "userState", "getUserProfile", "pick",
   function ($q, coreAPILoader, $log, userInfoCache, userState, getUserProfile, pick) {
@@ -3441,7 +3421,7 @@ angular.module("risevision.common.ui-status", [])
         var request = coreApi.user.list(criteria);
         request.execute(function (resp) {
             $log.debug("getUsers resp", resp);
-            if(resp.result === true) {
+            if(resp.result) {
               deferred.resolve(resp.items);
             }
             else {

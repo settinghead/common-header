@@ -124,7 +124,8 @@ app.run(["$templateCache", function($templateCache) {
     "	<div class=\"container\">\n" +
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
-    "			<a class=\"navbar-brand visible-md visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
+    "			<a class=\"navbar-brand visible-md visible-lg\"\n" +
+    "			  href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
     "			<a class=\"navbar-brand hidden-md hidden-lg text-center\"\n" +
@@ -648,8 +649,8 @@ app.run(["$templateCache", function($templateCache) {
     "      </span>\n" +
     "  </div>\n" +
     "  <!-- List of Users -->\n" +
-    "  <div class=\"list-group scrollable-list\">\n" +
-    "    <div class=\"list-group-item\" ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
+    "  <div class=\"list-group scrollable-list company-users-list\">\n" +
+    "    <div class=\"list-group-item  company-users-list-item\" ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
     "      <p class=\"list-group-item-text\"><strong>{{user.firstName}} {{user.lastName}}</strong> <small class=\"text-muted\">{{user.email}}</small></p>\n" +
     "    </div>\n" +
     "  </div>\n" +
