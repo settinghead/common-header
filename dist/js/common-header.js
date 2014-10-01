@@ -1985,9 +1985,9 @@ angular.module("risevision.common.header")
 
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
-    "addUser", "username", "userRoleMap", "$log", "$loading",
+    "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
-      addUser, username, userRoleMap, $log, $loading) {
+      addUser, username, userRoleMap, $log, $loading, userState) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -2007,7 +2007,15 @@ angular.module("risevision.common.header")
 
       $scope.deleteUser = function () {
         if (confirm("Are you sure you want to delete this user?")) {
-          deleteUser().finally($modalInstance.dismiss("deleted"));
+          deleteUser($scope.username)
+            .then(function () {
+              if($scope.username === userState.getUsername()) {
+                userState.signOut();
+              }
+            })
+            .finally(function () {
+              $modalInstance.dismiss("deleted");
+            });
         }
       };
 
@@ -3418,7 +3426,7 @@ angular.module("risevision.common.ui-status", [])
           username: username});
         request.execute(function (resp) {
           $log.debug("deleteUser resp", resp);
-          if(resp.result === true) {
+          if(resp.result) {
             deferred.resolve(resp);
           }
           else {

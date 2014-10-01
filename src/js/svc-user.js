@@ -126,7 +126,7 @@
           username: username});
         request.execute(function (resp) {
           $log.debug("deleteUser resp", resp);
-          if(resp.result === true) {
+          if(resp.result) {
             deferred.resolve(resp);
           }
           else {
