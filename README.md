@@ -28,10 +28,8 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 - [Karma](https://github.com/karma-runner/karma) and [Protractor](https://github.com/angular/protractor) for testing
 - [Rise Vision Gulp Factory](github.com/Rise-Vision/widget-tester.git)
 
-## Usage
-<!-- TODO -->
-
 ## Development
+- [Developer's Guide](https://github.com/Rise-Vision/common-header/wiki/Developer's-Guide-to-Rise-Vision-Common-Header)
 
 ### Prerequisites
 - [NPM (node package manager)](https://www.npmjs.org/)
@@ -52,8 +50,6 @@ npm run dev-install
 ``` bash
 gulp server-watch
 ```
-
-### Usage
 
 #### bower.json
 ``` js
@@ -86,9 +82,6 @@ target is included and the jsdev target is ignored so that it gets removed from 
 .pipe(gulp.dest("dist/");
 ```
 
-### Dependencies
-*include and describe all dependencies*
-
 ### Testing
 
 To run all tests at once, do
@@ -108,17 +101,6 @@ A mock Google API server is included for End-to-End testing. To run tests, do
 ``` bash
 gulp test:e2e
 ```
-
-## Submitting Issues
-If you encounter problems or find defects we really want to hear about them. If you could take the time to add them as issues to this Repository it would be most appreciated. When reporting issues please use the following format where applicable:
-
-**Reproduction Steps**
-
-1. did this
-2. then that
-3. followed by this (screenshots / video captures always help)
-
-**Expected Results**
 
 ``` bash
 npm run test
@@ -171,10 +153,8 @@ If you would like translate the user interface for this product to another langu
 In order to support languages i18n needs to be added to this repository.  Please refer to our Suggested Contributions.
 
 ### Suggested Contributions
-- *we need this*
-- *and we need that*
-- *we could really use this*
-- *and if we don't already have it (see above), we could use i18n Language Support*
+- Add more broadcast events as needed
+- I18n support
 
 ## Resources
 If you have any questions or problems please don't hesitate to join our lively and responsive community at http://community.risevision.com.
