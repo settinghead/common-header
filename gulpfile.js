@@ -108,7 +108,6 @@ var unitTestFiles = [
   "components/angular-bootstrap/ui-bootstrap-tpls.js",
   "components/angular-mocks/angular-mocks.js",
   "components/angular-spinner/angular-spinner.js",
-  "components/ngstorage/ngStorage.js",
   "components/ng-biscuit/dist/ng-biscuit.js",
   "src/js/config/config.js",
   "test/unit/fixtures/*.js",
