@@ -16,13 +16,13 @@
   .factory("userState", [
     "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
-    "getOAuthUserInfo", "getUserProfile", "getCompany",
+    "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
     function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
-    getOAuthUserInfo, getUserProfile, getCompany) {
+    getOAuthUserInfo, getUserProfile, getCompany, $rootScope) {
     //singleton factory that represents userState throughout application
     var _profile = null;
-    var _user = null;
+    var _user;
     var _userCompany = null;
     var _selectedCompany = null;
     var _roleMap = null;
@@ -102,8 +102,8 @@
       return result;
     };
 
-    var _resetUserState = function (){
-       _user = null;
+    var _resetUserState = function () {
+       _user = undefined;
        _selectedCompany = null;
        _profile = null;
        _userCompany = null;
@@ -138,7 +138,7 @@
            if (authResult && !authResult.error) {
              _setAccessToken(authResult);
              getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!isLoggedIn() || _user.username !== oauthUserInfo.email) {
+               if(!_user || _user.username !== oauthUserInfo.email) {
 
                  //populate user
                  _user = {
@@ -167,15 +167,21 @@
                      }, function () { _userCompany = null;
                      }).finally(function () {
                        authorizeDeferred.resolve(authResult);
+                       $rootScope.$broadcast("risevision.user.authorized");
                      });
                    },
                    function () { _profile = null;
                      authorizeDeferred.resolve(authResult);
+                     $rootScope.$broadcast("risevision.user.authorized");
                    });
                }
-             }, authorizeDeferred.reject);
+               else {authorizeDeferred.resolve(authResult); }
+             }, function(err){
+               _user = null;
+             authorizeDeferred.reject(err); });
            }
            else {
+             _user = null;
              authorizeDeferred.reject("not authorized");
            }
          });
@@ -184,33 +190,34 @@
      };
 
      var authenticate = function(forceAuth) {
-       $log.debug("authentication called");
-       var authenticateDeferred = $q.defer();
-       if(forceAuth) {
-         _resetUserState();
-         userInfoCache.removeAll();
-       }
+           var authenticateDeferred = $q.defer();
+           $log.debug("authentication called");
+           if(forceAuth) {
+             _resetUserState();
+             userInfoCache.removeAll();
+           }
 
-       // This flag indicates a potentially authenticated user.
-       var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
-       $log.debug("userAuthed", userAuthed);
+           // This flag indicates a potentially authenticated user.
+           var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
+           $log.debug("userAuthed", userAuthed);
 
-       if (forceAuth || userAuthed === true) {
-         _authorize(userAuthed === true && !forceAuth)
-         .then(function(authResult) {
-           if (authResult && ! authResult.error) {
-             authenticateDeferred.resolve();
+           if (forceAuth || userAuthed === true) {
+             _authorize(!forceAuth)
+             .then(function(authResult) {
+               if (authResult && ! authResult.error) {
+                 authenticateDeferred.resolve();
+               }
+               else {
+                 authenticateDeferred.reject("Authentication Error: " + authResult.error);
+               }
+             }, authenticateDeferred.reject);
            }
            else {
-             authenticateDeferred.reject("Authentication Error: " + authResult.error);
+             var msg = "user is not authenticated";
+             $log.debug(msg);
+             authenticateDeferred.reject(msg);
+             _user = null;
            }
-         });
-       }
-       else {
-         var msg = "user is not authenticated";
-         $log.debug(msg);
-         authenticateDeferred.reject(msg);
-       }
 
        return authenticateDeferred.promise;
      };
@@ -218,20 +225,24 @@
      var signOut = function() {
        var deferred = $q.defer();
        userInfoCache.removeAll();
-       // The flag the indicates a user is potentially
-       // authenticated already, must be destroyed.
-       _clearAccessToken().then(function () {
-         //clear auth token
-         // The majority of state is in here
-         _resetUserState();
-        //  TODO: shoppingCart.destroy();
-         //call google api to sign out
-         gapiLoader().then(function (gApi) {gApi.auth.signOut(); });
-         cookieStore.remove("surpressRegistration");
-         deferred.resolve();
-         $log.debug("User is signed out.");
-       }, function () {
-         deferred.reject();
+       gapiLoader().then(function (gApi) {
+         gApi.auth.signOut();
+         // The flag the indicates a user is potentially
+         // authenticated already, must be destroyed.
+         _clearAccessToken().then(function () {
+           //clear auth token
+           // The majority of state is in here
+           _resetUserState();
+           _user = null;
+          //  TODO: shoppingCart.destroy();
+           //call google api to sign out
+           cookieStore.remove("surpressRegistration");
+           deferred.resolve();
+           $rootScope.$broadcast("risevision.user.signedOut");
+           $log.debug("User is signed out.");
+         }, function () {
+           deferred.reject();
+         });
        });
        return deferred.promise;
      };
@@ -246,37 +257,35 @@
       return _profile !== null;
     };
 
-
     var hasRole = function (role) {
       return angular.isDefined(_roleMap[role]);
     };
-
 
     var userState = {
       getSelectedCompanyId: function () {
         return (_selectedCompany && _selectedCompany.id) || null; },
       getSelectedCompanyName: function () {
-        return (_selectedCompany && _selectedCompany.id) || null;},
+        return (_selectedCompany && _selectedCompany.name) || null;},
+      getSelectedCompanyCountry: function () {
+          return (_selectedCompany && _selectedCompany.country) || null;},
       getUsername: function () {
         return (_user && _user.username) || null; },
       getCopyOfProfile: function () { return angular.copy(_profile); },
       resetCompany: function () { _selectedCompany = _userCompany; },
       getCopyOfUserCompany: function () { return angular.copy(_userCompany); },
+      getCopyOfSelectedCompany: function () { return angular.copy(_selectedCompany); },
       switchCompany: function (company) { _selectedCompany = company; },
       isSubcompanySelected: function () {
         return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
+      isRiseAdmin: function () {return hasRole("ba"); },
       isRiseVisionUser: isRiseVisionUser,
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
       signOut: signOut,
     };
 
-    //freeze userState
-    // if(Object.freeze) {
-    //   Object.freeze(userState);
-    // }
     window.userState = userState;
     return userState;
   }]);

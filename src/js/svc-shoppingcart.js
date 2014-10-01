@@ -1,45 +1,50 @@
 (function (angular) {
   "use strict";
 
-  angular.module("risevision.common.cache")
+  angular.module("risevision.common.shoppingcart", ["risevision.common.userstate"])
 
-  .factory("shoppingCart", ["rvStorage", "$log", "$q",
-    function (rvStorage, $log, $q){
-    var items = null;
+  .factory("shoppingCart", ["rvStorage", "$log", "$q", "userState",
+    function (rvStorage, $log, $q, userState){
+    var _items = [];
     var itemsMap = {};
 
     var readFromStorage = function() {
       var storedCartContents = rvStorage.getItem("rvStore_OrderProducts");
-      $log.debug("storedCartContents", storedCartContents);
+      $log.debug("read storedCartContents", storedCartContents);
       if (storedCartContents) {
         var res = JSON.parse(storedCartContents);
         if (res && res.items && res.itemsMap) {
-          while(items.length > 0) { items.pop(); } //clear all items
-          items = res.items;
+          while(_items.length > 0) { _items.pop(); } //clear all items
+          for (var i = 0; i < res.items.length; i++) {
+            _items.push(res.items[i]);
+          }
           itemsMap = res.itemsMap;
+          $log.debug(_items.length, "items pushed to cart.");
         }
       }
     };
 
     var persistToStorage = function() {
       rvStorage.setItem("rvStore_OrderProducts",
-        JSON.stringify({items: items, itemsMap: itemsMap}));
+        JSON.stringify({items: _items, itemsMap: itemsMap}));
+      var storedCartContents = rvStorage.getItem("rvStore_OrderProducts");
+      $log.debug("written storedCartContents", storedCartContents);
     };
 
     var loadReady = $q.defer();
 
-    return {
+    var cartManager = {
       loadReady: loadReady.promise,
       getSubTotal: function (isCAD) {
         var shipping = 0;
         var subTotal = 0;
-        if(items) {
-          for (var i = 0; i < items.length; i++) {
-              var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
-              var productCost = (isCAD) ? items[i].selected.priceCAD : items[i].selected.priceUSD;
-              if (items[i].paymentTerms !== "Metered") {
-                shipping += shippingCost * items[i].qty || 0;
-                subTotal += productCost * items[i].qty || 0;
+        if(_items) {
+          for (var i = 0; i < _items.length; i++) {
+              var shippingCost = (isCAD) ? _items[i].selected.shippingCAD : _items[i].selected.shippingUSD;
+              var productCost = (isCAD) ? _items[i].selected.priceCAD : _items[i].selected.priceUSD;
+              if (_items[i].paymentTerms !== "Metered") {
+                shipping += shippingCost * _items[i].qty || 0;
+                subTotal += productCost * _items[i].qty || 0;
               }
           }
         }
@@ -48,40 +53,47 @@
       },
       getShippingTotal: function (isCAD) {
         var shipping = 0;
-        if(items) {
-          for (var i = 0; i < items.length; i++) {
-              if (items[i].paymentTerms !== "Metered") {
-                var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
-                shipping += shippingCost * items[i].qty || 0;
+        if(_items) {
+          for (var i = 0; i < _items.length; i++) {
+              if (_items[i].paymentTerms !== "Metered") {
+                var shippingCost = (isCAD) ? _items[i].selected.shippingCAD : _items[i].selected.shippingUSD;
+                shipping += shippingCost * _items[i].qty || 0;
               }
           }
         }
         return shipping;
       },
       clear: function () {
-        if(items) {
-          items.length = 0;
-        }
+        while(_items.length > 0) { _items.pop(); } //clear all items
         for (var key in itemsMap) {
           delete itemsMap[key];
         }
-        persistToStorage();
         $log.debug("Shopping cart cleared.");
       },
       destroy: function () {
         this.clear();
-        items = null;
-        return items;
+        persistToStorage();
+        return _items;
+      },
+      getItems: function () {
+        return _items;
+      },
+      setItems: function (items) {
+        $log.debug("Setting cart items", items);
+        while(_items.length > 0) { _items.pop(); } //clear all items
+        for (var i = 0; i < items.length; i++) {
+          _items.push(items[i]);
+        }
+        persistToStorage();
       },
       initialize: function () {
-        items = [];
         readFromStorage();
         loadReady.resolve();
-        return items;
+        return _items;
       },
       getItemCount: function () {
-        if(items !== null) {
-          return items.length;
+        if(_items !== null) {
+          return _items.length;
         }
         else {
           return 0;
@@ -90,9 +102,9 @@
       removeItem: function(itemToRemove) {
         if (itemToRemove && itemsMap[itemToRemove.productId]) {
           delete itemsMap[itemToRemove.productId];
-          for (var i = 0; i < items.length; i++) {
-            if (items[i].productId === itemToRemove.productId) {
-              items.splice(i, 1);
+          for (var i = 0; i < _items.length; i++) {
+            if (_items[i].productId === itemToRemove.productId) {
+              _items.splice(i, 1);
               delete itemsMap[itemToRemove.productId];
               break;
             }
@@ -114,12 +126,11 @@
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
 
-        if(!items) {return; }
+        if(!userState.isRiseVisionUser()) {return; }
 
         if (itemsMap[itemToAdd.productId] && (itemToAdd.paymentTerms === "Subscription" || itemToAdd.paymentTerms === "Metered")) {
           return;
         }
-
 
         if (itemToAdd && $.isNumeric(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
           if (itemsMap[itemToAdd.productId]) {
@@ -130,12 +141,16 @@
             // item is not already in the cart
             itemsMap[itemToAdd.productId] = angular.copy(itemToAdd);
             itemsMap[itemToAdd.productId].qty = qty;
-            items.push(itemsMap[itemToAdd.productId]);
+            _items.push(itemsMap[itemToAdd.productId]);
           }
           itemsMap[itemToAdd.productId].selected = itemToAdd.orderedPricing[pricingIndex];
           persistToStorage();
         }
       }
     };
+    cartManager.initialize();
+
+    return cartManager;
+
   }]);
 })(angular);

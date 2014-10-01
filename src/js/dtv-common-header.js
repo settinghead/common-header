@@ -14,6 +14,7 @@ angular.module("risevision.common.header", [
   "risevision.common.util",
   "risevision.common.userprofile",
   "risevision.common.registration",
+  "risevision.common.shoppingcart",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
@@ -75,22 +76,23 @@ angular.module("risevision.common.header", [
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 
-
+        //render dialogs based on status the UI is stuck on
         $scope.$watch(function () { return uiStatusManager.getStatus(); },
         function (newStatus, oldStatus){
           if(newStatus) {
             $log.debug("status changed from", oldStatus, "to", newStatus);
 
             //render a dialog based on the status current UI is in
-            if(newStatus === "basicProfileCreated") {
+            if(newStatus === "registerdAsRiseVisionUser") {
               showTermsAndConditions();
             }
           }
         });
 
         //force a check
-        uiStatusManager.invalidateStatus();
-
+        userState.authenticate(false).then().finally(
+          // function() {uiStatusManager.invalidateStatus(); }
+        );
       }
     };
   }

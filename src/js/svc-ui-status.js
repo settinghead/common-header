@@ -14,29 +14,31 @@ angular.module("risevision.common.ui-status", [])
   function ($log, $q, $injector, uiStatusDependencies) {
 
   var _status;
-  var _dependencies = uiStatusDependencies._dependencies;
+  var _dependencyMap = uiStatusDependencies._dependencies;
 
   //internal method that attempt to reach a particular status
   var _attemptStatus = function(status){
     var lastD;
     $log.debug("Attempting to reach status", status, "...");
-    var dependencies = _dependencies[status];
+    var dependencies = _dependencyMap[status];
 
     if(dependencies) {
       if(!(dependencies instanceof Array)) {
         dependencies = [dependencies];
       }
 
-      var prevD = $q.defer(), firstD = prevD;
+      var prevD = $q.defer(), firstD = prevD; //chain sibling dependency together
 
       angular.forEach(dependencies, function(dep) {
+        //iterate through dependencies
         var currentD = $q.defer();
         prevD.promise.then(currentD.resolve, function () {
           _attemptStatus(dep).then(function (){
-            //should go here if any of the dependencies is satisfied
-            if(_dependencies[dep]) {
+            //should come here if any of the dependencies is satisfied
+            if(_dependencyMap[dep]) {
               $log.debug("Deps for status", dep, "satisfied.");
             }
+            //find factory function and check for satisfaction
             $injector.get(status)().then(
               function () {
                 $log.debug("Status", status, "satisfied.");
@@ -44,12 +46,18 @@ angular.module("risevision.common.ui-status", [])
               },
               function () {
                 $log.debug("Status", status, "not satisfied.");
-                currentD.reject(dep);
+                currentD.reject(status);
               }
-            ).finally(currentD.resolve);
-          }, function () {
-            $log.debug("Failed to reach status", dep, ".");
-            currentD.reject(dep);
+            );
+          }, function (lastRej) {
+            if(_dependencyMap[dep]) {
+              $log.debug("Failed to reach status", dep, " because its dependencies are not satisfied. Last rejected dep: ", lastRej);
+              currentD.reject(lastRej);
+            }
+            else {
+              currentD.reject(dep);
+            }
+
           });
         });
         lastD = prevD = currentD;
@@ -59,7 +67,7 @@ angular.module("risevision.common.ui-status", [])
       firstD.reject();
     }
     else {
-      //terminal
+      //at deep level of termination status
       lastD = $q.defer();
       $injector.get(status)().then(
         function () {

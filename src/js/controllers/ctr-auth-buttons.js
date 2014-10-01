@@ -1,8 +1,8 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$rootScope", "$loading",
+  "userState", "$loading",
   "$log", "uiStatusManager",
-  function($scope, $modal, $templateCache, userState, $rootScope,
+  function($scope, $modal, $templateCache, userState,
   $loading, $log, uiStatusManager) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};

@@ -72,7 +72,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-show=\"!undetermined && !isLoggedIn\"\n" +
+    "<li ng-show=\"!undetermined && isLoggedIn === false\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
@@ -125,7 +125,7 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
     "			<a class=\"navbar-brand visible-md visible-lg\" href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
-    "				<!-- <img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\"> -->\n" +
+    "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
     "			<a class=\"navbar-brand hidden-md hidden-lg text-center\"\n" +
     "				href=\"\" off-canvas-toggle>\n" +
@@ -264,7 +264,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <ul class=\"nav nav-pills nav-stacked\">\n" +
     "  	<li off-canvas-toggle>\n" +
     "  		<i class=\"fa fa-times fa-2x pull-right\"></i>\n" +
-    "  		<!-- <img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\"> -->\n" +
+    "  		<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "  	</li>\n" +
     "    <li ng-repeat=\"opt in navOptions\">\n" +
     "			<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
@@ -305,7 +305,7 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li ng-show=\"isRiseVisionUser && !isSubcompanySelected\">\n" +
-    "  <a href=\"\" ng-click=\"switchCompany()\" class=\"action\">\n" +
+    "  <a href=\"\" ng-click=\"switchCompany()\" class=\"action select-subcompany-menu-button\">\n" +
     "    <i class=\"fa fa-share-square-o\"></i>\n" +
     "    <span class=\"item-name\">Select Sub-Company</span>\n" +
     "  </a>\n" +
@@ -999,10 +999,11 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<li class=\"shopping-cart\" ng-show=\"items !== null\">\n" +
+    "<li class=\"shopping-cart\" ng-show=\"isRiseVisionUser\">\n" +
     "<a href=\"{{shoppingCartUrl}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
-    "  <span id=\"cartBadge\" class=\"label label-primary\">{{items.length | surpressZero}}</span>\n" +
+    "  <span id=\"cartBadge\" class=\"label label-primary\" ng-show=\"cart.items.length\">\n" +
+    "    {{cart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
     "</li>\n" +
     "");
@@ -1021,7 +1022,7 @@ app.run(["$templateCache", function($templateCache) {
     "  </button>\n" +
     "  <h2 id=\"sub-company-label\" class=\"modal-title\">Add Sub-Company</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body\">\n" +
+    "<div class=\"modal-body select-subcompany-modal\">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"sub-company-name\">\n" +
@@ -1125,7 +1126,7 @@ app.run(["$templateCache", function($templateCache) {
     "ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
-    "    <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
+    "    <span class=\"label label-danger system-messages-badge\">{{messages.length | surpressZero}}</span>\n" +
     "  </a>\n" +
     "  <ul class=\"dropdown-menu system-messages\">\n" +
     "    <ng-include\n" +
@@ -1282,6 +1283,7 @@ angular.module("risevision.common.header", [
   "risevision.common.util",
   "risevision.common.userprofile",
   "risevision.common.registration",
+  "risevision.common.shoppingcart",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
@@ -1343,22 +1345,23 @@ angular.module("risevision.common.header", [
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 
-
+        //render dialogs based on status the UI is stuck on
         $scope.$watch(function () { return uiStatusManager.getStatus(); },
         function (newStatus, oldStatus){
           if(newStatus) {
             $log.debug("status changed from", oldStatus, "to", newStatus);
 
             //render a dialog based on the status current UI is in
-            if(newStatus === "basicProfileCreated") {
+            if(newStatus === "registerdAsRiseVisionUser") {
               showTermsAndConditions();
             }
           }
         });
 
         //force a check
-        uiStatusManager.invalidateStatus();
-
+        userState.authenticate(false).then().finally(
+          // function() {uiStatusManager.invalidateStatus(); }
+        );
       }
     };
   }
@@ -1366,9 +1369,9 @@ angular.module("risevision.common.header", [
 
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$rootScope", "$loading",
+  "userState", "$loading",
   "$log", "uiStatusManager",
-  function($scope, $modal, $templateCache, userState, $rootScope,
+  function($scope, $modal, $templateCache, userState,
   $loading, $log, uiStatusManager) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
@@ -1447,8 +1450,8 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "userState",
-  function($scope, $modal, $templateCache, userState) {
+  "userState", "getCompany", "$location",
+  function($scope, $modal, $templateCache, userState, getCompany, $location) {
 
     $scope.$watch(function () {return userState.getSelectedCompanyId(); },
     function (newCompanyId) {
@@ -1466,6 +1469,19 @@ angular.module("risevision.common.header")
         $scope.isPurchaser = userState.hasRole("pu");
       }
     });
+
+    var updateSelectedCompanyFromUrl = function() {
+      var newCompanyId = $location.search().cid;
+      if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+        getCompany(newCompanyId).then(function (company) {
+          userState.switchCompany(company);
+        });
+      }
+    };
+
+    //detect selectCompany changes on route UI
+    $scope.$on("$routeChangeSuccess", updateSelectedCompanyFromUrl);
+    updateSelectedCompanyFromUrl();
 
     $scope.addSubCompany = function(size) {
       $modal.open({
@@ -1553,17 +1569,14 @@ angular.module("risevision.common.header")
   function($scope, shoppingCart, userState, $log, STORE_URL) {
 
     $scope.shoppingCartUrl = STORE_URL + "#/shopping-cart";
-    $scope.items = null;
+    $scope.cart = {};
+    $scope.cart.items = shoppingCart.getItems();
+    $scope.$watch(function () {return userState.isRiseVisionUser();},
+      function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 
-    $scope.$watch(function () {return userState.getUsername(); },
-    function (newUsername) {
-      if(newUsername && userState.isRiseVisionUser()) {
-        $scope.items  = shoppingCart.initialize();
-        $log.debug("Shopping cart initialized for user", newUsername, $scope.items);
-      }
-      else {
-        $scope.items = shoppingCart.destroy();
-      }
+
+    $scope.$on("risevision.user.signedOut", function () {
+      shoppingCart.destroy();
     });
   }
 ]);
@@ -2663,13 +2676,13 @@ angular.module("risevision.common.geodata", [])
   .factory("userState", [
     "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
-    "getOAuthUserInfo", "getUserProfile", "getCompany",
+    "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
     function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
-    getOAuthUserInfo, getUserProfile, getCompany) {
+    getOAuthUserInfo, getUserProfile, getCompany, $rootScope) {
     //singleton factory that represents userState throughout application
     var _profile = null;
-    var _user = null;
+    var _user;
     var _userCompany = null;
     var _selectedCompany = null;
     var _roleMap = null;
@@ -2749,8 +2762,8 @@ angular.module("risevision.common.geodata", [])
       return result;
     };
 
-    var _resetUserState = function (){
-       _user = null;
+    var _resetUserState = function () {
+       _user = undefined;
        _selectedCompany = null;
        _profile = null;
        _userCompany = null;
@@ -2785,7 +2798,7 @@ angular.module("risevision.common.geodata", [])
            if (authResult && !authResult.error) {
              _setAccessToken(authResult);
              getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!isLoggedIn() || _user.username !== oauthUserInfo.email) {
+               if(!_user || _user.username !== oauthUserInfo.email) {
 
                  //populate user
                  _user = {
@@ -2814,15 +2827,21 @@ angular.module("risevision.common.geodata", [])
                      }, function () { _userCompany = null;
                      }).finally(function () {
                        authorizeDeferred.resolve(authResult);
+                       $rootScope.$broadcast("risevision.user.authorized");
                      });
                    },
                    function () { _profile = null;
                      authorizeDeferred.resolve(authResult);
+                     $rootScope.$broadcast("risevision.user.authorized");
                    });
                }
-             }, authorizeDeferred.reject);
+               else {authorizeDeferred.resolve(authResult); }
+             }, function(err){
+               _user = null;
+             authorizeDeferred.reject(err); });
            }
            else {
+             _user = null;
              authorizeDeferred.reject("not authorized");
            }
          });
@@ -2831,33 +2850,34 @@ angular.module("risevision.common.geodata", [])
      };
 
      var authenticate = function(forceAuth) {
-       $log.debug("authentication called");
-       var authenticateDeferred = $q.defer();
-       if(forceAuth) {
-         _resetUserState();
-         userInfoCache.removeAll();
-       }
+           var authenticateDeferred = $q.defer();
+           $log.debug("authentication called");
+           if(forceAuth) {
+             _resetUserState();
+             userInfoCache.removeAll();
+           }
 
-       // This flag indicates a potentially authenticated user.
-       var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
-       $log.debug("userAuthed", userAuthed);
+           // This flag indicates a potentially authenticated user.
+           var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
+           $log.debug("userAuthed", userAuthed);
 
-       if (forceAuth || userAuthed === true) {
-         _authorize(userAuthed === true && !forceAuth)
-         .then(function(authResult) {
-           if (authResult && ! authResult.error) {
-             authenticateDeferred.resolve();
+           if (forceAuth || userAuthed === true) {
+             _authorize(!forceAuth)
+             .then(function(authResult) {
+               if (authResult && ! authResult.error) {
+                 authenticateDeferred.resolve();
+               }
+               else {
+                 authenticateDeferred.reject("Authentication Error: " + authResult.error);
+               }
+             }, authenticateDeferred.reject);
            }
            else {
-             authenticateDeferred.reject("Authentication Error: " + authResult.error);
+             var msg = "user is not authenticated";
+             $log.debug(msg);
+             authenticateDeferred.reject(msg);
+             _user = null;
            }
-         });
-       }
-       else {
-         var msg = "user is not authenticated";
-         $log.debug(msg);
-         authenticateDeferred.reject(msg);
-       }
 
        return authenticateDeferred.promise;
      };
@@ -2865,20 +2885,24 @@ angular.module("risevision.common.geodata", [])
      var signOut = function() {
        var deferred = $q.defer();
        userInfoCache.removeAll();
-       // The flag the indicates a user is potentially
-       // authenticated already, must be destroyed.
-       _clearAccessToken().then(function () {
-         //clear auth token
-         // The majority of state is in here
-         _resetUserState();
-        //  TODO: shoppingCart.destroy();
-         //call google api to sign out
-         gapiLoader().then(function (gApi) {gApi.auth.signOut(); });
-         cookieStore.remove("surpressRegistration");
-         deferred.resolve();
-         $log.debug("User is signed out.");
-       }, function () {
-         deferred.reject();
+       gapiLoader().then(function (gApi) {
+         gApi.auth.signOut();
+         // The flag the indicates a user is potentially
+         // authenticated already, must be destroyed.
+         _clearAccessToken().then(function () {
+           //clear auth token
+           // The majority of state is in here
+           _resetUserState();
+           _user = null;
+          //  TODO: shoppingCart.destroy();
+           //call google api to sign out
+           cookieStore.remove("surpressRegistration");
+           deferred.resolve();
+           $rootScope.$broadcast("risevision.user.signedOut");
+           $log.debug("User is signed out.");
+         }, function () {
+           deferred.reject();
+         });
        });
        return deferred.promise;
      };
@@ -2893,37 +2917,35 @@ angular.module("risevision.common.geodata", [])
       return _profile !== null;
     };
 
-
     var hasRole = function (role) {
       return angular.isDefined(_roleMap[role]);
     };
-
 
     var userState = {
       getSelectedCompanyId: function () {
         return (_selectedCompany && _selectedCompany.id) || null; },
       getSelectedCompanyName: function () {
-        return (_selectedCompany && _selectedCompany.id) || null;},
+        return (_selectedCompany && _selectedCompany.name) || null;},
+      getSelectedCompanyCountry: function () {
+          return (_selectedCompany && _selectedCompany.country) || null;},
       getUsername: function () {
         return (_user && _user.username) || null; },
       getCopyOfProfile: function () { return angular.copy(_profile); },
       resetCompany: function () { _selectedCompany = _userCompany; },
       getCopyOfUserCompany: function () { return angular.copy(_userCompany); },
+      getCopyOfSelectedCompany: function () { return angular.copy(_selectedCompany); },
       switchCompany: function (company) { _selectedCompany = company; },
       isSubcompanySelected: function () {
         return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
+      isRiseAdmin: function () {return hasRole("ba"); },
       isRiseVisionUser: isRiseVisionUser,
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
       signOut: signOut,
     };
 
-    //freeze userState
-    // if(Object.freeze) {
-    //   Object.freeze(userState);
-    // }
     window.userState = userState;
     return userState;
   }]);
@@ -2946,29 +2968,31 @@ angular.module("risevision.common.ui-status", [])
   function ($log, $q, $injector, uiStatusDependencies) {
 
   var _status;
-  var _dependencies = uiStatusDependencies._dependencies;
+  var _dependencyMap = uiStatusDependencies._dependencies;
 
   //internal method that attempt to reach a particular status
   var _attemptStatus = function(status){
     var lastD;
     $log.debug("Attempting to reach status", status, "...");
-    var dependencies = _dependencies[status];
+    var dependencies = _dependencyMap[status];
 
     if(dependencies) {
       if(!(dependencies instanceof Array)) {
         dependencies = [dependencies];
       }
 
-      var prevD = $q.defer(), firstD = prevD;
+      var prevD = $q.defer(), firstD = prevD; //chain sibling dependency together
 
       angular.forEach(dependencies, function(dep) {
+        //iterate through dependencies
         var currentD = $q.defer();
         prevD.promise.then(currentD.resolve, function () {
           _attemptStatus(dep).then(function (){
-            //should go here if any of the dependencies is satisfied
-            if(_dependencies[dep]) {
+            //should come here if any of the dependencies is satisfied
+            if(_dependencyMap[dep]) {
               $log.debug("Deps for status", dep, "satisfied.");
             }
+            //find factory function and check for satisfaction
             $injector.get(status)().then(
               function () {
                 $log.debug("Status", status, "satisfied.");
@@ -2976,12 +3000,18 @@ angular.module("risevision.common.ui-status", [])
               },
               function () {
                 $log.debug("Status", status, "not satisfied.");
-                currentD.reject(dep);
+                currentD.reject(status);
               }
-            ).finally(currentD.resolve);
-          }, function () {
-            $log.debug("Failed to reach status", dep, ".");
-            currentD.reject(dep);
+            );
+          }, function (lastRej) {
+            if(_dependencyMap[dep]) {
+              $log.debug("Failed to reach status", dep, " because its dependencies are not satisfied. Last rejected dep: ", lastRej);
+              currentD.reject(lastRej);
+            }
+            else {
+              currentD.reject(dep);
+            }
+
           });
         });
         lastD = prevD = currentD;
@@ -2991,7 +3021,7 @@ angular.module("risevision.common.ui-status", [])
       firstD.reject();
     }
     else {
-      //terminal
+      //at deep level of termination status
       lastD = $q.defer();
       $injector.get(status)().then(
         function () {
@@ -3081,7 +3111,7 @@ angular.module("risevision.common.ui-status", [])
       addAccount().then().finally(function () {
         agreeToTerms().then().finally(function () {
           updateUser(username, basicProfile).then(function (resp) {
-            if(resp.result === true) { deferred.resolve(); }
+            if(resp.result) { deferred.resolve(); }
             else { deferred.reject(); }
           }, deferred.reject).finally("registerAccount ended");
         });
@@ -3120,10 +3150,10 @@ angular.module("risevision.common.ui-status", [])
   ["risevision.common.userstate", "risevision.common.ui-status",
   "risevision.common.userprofile", "risevision.common.gapi"])
 
-  .run(["uiStatusDependencies", function (uiStatusDependencies) {
+  .config(["uiStatusDependencies", function (uiStatusDependencies) {
     uiStatusDependencies.addDependencies({
-      "basicProfileCreated" : "signedInWithGoogle",
-      "registrationComplete": ["notLoggedIn", "basicProfileCreated"]
+      "registerdAsRiseVisionUser" : "signedInWithGoogle",
+      "registrationComplete": ["notLoggedIn", "registerdAsRiseVisionUser"]
     });
   }])
 
@@ -3162,7 +3192,7 @@ angular.module("risevision.common.ui-status", [])
     };
   }])
 
-  .factory("basicProfileCreated", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
+  .factory("registerdAsRiseVisionUser", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
   function ($q, getUserProfile, cookieStore, $log, userState) {
     return function () {
       var deferred = $q.defer();
@@ -3176,15 +3206,15 @@ angular.module("risevision.common.ui-status", [])
           deferred.resolve({});
         }
         else {
-          deferred.reject("basicProfileCreated");
+          deferred.reject("registerdAsRiseVisionUser");
         }
       }, function (err) {
         if (cookieStore.get("surpressRegistration")){
           deferred.resolve({});
         }
         else {
-          $log.debug("basicProfileCreated rejected", err);
-          deferred.reject("basicProfileCreated");
+          $log.debug("registerdAsRiseVisionUser rejected", err);
+          deferred.reject("registerdAsRiseVisionUser");
         }
       });
 
@@ -3265,33 +3295,40 @@ angular.module("risevision.common.ui-status", [])
   function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
     return function (username) {
-
-      if(!username) { throw "getUserProfile failed: username param is required."; }
       var deferred = $q.defer();
-      var criteria = {};
-      if (username) {criteria.username = username; }
-      $log.debug("getUserProfile called", criteria);
-      if(userInfoCache.get("profile-" +  username)) {
-        //skip if already exists
-        $log.debug("getUserProfile resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
-        deferred.resolve(userInfoCache.get("profile-" + username));
+
+      if(!username) {
+        deferred.reject("getUserProfile failed: username param is required.");
+        $log.debug("getUserProfile failed: username param is required.");
       }
+
       else {
-        $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
-          var coreApi = results[1];
-          var oauthUserInfo = results[2];
-          coreApi.user.get(criteria).execute(function (resp){
-            if (resp.error || !resp.result) {
-              deferred.reject(resp);
-            }
-            else {
-              $log.debug("getUser resp", resp);
-                //get user profile
-              userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
-              deferred.resolve(resp.item);
-            }
-          });
-        }, deferred.reject);
+        var criteria = {};
+        if (username) {criteria.username = username; }
+        $log.debug("getUserProfile called", criteria);
+        if(userInfoCache.get("profile-" +  username)) {
+          //skip if already exists
+          $log.debug("getUserProfile resp from cache", "profile-" + username, userInfoCache.get("profile-" + username));
+          deferred.resolve(userInfoCache.get("profile-" + username));
+        }
+        else {
+          $q.all([oauthAPILoader(), coreAPILoader(), getOAuthUserInfo()]).then(function (results){
+            var coreApi = results[1];
+            var oauthUserInfo = results[2];
+            coreApi.user.get(criteria).execute(function (resp){
+              if (resp.error || !resp.result) {
+                deferred.reject(resp);
+              }
+              else {
+                $log.debug("getUser resp", resp);
+                  //get user profile
+                userInfoCache.put("profile-" + username || oauthUserInfo.email, resp.item);
+                deferred.resolve(resp.item);
+              }
+            });
+          }, deferred.reject);
+        }
+
       }
       return deferred.promise;
     };
@@ -3421,45 +3458,50 @@ angular.module("risevision.common.ui-status", [])
 (function (angular) {
   "use strict";
 
-  angular.module("risevision.common.cache")
+  angular.module("risevision.common.shoppingcart", ["risevision.common.userstate"])
 
-  .factory("shoppingCart", ["rvStorage", "$log", "$q",
-    function (rvStorage, $log, $q){
-    var items = null;
+  .factory("shoppingCart", ["rvStorage", "$log", "$q", "userState",
+    function (rvStorage, $log, $q, userState){
+    var _items = [];
     var itemsMap = {};
 
     var readFromStorage = function() {
       var storedCartContents = rvStorage.getItem("rvStore_OrderProducts");
-      $log.debug("storedCartContents", storedCartContents);
+      $log.debug("read storedCartContents", storedCartContents);
       if (storedCartContents) {
         var res = JSON.parse(storedCartContents);
         if (res && res.items && res.itemsMap) {
-          while(items.length > 0) { items.pop(); } //clear all items
-          items = res.items;
+          while(_items.length > 0) { _items.pop(); } //clear all items
+          for (var i = 0; i < res.items.length; i++) {
+            _items.push(res.items[i]);
+          }
           itemsMap = res.itemsMap;
+          $log.debug(_items.length, "items pushed to cart.");
         }
       }
     };
 
     var persistToStorage = function() {
       rvStorage.setItem("rvStore_OrderProducts",
-        JSON.stringify({items: items, itemsMap: itemsMap}));
+        JSON.stringify({items: _items, itemsMap: itemsMap}));
+      var storedCartContents = rvStorage.getItem("rvStore_OrderProducts");
+      $log.debug("written storedCartContents", storedCartContents);
     };
 
     var loadReady = $q.defer();
 
-    return {
+    var cartManager = {
       loadReady: loadReady.promise,
       getSubTotal: function (isCAD) {
         var shipping = 0;
         var subTotal = 0;
-        if(items) {
-          for (var i = 0; i < items.length; i++) {
-              var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
-              var productCost = (isCAD) ? items[i].selected.priceCAD : items[i].selected.priceUSD;
-              if (items[i].paymentTerms !== "Metered") {
-                shipping += shippingCost * items[i].qty || 0;
-                subTotal += productCost * items[i].qty || 0;
+        if(_items) {
+          for (var i = 0; i < _items.length; i++) {
+              var shippingCost = (isCAD) ? _items[i].selected.shippingCAD : _items[i].selected.shippingUSD;
+              var productCost = (isCAD) ? _items[i].selected.priceCAD : _items[i].selected.priceUSD;
+              if (_items[i].paymentTerms !== "Metered") {
+                shipping += shippingCost * _items[i].qty || 0;
+                subTotal += productCost * _items[i].qty || 0;
               }
           }
         }
@@ -3468,40 +3510,47 @@ angular.module("risevision.common.ui-status", [])
       },
       getShippingTotal: function (isCAD) {
         var shipping = 0;
-        if(items) {
-          for (var i = 0; i < items.length; i++) {
-              if (items[i].paymentTerms !== "Metered") {
-                var shippingCost = (isCAD) ? items[i].selected.shippingCAD : items[i].selected.shippingUSD;
-                shipping += shippingCost * items[i].qty || 0;
+        if(_items) {
+          for (var i = 0; i < _items.length; i++) {
+              if (_items[i].paymentTerms !== "Metered") {
+                var shippingCost = (isCAD) ? _items[i].selected.shippingCAD : _items[i].selected.shippingUSD;
+                shipping += shippingCost * _items[i].qty || 0;
               }
           }
         }
         return shipping;
       },
       clear: function () {
-        if(items) {
-          items.length = 0;
-        }
+        while(_items.length > 0) { _items.pop(); } //clear all items
         for (var key in itemsMap) {
           delete itemsMap[key];
         }
-        persistToStorage();
         $log.debug("Shopping cart cleared.");
       },
       destroy: function () {
         this.clear();
-        items = null;
-        return items;
+        persistToStorage();
+        return _items;
+      },
+      getItems: function () {
+        return _items;
+      },
+      setItems: function (items) {
+        $log.debug("Setting cart items", items);
+        while(_items.length > 0) { _items.pop(); } //clear all items
+        for (var i = 0; i < items.length; i++) {
+          _items.push(items[i]);
+        }
+        persistToStorage();
       },
       initialize: function () {
-        items = [];
         readFromStorage();
         loadReady.resolve();
-        return items;
+        return _items;
       },
       getItemCount: function () {
-        if(items !== null) {
-          return items.length;
+        if(_items !== null) {
+          return _items.length;
         }
         else {
           return 0;
@@ -3510,9 +3559,9 @@ angular.module("risevision.common.ui-status", [])
       removeItem: function(itemToRemove) {
         if (itemToRemove && itemsMap[itemToRemove.productId]) {
           delete itemsMap[itemToRemove.productId];
-          for (var i = 0; i < items.length; i++) {
-            if (items[i].productId === itemToRemove.productId) {
-              items.splice(i, 1);
+          for (var i = 0; i < _items.length; i++) {
+            if (_items[i].productId === itemToRemove.productId) {
+              _items.splice(i, 1);
               delete itemsMap[itemToRemove.productId];
               break;
             }
@@ -3534,12 +3583,11 @@ angular.module("risevision.common.ui-status", [])
       },
       addItem: function(itemToAdd, qty, pricingIndex) {
 
-        if(!items) {return; }
+        if(!userState.isRiseVisionUser()) {return; }
 
         if (itemsMap[itemToAdd.productId] && (itemToAdd.paymentTerms === "Subscription" || itemToAdd.paymentTerms === "Metered")) {
           return;
         }
-
 
         if (itemToAdd && $.isNumeric(qty) && itemToAdd.orderedPricing.length > pricingIndex) {
           if (itemsMap[itemToAdd.productId]) {
@@ -3550,13 +3598,17 @@ angular.module("risevision.common.ui-status", [])
             // item is not already in the cart
             itemsMap[itemToAdd.productId] = angular.copy(itemToAdd);
             itemsMap[itemToAdd.productId].qty = qty;
-            items.push(itemsMap[itemToAdd.productId]);
+            _items.push(itemsMap[itemToAdd.productId]);
           }
           itemsMap[itemToAdd.productId].selected = itemToAdd.orderedPricing[pricingIndex];
           persistToStorage();
         }
       }
     };
+    cartManager.initialize();
+
+    return cartManager;
+
   }]);
 })(angular);
 
@@ -3924,7 +3976,7 @@ angular.module("risevision.common.company",
 
   angular.module("risevision.common.config")
     .value("CORE_URL", "https://rvacore-test.appspot.com/_ah/api")
-    .value("STORE_URL", "http://localhost:8000/")
+    .value("STORE_URL", "https://localhost:8000")
   ;
 })(angular);
 

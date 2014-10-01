@@ -2,13 +2,22 @@
 
 describe("Services: Shopping Cart", function() {
 
-  beforeEach(module("risevision.common.cache"));
+  beforeEach(module("risevision.common.shoppingcart"));
 
   it("should exist", function() {
     inject(function(shoppingCart) {
       expect(shoppingCart).be.defined;
     });
   });
+
+  beforeEach(module(function ($provide) {
+    //stub services
+    $provide.service("$q", function() {return Q;});
+
+    $provide.value("userState", {
+      isRiseVisionUser: function () {return true; }
+    });
+  }));
 
   it("should add items to cart", function (){
     inject(function(shoppingCart) {

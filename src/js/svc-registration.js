@@ -5,10 +5,10 @@
   ["risevision.common.userstate", "risevision.common.ui-status",
   "risevision.common.userprofile", "risevision.common.gapi"])
 
-  .run(["uiStatusDependencies", function (uiStatusDependencies) {
+  .config(["uiStatusDependencies", function (uiStatusDependencies) {
     uiStatusDependencies.addDependencies({
-      "basicProfileCreated" : "signedInWithGoogle",
-      "registrationComplete": ["notLoggedIn", "basicProfileCreated"]
+      "registerdAsRiseVisionUser" : "signedInWithGoogle",
+      "registrationComplete": ["notLoggedIn", "registerdAsRiseVisionUser"]
     });
   }])
 
@@ -47,7 +47,7 @@
     };
   }])
 
-  .factory("basicProfileCreated", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
+  .factory("registerdAsRiseVisionUser", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
   function ($q, getUserProfile, cookieStore, $log, userState) {
     return function () {
       var deferred = $q.defer();
@@ -61,15 +61,15 @@
           deferred.resolve({});
         }
         else {
-          deferred.reject("basicProfileCreated");
+          deferred.reject("registerdAsRiseVisionUser");
         }
       }, function (err) {
         if (cookieStore.get("surpressRegistration")){
           deferred.resolve({});
         }
         else {
-          $log.debug("basicProfileCreated rejected", err);
-          deferred.reject("basicProfileCreated");
+          $log.debug("registerdAsRiseVisionUser rejected", err);
+          deferred.reject("registerdAsRiseVisionUser");
         }
       });
 

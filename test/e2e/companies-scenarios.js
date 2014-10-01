@@ -21,13 +21,36 @@
       before(function() {
         ptor = protractor.getInstance();
         ptor.manage().deleteAllCookies();
-        browser.get("/test/e2e/index.html#/fake-store");
+        browser.get("/test/e2e/index.html#/shopping-cart");
 
         //clear local storage
         browser.executeScript("localStorage.clear();");
 
         ptor.driver.navigate().refresh();
         element(by.id("reset-db")).click();
+      });
+
+      xdescribe("Select Subcompany", function () {
+        it("Opens select subcompany dialog", function () {
+          element(by.css("a.sign-in")).click();
+          element(by.css(".authorize-button")).click();
+          assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+          element(by.css(".company-buttons-icon")).click();
+          assert.eventually.isTrue(element(by.css(".select-subcompany-menu-button")).isDisplayed(),
+            "Select subcompany menu item should present");
+          element(by.css(".move-company-menu-button")).click();
+
+          assert.eventually.isTrue(element(by.css(".select-subcompany-modal")).isDisplayed(),
+            "Move company dialog should show");
+        });
+
+        it("Switches to subcompany", function () {
+          //TODO
+        });
+
+        it("Switches back to parent company", function () {
+          //TODO
+        });
       });
 
       describe("Move company", function () {
