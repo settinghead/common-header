@@ -10,6 +10,13 @@ app.run(["$templateCache", function($templateCache) {
     "<li class=\"dropdown-header\">\n" +
     "  {{profile.email}}\n" +
     "</li>\n" +
+    "<li class=\"divider\" ng-show=\"isLoggedIn && !isRiseVisionUser\"></li>\n" +
+    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "  <a href=\"\" ng-click=\"register()\" class=\"user-settings-button action\">\n" +
+    "    <i class=\"fa fa-cogs\"></i>\n" +
+    "    <span class=\"item-name\">Register</span>\n" +
+    "  </a>\n" +
+    "</li>\n" +
     "<li class=\"divider\" ng-show=\"isRiseVisionUser\"></li>\n" +
     "<li ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
@@ -642,7 +649,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <!-- Search -->\n" +
     "  <div class=\"input-group company-search add-bottom\">\n" +
     "    <input id=\"csSearch\" type=\"text\" class=\"form-control\"\n" +
-    "      placeholder=\"Search Companies\"\n" +
+    "      placeholder=\"Search Company Users\"\n" +
     "      ng-model=\"userSearchString\">\n" +
     "      <span class=\"input-group-addon primary-bg\">\n" +
     "        <i class=\"fa fa-search\"></i>\n" +
