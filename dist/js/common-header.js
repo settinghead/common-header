@@ -987,10 +987,11 @@ app.run(["$templateCache", function($templateCache) {
     "      <button ng-click=\"save()\"\n" +
     "        type=\"button\"\n" +
     "        class=\"btn btn-success btn-fixed-width registration-save-button\"\n" +
-    "        ng-disabled=\"registrationForm.$invalid\">\n" +
+    "        ng-disabled=\"registrationForm.$invalid || registering\">\n" +
     "        Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "      </button>\n" +
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
+    "      ng-disabled=\"registering\"\n" +
     "      ng-click=\"closeModal()\">\n" +
     "        Cancel <i class=\"fa fa-white fa-times icon-right registration-cancel-button\"></i>\n" +
     "      </button>\n" +
@@ -1659,6 +1660,7 @@ angular.module("risevision.common.header")
       var copyOfProfile = userState.getCopyOfProfile() || {};
 
       $scope.profile = pick(copyOfProfile, "email", "mailSyncEnabled");
+      $scope.registering = false;
 
       $scope.profile.accepted =
         angular.isDefined(copyOfProfile.termsAcceptanceDate) &&
@@ -1694,13 +1696,19 @@ angular.module("risevision.common.header")
 
       $scope.save = function () {
         //update terms and conditions date
+        $scope.registering = true;
+        $loading.start("registration-modal");
         registerAccount(userState.getUsername(), $scope.profile).then(
           function () {
             $modalInstance.close("success");
             uiStatusManager.invalidateStatus("registrationComplete");
           },
           function (err) {alert("Error: " + JSON.stringify(err));
-          $log.error(err);});
+          $log.error(err);}).finally(function () {
+            $scope.registering = false;
+            $loading.stop("registration-modal");
+            userState.authenticate(false);
+          });
       };
     }
 ]);
@@ -2719,7 +2727,7 @@ angular.module("risevision.common.geodata", [])
     var _roleMap = null;
     var _accessToken = cookieStore.get("rv-token");
 
-    (function initializeAccessToken () {
+    var initializeAccessToken = function () {
       //load token from cookie
       if(_accessToken) {
         _accessToken = JSON.parse(_accessToken);
@@ -2729,13 +2737,14 @@ angular.module("risevision.common.geodata", [])
       }
 
       $log.debug("Access token", _accessToken);
-    })();
+    };
 
+    initializeAccessToken();
 
     var _setAccessToken = function (obj) {
       if(typeof obj === "object") {
         //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
-        obj = pick(obj, "access_token", "state");
+        _accessToken = obj = pick(obj, "access_token", "state");
         cookieStore.put(
           "rv-token", JSON.stringify(obj), {domain: _getBaseDomain()});
         cookieStore.put(
@@ -2829,7 +2838,7 @@ angular.module("risevision.common.geodata", [])
            if (authResult && !authResult.error) {
              _setAccessToken(authResult);
              getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!_user || _user.username !== oauthUserInfo.email) {
+               if(!_user || !_profile || _user.username !== oauthUserInfo.email) {
 
                  //populate user
                  _user = {
@@ -3705,14 +3714,16 @@ angular.module("risevision.common.ui-status", [])
         oauthAPILoader().then(function (gApi){
           gApi.client.oauth2.userinfo.get().execute(function (resp){
             $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
-            userInfoCache.put("oauth2UserInfo", resp);
             if(!resp) {
+              userInfoCache.remove("oauth2UserInfo");
               deferred.reject();
             }
             else if(resp.hasOwnProperty("error")) {
+              userInfoCache.remove("oauth2UserInfo");
               deferred.reject(resp.error);
             }
             else {
+              userInfoCache.put("oauth2UserInfo", resp);
               deferred.resolve(resp);
             }
           });

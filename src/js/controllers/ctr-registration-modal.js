@@ -9,6 +9,7 @@ angular.module("risevision.common.header")
       var copyOfProfile = userState.getCopyOfProfile() || {};
 
       $scope.profile = pick(copyOfProfile, "email", "mailSyncEnabled");
+      $scope.registering = false;
 
       $scope.profile.accepted =
         angular.isDefined(copyOfProfile.termsAcceptanceDate) &&
@@ -44,13 +45,19 @@ angular.module("risevision.common.header")
 
       $scope.save = function () {
         //update terms and conditions date
+        $scope.registering = true;
+        $loading.start("registration-modal");
         registerAccount(userState.getUsername(), $scope.profile).then(
           function () {
             $modalInstance.close("success");
             uiStatusManager.invalidateStatus("registrationComplete");
           },
           function (err) {alert("Error: " + JSON.stringify(err));
-          $log.error(err);});
+          $log.error(err);}).finally(function () {
+            $scope.registering = false;
+            $loading.stop("registration-modal");
+            userState.authenticate(false);
+          });
       };
     }
 ]);

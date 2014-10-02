@@ -28,7 +28,7 @@
     var _roleMap = null;
     var _accessToken = cookieStore.get("rv-token");
 
-    (function initializeAccessToken () {
+    var initializeAccessToken = function () {
       //load token from cookie
       if(_accessToken) {
         _accessToken = JSON.parse(_accessToken);
@@ -38,13 +38,14 @@
       }
 
       $log.debug("Access token", _accessToken);
-    })();
+    };
 
+    initializeAccessToken();
 
     var _setAccessToken = function (obj) {
       if(typeof obj === "object") {
         //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
-        obj = pick(obj, "access_token", "state");
+        _accessToken = obj = pick(obj, "access_token", "state");
         cookieStore.put(
           "rv-token", JSON.stringify(obj), {domain: _getBaseDomain()});
         cookieStore.put(
@@ -138,7 +139,7 @@
            if (authResult && !authResult.error) {
              _setAccessToken(authResult);
              getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!_user || _user.username !== oauthUserInfo.email) {
+               if(!_user || !_profile || _user.username !== oauthUserInfo.email) {
 
                  //populate user
                  _user = {
