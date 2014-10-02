@@ -32,9 +32,9 @@
 
       xdescribe("Select Subcompany", function () {
         it("Opens select subcompany dialog", function () {
-          element(by.css("a.sign-in")).click();
+          element(by.css("button.sign-in")).click();
           element(by.css(".authorize-button")).click();
-          assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+          assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
           element(by.css(".company-buttons-icon")).click();
           assert.eventually.isTrue(element(by.css(".select-subcompany-menu-button")).isDisplayed(),
             "Select subcompany menu item should present");
@@ -56,10 +56,10 @@
       describe("Move company", function () {
         it("Opens Move Company Dialog", function() {
           browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
-          element(by.css("a.sign-in")).click();
+          element(by.css("button.sign-in")).click();
           element(by.css(".authorize-button")).click();
 
-          assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+          assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
 
           element(by.css(".company-buttons-icon")).click();
 

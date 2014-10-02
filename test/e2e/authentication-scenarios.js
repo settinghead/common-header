@@ -33,12 +33,12 @@
     });
 
     it("should authorize", function() {
-      assert.eventually.isTrue(element(by.css("a.sign-in")).isDisplayed(), "Sign in button should show");
+      assert.eventually.isTrue(element(by.css("button.sign-in")).isDisplayed(), "Sign in button should show");
       //dialog does not show
       assert.eventually.isFalse(element(by.css(".authorization-modal")).isPresent(), "Auth modal should not show in the beginning");
       //click on sign in button
       browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
-      element(by.css("a.sign-in")).click();
+      element(by.css("button.sign-in")).click();
       //dialog shows
       assert.eventually.isTrue(element(by.css(".authorization-modal")).isDisplayed(), "Auth modal should show after clicking on sign in");
       assert.eventually.isTrue(element(by.css(".authorize-button")).isDisplayed(), "Auth button should exist in auth modal");
@@ -50,7 +50,7 @@
 
     it("should retain auth status upon refresh", function () {
       ptor.driver.navigate().refresh();
-      assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+      assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
       assert.eventually.isTrue(element(by.css("img.profile-pic")).isDisplayed(), "profile pic should show");
       assert.eventually.isFalse((element(by.css(".sign-out-button")).isDisplayed()), "sign out button should not show");
     });
@@ -74,7 +74,7 @@
       element(by.css(".sign-out-button")).click();
       browser.switchTo().alert().then(function (alert){alert.accept();});
       //signed out; sign-in button shows
-      expect(element(by.css("a.sign-in")).isDisplayed()).to.eventually.equal(true);
+      expect(element(by.css("button.sign-in")).isDisplayed()).to.eventually.equal(true);
 
     });
 

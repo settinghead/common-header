@@ -32,10 +32,10 @@
       it("should show user settings modal and update settings", function() {
         //log in
         browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
-        element(by.css("a.sign-in")).click();
+        element(by.css("button.sign-in")).click();
         element(by.css(".authorize-button")).click();
 
-        assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+        assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
 
         element(by.css("img.profile-pic")).click();
         assert.eventually.isTrue(element(by.css(".user-settings-button")).isDisplayed(), "User settings menu item should show");

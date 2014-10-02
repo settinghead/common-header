@@ -28,7 +28,7 @@
       });
 
       it("should not function when user is not signed in", function() {
-        assert.eventually.isTrue(element(by.css("a.sign-in")).isDisplayed(), "Sign in button should show");
+        assert.eventually.isTrue(element(by.css("button.sign-in")).isDisplayed(), "Sign in button should show");
 
         assert.eventually.isTrue(element(by.id("buy-product-1")).isDisplayed(), "Product 1 button should show");
         assert.eventually.isTrue(element(by.id("buy-product-2")).isDisplayed(), "Product 2 button should show");
@@ -43,7 +43,7 @@
       it("should add stuff to cart when logged in", function() {
         //log in
         browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
-        element(by.css("a.sign-in")).click();
+        element(by.css("button.sign-in")).click();
         element(by.css(".authorize-button")).click();
 
         assert.eventually.isTrue(element(by.id("buy-product-1")).isDisplayed(), "Product 1 button should show");
@@ -95,11 +95,11 @@
         element(by.css(".sign-out-button")).click();
         browser.switchTo().alert().then(function (alert){alert.accept();});
 
-        assert.eventually.isTrue(element(by.css("a.sign-in")).isDisplayed(), "Sign in button should show");
+        assert.eventually.isTrue(element(by.css("button.sign-in")).isDisplayed(), "Sign in button should show");
 
         //log in
         browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
-        element(by.css("a.sign-in")).click();
+        element(by.css("button.sign-in")).click();
         element(by.css(".authorize-button")).click();
 
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "", "Cart badge should display nothing");
