@@ -280,6 +280,7 @@
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
       isRiseAdmin: function () {return hasRole("ba"); },
+      isSeller: function () {return _selectedCompany && _selectedCompany.isSeller === true; },
       isRiseVisionUser: isRiseVisionUser,
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
