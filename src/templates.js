@@ -83,7 +83,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
-    "  <button type=\"button\" class=\"btn btn-sign-in btn-fixed-width\" ng-click=\"loginModal()\">\n" +
+    "  <button type=\"button\" class=\"btn sign-in btn-fixed-width\" ng-click=\"loginModal()\">\n" +
     "    </span>Sign In <i class=\"fa fa-sign-in fa-white icon-right\"></i>\n" +
     "  </button>\n" +
     "</li>\n" +
