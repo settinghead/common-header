@@ -987,10 +987,11 @@ app.run(["$templateCache", function($templateCache) {
     "      <button ng-click=\"save()\"\n" +
     "        type=\"button\"\n" +
     "        class=\"btn btn-success btn-fixed-width registration-save-button\"\n" +
-    "        ng-disabled=\"registrationForm.$invalid\">\n" +
+    "        ng-disabled=\"registrationForm.$invalid || registering\">\n" +
     "        Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "      </button>\n" +
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
+    "      ng-disabled=\"registering\"\n" +
     "      ng-click=\"closeModal()\">\n" +
     "        Cancel <i class=\"fa fa-white fa-times icon-right registration-cancel-button\"></i>\n" +
     "      </button>\n" +

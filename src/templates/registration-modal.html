@@ -43,10 +43,11 @@ rv-spinner-start-active="1">
       <button ng-click="save()"
         type="button"
         class="btn btn-success btn-fixed-width registration-save-button"
-        ng-disabled="registrationForm.$invalid">
+        ng-disabled="registrationForm.$invalid || registering">
         Save <i class="fa fa-white fa-check icon-right"></i>
       </button>
       <button type="button" class="btn btn-primary btn-fixed-width"
+      ng-disabled="registering"
       ng-click="closeModal()">
         Cancel <i class="fa fa-white fa-times icon-right registration-cancel-button"></i>
       </button>
