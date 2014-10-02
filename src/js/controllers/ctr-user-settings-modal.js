@@ -39,7 +39,7 @@ angular.module("risevision.common.header")
       var company = userState.getCopyOfSelectedCompany();
 
       $scope.showEmailCampaign = company.mailSyncEnabled;
-
+      $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
       getUserProfile(username).then(function (user) {
@@ -81,8 +81,18 @@ angular.module("risevision.common.header")
           if(username === userState.getUsername()) {
             userState.authenticate(false);
           }
-
           $loading.stop("user-settings-modal");});
+      };
+
+      $scope.editRoleAllowed = function (role) {
+        if (role.key === "ua" && $scope.username === userState.getUsername()) {
+          //do not allow users to uncheck admin role for themselves
+          return false;
+        }
+        else {
+          //allow user to check/uncheck role by default
+          return true;
+        }
       };
     }
   ]);

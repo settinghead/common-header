@@ -66,11 +66,12 @@
           Subscribe To Email Updates
       </label>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-show="isUserAdmin">
       <label>
         Roles
       </label>
-      <div class="checkbox" ng-repeat="role in availableRoles">
+      <div class="checkbox" ng-repeat="role in availableRoles"
+        ng-show="editRoleAllowed(role)">
         <label>
           <input type="checkbox"
             id="user-settings-{{role.key}}"

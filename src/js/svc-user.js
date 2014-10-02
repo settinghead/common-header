@@ -11,7 +11,7 @@
     "ce": "Content Editor",
     "cp": "Content Publisher",
     "da": "Display Administrator",
-    "ua": "User Administrator",
+    "ua": "Administrator",
     "sa": "System Administrator",
     "pu": "Purchaser",
     "ba": "Billing Administrator"
