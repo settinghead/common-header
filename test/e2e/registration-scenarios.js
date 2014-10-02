@@ -35,10 +35,10 @@
         element(by.id("clear-accounts")).click();
         element(by.id("clear-users")).click();
 
-        expect(element(by.css("a.sign-in")).isDisplayed()).to.eventually.equal(true);
+        expect(element(by.css("button.sign-in")).isDisplayed()).to.eventually.equal(true);
         //click on sign in button
         browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
-        element(by.css("a.sign-in")).click();
+        element(by.css("button.sign-in")).click();
         element(by.css(".authorize-button")).click();
 
         //dialog shows
