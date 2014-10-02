@@ -236,7 +236,6 @@
            _user = null;
           //  TODO: shoppingCart.destroy();
            //call google api to sign out
-           cookieStore.remove("surpressRegistration");
            $rootScope.$broadcast("risevision.user.signedOut");
            $log.debug("User is signed out.");
            deferred.resolve();

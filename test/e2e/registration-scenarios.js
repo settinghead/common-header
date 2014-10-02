@@ -45,35 +45,31 @@
         assert.eventually.isTrue(element(by.css(".registration-modal")).isPresent(), "registration dialog should show");
 
         //fill in email address
+      });
+
+      it("should not bug me again when I click 'cancel', even after a refresh (limbo state)", function() {
+        element(by.css(".registration-cancel-button")).click();
+        ptor.driver.navigate().refresh();
+        assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+        assert.eventually.isTrue(element(by.css("img.profile-pic")).isDisplayed(), "profile pic should show");
+        assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
+      });
+
+      it("allow me to register when I've changed my mind", function() {
+        element(by.css("img.profile-pic")).click();
+        assert.eventually.isTrue(element(by.css(".register-user-menu-button")).isDisplayed(), "Auth menu should have a 'Register' button");
+        element(by.css(".register-user-menu-button")).click();
+        assert.eventually.isTrue(element(by.css(".registration-modal")).isPresent(), "registration dialog should show");
+      });
+
+      it("should complete the registration process", function () {
         element(by.css(".registration-modal .email")).sendKeys("michael.sanchez@awesomecompany.io");
 
         //click authorize
         element(by.css(".accept-terms-checkbox")).click();
         element(by.css(".registration-save-button")).click();
 
-
         assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
-      });
-
-      xit("should show Email Update dialogue after the user has accepted T&C", function() {
-        delete window.currentUser.email;
-
-        expect(element(by.css(".update-profile-modal")).isPresent()).to.eventually.equal(false);
-        //click on sign in button
-        browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
-        element(by.css("a.sign-in")).click();
-        element(by.css(".authorize-button")).click();
-        //dialog shows
-        expect(element(by.css(".update-profile-modal")).isDisplayed()).to.eventually.equal(true);
-
-        //show error on invalid email
-        element(by.css(".update-profile-modal .continue-button")).click();
-        expect(element(by.css(".update-profile-modal .error-field")).isDisplayed()).to.eventually.equal(true);
-        //fill in email
-        element(by.css(".user-profile .email")).senKeys("michael.senchez@company.com");
-        element(by.css(".update-profile-modal .continue-button")).click();
-        //auth dialog should disappear
-        expect(element(by.css(".update-profile-modal")).isPresent()).to.eventually.equal(false);
       });
   });
 })();
