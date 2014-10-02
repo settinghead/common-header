@@ -50,7 +50,7 @@
       it("should not bug me again when I click 'cancel', even after a refresh (limbo state)", function() {
         element(by.css(".registration-cancel-button")).click();
         ptor.driver.navigate().refresh();
-        assert.eventually.isFalse(element(by.css("a.sign-in")).isDisplayed(), "sign in button should not show");
+        assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
         assert.eventually.isTrue(element(by.css("img.profile-pic")).isDisplayed(), "profile pic should show");
         assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
       });

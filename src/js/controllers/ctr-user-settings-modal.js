@@ -72,7 +72,10 @@ angular.module("risevision.common.header")
             alert("Error: " + error.message);
           }
         ).finally(function (){
-          userState.authenticate(false);
+          if(username === userState.getUsername()) {
+            userState.authenticate(false);
+          }
+
           $loading.stop("user-settings-modal");});
       };
     }

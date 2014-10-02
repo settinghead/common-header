@@ -31,22 +31,22 @@
     <span class="item-name">Add Sub-Company</span>
   </a>
 </li>
-<li ng-show="isSystemAdmin" class="divider"></li>
-<li ng-show="isSystemAdmin">
+<li ng-show="isUserAdmin" class="divider"></li>
+<li ng-show="isUserAdmin">
   <a href="" ng-click="moveCompany()" class="move-company-menu-button action">
     <i class="fa fa-arrows"></i>
     <span class="item-name">Move a Company under Your Company</span>
   </a>
 </li>
-<li ng-show="isPurchaser" class="divider"></li>
-<li ng-show="isPurchaser">
+<li ng-show="isUserAdmin" class="divider"></li>
+<li ng-show="isUserAdmin">
   <a href="" ng-click="companySettings()" class="action company-settings-menu-button">
     <i class="fa fa-cog"></i>
     <span class="item-name">Company Settings</span>
   </a>
 </li>
-<li ng-show="isSystemAdmin" class="divider"></li>
-<li ng-show="isSystemAdmin">
+<li ng-show="isUserAdmin" class="divider"></li>
+<li ng-show="isUserAdmin">
   <a href="" data-toggle="modal" ng-click="companyUsers()" class="action company-users-menu-button">
     <i class="fa fa-users"></i>
     <span class="item-name">Company Users</span>

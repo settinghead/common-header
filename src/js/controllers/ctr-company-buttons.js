@@ -15,7 +15,7 @@ angular.module("risevision.common.header")
     function (isRvUser) {
       $scope.isRiseVisionUser = isRvUser;
       if(isRvUser === true) {
-        $scope.isSystemAdmin = userState.hasRole("sa");
+        $scope.isUserAdmin = userState.hasRole("ua");
         $scope.isPurchaser = userState.hasRole("pu");
       }
     });
