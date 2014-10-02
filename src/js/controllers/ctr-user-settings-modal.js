@@ -1,6 +1,7 @@
 angular.module("risevision.common.header")
 
-  .controller("AddUserModalCtrl", ["$scope", "addUser", "$modalInstance", "companyId",
+  .controller("AddUserModalCtrl",
+  ["$scope", "addUser", "$modalInstance", "companyId",
   function ($scope, addUser, $modalInstance, companyId) {
     $scope.user = {};
 
@@ -26,13 +27,18 @@ angular.module("risevision.common.header")
     "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
     "uiStatusManager",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
-      addUser, username, userRoleMap, $log, $loading, userState, uiStatusManager) {
+      addUser, username, userRoleMap, $log, $loading, userState,
+      uiStatusManager) {
 
       //push roles into array
       $scope.availableRoles = [];
       angular.forEach(userRoleMap, function (v, k) {
         $scope.availableRoles.push({key: k, name: v});
       });
+
+      var company = userState.getCopyOfSelectedCompany();
+
+      $scope.showEmailCampaign = company.mailSyncEnabled;
 
       $scope.username = username;
 
