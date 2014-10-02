@@ -7,7 +7,6 @@
   "risevision.common.userstate"])
 
   .value("userRoleMap", {
-    "ca": "Content Administrator",
     "ce": "Content Editor",
     "cp": "Content Publisher",
     "da": "Display Administrator",
