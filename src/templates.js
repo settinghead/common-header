@@ -1234,11 +1234,12 @@ app.run(["$templateCache", function($templateCache) {
     "          Subscribe To Email Updates\n" +
     "      </label>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\" ng-show=\"isUserAdmin\">\n" +
     "      <label>\n" +
     "        Roles\n" +
     "      </label>\n" +
-    "      <div class=\"checkbox\" ng-repeat=\"role in availableRoles\">\n" +
+    "      <div class=\"checkbox\" ng-repeat=\"role in availableRoles\"\n" +
+    "        ng-show=\"editRoleAllowed(role)\">\n" +
     "        <label>\n" +
     "          <input type=\"checkbox\"\n" +
     "            id=\"user-settings-{{role.key}}\"\n" +

@@ -209,13 +209,17 @@
                  authenticateDeferred.resolve();
                }
                else {
+                 _clearAccessToken();
                  authenticateDeferred.reject("Authentication Error: " + authResult.error);
                }
-             }, authenticateDeferred.reject);
+             }, function () {
+               _clearAccessToken();
+               authenticateDeferred.reject();});
            }
            else {
              var msg = "user is not authenticated";
              $log.debug(msg);
+             _clearAccessToken();
              authenticateDeferred.reject(msg);
              _user = null;
            }
@@ -280,6 +284,8 @@
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
       isRiseAdmin: function () {return hasRole("ba"); },
+      isUserAdmin: function () {return hasRole("ua"); },
+      isPurchaser: function () {return hasRole("pu"); },
       isSeller: function () {return _selectedCompany && _selectedCompany.isSeller === true; },
       isRiseVisionUser: isRiseVisionUser,
       isLoggedIn: isLoggedIn,

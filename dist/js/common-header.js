@@ -1234,11 +1234,12 @@ app.run(["$templateCache", function($templateCache) {
     "          Subscribe To Email Updates\n" +
     "      </label>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\" ng-show=\"isUserAdmin\">\n" +
     "      <label>\n" +
     "        Roles\n" +
     "      </label>\n" +
-    "      <div class=\"checkbox\" ng-repeat=\"role in availableRoles\">\n" +
+    "      <div class=\"checkbox\" ng-repeat=\"role in availableRoles\"\n" +
+    "        ng-show=\"editRoleAllowed(role)\">\n" +
     "        <label>\n" +
     "          <input type=\"checkbox\"\n" +
     "            id=\"user-settings-{{role.key}}\"\n" +
@@ -1477,8 +1478,8 @@ angular.module("risevision.common.header")
     function (isRvUser) {
       $scope.isRiseVisionUser = isRvUser;
       if(isRvUser === true) {
-        $scope.isUserAdmin = userState.hasRole("ua");
-        $scope.isPurchaser = userState.hasRole("pu");
+        $scope.isUserAdmin = userState.isUserAdmin();
+        $scope.isPurchaser = userState.isPurchaser();
       }
     });
 
@@ -2011,7 +2012,7 @@ angular.module("risevision.common.header")
       var company = userState.getCopyOfSelectedCompany();
 
       $scope.showEmailCampaign = company.mailSyncEnabled;
-
+      $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
       getUserProfile(username).then(function (user) {
@@ -2053,8 +2054,18 @@ angular.module("risevision.common.header")
           if(username === userState.getUsername()) {
             userState.authenticate(false);
           }
-
           $loading.stop("user-settings-modal");});
+      };
+
+      $scope.editRoleAllowed = function (role) {
+        if (role.key === "ua" && $scope.username === userState.getUsername()) {
+          //do not allow users to uncheck admin role for themselves
+          return false;
+        }
+        else {
+          //allow user to check/uncheck role by default
+          return true;
+        }
       };
     }
   ]);
@@ -2920,13 +2931,17 @@ angular.module("risevision.common.geodata", [])
                  authenticateDeferred.resolve();
                }
                else {
+                 _clearAccessToken();
                  authenticateDeferred.reject("Authentication Error: " + authResult.error);
                }
-             }, authenticateDeferred.reject);
+             }, function () {
+               _clearAccessToken();
+               authenticateDeferred.reject();});
            }
            else {
              var msg = "user is not authenticated";
              $log.debug(msg);
+             _clearAccessToken();
              authenticateDeferred.reject(msg);
              _user = null;
            }
@@ -2991,6 +3006,8 @@ angular.module("risevision.common.geodata", [])
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
       isRiseAdmin: function () {return hasRole("ba"); },
+      isUserAdmin: function () {return hasRole("ua"); },
+      isPurchaser: function () {return hasRole("pu"); },
       isSeller: function () {return _selectedCompany && _selectedCompany.isSeller === true; },
       isRiseVisionUser: isRiseVisionUser,
       isLoggedIn: isLoggedIn,
@@ -3336,7 +3353,7 @@ angular.module("risevision.common.ui-status", [])
     "ce": "Content Editor",
     "cp": "Content Publisher",
     "da": "Display Administrator",
-    "ua": "User Administrator",
+    "ua": "Administrator",
     "sa": "System Administrator",
     "pu": "Purchaser",
     "ba": "Billing Administrator"
