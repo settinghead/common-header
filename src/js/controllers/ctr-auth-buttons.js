@@ -26,9 +26,11 @@ angular.module("risevision.common.header")
       function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 
     //repopulate profile upon change of current user
-    $scope.$watch(function () {return userState.getUsername();},
-      function () {
-        $scope.profile = userState.getCopyOfProfile(); });
+    $scope.$watch(function () {return userState.isRiseVisionUser();},
+      function (isRvUser) {
+        if(isRvUser === true) {
+          $scope.profile = userState.getCopyOfProfile();
+        }});
 
     // Login Modal
     $scope.loginModal = function(size) {
