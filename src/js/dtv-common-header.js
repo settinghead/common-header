@@ -88,11 +88,6 @@ angular.module("risevision.common.header", [
             }
           }
         });
-
-        //force a check
-        userState.authenticate(false).then().finally(
-          // function() {uiStatusManager.invalidateStatus(); }
-        );
       }
     };
   }
