@@ -83,10 +83,9 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
-    "  <a href=\"\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
-    "    <span>Sign In</span>\n" +
-    "    <i class=\"fa fa-sign-in\"></i>\n" +
-    "  </a>\n" +
+    "  <button type=\"button\" class=\"btn btn-sign-in btn-fixed-width\" ng-click=\"loginModal()\">\n" +
+    "    </span>Sign In <i class=\"fa fa-sign-in fa-white icon-right\"></i>\n" +
+    "  </button>\n" +
     "</li>\n" +
     "");
 }]);
@@ -99,7 +98,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("authorization-modal.html",
     "<div class=\"modal-header\">\n" +
-    "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "  <button type=\"button\" class=\"close\" ng-click=\"closeModal()\">\n" +
     "  		<i class=\"fa fa-times\"></i>\n" +
     "  	</button>\n" +
     "</div>\n" +
