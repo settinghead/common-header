@@ -324,22 +324,22 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Add Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"isSystemAdmin\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isSystemAdmin\">\n" +
+    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin\">\n" +
     "  <a href=\"\" ng-click=\"moveCompany()\" class=\"move-company-menu-button action\">\n" +
     "    <i class=\"fa fa-arrows\"></i>\n" +
     "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"isPurchaser\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isPurchaser\">\n" +
+    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin\">\n" +
     "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"isSystemAdmin\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isSystemAdmin\">\n" +
+    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin\">\n" +
     "  <a href=\"\" data-toggle=\"modal\" ng-click=\"companyUsers()\" class=\"action company-users-menu-button\">\n" +
     "    <i class=\"fa fa-users\"></i>\n" +
     "    <span class=\"item-name\">Company Users</span>\n" +
