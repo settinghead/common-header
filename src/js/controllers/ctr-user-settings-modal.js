@@ -71,7 +71,9 @@ angular.module("risevision.common.header")
             $log.debug(error);
             alert("Error: " + error.message);
           }
-        ).finally(function (){$loading.stop("user-settings-modal");});
+        ).finally(function (){
+          userState.authenticate(false);
+          $loading.stop("user-settings-modal");});
       };
     }
   ]);
