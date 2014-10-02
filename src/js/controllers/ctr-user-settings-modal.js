@@ -24,8 +24,9 @@ angular.module("risevision.common.header")
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
+    "uiStatusManager",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
-      addUser, username, userRoleMap, $log, $loading, userState) {
+      addUser, username, userRoleMap, $log, $loading, userState, uiStatusManager) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -48,7 +49,9 @@ angular.module("risevision.common.header")
           deleteUser($scope.username)
             .then(function () {
               if($scope.username === userState.getUsername()) {
-                userState.signOut();
+                userState.signOut().then().finally(function() {
+                  uiStatusManager.invalidateStatus("registrationComplete");
+                });
               }
             })
             .finally(function () {

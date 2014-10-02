@@ -871,7 +871,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button>\n" +
     "  <button type=\"button\" class=\"btn btn-primary close-move-company-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
-    "    Canel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
+    "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
     "");
@@ -1368,9 +1368,9 @@ angular.module("risevision.common.header", [
         });
 
         //force a check
-        userState.authenticate(false).then().finally(
-          // function() {uiStatusManager.invalidateStatus(); }
-        );
+        // userState.authenticate(false).then().finally(
+        //   // function() {uiStatusManager.invalidateStatus(); }
+        // );
       }
     };
   }
@@ -1410,17 +1410,15 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.loginModal = function(size) {
-      // var modalInstance =
+      var modalInstance =
       $modal.open({
         template: $templateCache.get("authorization-modal.html"),
         controller: "AuthModalCtrl",
         size: size
       });
-    };
 
-    $scope.authenticate = function() {
-      userState.authenticate(true).then(function () {
-        uiStatusManager.invalidateStatus("registrationComplete");
+      modalInstance.result.then(function () {
+          uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
 
@@ -1705,14 +1703,13 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 .controller("AuthModalCtrl", ["$scope", "$modalInstance", "$window",
-  "userState", "$rootScope", "$loading", "uiStatusManager",
-  function($scope, $modalInstance, $window, userState, $rootScope, $loading, uiStatusManager) {
+  "userState", "$rootScope", "$loading",
+  function($scope, $modalInstance, $window, userState, $rootScope, $loading) {
     $loading.stop("authenticate-button");
 
     $scope.authenticate = function() {
       $loading.start("authenticate-button");
       userState.authenticate(true).then().finally(function(){
-        uiStatusManager.invalidateStatus("registrationComplete");
         $modalInstance.close("success");
         $loading.stop("authenticate-button");
       });
@@ -1986,8 +1983,9 @@ angular.module("risevision.common.header")
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
+    "uiStatusManager",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
-      addUser, username, userRoleMap, $log, $loading, userState) {
+      addUser, username, userRoleMap, $log, $loading, userState, uiStatusManager) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -2010,7 +2008,9 @@ angular.module("risevision.common.header")
           deleteUser($scope.username)
             .then(function () {
               if($scope.username === userState.getUsername()) {
-                userState.signOut();
+                userState.signOut().then().finally(function() {
+                  uiStatusManager.invalidateStatus("registrationComplete");
+                });
               }
             })
             .finally(function () {
@@ -2924,9 +2924,9 @@ angular.module("risevision.common.geodata", [])
           //  TODO: shoppingCart.destroy();
            //call google api to sign out
            cookieStore.remove("surpressRegistration");
-           deferred.resolve();
            $rootScope.$broadcast("risevision.user.signedOut");
            $log.debug("User is signed out.");
+           deferred.resolve();
          }, function () {
            deferred.reject();
          });

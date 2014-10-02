@@ -32,17 +32,15 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.loginModal = function(size) {
-      // var modalInstance =
+      var modalInstance =
       $modal.open({
         template: $templateCache.get("authorization-modal.html"),
         controller: "AuthModalCtrl",
         size: size
       });
-    };
 
-    $scope.authenticate = function() {
-      userState.authenticate(true).then(function () {
-        uiStatusManager.invalidateStatus("registrationComplete");
+      modalInstance.result.then(function () {
+          uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
 
