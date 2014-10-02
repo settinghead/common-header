@@ -63,8 +63,8 @@ angular.module("risevision.common.header")
         size: size,
         backdrop: true,
         resolve: {
-          companyId: function () {
-            return userState.getSelectedCompanyId();
+          company: function () {
+            return userState.getCopyOfSelectedCompany();
           }
         }
       });

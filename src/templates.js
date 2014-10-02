@@ -1206,7 +1206,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-phone\">\n" +
-    "        Telephone\n" +
+    "        Phone\n" +
     "      </label>\n" +
     "      <input\n" +
     "        id=\"user-settings-phone\"\n" +
@@ -1226,7 +1226,7 @@ app.run(["$templateCache", function($templateCache) {
     "        ng-model=\"user.email\"\n" +
     "        />\n" +
     "    </div>\n" +
-    "    <div class=\"checkbox\">\n" +
+    "    <div class=\"checkbox\" ng-show=\"showEmailCampaign\">\n" +
     "      <label>\n" +
     "        <input type=\"checkbox\"\n" +
     "          id=\"user-settings-newsletter\"\n" +

@@ -7,8 +7,8 @@ angular.module("risevision.common.header")
   }])
 
   .controller("CompanyUsersModalCtrl", ["$scope", "$modalInstance", "$modal",
-    "$templateCache", "companyId", "getUsers",
-    function($scope, $modalInstance, $modal, $templateCache, companyId, getUsers) {
+    "$templateCache", "company", "getUsers",
+    function($scope, $modalInstance, $modal, $templateCache, company, getUsers) {
 
       $scope.sort = {
         field: "username",
@@ -31,7 +31,7 @@ angular.module("risevision.common.header")
       };
 
       var loadUsers = function () {
-        getUsers({companyId: companyId,
+        getUsers({companyId: company.id,
           search: $scope.search.searchString}).then(function (users) {
           $scope.users = users;
         });
@@ -44,7 +44,7 @@ angular.module("risevision.common.header")
           template: $templateCache.get("user-settings-modal.html"),
           controller: "AddUserModalCtrl",
           size: size,
-          resolve: { companyId: function () {return companyId; } }
+          resolve: { companyId: function () {return company.id; } }
         });
         instance.result.finally(loadUsers);
       };
@@ -55,7 +55,8 @@ angular.module("risevision.common.header")
           controller: "UserSettingsModalCtrl",
           size: size,
           resolve: {username: function (){ return username; },
-          add: function () {return false; }}
+          add: function () {return false; }
+          }
         });
         instance.result.finally(loadUsers);
       };
