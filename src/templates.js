@@ -992,7 +992,7 @@ app.run(["$templateCache", function($templateCache) {
     "      </button>\n" +
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
     "      ng-click=\"closeModal()\">\n" +
-    "        Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
+    "        Cancel <i class=\"fa fa-white fa-times icon-right registration-cancel-button\"></i>\n" +
     "      </button>\n" +
     "    </div>\n" +
     "  </form>\n" +

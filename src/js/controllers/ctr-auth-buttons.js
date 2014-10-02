@@ -1,11 +1,29 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$loading",
+  "userState", "$loading", "cookieStore",
   "$log", "uiStatusManager",
   function($scope, $modal, $templateCache, userState,
-  $loading, $log, uiStatusManager) {
+  $loading, cookieStore, $log, uiStatusManager) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
+
+
+    $scope.register = function (size) {
+      var modalInstance = $modal.open({
+        template: $templateCache.get("registration-modal.html"),
+        controller: "RegistrationModalCtrl",
+        size: size,
+        backdrop: "static"
+      });
+      modalInstance.result.finally(function (){
+        uiStatusManager.invalidateStatus();
+      });
+    };
+
+    //clear state where user registration is surpressed
+    $scope.$on("risevision.user.signedOut", function () {
+      cookieStore.remove("surpressRegistration");
+    });
 
     //spinner
     $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
@@ -13,6 +31,19 @@ angular.module("risevision.common.header")
       $scope.undetermined = undetermined;
       if (undetermined === true) { $loading.start("auth-buttons"); }
       else { $loading.stop("auth-buttons"); }
+    });
+
+    //render dialogs based on status the UI is stuck on
+    $scope.$watch(function () { return uiStatusManager.getStatus(); },
+    function (newStatus, oldStatus){
+      if(newStatus) {
+        $log.debug("status changed from", oldStatus, "to", newStatus);
+
+        //render a dialog based on the status current UI is in
+        if(newStatus === "registerdAsRiseVisionUser") {
+          $scope.register();
+        }
+      }
     });
 
     //watch on username change and populate onto scope variables requried

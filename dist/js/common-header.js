@@ -992,7 +992,7 @@ app.run(["$templateCache", function($templateCache) {
     "      </button>\n" +
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
     "      ng-click=\"closeModal()\">\n" +
-    "        Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
+    "        Cancel <i class=\"fa fa-white fa-times icon-right registration-cancel-button\"></i>\n" +
     "      </button>\n" +
     "    </div>\n" +
     "  </form>\n" +
@@ -1300,27 +1300,15 @@ angular.module("risevision.common.header", [
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
     "$templateCache",
-    "userState", "uiStatusManager",
+    "userState",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache, userState, uiStatusManager) {
+    oauthAPILoader, $log, $templateCache, userState) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
       link: function($scope) {
         $scope.navCollapsed = true;
-
-        var showTermsAndConditions = function (size) {
-          var modalInstance = $modal.open({
-            template: $templateCache.get("registration-modal.html"),
-            controller: "RegistrationModalCtrl",
-            size: size,
-            backdrop: "static"
-          });
-          modalInstance.result.finally(function (){
-            uiStatusManager.invalidateStatus();
-          });
-        };
 
         // If nav options not provided use defaults
         if (!$scope.navOptions) {
@@ -1354,18 +1342,6 @@ angular.module("risevision.common.header", [
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 
-        //render dialogs based on status the UI is stuck on
-        $scope.$watch(function () { return uiStatusManager.getStatus(); },
-        function (newStatus, oldStatus){
-          if(newStatus) {
-            $log.debug("status changed from", oldStatus, "to", newStatus);
-
-            //render a dialog based on the status current UI is in
-            if(newStatus === "registerdAsRiseVisionUser") {
-              showTermsAndConditions();
-            }
-          }
-        });
       }
     };
   }
@@ -1373,12 +1349,30 @@ angular.module("risevision.common.header", [
 
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
-  "userState", "$loading",
+  "userState", "$loading", "cookieStore",
   "$log", "uiStatusManager",
   function($scope, $modal, $templateCache, userState,
-  $loading, $log, uiStatusManager) {
+  $loading, cookieStore, $log, uiStatusManager) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
+
+
+    $scope.register = function (size) {
+      var modalInstance = $modal.open({
+        template: $templateCache.get("registration-modal.html"),
+        controller: "RegistrationModalCtrl",
+        size: size,
+        backdrop: "static"
+      });
+      modalInstance.result.finally(function (){
+        uiStatusManager.invalidateStatus();
+      });
+    };
+
+    //clear state where user registration is surpressed
+    $scope.$on("risevision.user.signedOut", function () {
+      cookieStore.remove("surpressRegistration");
+    });
 
     //spinner
     $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
@@ -1386,6 +1380,19 @@ angular.module("risevision.common.header")
       $scope.undetermined = undetermined;
       if (undetermined === true) { $loading.start("auth-buttons"); }
       else { $loading.stop("auth-buttons"); }
+    });
+
+    //render dialogs based on status the UI is stuck on
+    $scope.$watch(function () { return uiStatusManager.getStatus(); },
+    function (newStatus, oldStatus){
+      if(newStatus) {
+        $log.debug("status changed from", oldStatus, "to", newStatus);
+
+        //render a dialog based on the status current UI is in
+        if(newStatus === "registerdAsRiseVisionUser") {
+          $scope.register();
+        }
+      }
     });
 
     //watch on username change and populate onto scope variables requried
@@ -2920,7 +2927,6 @@ angular.module("risevision.common.geodata", [])
            _user = null;
           //  TODO: shoppingCart.destroy();
            //call google api to sign out
-           cookieStore.remove("surpressRegistration");
            $rootScope.$broadcast("risevision.user.signedOut");
            $log.debug("User is signed out.");
            deferred.resolve();

@@ -22,27 +22,15 @@ angular.module("risevision.common.header", [
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
     "$templateCache",
-    "userState", "uiStatusManager",
+    "userState",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache, userState, uiStatusManager) {
+    oauthAPILoader, $log, $templateCache, userState) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
       link: function($scope) {
         $scope.navCollapsed = true;
-
-        var showTermsAndConditions = function (size) {
-          var modalInstance = $modal.open({
-            template: $templateCache.get("registration-modal.html"),
-            controller: "RegistrationModalCtrl",
-            size: size,
-            backdrop: "static"
-          });
-          modalInstance.result.finally(function (){
-            uiStatusManager.invalidateStatus();
-          });
-        };
 
         // If nav options not provided use defaults
         if (!$scope.navOptions) {
@@ -76,18 +64,6 @@ angular.module("risevision.common.header", [
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 
-        //render dialogs based on status the UI is stuck on
-        $scope.$watch(function () { return uiStatusManager.getStatus(); },
-        function (newStatus, oldStatus){
-          if(newStatus) {
-            $log.debug("status changed from", oldStatus, "to", newStatus);
-
-            //render a dialog based on the status current UI is in
-            if(newStatus === "registerdAsRiseVisionUser") {
-              showTermsAndConditions();
-            }
-          }
-        });
       }
     };
   }
