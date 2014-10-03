@@ -41,6 +41,7 @@ angular.module("risevision.common.header")
       $scope.showEmailCampaign = company.mailSyncEnabled;
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
+      $scope.isAdd = !username;
 
       getUserProfile(username).then(function (user) {
         $scope.user = user;
@@ -79,7 +80,7 @@ angular.module("risevision.common.header")
           }
         ).finally(function (){
           if(username === userState.getUsername()) {
-            userState.authenticate(false);
+            userState.refreshProfile();
           }
           $loading.stop("user-settings-modal");});
       };

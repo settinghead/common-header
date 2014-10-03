@@ -5,7 +5,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\">\n" +
-    "  {{profile.firstName}} {{profile.lastName}}\n" +
+    "  <span class=\"user-full-name\">{{profile.firstName}} {{profile.lastName}}</span>\n" +
     "</li>\n" +
     "<li class=\"dropdown-header\">\n" +
     "  {{profile.email}}\n" +
@@ -372,7 +372,8 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     " ng-show=\"isRiseVisionUser\"\n" +
     " ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
-    "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
+    "  <a href=\"\" class=\"company-buttons-icon-mobile\"\n" +
+    "    action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
     "</li>\n" +
@@ -492,7 +493,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"company-settings-phone\">\n" +
-    "        Telephone\n" +
+    "        Phone\n" +
     "      </label>\n" +
     "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" />\n" +
     "    </div>\n" +
@@ -1170,7 +1171,10 @@ app.run(["$templateCache", function($templateCache) {
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
     "  </button>\n" +
-    "  <h2 id=\"user-settings-label\" class=\"modal-title\">User Settings</h2>\n" +
+    "  <h2 id=\"user-settings-label\" class=\"modal-title\">\n" +
+    "  <span ng-if=\"!isAdd\">User Settings</span>\n" +
+    "  <span ng-if=\"isAdd\">Add User</span>\n" +
+    "  </h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body user-settings-modal\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
@@ -1178,11 +1182,17 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-start-active=\"0\"\n" +
     ">\n" +
     "  <form role=\"form\">\n" +
-    "    <div class=\"form-group\" ng-if=\"user.username\">\n" +
+    "    <div class=\"form-group\">\n" +
     "      <label>\n" +
     "        Username\n" +
     "      </label>\n" +
-    "      {{user.username}}\n" +
+    "      <span ng-if=\"!isAdd\">{{user.username}}</span>\n" +
+    "      <input id=\"user-settings-first-name\"\n" +
+    "        type=\"text\"\n" +
+    "        class=\"form-control\"\n" +
+    "        ng-if=\"isAdd\"\n" +
+    "        ng-model=\"user.username\"\n" +
+    "        />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-first-name\">\n" +
@@ -1265,8 +1275,7 @@ app.run(["$templateCache", function($templateCache) {
     "    Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button><!-- Cancel\n" +
     "  --><button type=\"button\" class=\"btn btn-danger btn-fixed-width\"\n" +
-    "    ng-if=\"username\"\n" +
-    "    ng-click=\"deleteUser()\">\n" +
+    "    ng-if=\"!isAdd\" ng-click=\"deleteUser()\">\n" +
     "		Delete <i class=\"fa fa-white fa-trash-o icon-right\"></i>\n" +
     "	</button><!-- Delete\n" +
     "   --><button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"closeModal()\">\n" +
@@ -2014,6 +2023,7 @@ angular.module("risevision.common.header")
       $scope.showEmailCampaign = company.mailSyncEnabled;
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
+      $scope.isAdd = !username;
 
       getUserProfile(username).then(function (user) {
         $scope.user = user;
@@ -2052,7 +2062,7 @@ angular.module("risevision.common.header")
           }
         ).finally(function (){
           if(username === userState.getUsername()) {
-            userState.authenticate(false);
+            userState.refreshProfile();
           }
           $loading.stop("user-settings-modal");});
       };
@@ -2743,12 +2753,19 @@ angular.module("risevision.common.geodata", [])
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope) {
     //singleton factory that represents userState throughout application
-    var _profile = null; //Rise vision profile
-    var _user;  //Google user
-    var _userCompany = null;
-    var _selectedCompany = null;
-    var _roleMap = null;
+    var _profile = {}; //Rise vision profile
+    var _user = {};  //Google user
+    var _userCompany = {};
+    var _selectedCompany = {};
+    var _roleMap = {};
     var _accessToken = cookieStore.get("rv-token");
+
+      //
+      var _follow = function(source) {
+        var Follower = function(){};
+        Follower.prototype = source;
+        return new Follower();
+      };
 
     var initializeAccessToken = function () {
       //load token from cookie
@@ -2825,13 +2842,47 @@ angular.module("risevision.common.geodata", [])
       return result;
     };
 
+    var _clearObj = function (obj) {
+      for (var member in obj) {
+        delete obj[member];
+      }
+    };
+
+    var _clearAndCopy = function (src, dest) {
+      _clearObj(dest);
+      angular.extend(dest, src);
+    };
+
     var _resetUserState = function () {
-       _user = undefined;
-       _selectedCompany = null;
-       _profile = null;
-       _userCompany = null;
+       _clearObj(_user);
+       _clearObj(_selectedCompany);
+       _clearObj(_profile);
+       _clearObj(_userCompany);
        _roleMap = null;
        $log.debug("User state has been reset.");
+     };
+
+     var refreshProfile = function () {
+       var deferred = $q.defer();
+         getOAuthUserInfo().then(function (oauthUserInfo) {
+         //populate profile if the current user is a rise vision user
+         getUserProfile(_user.username, true).then(
+           function (profile) {
+             _clearAndCopy(angular.extend({
+               username: oauthUserInfo.email
+             }, profile), _profile);
+
+             //set role map
+             _roleMap = {};
+             if(_profile.roles) {
+                _profile.roles.forEach(function (val){
+                  _roleMap[val] = true;
+                });
+             }
+             deferred.resolve();
+           }, deferred.reject);
+       }, deferred.reject);
+       return deferred.promise;
      };
 
      /*
@@ -2860,51 +2911,41 @@ angular.module("risevision.common.geodata", [])
            $log.debug("authResult", authResult);
            if (authResult && !authResult.error) {
              _setAccessToken(authResult);
+
              getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!_user || !_profile || _user.username !== oauthUserInfo.email) {
+               if(!_user || !_profile ||
+                 _user.username !== oauthUserInfo.email) {
 
                  //populate user
-                 _user = {
+                 _clearAndCopy({
                    username: oauthUserInfo.email,
                    picture: oauthUserInfo.picture
-                 };
+                 }, _user);
 
-                 //populate profile if the current user is a rise vision user
-                 getUserProfile(_user.username).then(
-                   function (profile) {
-                     _profile = angular.extend({
-                       username: oauthUserInfo.email
-                     }, profile);
+                 refreshProfile().then(function () {
+                   //populate userCompany
+                   return getCompany().then(function(company) {
+                      _clearAndCopy(company, _userCompany);
+                     _clearAndCopy(company, _selectedCompany);
 
-                     //set role map
-                     _roleMap = {};
-                     if(_profile.roles) {
-                        _profile.roles.forEach(function (val){
-                          _roleMap[val] = true;
-                        });
-                     }
-
-                     //populate userCompany
-                     return getCompany().then(function(company) {
-                       _selectedCompany = _userCompany = company;
-                     }, function () { _userCompany = null;
-                     }).finally(function () {
-                       authorizeDeferred.resolve(authResult);
-                       $rootScope.$broadcast("risevision.user.authorized");
-                     });
-                   },
-                   function () { _profile = null;
-                     authorizeDeferred.resolve(authResult);
-                     $rootScope.$broadcast("risevision.user.authorized");
+                   }, function () { _clearObj(_userCompany);
+                   }).finally(function () {
+                    authorizeDeferred.resolve(authResult);
+                    $rootScope.$broadcast("risevision.user.authorized");
                    });
+                 },
+                 function () {
+                   authorizeDeferred.resolve(authResult);
+                   $rootScope.$broadcast("risevision.user.authorized");
+                 });
                }
                else {authorizeDeferred.resolve(authResult); }
              }, function(err){
-               _user = null;
+               _clearObj(_user);
              authorizeDeferred.reject(err); });
            }
            else {
-             _user = null;
+             _clearObj(_user);
              authorizeDeferred.reject("not authorized");
            }
          });
@@ -2943,7 +2984,7 @@ angular.module("risevision.common.geodata", [])
              $log.debug(msg);
              _clearAccessToken();
              authenticateDeferred.reject(msg);
-             _user = null;
+             _clearObj(_user);
            }
 
        return authenticateDeferred.promise;
@@ -2960,8 +3001,7 @@ angular.module("risevision.common.geodata", [])
            //clear auth token
            // The majority of state is in here
            _resetUserState();
-           _user = null;
-          //  TODO: shoppingCart.destroy();
+           _clearObj(_user);
            //call google api to sign out
            $rootScope.$broadcast("risevision.user.signedOut");
            $log.debug("User is signed out.");
@@ -2974,13 +3014,13 @@ angular.module("risevision.common.geodata", [])
      };
 
     var isLoggedIn = function () {
-      if(_user === null) {return false; }
-      else if(_user === undefined) { return undefined; }
+      if(!_user.username) {return false; }
       else { return true; }
     };
 
     var isRiseVisionUser = function () {
-      return _profile !== null;
+      return _profile.username !== null &&
+        _profile.username !== undefined;
     };
 
     var hasRole = function (role) {
@@ -2996,11 +3036,11 @@ angular.module("risevision.common.geodata", [])
           return (_selectedCompany && _selectedCompany.country) || null;},
       getUsername: function () {
         return (_user && _user.username) || null; },
-      getCopyOfProfile: function () { return angular.copy(_profile); },
-      resetCompany: function () { _selectedCompany = _userCompany; },
-      getCopyOfUserCompany: function () { return angular.copy(_userCompany); },
-      getCopyOfSelectedCompany: function () { return angular.copy(_selectedCompany); },
-      switchCompany: function (company) { _selectedCompany = company; },
+      getCopyOfProfile: function () { return _follow(_profile); },
+      resetCompany: function () { _clearAndCopy(_userCompany, _selectedCompany); },
+      getCopyOfUserCompany: function () { return _follow(_userCompany); },
+      getCopyOfSelectedCompany: function () { return _follow(_selectedCompany); },
+      switchCompany: function (company) { _clearAndCopy(company, _selectedCompany); },
       isSubcompanySelected: function () {
         return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
       getUserPicture: function () { return _user.picture; },
@@ -3013,6 +3053,7 @@ angular.module("risevision.common.geodata", [])
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
       signOut: signOut,
+      refreshProfile: refreshProfile
     };
 
     window.userState = userState;
@@ -3349,7 +3390,6 @@ angular.module("risevision.common.ui-status", [])
   "risevision.common.userstate"])
 
   .value("userRoleMap", {
-    "ca": "Content Administrator",
     "ce": "Content Editor",
     "cp": "Content Publisher",
     "da": "Display Administrator",
@@ -3363,15 +3403,20 @@ angular.module("risevision.common.ui-status", [])
   "getOAuthUserInfo", "userInfoCache",
   function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
-    return function (username) {
+    return function (username, clearCache) {
       var deferred = $q.defer();
 
       if(!username) {
         deferred.reject("getUserProfile failed: username param is required.");
         $log.debug("getUserProfile failed: username param is required.");
       }
-
       else {
+
+        //clear cache if instructed so
+        if(clearCache) {
+          userInfoCache.remove("profile-" + username);
+        }
+
         var criteria = {};
         if (username) {criteria.username = username; }
         $log.debug("getUserProfile called", criteria);

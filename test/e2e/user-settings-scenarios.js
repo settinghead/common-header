@@ -46,7 +46,6 @@
         assert.eventually.isTrue(element(by.css(".user-settings-modal"))
           .isDisplayed(), "User settings modal should show after clicking on menu item");
 
-
         element(by.id("user-settings-first-name")).clear();
         element(by.id("user-settings-first-name")).sendKeys("John");
 
@@ -79,11 +78,6 @@
            element(by.id("user-settings-da")).click();
         }
 
-        if ( element(by.id("user-settings-sa")).isSelected() )
-        {
-           element(by.id("user-settings-sa")).click();
-        }
-
         //click save button
         element(by.id("save-button")).click();
         assert.eventually.isFalse(element(by.css(".user-settings-modal"))
@@ -98,6 +92,13 @@
         expect(profilePromise).to.eventually.have.property("telephone", "000-000-0000");
 
         //TODO test roles
+      });
+
+      it("should immediately update fixes", function () {
+        element(by.css("img.profile-pic")).click();
+        assert.eventually.equal(element(
+          by.css("span.user-full-name")).getText(), "John Doe",
+            "User full name shold ");
       });
   });
 })();
