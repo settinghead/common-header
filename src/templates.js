@@ -5,7 +5,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons-menu.html",
     "<li class=\"dropdown-header dropdown-title\">\n" +
-    "  {{profile.firstName}} {{profile.lastName}}\n" +
+    "  <span class=\"user-full-name\">{{profile.firstName}} {{profile.lastName}}</span>\n" +
     "</li>\n" +
     "<li class=\"dropdown-header\">\n" +
     "  {{profile.email}}\n" +
@@ -372,7 +372,8 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     " ng-show=\"isRiseVisionUser\"\n" +
     " ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
-    "  <a href=\"\" class=\"company-buttons-icon-mobile\" action-sheet=\"'company-buttons-menu.html'\">\n" +
+    "  <a href=\"\" class=\"company-buttons-icon-mobile\"\n" +
+    "    action-sheet=\"'company-buttons-menu.html'\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
     "</li>\n" +
@@ -492,7 +493,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"company-settings-phone\">\n" +
-    "        Telephone\n" +
+    "        Phone\n" +
     "      </label>\n" +
     "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" />\n" +
     "    </div>\n" +
@@ -1170,7 +1171,10 @@ app.run(["$templateCache", function($templateCache) {
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
     "  </button>\n" +
-    "  <h2 id=\"user-settings-label\" class=\"modal-title\">User Settings</h2>\n" +
+    "  <h2 id=\"user-settings-label\" class=\"modal-title\">\n" +
+    "  <span ng-if=\"!isAdd\">User Settings</span>\n" +
+    "  <span ng-if=\"isAdd\">Add User</span>\n" +
+    "  </h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body user-settings-modal\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
@@ -1178,11 +1182,17 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-start-active=\"0\"\n" +
     ">\n" +
     "  <form role=\"form\">\n" +
-    "    <div class=\"form-group\" ng-if=\"user.username\">\n" +
+    "    <div class=\"form-group\">\n" +
     "      <label>\n" +
     "        Username\n" +
     "      </label>\n" +
-    "      {{user.username}}\n" +
+    "      <span ng-if=\"!isAdd\">{{user.username}}</span>\n" +
+    "      <input id=\"user-settings-first-name\"\n" +
+    "        type=\"text\"\n" +
+    "        class=\"form-control\"\n" +
+    "        ng-if=\"isAdd\"\n" +
+    "        ng-model=\"user.username\"\n" +
+    "        />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-first-name\">\n" +
@@ -1265,8 +1275,7 @@ app.run(["$templateCache", function($templateCache) {
     "    Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button><!-- Cancel\n" +
     "  --><button type=\"button\" class=\"btn btn-danger btn-fixed-width\"\n" +
-    "    ng-if=\"username\"\n" +
-    "    ng-click=\"deleteUser()\">\n" +
+    "    ng-if=\"!isAdd\" ng-click=\"deleteUser()\">\n" +
     "		Delete <i class=\"fa fa-white fa-trash-o icon-right\"></i>\n" +
     "	</button><!-- Delete\n" +
     "   --><button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"closeModal()\">\n" +

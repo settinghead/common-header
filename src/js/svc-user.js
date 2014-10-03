@@ -20,15 +20,20 @@
   "getOAuthUserInfo", "userInfoCache",
   function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
-    return function (username) {
+    return function (username, clearCache) {
       var deferred = $q.defer();
 
       if(!username) {
         deferred.reject("getUserProfile failed: username param is required.");
         $log.debug("getUserProfile failed: username param is required.");
       }
-
       else {
+
+        //clear cache if instructed so
+        if(clearCache) {
+          userInfoCache.remove("profile-" + username);
+        }
+
         var criteria = {};
         if (username) {criteria.username = username; }
         $log.debug("getUserProfile called", criteria);

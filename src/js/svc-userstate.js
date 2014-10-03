@@ -21,12 +21,19 @@
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope) {
     //singleton factory that represents userState throughout application
-    var _profile = null; //Rise vision profile
-    var _user;  //Google user
-    var _userCompany = null;
-    var _selectedCompany = null;
-    var _roleMap = null;
+    var _profile = {}; //Rise vision profile
+    var _user = {};  //Google user
+    var _userCompany = {};
+    var _selectedCompany = {};
+    var _roleMap = {};
     var _accessToken = cookieStore.get("rv-token");
+
+      //
+      var _follow = function(source) {
+        var Follower = function(){};
+        Follower.prototype = source;
+        return new Follower();
+      };
 
     var initializeAccessToken = function () {
       //load token from cookie
@@ -103,13 +110,47 @@
       return result;
     };
 
+    var _clearObj = function (obj) {
+      for (var member in obj) {
+        delete obj[member];
+      }
+    };
+
+    var _clearAndCopy = function (src, dest) {
+      _clearObj(dest);
+      angular.extend(dest, src);
+    };
+
     var _resetUserState = function () {
-       _user = undefined;
-       _selectedCompany = null;
-       _profile = null;
-       _userCompany = null;
+       _clearObj(_user);
+       _clearObj(_selectedCompany);
+       _clearObj(_profile);
+       _clearObj(_userCompany);
        _roleMap = null;
        $log.debug("User state has been reset.");
+     };
+
+     var refreshProfile = function () {
+       var deferred = $q.defer();
+         getOAuthUserInfo().then(function (oauthUserInfo) {
+         //populate profile if the current user is a rise vision user
+         getUserProfile(_user.username, true).then(
+           function (profile) {
+             _clearAndCopy(angular.extend({
+               username: oauthUserInfo.email
+             }, profile), _profile);
+
+             //set role map
+             _roleMap = {};
+             if(_profile.roles) {
+                _profile.roles.forEach(function (val){
+                  _roleMap[val] = true;
+                });
+             }
+             deferred.resolve();
+           }, deferred.reject);
+       }, deferred.reject);
+       return deferred.promise;
      };
 
      /*
@@ -138,51 +179,41 @@
            $log.debug("authResult", authResult);
            if (authResult && !authResult.error) {
              _setAccessToken(authResult);
+
              getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!_user || !_profile || _user.username !== oauthUserInfo.email) {
+               if(!_user || !_profile ||
+                 _user.username !== oauthUserInfo.email) {
 
                  //populate user
-                 _user = {
+                 _clearAndCopy({
                    username: oauthUserInfo.email,
                    picture: oauthUserInfo.picture
-                 };
+                 }, _user);
 
-                 //populate profile if the current user is a rise vision user
-                 getUserProfile(_user.username).then(
-                   function (profile) {
-                     _profile = angular.extend({
-                       username: oauthUserInfo.email
-                     }, profile);
+                 refreshProfile().then(function () {
+                   //populate userCompany
+                   return getCompany().then(function(company) {
+                      _clearAndCopy(company, _userCompany);
+                     _clearAndCopy(company, _selectedCompany);
 
-                     //set role map
-                     _roleMap = {};
-                     if(_profile.roles) {
-                        _profile.roles.forEach(function (val){
-                          _roleMap[val] = true;
-                        });
-                     }
-
-                     //populate userCompany
-                     return getCompany().then(function(company) {
-                       _selectedCompany = _userCompany = company;
-                     }, function () { _userCompany = null;
-                     }).finally(function () {
-                       authorizeDeferred.resolve(authResult);
-                       $rootScope.$broadcast("risevision.user.authorized");
-                     });
-                   },
-                   function () { _profile = null;
-                     authorizeDeferred.resolve(authResult);
-                     $rootScope.$broadcast("risevision.user.authorized");
+                   }, function () { _clearObj(_userCompany);
+                   }).finally(function () {
+                    authorizeDeferred.resolve(authResult);
+                    $rootScope.$broadcast("risevision.user.authorized");
                    });
+                 },
+                 function () {
+                   authorizeDeferred.resolve(authResult);
+                   $rootScope.$broadcast("risevision.user.authorized");
+                 });
                }
                else {authorizeDeferred.resolve(authResult); }
              }, function(err){
-               _user = null;
+               _clearObj(_user);
              authorizeDeferred.reject(err); });
            }
            else {
-             _user = null;
+             _clearObj(_user);
              authorizeDeferred.reject("not authorized");
            }
          });
@@ -221,7 +252,7 @@
              $log.debug(msg);
              _clearAccessToken();
              authenticateDeferred.reject(msg);
-             _user = null;
+             _clearObj(_user);
            }
 
        return authenticateDeferred.promise;
@@ -238,8 +269,7 @@
            //clear auth token
            // The majority of state is in here
            _resetUserState();
-           _user = null;
-          //  TODO: shoppingCart.destroy();
+           _clearObj(_user);
            //call google api to sign out
            $rootScope.$broadcast("risevision.user.signedOut");
            $log.debug("User is signed out.");
@@ -252,13 +282,13 @@
      };
 
     var isLoggedIn = function () {
-      if(_user === null) {return false; }
-      else if(_user === undefined) { return undefined; }
+      if(!_user.username) {return false; }
       else { return true; }
     };
 
     var isRiseVisionUser = function () {
-      return _profile !== null;
+      return _profile.username !== null &&
+        _profile.username !== undefined;
     };
 
     var hasRole = function (role) {
@@ -274,11 +304,11 @@
           return (_selectedCompany && _selectedCompany.country) || null;},
       getUsername: function () {
         return (_user && _user.username) || null; },
-      getCopyOfProfile: function () { return angular.copy(_profile); },
-      resetCompany: function () { _selectedCompany = _userCompany; },
-      getCopyOfUserCompany: function () { return angular.copy(_userCompany); },
-      getCopyOfSelectedCompany: function () { return angular.copy(_selectedCompany); },
-      switchCompany: function (company) { _selectedCompany = company; },
+      getCopyOfProfile: function () { return _follow(_profile); },
+      resetCompany: function () { _clearAndCopy(_userCompany, _selectedCompany); },
+      getCopyOfUserCompany: function () { return _follow(_userCompany); },
+      getCopyOfSelectedCompany: function () { return _follow(_selectedCompany); },
+      switchCompany: function (company) { _clearAndCopy(company, _selectedCompany); },
       isSubcompanySelected: function () {
         return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
       getUserPicture: function () { return _user.picture; },
@@ -291,6 +321,7 @@
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
       signOut: signOut,
+      refreshProfile: refreshProfile
     };
 
     window.userState = userState;
