@@ -9,7 +9,6 @@ angular.module("risevision.common.header")
 
 
     $scope.register = function (size) {
-      cookieStore.remove("surpressRegistration");
       var modalInstance = $modal.open({
         template: $templateCache.get("registration-modal.html"),
         controller: "RegistrationModalCtrl",
@@ -65,16 +64,9 @@ angular.module("risevision.common.header")
         }});
 
     // Login Modal
-    $scope.loginModal = function(size) {
-      var modalInstance =
-      $modal.open({
-        template: $templateCache.get("authorization-modal.html"),
-        controller: "AuthModalCtrl",
-        size: size
-      });
-
-      modalInstance.result.then(function () {
-          uiStatusManager.invalidateStatus("registrationComplete");
+    $scope.login = function() {
+      userState.authenticate(true).then().finally(function(){
+        uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
 
@@ -107,6 +99,8 @@ angular.module("risevision.common.header")
       });
     };
 
-    userState.authenticate(false);
+    userState.authenticate(false).then().finally(function () {
+      uiStatusManager.invalidateStatus("registrationComplete");
+    });
   }
 ]);

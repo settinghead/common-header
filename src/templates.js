@@ -10,13 +10,6 @@ app.run(["$templateCache", function($templateCache) {
     "<li class=\"dropdown-header\">\n" +
     "  {{profile.email}}\n" +
     "</li>\n" +
-    "<li class=\"divider\" ng-show=\"isLoggedIn && !isRiseVisionUser\"></li>\n" +
-    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
-    "  <a href=\"\" ng-click=\"register()\" class=\"register-user-menu-button action\">\n" +
-    "    <i class=\"fa fa-cogs\"></i>\n" +
-    "    <span class=\"item-name\">Register</span>\n" +
-    "  </a>\n" +
-    "</li>\n" +
     "<li class=\"divider\" ng-show=\"isRiseVisionUser\"></li>\n" +
     "<li ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
@@ -52,7 +45,7 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  class=\"dropdown\"\n" +
     "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
-    "  ng-show=\"isLoggedIn\"\n" +
+    "  ng-show=\"isLoggedIn && isRiseVisionUser\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
@@ -66,10 +59,17 @@ app.run(["$templateCache", function($templateCache) {
     "      ></ng-include>\n" +
     "    </ul>\n" +
     "</li>\n" +
+    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "  <button type=\"button\" href=\"\" ng-click=\"register()\"\n" +
+    "    class=\"register-user-menu-button action top-auth-button\">\n" +
+    "    Create Account\n" +
+    "    <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
+    "  </a>\n" +
+    "</li>\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
     "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
-    "  ng-show=\"isLoggedIn\"\n" +
+    "  ng-show=\"isLoggedIn && isRiseVisionUser\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
@@ -83,7 +83,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
-    "  <button type=\"button\" class=\"sign-in\" ng-click=\"loginModal()\">\n" +
+    "  <button type=\"button\" class=\"sign-in top-auth-button\" ng-click=\"login()\">\n" +
     "    Sign In <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
     "  </button>\n" +
     "</li>\n" +
@@ -956,16 +956,17 @@ app.run(["$templateCache", function($templateCache) {
     "  for system notices and other critical information. We promise,\n" +
     "   only system notices, we won't send you anything else unless you\n" +
     "  sign up for the newsletter below, and we won't share your email address\n" +
-    "  with anyone else. Promise!</p>\n" +
+    "  with anyone else.</p>\n" +
     "\n" +
     "  <form role=\"form\" name=\"registrationForm\">\n" +
     "    <div class=\"form-group\" ng-class=\"{ 'has-error' : registrationForm.email.$invalid && !userForm.email.$pristine }\">\n" +
     "      <label for=\"email\">Email</label>\n" +
     "      <input type=\"email\" class=\"form-control email\"\n" +
     "      name=\"email\"\n" +
-    "      id=\"email\" placeholder=\"Enter email\" required\n" +
+    "      id=\"email\" required\n" +
     "      ng-model=\"profile.email\">\n" +
-    "      <p ng-show=\"registrationForm.email.$invalid && !registrationForm.email.$pristine\" class=\"help-block\">Enter a valid email.</p>\n" +
+    "      <p ng-show=\"registrationForm.email.$invalid && !registrationForm.email.$pristine\"\n" +
+    "        class=\"help-block validation-error-message-email\">Enter a valid email.</p>\n" +
     "    </div>\n" +
     "    <!-- Terms of Service and Privacy -->\n" +
     "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
@@ -974,20 +975,21 @@ app.run(["$templateCache", function($templateCache) {
     "        ng-model=\"profile.accepted\"\n" +
     "        class=\"accept-terms-checkbox\" required />\n" +
     "      I accept the terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
-    "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\" class=\"help-block\">You must accept terms and condtions.</p>\n" +
+    "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\"\n" +
+    "        class=\"help-block validation-error-message-accepted\">You must accept terms and condtions.</p>\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <!-- Newsletter -->\n" +
     "    <div class=\"checkbox form-group\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our Newsletter\n" +
+    "        <input type=\"checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our newsletter\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <button ng-click=\"save()\"\n" +
     "        type=\"button\"\n" +
     "        class=\"btn btn-success btn-fixed-width registration-save-button\"\n" +
-    "        ng-disabled=\"registrationForm.$invalid || registering\">\n" +
+    "        ng-disabled=\"registering\">\n" +
     "        Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "      </button>\n" +
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\"\n" +
