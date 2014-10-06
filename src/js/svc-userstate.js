@@ -181,7 +181,7 @@
              _setAccessToken(authResult);
 
              getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!_user || !_profile ||
+               if(!_user.username || !_profile.username ||
                  _user.username !== oauthUserInfo.email) {
 
                  //populate user
