@@ -317,29 +317,29 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Select Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isUserAdmin\">\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\">\n" +
     "  <a href=\"\" ng-click=\"addSubCompany()\" class=\"action add-subcompany-menu-button\">\n" +
     "    <i class=\"fa fa-plus\"></i>\n" +
     "    <span class=\"item-name\">Add Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isUserAdmin\">\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\">\n" +
     "  <a href=\"\" ng-click=\"moveCompany()\" class=\"move-company-menu-button action\">\n" +
     "    <i class=\"fa fa-arrows\"></i>\n" +
     "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isUserAdmin\">\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\">\n" +
     "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isUserAdmin\">\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin || isRiseAdmin\">\n" +
     "  <a href=\"\" data-toggle=\"modal\" ng-click=\"companyUsers()\" class=\"action company-users-menu-button\">\n" +
     "    <i class=\"fa fa-users\"></i>\n" +
     "    <span class=\"item-name\">Company Users</span>\n" +
@@ -1246,16 +1246,17 @@ app.run(["$templateCache", function($templateCache) {
     "          Subscribe To Email Updates\n" +
     "      </label>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\" ng-show=\"isUserAdmin\">\n" +
+    "    <div class=\"form-group\">\n" +
     "      <label>\n" +
     "        Roles\n" +
     "      </label>\n" +
     "      <div class=\"checkbox\" ng-repeat=\"role in availableRoles\"\n" +
-    "        ng-show=\"editRoleAllowed(role)\">\n" +
+    "        ng-show=\"editRoleVisible(role)\">\n" +
     "        <label>\n" +
     "          <input type=\"checkbox\"\n" +
     "            id=\"user-settings-{{role.key}}\"\n" +
     "            checklist-model=\"user.roles\"\n" +
+    "            ng-disabled=\"!editRoleAllowed(role)\"\n" +
     "            checklist-value=\"role.key\"> {{role.name}}\n" +
     "        </label>\n" +
     "      </div>\n" +

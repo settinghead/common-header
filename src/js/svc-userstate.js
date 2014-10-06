@@ -313,7 +313,7 @@
         return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
-      isRiseAdmin: function () {return hasRole("ba"); },
+      isRiseAdmin: function () {return hasRole("sa"); },
       isUserAdmin: function () {return hasRole("ua"); },
       isPurchaser: function () {return hasRole("pu"); },
       isSeller: function () {return _selectedCompany && _selectedCompany.isSeller === true; },

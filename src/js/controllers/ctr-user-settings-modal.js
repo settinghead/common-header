@@ -86,13 +86,38 @@ angular.module("risevision.common.header")
       };
 
       $scope.editRoleAllowed = function (role) {
-        if (role.key === "ua" && $scope.username === userState.getUsername()) {
-          //do not allow users to uncheck admin role for themselves
-          return false;
+        if(userState.isRiseAdmin()) {
+          return true;
+        }
+        else if (userState.isUserAdmin()) {
+          if(role.key === "sa" || role.key === "ba") {
+            return false;
+          }
+          else {
+            return true;
+          }
         }
         else {
-          //allow user to check/uncheck role by default
+          //do not allow user to check/uncheck role by default
+          return false;
+        }
+      };
+
+      $scope.editRoleVisible = function (role) {
+        if(userState.isRiseAdmin()) {
           return true;
+        }
+        else if (userState.isUserAdmin() || userState.isRiseVisionUser()) {
+          if(role.key === "sa" || role.key === "ba") {
+            return false;
+          }
+          else {
+            return true;
+          }
+        }
+        else {
+          // in practice should never reach here
+          return false;
         }
       };
     }

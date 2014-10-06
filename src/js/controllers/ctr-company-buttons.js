@@ -20,6 +20,9 @@ angular.module("risevision.common.header")
       }
     });
 
+    $scope.$watch(function () {return userState.isRiseAdmin(); },
+    function (isRvAdmin) { $scope.isRiseVisionAdmin = isRvAdmin; });
+
     var updateSelectedCompanyFromUrl = function() {
       var newCompanyId = $location.search().cid;
       if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
