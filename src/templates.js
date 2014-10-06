@@ -52,7 +52,7 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  class=\"dropdown\"\n" +
     "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
-    "  ng-show=\"isLoggedIn\"\n" +
+    "  ng-show=\"isLoggedIn && isRiseVisionUser\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\">\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
@@ -66,10 +66,17 @@ app.run(["$templateCache", function($templateCache) {
     "      ></ng-include>\n" +
     "    </ul>\n" +
     "</li>\n" +
+    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "  <button type=\"button\" href=\"\" ng-click=\"register()\"\n" +
+    "    class=\"register-user-menu-button action top-auth-button\">\n" +
+    "    Create Account\n" +
+    "    <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
+    "  </a>\n" +
+    "</li>\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
     "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
-    "  ng-show=\"isLoggedIn\"\n" +
+    "  ng-show=\"isLoggedIn && isRiseVisionUser\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
@@ -83,7 +90,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner=\"spinnerOptions\"\n" +
     "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
-    "  <button type=\"button\" class=\"sign-in\" ng-click=\"login()\">\n" +
+    "  <button type=\"button\" class=\"sign-in top-auth-button\" ng-click=\"login()\">\n" +
     "    Sign In <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
     "  </button>\n" +
     "</li>\n" +

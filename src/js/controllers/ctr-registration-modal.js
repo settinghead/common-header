@@ -7,6 +7,9 @@ angular.module("risevision.common.header")
     registerAccount, $log, cookieStore, userState, pick, uiStatusManager) {
 
       var copyOfProfile = userState.getCopyOfProfile() || {};
+      //remove cookie so that it will show next time user refreshes page
+      cookieStore.remove("surpressRegistration");
+
 
       $scope.profile = pick(copyOfProfile, "email", "mailSyncEnabled");
       $scope.registering = false;
@@ -44,8 +47,8 @@ angular.module("risevision.common.header")
       });
 
       $scope.save = function () {
-        $scope.registrationForm.accepted.$pristine = false;
-        $scope.registrationForm.email.$pristine = false;
+        ($scope.registrationForm || {}).accepted.$pristine = false;
+        ($scope.registrationForm || {}).email.$pristine = false;
 
         if(!$scope.registrationForm.$invalid) {
            //update terms and conditions date
