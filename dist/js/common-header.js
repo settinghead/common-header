@@ -10,6 +10,13 @@ app.run(["$templateCache", function($templateCache) {
     "<li class=\"dropdown-header\">\n" +
     "  {{profile.email}}\n" +
     "</li>\n" +
+    "<li class=\"divider\" ng-show=\"isLoggedIn && !isRiseVisionUser\"></li>\n" +
+    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "  <a href=\"\" ng-click=\"register()\" class=\"register-user-menu-button action\">\n" +
+    "    <i class=\"fa fa-cogs\"></i>\n" +
+    "    <span class=\"item-name\">Create Account</span>\n" +
+    "  </a>\n" +
+    "</li>\n" +
     "<li class=\"divider\" ng-show=\"isRiseVisionUser\"></li>\n" +
     "<li ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
@@ -1704,8 +1711,8 @@ angular.module("risevision.common.header")
       });
 
       $scope.save = function () {
-        ($scope.registrationForm.accepted || {}).$pristine = false;
-        ($scope.registrationForm.email || {}).$pristine = false;
+        ($scope.registrationForm || {}).accepted.$pristine = false;
+        ($scope.registrationForm || {}).email.$pristine = false;
 
         if(!$scope.registrationForm.$invalid) {
            //update terms and conditions date
@@ -4029,15 +4036,14 @@ angular.module("risevision.common.company",
  *
  */
 (function (angular){
-
   "use strict";
 
   try { angular.module("risevision.common.config"); }
-  catch(err) { angular.module("risevision.common.config", []); }
+catch(err) { angular.module("risevision.common.config", []); }
 
   angular.module("risevision.common.config")
-    .value("CORE_URL", "https://rvacore-test.appspot.com/_ah/api")
-    .value("STORE_URL", "https://localhost:8000")
+    .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
+    .value("STORE_URL", "https://store.risevision.com")
   ;
 })(angular);
 

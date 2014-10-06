@@ -47,8 +47,8 @@ angular.module("risevision.common.header")
       });
 
       $scope.save = function () {
-        ($scope.registrationForm.accepted || {}).$pristine = false;
-        ($scope.registrationForm.email || {}).$pristine = false;
+        ($scope.registrationForm || {}).accepted.$pristine = false;
+        ($scope.registrationForm || {}).email.$pristine = false;
 
         if(!$scope.registrationForm.$invalid) {
            //update terms and conditions date

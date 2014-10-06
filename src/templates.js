@@ -10,6 +10,13 @@ app.run(["$templateCache", function($templateCache) {
     "<li class=\"dropdown-header\">\n" +
     "  {{profile.email}}\n" +
     "</li>\n" +
+    "<li class=\"divider\" ng-show=\"isLoggedIn && !isRiseVisionUser\"></li>\n" +
+    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "  <a href=\"\" ng-click=\"register()\" class=\"register-user-menu-button action\">\n" +
+    "    <i class=\"fa fa-cogs\"></i>\n" +
+    "    <span class=\"item-name\">Create Account</span>\n" +
+    "  </a>\n" +
+    "</li>\n" +
     "<li class=\"divider\" ng-show=\"isRiseVisionUser\"></li>\n" +
     "<li ng-show=\"isRiseVisionUser\">\n" +
     "  <a href=\"\" ng-click=\"userSettings()\" class=\"user-settings-button action\">\n" +
