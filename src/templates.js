@@ -495,7 +495,7 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"company-settings-phone\">\n" +
     "        Phone\n" +
     "      </label>\n" +
-    "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" />\n" +
+    "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" ng-model=\"company.telephone\"/>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"company-settings-monitoring\">\n" +

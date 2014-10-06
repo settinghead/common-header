@@ -495,7 +495,7 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"company-settings-phone\">\n" +
     "        Phone\n" +
     "      </label>\n" +
-    "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" />\n" +
+    "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" ng-model=\"company.telephone\"/>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"company-settings-monitoring\">\n" +
@@ -3928,7 +3928,7 @@ angular.module("risevision.common.company",
     return function (companyId, fields) {
         var deferred = $q.defer();
         fields = pick(
-          fields, "street", "unit", "city", "country", "postalCode", "province");
+          fields, "name", "street", "unit", "city", "country", "postalCode", "province", "telephone");
         $log.debug("updateCompany called", companyId, fields);
         // fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
