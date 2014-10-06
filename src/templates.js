@@ -484,13 +484,13 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"company-settings-state\">\n" +
     "        State / Province\n" +
     "      </label>\n" +
-    "      <!-- <input id=\"company-settings-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" /> -->\n" +
+    "      <input id=\"company-settings-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" />\n" +
     "      <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
     "        <option value=\"\">&lt; Select Province &gt;</option>\n" +
     "      </select>\n" +
-    "      <!-- <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
+    "      <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
     "        <option value=\"\">&lt; Select State &gt;</option>\n" +
-    "      </select> -->\n" +
+    "      </select>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"company-settings-zip\">\n" +
