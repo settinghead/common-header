@@ -24,29 +24,29 @@
     <span class="item-name">Select Sub-Company</span>
   </a>
 </li>
-<li ng-show="isUserAdmin" class="divider"></li>
-<li ng-show="isUserAdmin">
+<li ng-show="isUserAdmin || isRiseAdmin" class="divider"></li>
+<li ng-show="isUserAdmin || isRiseAdmin">
   <a href="" ng-click="addSubCompany()" class="action add-subcompany-menu-button">
     <i class="fa fa-plus"></i>
     <span class="item-name">Add Sub-Company</span>
   </a>
 </li>
-<li ng-show="isUserAdmin" class="divider"></li>
-<li ng-show="isUserAdmin">
+<li ng-show="isUserAdmin || isRiseAdmin" class="divider"></li>
+<li ng-show="isUserAdmin || isRiseAdmin">
   <a href="" ng-click="moveCompany()" class="move-company-menu-button action">
     <i class="fa fa-arrows"></i>
     <span class="item-name">Move a Company under Your Company</span>
   </a>
 </li>
-<li ng-show="isUserAdmin" class="divider"></li>
-<li ng-show="isUserAdmin">
+<li ng-show="isUserAdmin || isRiseAdmin" class="divider"></li>
+<li ng-show="isUserAdmin || isRiseAdmin">
   <a href="" ng-click="companySettings()" class="action company-settings-menu-button">
     <i class="fa fa-cog"></i>
     <span class="item-name">Company Settings</span>
   </a>
 </li>
-<li ng-show="isUserAdmin" class="divider"></li>
-<li ng-show="isUserAdmin">
+<li ng-show="isUserAdmin || isRiseAdmin" class="divider"></li>
+<li ng-show="isUserAdmin || isRiseAdmin">
   <a href="" data-toggle="modal" ng-click="companyUsers()" class="action company-users-menu-button">
     <i class="fa fa-users"></i>
     <span class="item-name">Company Users</span>
