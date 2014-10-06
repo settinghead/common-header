@@ -144,6 +144,32 @@ angular.module("risevision.common.company",
     };
   }])
 
+  .factory("regenerateCompanyField", ["$q", "$log", "coreAPILoader",
+   function ($q, $log, coreAPILoader){
+    return function (companyId, fieldName) {
+        var deferred = $q.defer();
+        $log.debug("regenerateField called", companyId, fieldName);
+        coreAPILoader().then(function (coreApi) {
+          var request = coreApi.company.regenerateField({"id": companyId, "fieldName": fieldName});
+          request.execute(
+            function (resp) {
+              $log.debug("regenerateField resp", resp);
+              if (!resp.error) {
+                deferred.resolve(resp);
+              } else {
+                deferred.reject(resp.message);
+              }
+            },
+            function (resp) {
+              deferred.reject("call failed " + resp);
+            }
+            );
+        });
+
+        return deferred.promise;
+    };
+  }])
+
   .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
     function (coreAPILoader, $q, $log, getCompany) {
 

@@ -508,18 +508,18 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Authentication Key\n" +
     "      </label>\n" +
-    "      <a class=\"action-link\" href=\"\">Reset</a>\n" +
+    "      <a class=\"action-link\" href=\"\" ng-click=\"resetAuthKey()\">Reset</a>\n" +
     "      <div>\n" +
-    "        authKey\n" +
+    "        {{company.authKey}}\n" +
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
     "        Claim ID\n" +
     "      </label>\n" +
-    "      <a class=\"action-link\" href=\"\">Reset</a>\n" +
+    "      <a class=\"action-link\" href=\"\" ng-click=\"resetClaimId()\">Reset</a>\n" +
     "      <div>\n" +
-    "        abc123\n" +
+    "        {{company.claimId}}\n" +
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\" ng-hide=\"true\">\n" +
@@ -1774,9 +1774,11 @@ angular.module("risevision.common.header")
 
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
   "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
-  "getCompany",
+  "getCompany", "regenerateCompanyField", "$window",
   function($scope, $modalInstance, updateCompany, companyId,
-  COUNTRIES, REGIONS_CA, REGIONS_US, getCompany) {
+    COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField, 
+    $window) {
+
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
     $scope.regionsCA = REGIONS_CA;
@@ -1788,7 +1790,7 @@ angular.module("risevision.common.header")
           $scope.company = company;
         },
         function (resp) {
-          alert("An error has occurred.", resp.error);
+          alert("An error has occurred. " + resp.error);
         });
     }
     $scope.closeModal = function() {
@@ -1799,10 +1801,33 @@ angular.module("risevision.common.header")
         function () {
           $modalInstance.close("success");
         },
-      function (error) {
-        alert("Error", error);
-      });
+        function (error) {
+          alert("Error " + error);
+        });
     };
+    $scope.resetAuthKey = function() {
+      if ($window.confirm("Resetting the Company Authentication Key will cause existing Data Gadgets to no longer report data until they are updated with the new Key.")) {
+        regenerateCompanyField($scope.company.id, "authKey").then(
+          function(resp) {
+            $scope.company.authKey = resp.item;
+          },
+          function (error) {
+            alert("Error" + error);
+          });
+      }
+    };
+    $scope.resetClaimId = function() {
+      if ($window.confirm("Resetting the Company Claim Id will cause existing installations to no longer be associated with your Company.")) {
+        regenerateCompanyField($scope.company.id, "claimId").then(
+          function(resp) {
+            $scope.company.claimId = resp.item;
+          },
+          function (error) {
+            alert("Error" + error);
+          });
+      }
+    };
+
   }
 ]);
 
@@ -3937,6 +3962,32 @@ angular.module("risevision.common.company",
             $log.debug("updateCompany resp", resp);
               deferred.resolve(resp);
           });
+        });
+
+        return deferred.promise;
+    };
+  }])
+
+  .factory("regenerateCompanyField", ["$q", "$log", "coreAPILoader",
+   function ($q, $log, coreAPILoader){
+    return function (companyId, fieldName) {
+        var deferred = $q.defer();
+        $log.debug("regenerateField called", companyId, fieldName);
+        coreAPILoader().then(function (coreApi) {
+          var request = coreApi.company.regenerateField({"id": companyId, "fieldName": fieldName});
+          request.execute(
+            function (resp) {
+              $log.debug("regenerateField resp", resp);
+              if (!resp.error) {
+                deferred.resolve(resp);
+              } else {
+                deferred.reject(resp.message);
+              }
+            },
+            function (resp) {
+              deferred.reject("call failed " + resp);
+            }
+            );
         });
 
         return deferred.promise;
