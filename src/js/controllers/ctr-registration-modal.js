@@ -56,8 +56,10 @@ angular.module("risevision.common.header")
            $loading.start("registration-modal");
            registerAccount(userState.getUsername(), $scope.profile).then(
              function () {
-               $modalInstance.close("success");
-               uiStatusManager.invalidateStatus("registrationComplete");
+               userState.authenticate(false).then().finally(function () {
+                 uiStatusManager.invalidateStatus("registrationComplete");
+                 $modalInstance.close("success");
+               });
              },
              function (err) {alert("Error: " + JSON.stringify(err));
              $log.error(err);}).finally(function () {

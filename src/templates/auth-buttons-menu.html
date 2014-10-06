@@ -4,13 +4,6 @@
 <li class="dropdown-header">
   {{profile.email}}
 </li>
-<li class="divider" ng-show="isLoggedIn && !isRiseVisionUser"></li>
-<li ng-show="isLoggedIn && !isRiseVisionUser">
-  <a href="" ng-click="register()" class="register-user-menu-button action">
-    <i class="fa fa-cogs"></i>
-    <span class="item-name">Create Account</span>
-  </a>
-</li>
 <li class="divider" ng-show="isRiseVisionUser"></li>
 <li ng-show="isRiseVisionUser">
   <a href="" ng-click="userSettings()" class="user-settings-button action">

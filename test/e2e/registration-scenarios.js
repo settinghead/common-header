@@ -47,12 +47,11 @@
         element(by.css(".registration-cancel-button")).click();
         ptor.driver.navigate().refresh();
         assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
-        assert.eventually.isTrue(element(by.css(".register-user-menu-button")).isDisplayed(), "Create Account button should show");
         assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
       });
 
       it("allow me to register when I've changed my mind", function() {
-        assert.eventually.isTrue(element(by.css(".register-user-menu-button")).isDisplayed(), "Auth menu should have a 'Register' button");
+        assert.eventually.isTrue(element(by.css(".register-user-menu-button")).isDisplayed(), "Create Account button should show");
         element(by.css(".register-user-menu-button")).click();
         assert.eventually.isTrue(element(by.css(".registration-modal")).isPresent(), "registration dialog should show");
       });
@@ -68,8 +67,11 @@
         //click authorize
         element(by.css(".accept-terms-checkbox")).click();
         element(by.css(".registration-save-button")).click();
-
         assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
+      });
+
+      it("should update auth button", function () {
+        assert.eventually.isTrue(element(by.css("img.profile-pic")).isDisplayed(), "profile pic should show");
       });
   });
 })();
