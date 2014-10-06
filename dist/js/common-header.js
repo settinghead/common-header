@@ -317,9 +317,9 @@ app.run(["$templateCache", function($templateCache) {
     "    <span class=\"item-name\">Select Sub-Company</span>\n" +
     "  </a>\n" +
     "</li>\n" +
-    "<li ng-show=\"roleMap.sa\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"roleMap.sa\">\n" +
-    "  <a href=\"\" ng-click=\"addSubCompany()\" class=\"action\">\n" +
+    "<li ng-show=\"isUserAdmin\" class=\"divider\"></li>\n" +
+    "<li ng-show=\"isUserAdmin\">\n" +
+    "  <a href=\"\" ng-click=\"addSubCompany()\" class=\"action add-subcompany-menu-button\">\n" +
     "    <i class=\"fa fa-plus\"></i>\n" +
     "    <span class=\"item-name\">Add Sub-Company</span>\n" +
     "  </a>\n" +
@@ -1032,7 +1032,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <button type=\"button\" class=\"close\" ng-click=\"closeModal()\" aria-hidden=\"true\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
     "  </button>\n" +
-    "  <h2 id=\"sub-company-label\" class=\"modal-title\">Add Sub-Company</h2>\n" +
+    "  <h2 id=\"sub-company-label\" class=\"modal-title add-subcompany-modal\">Add Sub-Company</h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body select-subcompany-modal\">\n" +
     "  <form role=\"form\">\n" +
@@ -1101,7 +1101,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <button type=\"button\" class=\"btn btn-success btn-fixed-width\" ng-click=\"save()\">Save\n" +
     "    <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"closeModal()\">Cancel\n" +
+    "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width cancel-add-subcompany-button\" ng-click=\"closeModal()\">Cancel\n" +
     "    <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +

@@ -101,6 +101,20 @@
         });
       });
 
+      describe("Add subcompany", function () {
+        it("Opens Add Subcompany dialog", function () {
+          element(by.css(".company-buttons-icon")).click();
+          assert.eventually.isTrue(element(by.css(".add-subcompany-menu-button")).isDisplayed(),
+            "Add subcompany menu item should show");
+          element(by.css(".add-subcompany-menu-button")).click();
+          assert.eventually.isTrue(element(by.css(".add-subcompany-modal")).isDisplayed(),
+            "Add subcompany dialog should show");
+          element(by.css(".cancel-add-subcompany-button")).click();
+          assert.eventually.isFalse(element(by.css(".add-subcompany-modal")).isPresent(),
+            "Add subcompany dialog should hide");
+        });
+      });
+
       describe("Company Users", function () {
         it("Opens Company Users Dialog and load company users", function() {
           element(by.css(".company-buttons-icon")).click();

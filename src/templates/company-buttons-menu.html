@@ -24,9 +24,9 @@
     <span class="item-name">Select Sub-Company</span>
   </a>
 </li>
-<li ng-show="roleMap.sa" class="divider"></li>
-<li ng-show="roleMap.sa">
-  <a href="" ng-click="addSubCompany()" class="action">
+<li ng-show="isUserAdmin" class="divider"></li>
+<li ng-show="isUserAdmin">
+  <a href="" ng-click="addSubCompany()" class="action add-subcompany-menu-button">
     <i class="fa fa-plus"></i>
     <span class="item-name">Add Sub-Company</span>
   </a>
