@@ -10,10 +10,10 @@
     "ce": "Content Editor",
     "cp": "Content Publisher",
     "da": "Display Administrator",
-    "ua": "Administrator",
-    "sa": "System Administrator",
-    "pu": "Purchaser",
-    "ba": "Billing Administrator"
+    "ua": "System Administrator",
+    "pu": "Store Purchaser",
+    "sa": "Rise System Administrator",
+    "ba": "Rise Store Administrator"
   })
 
   .factory("getUserProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
