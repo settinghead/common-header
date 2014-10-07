@@ -98,22 +98,24 @@
     };
   }])
 
-  .factory("addUser", ["$q", "coreAPILoader", "$log",
-  function ($q, coreAPILoader, $log) {
+  .factory("addUser", ["$q", "coreAPILoader", "$log", "pick",
+  function ($q, coreAPILoader, $log, pick) {
     return function (companyId, username, profile) {
       var deferred = $q.defer();
       coreAPILoader().then(function (coreApi) {
+        profile = pick(profile, "firstName", "lastName",
+          "email", "telephone", "roles");
         var request = coreApi.user.add({
           username: username,
           companyId: companyId,
           data: JSON.stringify(profile)});
         request.execute(function (resp) {
           $log.debug("addUser resp", resp);
-          if(resp.result === true) {
+          if(resp.result) {
             deferred.resolve(resp);
           }
           else {
-            deferred.reject("addUser");
+            deferred.reject(resp);
           }
         });
       });
