@@ -130,6 +130,24 @@
             "Loads up 34 users");
         });
 
+        it("opens up Add User dialog", function () {
+          element(by.css("button.add-company-user-button")).click();
+          assert.eventually.isTrue(element(by.css(".user-settings-modal")).isPresent(), "Add user dialog should show");
+        });
+
+        it("adds a user", function () {
+          element(by.id("user-settings-username")).sendKeys("noobuser@somecompany.com");
+          element(by.id("user-settings-first-name")).sendKeys("John");
+          element(by.id("user-settings-last-name")).sendKeys("Noob");
+          element(by.id("user-settings-phone")).sendKeys("000-000-0000");
+          element(by.id("user-settings-email")).sendKeys("noobuser@somecompany.com");
+          element(by.id("save-button")).click();
+          assert.eventually.isFalse(element(by.css(".user-settings-modal")).isPresent(), "Add user dialog should hide");
+
+          assert.eventually.strictEqual(element.all(by.css(".company-users-list-item")).count(), 35,
+            "Loads up 35 users");
+        });
+
         it("Company Users Dialog Should Close", function () {
           element(by.css("button.close-company-users-button")).click();
           assert.eventually.isFalse(element(by.css(".company-users-modal")).isPresent(),

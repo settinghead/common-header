@@ -1,24 +1,68 @@
 angular.module("risevision.common.header")
 
   .controller("AddUserModalCtrl",
-  ["$scope", "addUser", "$modalInstance", "companyId",
-  function ($scope, addUser, $modalInstance, companyId) {
+  ["$scope", "addUser", "$modalInstance", "companyId", "userState",
+  "userRoleMap",
+  function ($scope, addUser, $modalInstance, companyId, userState,
+  userRoleMap) {
     $scope.user = {};
+    $scope.isAdd = true;
 
+    //push roles into array
+    $scope.availableRoles = [];
+    angular.forEach(userRoleMap, function (v, k) {
+      $scope.availableRoles.push({key: k, name: v});
+    });
 
     $scope.save = function () {
-      addUser(companyId, $scope.user.email, $scope.user).then(
+      addUser(companyId, $scope.user.username, $scope.user).then(
         function () {
           $modalInstance.close("success");
         },
         function (error) {
-          alert("Error", error);
+          alert("Error" + JSON.stringify(error));
         }
       );
     };
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
+    };
+
+    $scope.editRoleAllowed = function (role) {
+      if(userState.isRiseAdmin()) {
+        return true;
+      }
+      else if (userState.isUserAdmin()) {
+        if(role.key === "sa" || role.key === "ba") {
+          return false;
+        }
+        else {
+          return true;
+        }
+      }
+      else {
+        //do not allow user to check/uncheck role by default
+        return false;
+      }
+    };
+
+    $scope.editRoleVisible = function (role) {
+      if(userState.isRiseAdmin()) {
+        return true;
+      }
+      else if (userState.isUserAdmin() || userState.isRiseVisionUser()) {
+        if(role.key === "sa" || role.key === "ba") {
+          return false;
+        }
+        else {
+          return true;
+        }
+      }
+      else {
+        // in practice should never reach here
+        return false;
+      }
     };
   }])
 
@@ -41,7 +85,6 @@ angular.module("risevision.common.header")
       $scope.showEmailCampaign = company.mailSyncEnabled;
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
-      $scope.isAdd = !username;
 
       getUserProfile(username).then(function (user) {
         $scope.user = user;

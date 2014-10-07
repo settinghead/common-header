@@ -634,7 +634,8 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-users-modal.html",
     "<div class=\"modal-header\">\n" +
-    "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
+    "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\"\n" +
+    "    aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
     "  </button>\n" +
     "  <h2 id=\"company-users-label\" class=\"modal-title\">Company Users</h2>\n" +
@@ -657,17 +658,19 @@ app.run(["$templateCache", function($templateCache) {
     "  </div>\n" +
     "  <!-- List of Users -->\n" +
     "  <div class=\"list-group scrollable-list company-users-list\">\n" +
-    "    <div class=\"list-group-item  company-users-list-item\" ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
+    "    <div class=\"list-group-item  company-users-list-item\"\n" +
+    "      ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
     "      <p class=\"list-group-item-text\"><strong>{{user.firstName}} {{user.lastName}}</strong> <small class=\"text-muted\">{{user.email}}</small></p>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <button type=\"button\" class=\"btn btn-success\"\n" +
+    "  <button type=\"button\" class=\"btn btn-success add-company-user-button\"\n" +
     "    ng-click=\"addUser()\">Add User\n" +
     "    <i class=\"fa fa-white fa-plus icon-right\"></i>\n" +
     "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-primary close-company-users-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
+    "  <button type=\"button\" class=\"btn btn-primary close-company-users-button\"\n" +
+    "    data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
@@ -1188,7 +1191,7 @@ app.run(["$templateCache", function($templateCache) {
     "        Username\n" +
     "      </label>\n" +
     "      <span ng-if=\"!isAdd\">{{user.username}}</span>\n" +
-    "      <input id=\"user-settings-first-name\"\n" +
+    "      <input id=\"user-settings-username\"\n" +
     "        type=\"text\"\n" +
     "        class=\"form-control\"\n" +
     "        ng-if=\"isAdd\"\n" +
