@@ -5,7 +5,7 @@ angular.module("risevision.common.header")
   "getCompany", "regenerateCompanyField", "$window", "$loading", "humanReadableError",
   function($scope, $modalInstance, updateCompany, companyId,
     COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField,
-    $window, $loading, humanReadableError) {
+    $window, $loading, humanReadableError, userState) {
 
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -37,6 +37,7 @@ angular.module("risevision.common.header")
       $scope.loading = true;
       updateCompany($scope.company.id, $scope.company).then(
         function () {
+          userState.updateCompanySettings($scope.company);
           $modalInstance.close("success");
         },
         function (error) {

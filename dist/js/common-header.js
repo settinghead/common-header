@@ -1318,6 +1318,12 @@ angular.module("risevision.common.header", [
         function (selectedCompanyId) {
           if(selectedCompanyId) {
             $scope.isSubcompanySelected = userState.isSubcompanySelected();
+          }
+        });
+
+        $scope.$watch(function () { return userState.getSelectedCompanyName(); },
+        function (selectedCompanyName) {
+          if(selectedCompanyName) {
             $scope.selectedCompanyName = userState.getSelectedCompanyName();
           }
         });
@@ -1446,6 +1452,12 @@ angular.module("risevision.common.header")
     function (newCompanyId) {
       if(newCompanyId) {
         $scope.isSubcompanySelected = userState.isSubcompanySelected();
+      }
+    });
+
+    $scope.$watch(function () {return userState.getSelectedCompanyName(); },
+    function (selectedCompanyName) {
+      if(selectedCompanyName) {
         $scope.selectedCompanyName = userState.getSelectedCompanyName();
       }
     });
@@ -1752,7 +1764,7 @@ angular.module("risevision.common.header")
   "getCompany", "regenerateCompanyField", "$window", "$loading", "humanReadableError",
   function($scope, $modalInstance, updateCompany, companyId,
     COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField,
-    $window, $loading, humanReadableError) {
+    $window, $loading, humanReadableError, userState) {
 
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -1784,6 +1796,7 @@ angular.module("risevision.common.header")
       $scope.loading = true;
       updateCompany($scope.company.id, $scope.company).then(
         function () {
+          userState.updateCompanySettings($scope.company);
           $modalInstance.close("success");
         },
         function (error) {
@@ -1990,9 +2003,9 @@ angular.module("risevision.common.header")
 
   .controller("AddUserModalCtrl",
   ["$scope", "addUser", "$modalInstance", "companyId", "userState",
-  "userRoleMap",
+  "userRoleMap", "humanReadableError",
   function ($scope, addUser, $modalInstance, companyId, userState,
-  userRoleMap) {
+  userRoleMap, humanReadableError) {
     $scope.user = {};
     $scope.isAdd = true;
 
@@ -2008,7 +2021,7 @@ angular.module("risevision.common.header")
           $modalInstance.close("success");
         },
         function (error) {
-          alert("Error" + JSON.stringify(error));
+          alert("Error" + humanReadableError(error));
         }
       );
     };
@@ -2057,10 +2070,10 @@ angular.module("risevision.common.header")
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
-    "uiStatusManager",
+    "uiStatusManager", "humanReadableError",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
       addUser, username, userRoleMap, $log, $loading, userState,
-      uiStatusManager) {
+      uiStatusManager, humanReadableError) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -2107,7 +2120,7 @@ angular.module("risevision.common.header")
           },
           function (error) {
             $log.debug(error);
-            alert("Error: " + error.message);
+            alert("Error: " + humanReadableError(error));
           }
         ).finally(function (){
           if(username === userState.getUsername()) {
@@ -3011,7 +3024,7 @@ angular.module("risevision.common.geodata", [])
                  refreshProfile().then(function () {
                    //populate userCompany
                    return getCompany().then(function(company) {
-                      _clearAndCopy(company, _userCompany);
+                     _clearAndCopy(company, _userCompany);
                      _clearAndCopy(company, _selectedCompany);
 
                    }, function () { _clearObj(_userCompany);
@@ -3118,6 +3131,14 @@ angular.module("risevision.common.geodata", [])
         return (_selectedCompany && _selectedCompany.id) || null; },
       getSelectedCompanyName: function () {
         return (_selectedCompany && _selectedCompany.name) || null;},
+      updateCompanySettings: function (company) {
+        if (company && _selectedCompany) {
+          _clearAndCopy(company, _selectedCompany);
+          if (_userCompany.id === _selectedCompany.id) {
+            _clearAndCopy(company, _userCompany);
+          }
+        }
+      },
       getSelectedCompanyCountry: function () {
           return (_selectedCompany && _selectedCompany.country) || null;},
       getUsername: function () {
@@ -4038,7 +4059,6 @@ angular.module("risevision.common.company",
     return function (companyId, fields) {
         var deferred = $q.defer();
         fields = pick.apply(this, [fields].concat(COMPANY_WRITABLE_FIELDS));
-
         $log.debug("updateCompany called", companyId, fields);
         // fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
