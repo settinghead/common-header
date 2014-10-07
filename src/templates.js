@@ -325,13 +325,6 @@ app.run(["$templateCache", function($templateCache) {
     "</li>\n" +
     "<li ng-show=\"isUserAdmin || isRiseAdmin\" class=\"divider\"></li>\n" +
     "<li ng-show=\"isUserAdmin || isRiseAdmin\">\n" +
-    "  <a href=\"\" ng-click=\"moveCompany()\" class=\"move-company-menu-button action\">\n" +
-    "    <i class=\"fa fa-arrows\"></i>\n" +
-    "    <span class=\"item-name\">Move a Company under Your Company</span>\n" +
-    "  </a>\n" +
-    "</li>\n" +
-    "<li ng-show=\"isUserAdmin || isRiseAdmin\" class=\"divider\"></li>\n" +
-    "<li ng-show=\"isUserAdmin || isRiseAdmin\">\n" +
     "  <a href=\"\" ng-click=\"companySettings()\" class=\"action company-settings-menu-button\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "    <span class=\"item-name\">Company Settings</span>\n" +
@@ -1095,12 +1088,13 @@ app.run(["$templateCache", function($templateCache) {
     "      <input id=\"sub-company-monitoring\" type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
-    "      <a href=\"\" data-dismiss=\"modal\" data-toggle=\"modal\" ng-click=\"moveCompany()\">Move a Company Under Your Company</a>\n" +
+    "      <a href=\"\" data-dismiss=\"modal\" data-toggle=\"modal\" class=\"move-subcompany-button\"\n" +
+    "        ng-click=\"moveCompany()\">Move a Company Under Your Company</a>\n" +
     "    </div>\n" +
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <button type=\"button\" class=\"btn btn-success btn-fixed-width\" ng-click=\"save()\">Save\n" +
+    "  <button type=\"button\" class=\"btn btn-success btn-fixed-width add-subcompany-save-button\" ng-click=\"save()\">Save\n" +
     "    <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button>\n" +
     "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width cancel-add-subcompany-button\" ng-click=\"closeModal()\">Cancel\n" +

@@ -63,12 +63,13 @@
       <input id="sub-company-monitoring" type="email" class="form-control" placeholder="e.g. john.doe@company.com, jane.doe@company.com"/>
     </div>
     <div class="form-group">
-      <a href="" data-dismiss="modal" data-toggle="modal" ng-click="moveCompany()">Move a Company Under Your Company</a>
+      <a href="" data-dismiss="modal" data-toggle="modal" class="move-subcompany-button"
+        ng-click="moveCompany()">Move a Company Under Your Company</a>
     </div>
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-success btn-fixed-width" ng-click="save()">Save
+  <button type="button" class="btn btn-success btn-fixed-width add-subcompany-save-button" ng-click="save()">Save
     <i class="fa fa-white fa-check icon-right"></i>
   </button>
   <button type="button" class="btn btn-primary btn-fixed-width cancel-add-subcompany-button" ng-click="closeModal()">Cancel
