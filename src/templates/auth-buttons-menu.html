@@ -11,6 +11,7 @@
     <span class="item-name">User Settings</span>
   </a>
 </li>
+<li class="divider" ng-show="isRiseVisionUser"></li>
 <li class="divider" ng-show="false"></li>
 <li ng-show="false">
   <a href="" class="action" ng-click="paymentMethods()">
@@ -18,7 +19,6 @@
     <span class="item-name">Payment Methods</span>
   </a>
 </li>
-<li class="divider" ng-show="isLoggedIn"></li>
 <li ng-show="isLoggedIn">
   <a href="" ng-click="logout()" class="sign-out-button action">
     <i class="fa fa-sign-out"></i>

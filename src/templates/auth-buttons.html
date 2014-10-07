@@ -1,8 +1,14 @@
 <!-- Desktop and tablet -->
+<li ng-show="isLoggedIn && !isRiseVisionUser">
+  <button type="button" href="" ng-click="register()"
+    class="register-user-menu-button action top-auth-button">
+    Create Account
+  </a>
+</li>
 <li
   class="dropdown"
   ng-class="{'hidden-xs': isLoggedIn}"
-  ng-show="isLoggedIn && isRiseVisionUser"
+  ng-show="isLoggedIn"
   rv-spinner="spinnerOptions"
   rv-spinner-key="auth-buttons">
     <a href="" class="dropdown-toggle">
@@ -16,17 +22,10 @@
       ></ng-include>
     </ul>
 </li>
-<li ng-show="isLoggedIn && !isRiseVisionUser">
-  <button type="button" href="" ng-click="register()"
-    class="register-user-menu-button action top-auth-button">
-    Create Account
-    <img src="http://rise-vision.github.io/style-guide/img/avatar_2x.jpg">
-  </a>
-</li>
 <!-- Mobile -->
 <li
   ng-class="{'visible-xs-inline-block': isLoggedIn}"
-  ng-show="isLoggedIn && isRiseVisionUser"
+  ng-show="isLoggedIn"
   rv-spinner="spinnerOptions"
   rv-spinner-key="auth-buttons"
   >
