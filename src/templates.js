@@ -958,24 +958,24 @@ app.run(["$templateCache", function($templateCache) {
     "  sign up for the newsletter below, and we won't share your email address\n" +
     "  with anyone else.</p>\n" +
     "\n" +
-    "  <form role=\"form\" name=\"registrationForm\">\n" +
-    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : registrationForm.email.$invalid && !userForm.email.$pristine }\">\n" +
+    "  <form novalidate role=\"form\" name=\"forms.registrationForm\">\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.email.$invalid && !userForm.email.$pristine }\">\n" +
     "      <label for=\"email\">Email</label>\n" +
     "      <input type=\"email\" class=\"form-control email\"\n" +
     "      name=\"email\"\n" +
     "      id=\"email\" required\n" +
     "      ng-model=\"profile.email\">\n" +
-    "      <p ng-show=\"registrationForm.email.$invalid && !registrationForm.email.$pristine\"\n" +
+    "      <p ng-show=\"forms.registrationForm.email.$invalid && !forms.registrationForm.email.$pristine\"\n" +
     "        class=\"help-block validation-error-message-email\">Enter a valid email.</p>\n" +
     "    </div>\n" +
     "    <!-- Terms of Service and Privacy -->\n" +
-    "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
+    "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
     "      <label>\n" +
     "      <input type=\"checkbox\" name=\"accepted\"\n" +
     "        ng-model=\"profile.accepted\"\n" +
     "        class=\"accept-terms-checkbox\" required />\n" +
     "      I accept the terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
-    "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\"\n" +
+    "      <p ng-show=\"forms.registrationForm.accepted.$invalid && !forms.registrationForm.accepted.$pristine\"\n" +
     "        class=\"help-block validation-error-message-accepted\">You must accept terms and condtions.</p>\n" +
     "      </label>\n" +
     "    </div>\n" +

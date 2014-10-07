@@ -8,16 +8,9 @@ angular.module("risevision.common.header")
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
 
-    $scope.register = function (size) {
-      var modalInstance = $modal.open({
-        template: $templateCache.get("registration-modal.html"),
-        controller: "RegistrationModalCtrl",
-        size: size,
-        backdrop: "static"
-      });
-      modalInstance.result.finally(function (){
-        uiStatusManager.invalidateStatus();
-      });
+    $scope.register = function () {
+      cookieStore.remove("surpressRegistration");
+      uiStatusManager.invalidateStatus("registrationComplete");
     };
 
     //clear state where user registration is surpressed
@@ -41,7 +34,14 @@ angular.module("risevision.common.header")
 
         //render a dialog based on the status current UI is in
         if(newStatus === "registerdAsRiseVisionUser") {
-          $scope.register();
+          var modalInstance = $modal.open({
+            template: $templateCache.get("registration-modal.html"),
+            controller: "RegistrationModalCtrl",
+            backdrop: "static"
+          });
+          modalInstance.result.finally(function (){
+            uiStatusManager.invalidateStatus("registrationComplete");
+          });
         }
       }
     });

@@ -958,24 +958,24 @@ app.run(["$templateCache", function($templateCache) {
     "  sign up for the newsletter below, and we won't share your email address\n" +
     "  with anyone else.</p>\n" +
     "\n" +
-    "  <form role=\"form\" name=\"registrationForm\">\n" +
-    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : registrationForm.email.$invalid && !userForm.email.$pristine }\">\n" +
+    "  <form novalidate role=\"form\" name=\"forms.registrationForm\">\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.email.$invalid && !userForm.email.$pristine }\">\n" +
     "      <label for=\"email\">Email</label>\n" +
     "      <input type=\"email\" class=\"form-control email\"\n" +
     "      name=\"email\"\n" +
     "      id=\"email\" required\n" +
     "      ng-model=\"profile.email\">\n" +
-    "      <p ng-show=\"registrationForm.email.$invalid && !registrationForm.email.$pristine\"\n" +
+    "      <p ng-show=\"forms.registrationForm.email.$invalid && !forms.registrationForm.email.$pristine\"\n" +
     "        class=\"help-block validation-error-message-email\">Enter a valid email.</p>\n" +
     "    </div>\n" +
     "    <!-- Terms of Service and Privacy -->\n" +
-    "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
+    "    <div class=\"checkbox form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.accepted.$invalid && !userForm.accepted.$pristine }\">\n" +
     "      <label>\n" +
     "      <input type=\"checkbox\" name=\"accepted\"\n" +
     "        ng-model=\"profile.accepted\"\n" +
     "        class=\"accept-terms-checkbox\" required />\n" +
     "      I accept the terms of <a href=\"http://www.risevision.com/terms-service-privacy/\" target=\"_blank\">Service and Privacy</a>\n" +
-    "      <p ng-show=\"registrationForm.accepted.$invalid && !registrationForm.accepted.$pristine\"\n" +
+    "      <p ng-show=\"forms.registrationForm.accepted.$invalid && !forms.registrationForm.accepted.$pristine\"\n" +
     "        class=\"help-block validation-error-message-accepted\">You must accept terms and condtions.</p>\n" +
     "      </label>\n" +
     "    </div>\n" +
@@ -1376,16 +1376,9 @@ angular.module("risevision.common.header")
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
 
-    $scope.register = function (size) {
-      var modalInstance = $modal.open({
-        template: $templateCache.get("registration-modal.html"),
-        controller: "RegistrationModalCtrl",
-        size: size,
-        backdrop: "static"
-      });
-      modalInstance.result.finally(function (){
-        uiStatusManager.invalidateStatus();
-      });
+    $scope.register = function () {
+      cookieStore.remove("surpressRegistration");
+      uiStatusManager.invalidateStatus("registrationComplete");
     };
 
     //clear state where user registration is surpressed
@@ -1409,7 +1402,14 @@ angular.module("risevision.common.header")
 
         //render a dialog based on the status current UI is in
         if(newStatus === "registerdAsRiseVisionUser") {
-          $scope.register();
+          var modalInstance = $modal.open({
+            template: $templateCache.get("registration-modal.html"),
+            controller: "RegistrationModalCtrl",
+            backdrop: "static"
+          });
+          modalInstance.result.finally(function (){
+            uiStatusManager.invalidateStatus("registrationComplete");
+          });
         }
       }
     });
@@ -1680,6 +1680,7 @@ angular.module("risevision.common.header")
     registerAccount, $log, cookieStore, userState, pick, uiStatusManager) {
 
       var copyOfProfile = userState.getCopyOfProfile() || {};
+
       //remove cookie so that it will show next time user refreshes page
       cookieStore.remove("surpressRegistration");
 
@@ -1710,27 +1711,26 @@ angular.module("risevision.common.header")
               $loading.start("registration-modal");
           }
           else if (undetermined === false) {
-          $loading.stop("registration-modal");
             if(uiStatusManager.getStatus() === "registrationComplete") {
               $modalInstance.close("success");
               //stop the watch
               watch();
             }
+            $loading.stop("registration-modal");
           }
       });
 
       $scope.save = function () {
-        ($scope.registrationForm || {}).accepted.$pristine = false;
-        ($scope.registrationForm || {}).email.$pristine = false;
+        $scope.forms.registrationForm.accepted.$pristine = false;
+        $scope.forms.registrationForm.email.$pristine = false;
 
-        if(!$scope.registrationForm.$invalid) {
+        if(!$scope.forms.registrationForm.$invalid) {
            //update terms and conditions date
            $scope.registering = true;
            $loading.start("registration-modal");
            registerAccount(userState.getUsername(), $scope.profile).then(
              function () {
                userState.authenticate(false).then().finally(function () {
-                 uiStatusManager.invalidateStatus("registrationComplete");
                  $modalInstance.close("success");
                });
              },
@@ -1743,6 +1743,7 @@ angular.module("risevision.common.header")
         }
 
       };
+      $scope.forms = {};
     }
 ]);
 
@@ -2912,7 +2913,7 @@ angular.module("risevision.common.geodata", [])
        _clearObj(_selectedCompany);
        _clearObj(_profile);
        _clearObj(_userCompany);
-       _roleMap = null;
+       _roleMap = {};
        $log.debug("User state has been reset.");
      };
 

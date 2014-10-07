@@ -126,7 +126,7 @@
        _clearObj(_selectedCompany);
        _clearObj(_profile);
        _clearObj(_userCompany);
-       _roleMap = null;
+       _roleMap = {};
        $log.debug("User state has been reset.");
      };
 
