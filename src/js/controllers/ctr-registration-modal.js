@@ -7,6 +7,7 @@ angular.module("risevision.common.header")
     registerAccount, $log, cookieStore, userState, pick, uiStatusManager) {
 
       var copyOfProfile = userState.getCopyOfProfile() || {};
+
       //remove cookie so that it will show next time user refreshes page
       cookieStore.remove("surpressRegistration");
 
@@ -37,27 +38,26 @@ angular.module("risevision.common.header")
               $loading.start("registration-modal");
           }
           else if (undetermined === false) {
-          $loading.stop("registration-modal");
             if(uiStatusManager.getStatus() === "registrationComplete") {
               $modalInstance.close("success");
               //stop the watch
               watch();
             }
+            $loading.stop("registration-modal");
           }
       });
 
       $scope.save = function () {
-        ($scope.registrationForm || {}).accepted.$pristine = false;
-        ($scope.registrationForm || {}).email.$pristine = false;
+        $scope.forms.registrationForm.accepted.$pristine = false;
+        $scope.forms.registrationForm.email.$pristine = false;
 
-        if(!$scope.registrationForm.$invalid) {
+        if(!$scope.forms.registrationForm.$invalid) {
            //update terms and conditions date
            $scope.registering = true;
            $loading.start("registration-modal");
            registerAccount(userState.getUsername(), $scope.profile).then(
              function () {
                userState.authenticate(false).then().finally(function () {
-                 uiStatusManager.invalidateStatus("registrationComplete");
                  $modalInstance.close("success");
                });
              },
@@ -70,5 +70,6 @@ angular.module("risevision.common.header")
         }
 
       };
+      $scope.forms = {};
     }
 ]);
