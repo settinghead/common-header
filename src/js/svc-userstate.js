@@ -193,7 +193,7 @@
                  refreshProfile().then(function () {
                    //populate userCompany
                    return getCompany().then(function(company) {
-                      _clearAndCopy(company, _userCompany);
+                     _clearAndCopy(company, _userCompany);
                      _clearAndCopy(company, _selectedCompany);
 
                    }, function () { _clearObj(_userCompany);
@@ -300,6 +300,14 @@
         return (_selectedCompany && _selectedCompany.id) || null; },
       getSelectedCompanyName: function () {
         return (_selectedCompany && _selectedCompany.name) || null;},
+      updateCompanySettings: function (company) {
+        if (company && _selectedCompany) {
+          _clearAndCopy(company, _selectedCompany);
+          if (_userCompany.id === _selectedCompany.id) {
+            _clearAndCopy(company, _userCompany);
+          }
+        }
+      },
       getSelectedCompanyCountry: function () {
           return (_selectedCompany && _selectedCompany.country) || null;},
       getUsername: function () {

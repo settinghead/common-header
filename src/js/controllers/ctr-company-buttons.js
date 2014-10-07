@@ -7,6 +7,12 @@ angular.module("risevision.common.header")
     function (newCompanyId) {
       if(newCompanyId) {
         $scope.isSubcompanySelected = userState.isSubcompanySelected();
+      }
+    });
+
+    $scope.$watch(function () {return userState.getSelectedCompanyName(); },
+    function (selectedCompanyName) {
+      if(selectedCompanyName) {
         $scope.selectedCompanyName = userState.getSelectedCompanyName();
       }
     });
