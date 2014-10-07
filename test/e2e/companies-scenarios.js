@@ -52,19 +52,23 @@
         });
       });
 
-      describe("Move company", function () {
-        it("Opens Move Company Dialog", function() {
+      describe("Add subcompany & move company", function () {
+        it("Opens Add Subcompany dialog", function () {
+
           browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
           element(by.css("button.sign-in")).click();
-
           assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
 
           element(by.css(".company-buttons-icon")).click();
+          assert.eventually.isTrue(element(by.css(".add-subcompany-menu-button")).isDisplayed(),
+            "Add subcompany menu item should show");
+          element(by.css(".add-subcompany-menu-button")).click();
+          assert.eventually.isTrue(element(by.css(".add-subcompany-modal")).isDisplayed(),
+            "Add subcompany dialog should show");
+        });
 
-          assert.eventually.isTrue(element(by.css(".move-company-menu-button")).isDisplayed(),
-            "Move company menu item should present");
-
-          element(by.css(".move-company-menu-button")).click();
+        it("Opens Move Company Dialog", function() {
+          element(by.css(".move-subcompany-button")).click();
 
           assert.eventually.isTrue(element(by.css(".move-company-modal")).isDisplayed(),
             "Move company dialog should show");
@@ -76,7 +80,6 @@
           element(by.css(".retrieve-company-details-button")).click();
           assert.eventually.isTrue(element(by.css(".alert.alert-danger")).isDisplayed(),
             "Error message should show");
-
         });
 
         it("Retrieves Company Info", function () {
@@ -99,16 +102,8 @@
           assert.eventually.isFalse(element(by.css(".move-company-modal")).isPresent(),
             "Move company dialog should hide");
         });
-      });
 
-      describe("Add subcompany", function () {
-        it("Opens Add Subcompany dialog", function () {
-          element(by.css(".company-buttons-icon")).click();
-          assert.eventually.isTrue(element(by.css(".add-subcompany-menu-button")).isDisplayed(),
-            "Add subcompany menu item should show");
-          element(by.css(".add-subcompany-menu-button")).click();
-          assert.eventually.isTrue(element(by.css(".add-subcompany-modal")).isDisplayed(),
-            "Add subcompany dialog should show");
+        it("Closes Add subcompany Dialog", function () {
           element(by.css(".cancel-add-subcompany-button")).click();
           assert.eventually.isFalse(element(by.css(".add-subcompany-modal")).isPresent(),
             "Add subcompany dialog should hide");
