@@ -500,8 +500,8 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"company-settings-monitoring\">\n" +
     "        Send Monitoring Emails To\n" +
     "      </label>\n" +
-    "      <input id=\"company-settings-monitoring\"\n" +
-    "        type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
+    "      <input id=\"company-settings-monitoring\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\" \n" +
+    "        ng-model=\"company.notificationEmails\" ng-list />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
@@ -4051,7 +4051,7 @@ angular.module("risevision.common.company",
     return function (companyId, fields) {
         var deferred = $q.defer();
         fields = pick(
-          fields, "name", "street", "unit", "city", "country", "postalCode", "province", "telephone");
+          fields, "name", "street", "unit", "city", "country", "postalCode", "province", "telephone", "notificationEmails");
         $log.debug("updateCompany called", companyId, fields);
         // fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {

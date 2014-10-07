@@ -500,8 +500,8 @@ app.run(["$templateCache", function($templateCache) {
     "      <label for=\"company-settings-monitoring\">\n" +
     "        Send Monitoring Emails To\n" +
     "      </label>\n" +
-    "      <input id=\"company-settings-monitoring\"\n" +
-    "        type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
+    "      <input id=\"company-settings-monitoring\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\" \n" +
+    "        ng-model=\"company.notificationEmails\" ng-list />\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +

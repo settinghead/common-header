@@ -129,7 +129,7 @@ angular.module("risevision.common.company",
     return function (companyId, fields) {
         var deferred = $q.defer();
         fields = pick(
-          fields, "name", "street", "unit", "city", "country", "postalCode", "province", "telephone");
+          fields, "name", "street", "unit", "city", "country", "postalCode", "province", "telephone", "notificationEmails");
         $log.debug("updateCompany called", companyId, fields);
         // fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
