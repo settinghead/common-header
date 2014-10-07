@@ -2,10 +2,10 @@ angular.module("risevision.common.header")
 
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
   "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
-  "getCompany", "regenerateCompanyField", "$window",
+  "getCompany", "regenerateCompanyField", "$window", "userState",
   function($scope, $modalInstance, updateCompany, companyId,
     COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField, 
-    $window) {
+    $window, userState) {
 
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -27,6 +27,7 @@ angular.module("risevision.common.header")
     $scope.save = function () {
       updateCompany($scope.company.id, $scope.company).then(
         function () {
+          userState.updateCompanySettings($scope.company);
           $modalInstance.close("success");
         },
         function (error) {
