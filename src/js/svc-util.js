@@ -1,6 +1,18 @@
 (function (angular) {
   "use strict";
   angular.module("risevision.common.util", [])
+
+  .value("humanReadableError", function (resp) {
+    var message;
+    if (resp.message) {message = resp.message; }
+    else if(resp.error) {
+      if(resp.error.message) {message = resp.message; }
+      else {message = resp.error; }
+    }
+    else {message = resp; }
+    return JSON.stringify(message);
+  })
+
   .value("BaseList", function (maxCount) {
       this.list = [];
       this.maxCount = maxCount ? maxCount : 20;

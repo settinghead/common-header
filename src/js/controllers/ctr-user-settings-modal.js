@@ -2,9 +2,9 @@ angular.module("risevision.common.header")
 
   .controller("AddUserModalCtrl",
   ["$scope", "addUser", "$modalInstance", "companyId", "userState",
-  "userRoleMap",
+  "userRoleMap", "humanReadableError",
   function ($scope, addUser, $modalInstance, companyId, userState,
-  userRoleMap) {
+  userRoleMap, humanReadableError) {
     $scope.user = {};
     $scope.isAdd = true;
 
@@ -20,7 +20,7 @@ angular.module("risevision.common.header")
           $modalInstance.close("success");
         },
         function (error) {
-          alert("Error" + JSON.stringify(error));
+          alert("Error" + humanReadableError(error));
         }
       );
     };
@@ -69,10 +69,10 @@ angular.module("risevision.common.header")
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
-    "uiStatusManager",
+    "uiStatusManager", "humanReadableError",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
       addUser, username, userRoleMap, $log, $loading, userState,
-      uiStatusManager) {
+      uiStatusManager, humanReadableError) {
 
       //push roles into array
       $scope.availableRoles = [];
@@ -119,7 +119,7 @@ angular.module("risevision.common.header")
           },
           function (error) {
             $log.debug(error);
-            alert("Error: " + error.message);
+            alert("Error: " + humanReadableError(error));
           }
         ).finally(function (){
           if(username === userState.getUsername()) {
