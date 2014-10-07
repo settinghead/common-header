@@ -1,3 +1,7 @@
+<div rv-spinner
+  rv-spinner-key="company-settings-modal"
+  rv-spinner-start-active="1">
+
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeModal()">
     <i class="fa fa-times"></i>
@@ -5,71 +9,8 @@
   <h2 id="company-settings-label" class="modal-title">Company Settings</h2>
 </div>
 <div class="modal-body company-settings-modal">
-  <form role="form">
-    <div class="form-group">
-      <label for="company-settings-name">
-        Name
-      </label>
-      <input id="company-settings-name" type="text" class="form-control" ng-model="company.name" />
-    </div>
-    <div class="form-group">
-      <label for="company-settings-street">
-        Street
-      </label>
-      <input id="company-settings-street" type="text" class="form-control" ng-model="company.street" />
-    </div>
-    <div class="form-group">
-      <label for="company-settings-unit">
-        Unit
-      </label>
-      <input id="company-settings-unit" type="text" class="form-control" ng-model="company.unit" />
-    </div>
-    <div class="form-group">
-      <label for="company-settings-city">
-        City
-      </label>
-      <input id="company-settings-city" type="text" class="form-control" ng-model="company.city" />
-    </div>
-    <div class="form-group">
-      <label for="company-settings-country">
-        Country
-      </label>
-      <select id="company-settings-country" class="form-control selectpicker"
-        ng-model="company.country" ng-options="c[1] as c[0] for c in countries">
-        <option value="">&lt; Select Country &gt;</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="company-settings-state">
-        State / Province
-      </label>
-      <input id="company-settings-state" type="text" class="form-control" ng-model="company.province" ng-hide="company.country == 'US' || company.country == 'CA'" />
-      <select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsCA" ng-show="company.country == 'CA'">
-        <option value="">&lt; Select Province &gt;</option>
-      </select>
-      <select class="form-control selectpicker" ng-model="company.province" ng-options="c[1] as c[0] for c in regionsUS" ng-show="company.country == 'US'">
-        <option value="">&lt; Select State &gt;</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="company-settings-zip">
-        Zip / Postal Code
-      </label>
-      <input id="company-settings-zip" type="text" class="form-control" ng-model="company.postalCode" />
-    </div>
-    <div class="form-group">
-      <label for="company-settings-phone">
-        Phone
-      </label>
-      <input id="company-settings-phone" type="tel" class="form-control" ng-model="company.telephone"/>
-    </div>
-    <div class="form-group">
-      <label for="company-settings-monitoring">
-        Send Monitoring Emails To
-      </label>
-      <input id="company-settings-monitoring"
-        type="email" class="form-control" placeholder="e.g. john.doe@company.com, jane.doe@company.com"/>
-    </div>
+  <form role="form" name="forms.companyForm">
+    <div ng-include="'company-fields.html'"></div>
     <div class="form-group">
       <label>
         Authentication Key
@@ -176,7 +117,9 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-success btn-fixed-width" ng-click="save()">Save
+    <button type="button"
+      class="btn btn-success btn-fixed-width" ng-click="save()"
+      ng-disabled="forms.companyForm.$invalid">Save
       <i class="fa fa-white fa-check icon-right"></i>
     </button>
     <button type="button" class="btn btn-danger btn-fixed-width" ng-show="!isDeletingCompany" ng-click="deleteCompany()">
@@ -185,8 +128,10 @@
     <button type="button" class="btn btn-danger btn-confirm-delete" data-dismiss="modal" ng-show="isDeletingCompany" ng-click="closeModal()">
       Confirm Deletion <i class="fa fa-white fa-warning icon-right"></i>
     </button>
-    <button type="button" class="btn btn-primary btn-fixed-width close-company-settings-button" data-dismiss="modal" ng-click="closeModal()">Cancel
+    <button type="button"
+      class="btn btn-primary btn-fixed-width close-company-settings-button" data-dismiss="modal" ng-click="closeModal()">Cancel
       <i class="fa fa-white fa-times icon-right"></i>
     </button>
   </div>
 </div>
+</div> <!--spinner -->

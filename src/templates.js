@@ -378,6 +378,84 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("company-fields.html",
+    "<div class=\"form-group\" ng-class=\"{'has-error': forms.companyForm.name.$invalid && !forms.companyForm.name.$pristine}\">\n" +
+    "  <label for=\"company-settings-name\">\n" +
+    "    Name *\n" +
+    "  </label>\n" +
+    "  <input required id=\"company-settings-name\" type=\"text\" class=\"form-control\"\n" +
+    "    ng-model=\"company.name\" name=\"name\" />\n" +
+    "  <p ng-show=\"forms.companyForm.name.$invalid && !forms.companyForm.name.$pristine\"\n" +
+    "    class=\"help-block validation-error-message-name\">Company name is required.</p>\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-street\">\n" +
+    "    Street\n" +
+    "  </label>\n" +
+    "  <input id=\"company-settings-street\" type=\"text\" class=\"form-control\" ng-model=\"company.street\" />\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-unit\">\n" +
+    "    Unit\n" +
+    "  </label>\n" +
+    "  <input id=\"company-settings-unit\" type=\"text\" class=\"form-control\" ng-model=\"company.unit\" />\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-city\">\n" +
+    "    City\n" +
+    "  </label>\n" +
+    "  <input id=\"company-settings-city\" type=\"text\" class=\"form-control\" ng-model=\"company.city\" />\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-country\">\n" +
+    "    Country\n" +
+    "  </label>\n" +
+    "  <select id=\"company-settings-country\" class=\"form-control selectpicker\"\n" +
+    "    ng-model=\"company.country\" ng-options=\"c[1] as c[0] for c in countries\">\n" +
+    "    <option value=\"\">&lt; Select Country &gt;</option>\n" +
+    "  </select>\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-state\">\n" +
+    "    State / Province\n" +
+    "  </label>\n" +
+    "  <input id=\"company-settings-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" />\n" +
+    "  <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
+    "    <option value=\"\">&lt; Select Province &gt;</option>\n" +
+    "  </select>\n" +
+    "  <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
+    "    <option value=\"\">&lt; Select State &gt;</option>\n" +
+    "  </select>\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-zip\">\n" +
+    "    Zip / Postal Code\n" +
+    "  </label>\n" +
+    "  <input id=\"company-settings-zip\" type=\"text\" class=\"form-control\" ng-model=\"company.postalCode\" />\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-phone\">\n" +
+    "    Phone\n" +
+    "  </label>\n" +
+    "  <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" ng-model=\"company.telephone\"/>\n" +
+    "</div>\n" +
+    "<div class=\"form-group\">\n" +
+    "  <label for=\"company-settings-monitoring\">\n" +
+    "    Send Monitoring Emails To\n" +
+    "  </label>\n" +
+    "  <input id=\"company-settings-monitoring\"\n" +
+    "    type=\"text\" class=\"form-control\" ng-list=\", \"\n" +
+    "     ng-model=\"company.notificationEmails\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("company-selector-modal.html",
     "<form role=\"form\">\n" +
     "	<div class=\"modal-header\">\n" +
@@ -424,6 +502,10 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-settings-modal.html",
+    "<div rv-spinner\n" +
+    "  rv-spinner-key=\"company-settings-modal\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
+    "\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -431,71 +513,8 @@ app.run(["$templateCache", function($templateCache) {
     "  <h2 id=\"company-settings-label\" class=\"modal-title\">Company Settings</h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body company-settings-modal\">\n" +
-    "  <form role=\"form\">\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-name\">\n" +
-    "        Name\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-name\" type=\"text\" class=\"form-control\" ng-model=\"company.name\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-street\">\n" +
-    "        Street\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-street\" type=\"text\" class=\"form-control\" ng-model=\"company.street\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-unit\">\n" +
-    "        Unit\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-unit\" type=\"text\" class=\"form-control\" ng-model=\"company.unit\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-city\">\n" +
-    "        City\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-city\" type=\"text\" class=\"form-control\" ng-model=\"company.city\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-country\">\n" +
-    "        Country\n" +
-    "      </label>\n" +
-    "      <select id=\"company-settings-country\" class=\"form-control selectpicker\"\n" +
-    "        ng-model=\"company.country\" ng-options=\"c[1] as c[0] for c in countries\">\n" +
-    "        <option value=\"\">&lt; Select Country &gt;</option>\n" +
-    "      </select>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-state\">\n" +
-    "        State / Province\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" />\n" +
-    "      <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
-    "        <option value=\"\">&lt; Select Province &gt;</option>\n" +
-    "      </select>\n" +
-    "      <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
-    "        <option value=\"\">&lt; Select State &gt;</option>\n" +
-    "      </select>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-zip\">\n" +
-    "        Zip / Postal Code\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-zip\" type=\"text\" class=\"form-control\" ng-model=\"company.postalCode\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-phone\">\n" +
-    "        Phone\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-phone\" type=\"tel\" class=\"form-control\" ng-model=\"company.telephone\"/>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"company-settings-monitoring\">\n" +
-    "        Send Monitoring Emails To\n" +
-    "      </label>\n" +
-    "      <input id=\"company-settings-monitoring\"\n" +
-    "        type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
-    "    </div>\n" +
+    "  <form role=\"form\" name=\"forms.companyForm\">\n" +
+    "    <div ng-include=\"'company-fields.html'\"></div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
     "        Authentication Key\n" +
@@ -602,7 +621,9 @@ app.run(["$templateCache", function($templateCache) {
     "    </form>\n" +
     "  </div>\n" +
     "  <div class=\"modal-footer\">\n" +
-    "    <button type=\"button\" class=\"btn btn-success btn-fixed-width\" ng-click=\"save()\">Save\n" +
+    "    <button type=\"button\"\n" +
+    "      class=\"btn btn-success btn-fixed-width\" ng-click=\"save()\"\n" +
+    "      ng-disabled=\"forms.companyForm.$invalid\">Save\n" +
     "      <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "    </button>\n" +
     "    <button type=\"button\" class=\"btn btn-danger btn-fixed-width\" ng-show=\"!isDeletingCompany\" ng-click=\"deleteCompany()\">\n" +
@@ -611,11 +632,13 @@ app.run(["$templateCache", function($templateCache) {
     "    <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +
     "      Confirm Deletion <i class=\"fa fa-white fa-warning icon-right\"></i>\n" +
     "    </button>\n" +
-    "    <button type=\"button\" class=\"btn btn-primary btn-fixed-width close-company-settings-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
+    "    <button type=\"button\"\n" +
+    "      class=\"btn btn-primary btn-fixed-width close-company-settings-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
     "      <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "    </button>\n" +
     "  </div>\n" +
     "</div>\n" +
+    "</div> <!--spinner -->\n" +
     "");
 }]);
 })();
@@ -1023,6 +1046,9 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("subcompany-modal.html",
+    "<div rv-spinner\n" +
+    "  rv-spinner-key=\"add-subcompany-modal\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" ng-click=\"closeModal()\" aria-hidden=\"true\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -1030,63 +1056,8 @@ app.run(["$templateCache", function($templateCache) {
     "  <h2 id=\"sub-company-label\" class=\"modal-title add-subcompany-modal\">Add Sub-Company</h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body select-subcompany-modal\">\n" +
-    "  <form role=\"form\">\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-name\">\n" +
-    "        Name\n" +
-    "      </label>\n" +
-    "      <input id=\"sub-company-name\" type=\"text\" class=\"form-control\" ng-model=\"company.name\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-street\">\n" +
-    "        Street\n" +
-    "      </label>\n" +
-    "      <input id=\"sub-company-street\" type=\"text\" class=\"form-control\" ng-model=\"company.street\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-unit\">\n" +
-    "        Unit\n" +
-    "      </label>\n" +
-    "      <input id=\"sub-company-unit\" type=\"text\" class=\"form-control\" ng-model=\"company.unit\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-city\">\n" +
-    "        City\n" +
-    "      </label>\n" +
-    "      <input id=\"sub-company-city\" type=\"text\" class=\"form-control\" ng-model=\"company.city\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-country\">\n" +
-    "        Country\n" +
-    "      </label>\n" +
-    "      <select id=\"sub-company-country\" class=\"form-control selectpicker\" ng-model=\"company.country\" ng-options=\"c[1] as c[0] for c in countries\">\n" +
-    "        <option value=\"\">&lt; Select Country &gt;</option>\n" +
-    "      </select>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-state\">\n" +
-    "        State / Province\n" +
-    "      </label>\n" +
-    "      <!-- <input id=\"sub-company-state\" type=\"text\" class=\"form-control\" ng-model=\"company.province\" ng-hide=\"company.country == 'US' || company.country == 'CA'\" /> -->\n" +
-    "      <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsCA\" ng-show=\"company.country == 'CA'\">\n" +
-    "        <option value=\"\">&lt; Select Province &gt;</option>\n" +
-    "      </select>\n" +
-    "      <!-- <select class=\"form-control selectpicker\" ng-model=\"company.province\" ng-options=\"c[1] as c[0] for c in regionsUS\" ng-show=\"company.country == 'US'\">\n" +
-    "        <option value=\"\">&lt; Select State &gt;</option>\n" +
-    "      </select> -->\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-zip\">\n" +
-    "        Zip / Postal Code\n" +
-    "      </label>\n" +
-    "      <input id=\"sub-company-zip\" type=\"text\" class=\"form-control\" ng-model=\"company.postalCode\" />\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"sub-company-monitoring\">\n" +
-    "        Send Monitoring Emails To\n" +
-    "      </label>\n" +
-    "      <input id=\"sub-company-monitoring\" type=\"email\" class=\"form-control\" placeholder=\"e.g. john.doe@company.com, jane.doe@company.com\"/>\n" +
-    "    </div>\n" +
+    "  <form role=\"form\" name=\"forms.companyForm\">\n" +
+    "    <div ng-include=\"'company-fields.html'\"></div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <a href=\"\" data-dismiss=\"modal\" data-toggle=\"modal\" class=\"move-subcompany-button\"\n" +
     "        ng-click=\"moveCompany()\">Move a Company Under Your Company</a>\n" +
@@ -1094,12 +1065,15 @@ app.run(["$templateCache", function($templateCache) {
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <button type=\"button\" class=\"btn btn-success btn-fixed-width add-subcompany-save-button\" ng-click=\"save()\">Save\n" +
+    "  <button type=\"button\"\n" +
+    "    class=\"btn btn-success btn-fixed-width add-subcompany-save-button\"\n" +
+    "    ng-click=\"save()\" ng-disabled=\"forms.companyForm.$invalid\">Save\n" +
     "    <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button>\n" +
     "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width cancel-add-subcompany-button\" ng-click=\"closeModal()\">Cancel\n" +
     "    <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
+    "</div>\n" +
     "</div>\n" +
     "");
 }]);

@@ -8,7 +8,13 @@ angular.module("risevision.common.company",
     "risevision.common.util"
   ])
 
-    .factory("validateAddress", ["$q", "storeAPILoader", "$log",
+  .constant("COMPANY_WRITABLE_FIELDS", [
+    "name", "street", "unit", "city", "province", "country",
+    "postalCode", "timeZoneOffset", "telephone", "fax", "companyStatus",
+    "notificationEmails", "mailSyncEnabled",
+  ])
+
+  .factory("validateAddress", ["$q", "storeAPILoader", "$log",
   function ($q, storeAPILoader, $log) {
       return function (company) {
 
@@ -36,14 +42,16 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("createCompany", ["$q", "coreAPILoader", function ($q, coreAPILoader) {
+  .factory("createCompany", ["$q", "coreAPILoader", "COMPANY_WRITABLE_FIELDS",
+    "pick",
+    function ($q, coreAPILoader, COMPANY_WRITABLE_FIELDS, pick) {
     return function (parentCompanyId, company) {
       var deferred = $q.defer();
-      company.validate = true;
       coreAPILoader().then(function (coreApi) {
+        var fields = pick.apply(this, [company].concat(COMPANY_WRITABLE_FIELDS));
         var request = coreApi.company.add({
           parentId: parentCompanyId,
-          data: JSON.stringify(company)
+          data: JSON.stringify(fields)
         });
         request.execute(function (resp) {
           if(resp.result) {
@@ -125,18 +133,24 @@ angular.module("risevision.common.company",
   }])
 
   .factory("updateCompany", ["$q", "$log", "coreAPILoader", "pick",
-   function ($q, $log, coreAPILoader, pick){
+  "COMPANY_WRITABLE_FIELDS",
+   function ($q, $log, coreAPILoader, pick, COMPANY_WRITABLE_FIELDS){
     return function (companyId, fields) {
         var deferred = $q.defer();
-        fields = pick(
-          fields, "name", "street", "unit", "city", "country", "postalCode", "province", "telephone");
+        fields = pick.apply(this, [fields].concat(COMPANY_WRITABLE_FIELDS));
+
         $log.debug("updateCompany called", companyId, fields);
         // fields.validate = validationRequired || false;
         coreAPILoader().then(function (coreApi) {
           var request = coreApi.company.update({id: companyId, data: JSON.stringify(fields)});
           request.execute(function (resp) {
             $log.debug("updateCompany resp", resp);
+            if(resp.result) {
               deferred.resolve(resp);
+            }
+            else {
+              deferred.reject(resp);
+            }
           });
         });
 
