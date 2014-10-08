@@ -1,16 +1,19 @@
 <!-- Desktop and tablet -->
-<li ng-show="isLoggedIn && !isRiseVisionUser">
+<li
+  ng-show="isLoggedIn && !isRiseVisionUser && !undetermined">
   <button type="button" href="" ng-click="register()"
     class="register-user-menu-button action top-auth-button">
     Create Account
   </a>
 </li>
 <li
-  class="dropdown"
+  class="dropdown user-profile-dropdown"
   ng-class="{'hidden-xs': isLoggedIn}"
   ng-show="isLoggedIn"
   rv-spinner="spinnerOptions"
-  rv-spinner-key="auth-buttons">
+  rv-spinner-key="auth-buttons"
+  rv-spinner-start-active="1"
+  >
     <a href="" class="dropdown-toggle">
       <img ng-src="{{userPicture}}"
         class="profile-pic" width="30" height="30" alt="User" />
@@ -26,8 +29,6 @@
 <li
   ng-class="{'visible-xs-inline-block': isLoggedIn}"
   ng-show="isLoggedIn"
-  rv-spinner="spinnerOptions"
-  rv-spinner-key="auth-buttons"
   >
     <a href="" class="dropdown-toggle" action-sheet="'auth-buttons-menu.html'">
       <img ng-src="{{userPicture}}"
@@ -35,10 +36,7 @@
     </a>
 </li>
 <!-- If User NOT Authenticated -->
-<li ng-show="!undetermined && isLoggedIn === false"
-  rv-spinner="spinnerOptions"
-  rv-spinner-key="auth-buttons"
-  >
+<li ng-show="!undetermined && isLoggedIn === false">
   <button type="button" class="sign-in top-auth-button" ng-click="login()">
     Sign In <img src="http://rise-vision.github.io/style-guide/img/avatar_2x.jpg">
   </button>

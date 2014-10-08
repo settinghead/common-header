@@ -42,18 +42,21 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "<li\n" +
+    "  ng-show=\"isLoggedIn && !isRiseVisionUser && !undetermined\">\n" +
     "  <button type=\"button\" href=\"\" ng-click=\"register()\"\n" +
     "    class=\"register-user-menu-button action top-auth-button\">\n" +
     "    Create Account\n" +
     "  </a>\n" +
     "</li>\n" +
     "<li\n" +
-    "  class=\"dropdown\"\n" +
+    "  class=\"dropdown user-profile-dropdown\"\n" +
     "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\">\n" +
+    "  rv-spinner-key=\"auth-buttons\"\n" +
+    "  rv-spinner-start-active=\"1\"\n" +
+    "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
@@ -69,8 +72,6 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
@@ -78,10 +79,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-show=\"!undetermined && isLoggedIn === false\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  >\n" +
+    "<li ng-show=\"!undetermined && isLoggedIn === false\">\n" +
     "  <button type=\"button\" class=\"sign-in top-auth-button\" ng-click=\"login()\">\n" +
     "    Sign In <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
     "  </button>\n" +
@@ -233,23 +231,10 @@ app.run(["$templateCache", function($templateCache) {
     "					<li ng-repeat=\"opt in navOptions\">\n" +
     "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "					</li>\n" +
-    "					<li class=\"dropdown\">\n" +
-    "						<a href=\"\" class=\"dropdown-toggle remove-radius\">\n" +
+    "					<li>\n" +
+    "						<a href=\"http://www.risevision.com/help/\" target=\"_blank\">\n" +
     "							Help\n" +
     "						</a>\n" +
-    "						<ul class=\"dropdown-menu\">\n" +
-    "							<li>\n" +
-    "								<a href=\"http://community.risevision.com/rise_vision_inc\" class=\"item-name\" target=\"_blank\">Community</a>\n" +
-    "							</li>\n" +
-    "							<li class=\"divider\"></li>\n" +
-    "							<li>\n" +
-    "								<a href=\"http://www.risevision.com/user-training/\" class=\"item-name\" target=\"_blank\">Training</a>\n" +
-    "							</li>\n" +
-    "							<li class=\"divider\"></li>\n" +
-    "							<li>\n" +
-    "								<a href=\"http://www.risevision.com/help/users/\" class=\"item-name\" target=\"_blank\">Documentation</a>\n" +
-    "							</li>\n" +
-    "						</ul>\n" +
     "					</li>\n" +
     "				</ul>\n" +
     "			</div>\n" +
@@ -647,6 +632,9 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-users-modal.html",
+    "<div rv-spinner\n" +
+    "  rv-spinner-key=\"company-users-modal\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\"\n" +
     "    aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
@@ -671,7 +659,10 @@ app.run(["$templateCache", function($templateCache) {
     "      </span>\n" +
     "  </div>\n" +
     "  <!-- List of Users -->\n" +
-    "  <div class=\"list-group scrollable-list company-users-list\">\n" +
+    "  <div class=\"list-group scrollable-list company-users-list\"\n" +
+    "    rv-spinner\n" +
+    "    rv-spinner-key=\"company-users-list\"\n" +
+    "    rv-spinner-start-active=\"1\">\n" +
     "    <div class=\"list-group-item  company-users-list-item\"\n" +
     "      ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
     "      <p class=\"list-group-item-text\"><strong>{{user.firstName}} {{user.lastName}}</strong> <small class=\"text-muted\">{{user.email}}</small></p>\n" +
@@ -688,6 +679,7 @@ app.run(["$templateCache", function($templateCache) {
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
+    "</div> <!-- spinner -->\n" +
     "");
 }]);
 })();
@@ -831,6 +823,10 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("move-company-modal.html",
+    "<div rv-spinner\n" +
+    "  rv-spinner-key=\"move-company-modal\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
+    "\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -1137,6 +1133,9 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("user-settings-modal.html",
+    "<div rv-spinner=\"spinnerOptions\"\n" +
+    "rv-spinner-key=\"user-settings-modal\"\n" +
+    "rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -1146,11 +1145,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <span ng-if=\"isAdd\">Add User</span>\n" +
     "  </h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body user-settings-modal\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"user-settings\"\n" +
-    "  rv-spinner-start-active=\"0\"\n" +
-    ">\n" +
+    "<div class=\"modal-body user-settings-modal\">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
@@ -1252,6 +1247,7 @@ app.run(["$templateCache", function($templateCache) {
     "   --><button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
+    "</div>\n" +
     "</div>\n" +
     "");
 }]);

@@ -42,18 +42,21 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("auth-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li ng-show=\"isLoggedIn && !isRiseVisionUser\">\n" +
+    "<li\n" +
+    "  ng-show=\"isLoggedIn && !isRiseVisionUser && !undetermined\">\n" +
     "  <button type=\"button\" href=\"\" ng-click=\"register()\"\n" +
     "    class=\"register-user-menu-button action top-auth-button\">\n" +
     "    Create Account\n" +
     "  </a>\n" +
     "</li>\n" +
     "<li\n" +
-    "  class=\"dropdown\"\n" +
+    "  class=\"dropdown user-profile-dropdown\"\n" +
     "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
     "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\">\n" +
+    "  rv-spinner-key=\"auth-buttons\"\n" +
+    "  rv-spinner-start-active=\"1\"\n" +
+    "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
     "        class=\"profile-pic\" width=\"30\" height=\"30\" alt=\"User\" />\n" +
@@ -69,8 +72,6 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
     "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
@@ -78,10 +79,7 @@ app.run(["$templateCache", function($templateCache) {
     "    </a>\n" +
     "</li>\n" +
     "<!-- If User NOT Authenticated -->\n" +
-    "<li ng-show=\"!undetermined && isLoggedIn === false\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  >\n" +
+    "<li ng-show=\"!undetermined && isLoggedIn === false\">\n" +
     "  <button type=\"button\" class=\"sign-in top-auth-button\" ng-click=\"login()\">\n" +
     "    Sign In <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
     "  </button>\n" +
@@ -233,23 +231,10 @@ app.run(["$templateCache", function($templateCache) {
     "					<li ng-repeat=\"opt in navOptions\">\n" +
     "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "					</li>\n" +
-    "					<li class=\"dropdown\">\n" +
-    "						<a href=\"\" class=\"dropdown-toggle remove-radius\">\n" +
+    "					<li>\n" +
+    "						<a href=\"http://www.risevision.com/help/\" target=\"_blank\">\n" +
     "							Help\n" +
     "						</a>\n" +
-    "						<ul class=\"dropdown-menu\">\n" +
-    "							<li>\n" +
-    "								<a href=\"http://community.risevision.com/rise_vision_inc\" class=\"item-name\" target=\"_blank\">Community</a>\n" +
-    "							</li>\n" +
-    "							<li class=\"divider\"></li>\n" +
-    "							<li>\n" +
-    "								<a href=\"http://www.risevision.com/user-training/\" class=\"item-name\" target=\"_blank\">Training</a>\n" +
-    "							</li>\n" +
-    "							<li class=\"divider\"></li>\n" +
-    "							<li>\n" +
-    "								<a href=\"http://www.risevision.com/help/users/\" class=\"item-name\" target=\"_blank\">Documentation</a>\n" +
-    "							</li>\n" +
-    "						</ul>\n" +
     "					</li>\n" +
     "				</ul>\n" +
     "			</div>\n" +
@@ -647,6 +632,9 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-users-modal.html",
+    "<div rv-spinner\n" +
+    "  rv-spinner-key=\"company-users-modal\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\"\n" +
     "    aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
@@ -671,7 +659,10 @@ app.run(["$templateCache", function($templateCache) {
     "      </span>\n" +
     "  </div>\n" +
     "  <!-- List of Users -->\n" +
-    "  <div class=\"list-group scrollable-list company-users-list\">\n" +
+    "  <div class=\"list-group scrollable-list company-users-list\"\n" +
+    "    rv-spinner\n" +
+    "    rv-spinner-key=\"company-users-list\"\n" +
+    "    rv-spinner-start-active=\"1\">\n" +
     "    <div class=\"list-group-item  company-users-list-item\"\n" +
     "      ng-repeat=\"user in users | orderBy:sort.field:sort.descending | filter:userSearchString\" ng-click=\"editUser(user.username)\">\n" +
     "      <p class=\"list-group-item-text\"><strong>{{user.firstName}} {{user.lastName}}</strong> <small class=\"text-muted\">{{user.email}}</small></p>\n" +
@@ -688,6 +679,7 @@ app.run(["$templateCache", function($templateCache) {
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
+    "</div> <!-- spinner -->\n" +
     "");
 }]);
 })();
@@ -831,6 +823,10 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("move-company-modal.html",
+    "<div rv-spinner\n" +
+    "  rv-spinner-key=\"move-company-modal\"\n" +
+    "  rv-spinner-start-active=\"1\">\n" +
+    "\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -1137,6 +1133,9 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("user-settings-modal.html",
+    "<div rv-spinner=\"spinnerOptions\"\n" +
+    "rv-spinner-key=\"user-settings-modal\"\n" +
+    "rv-spinner-start-active=\"1\">\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -1146,11 +1145,7 @@ app.run(["$templateCache", function($templateCache) {
     "  <span ng-if=\"isAdd\">Add User</span>\n" +
     "  </h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body user-settings-modal\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"user-settings\"\n" +
-    "  rv-spinner-start-active=\"0\"\n" +
-    ">\n" +
+    "<div class=\"modal-body user-settings-modal\">\n" +
     "  <form role=\"form\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label>\n" +
@@ -1253,6 +1248,7 @@ app.run(["$templateCache", function($templateCache) {
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
+    "</div>\n" +
     "");
 }]);
 })();
@@ -1337,12 +1333,11 @@ angular.module("risevision.common.header", [
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager",
+  "$log", "uiStatusManager", "$timeout",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager) {
+  $loading, cookieStore, $log, uiStatusManager, $timeout) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
-
 
     $scope.register = function () {
       cookieStore.remove("surpressRegistration");
@@ -1358,9 +1353,16 @@ angular.module("risevision.common.header")
     $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
     function (undetermined){
       $scope.undetermined = undetermined;
-      if (undetermined === true) { $loading.start("auth-buttons"); }
-      else { $loading.stop("auth-buttons"); }
+      $scope.loading = undetermined;
     });
+
+    //temporary hack to force stop the spinner
+    $timeout(function () {
+      $scope.$watch("loading", function (loading) {
+        if (loading) { $loading.start("auth-buttons"); }
+        else { $loading.stop("auth-buttons"); }
+        }
+      ); }, 0);
 
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiStatusManager.getStatus(); },
@@ -1401,7 +1403,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
+      $scope.loading = true;
       userState.authenticate(true).then().finally(function(){
+        $scope.loading = false;
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
@@ -1434,8 +1438,9 @@ angular.module("risevision.common.header")
         size: size
       });
     };
-
+    $scope.loading = true;
     userState.authenticate(false).then().finally(function () {
+      $scope.loading = false;
       uiStatusManager.invalidateStatus("registrationComplete");
     });
   }
@@ -1718,12 +1723,18 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 
 .controller("MoveCompanyModalCtrl", ["$scope", "$modalInstance",
-  "moveCompany", "lookupCompany", "userState",
-  function($scope, $modalInstance, moveCompany, lookupCompany, userState) {
+  "moveCompany", "lookupCompany", "userState", "$loading",
+  function($scope, $modalInstance, moveCompany, lookupCompany, userState, $loading) {
 
     $scope.company = {};
     $scope.errors = [];
     $scope.messages = [];
+
+    $scope.$watch("loading", function (loading) {
+      if(loading) { $loading.start("move-company-modal"); }
+      else { $loading.stop("move-company-modal"); }
+    });
+
     $scope.$watch(
       function () {return userState.getUsername(); },
       function (newUsername) {
@@ -1739,18 +1750,21 @@ angular.module("risevision.common.header")
 
     $scope.moveCompany = function () {
       $scope.messages = [];
+      $scope.loading = true;
       moveCompany($scope.company.authKey).then(function () {
         $scope.messages.push("Success. The company has been moved under your company.");
-      }, function (err) {$scope.errors.push("Error: "  + JSON.stringify(err)); });
+      }, function (err) {$scope.errors.push("Error: "  + JSON.stringify(err)); })
+      .finally(function () { $scope.loading = false; });
     };
 
     $scope.getCompany = function () {
       $scope.errors = []; $scope.messages = [];
+      $scope.loading = true;
       lookupCompany($scope.company.authKey).then(function (resp) {
         angular.extend($scope.company, resp);
       }, function (resp) {
         $scope.errors.push("Failed to retrieve company. " + resp.message);
-      });
+      }).finally(function () {$scope.loading = false; });
     };
   }
 ]);
@@ -1782,13 +1796,14 @@ angular.module("risevision.common.header")
     $scope.forms = {};
 
     if(companyId) {
+      $scope.loading = true;
       getCompany(companyId, $scope.isRiseStoreAdmin).then(
         function (company) {
           $scope.company = company;
         },
         function (resp) {
           alert("An error has occurred. " + humanReadableError(resp));
-        });
+        }).finally(function () { $scope.loading = false; });
     }
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
@@ -1798,7 +1813,7 @@ angular.module("risevision.common.header")
 
       // cannot use $q.all because of the specifics of the Core API implementation
       // $q.all([
-      //   updateCompany($scope.company.id, $scope.company), 
+      //   updateCompany($scope.company.id, $scope.company),
       //   riseAPI_setCompany($scope.company.id, $scope.company)])
       // .then(
       //   function () {
@@ -1953,8 +1968,17 @@ angular.module("risevision.common.header")
   }])
 
   .controller("CompanyUsersModalCtrl", ["$scope", "$modalInstance", "$modal",
-    "$templateCache", "company", "getUsers",
-    function($scope, $modalInstance, $modal, $templateCache, company, getUsers) {
+    "$templateCache", "company", "getUsers", "$loading",
+    function($scope, $modalInstance, $modal, $templateCache, company, getUsers,
+    $loading) {
+
+      $scope.$watch("loading", function (loading) {
+        if(loading) {
+          $loading.start("company-users-modal");
+          $loading.start("company-users-list"); }
+        else { $loading.stop("company-users-modal");
+        $loading.stop("company-users-list"); }
+      });
 
       $scope.sort = {
         field: "username",
@@ -1977,9 +2001,12 @@ angular.module("risevision.common.header")
       };
 
       var loadUsers = function () {
+        $scope.loading = true;
         getUsers({companyId: company.id,
           search: $scope.search.searchString}).then(function (users) {
           $scope.users = users;
+        }).finally(function () {
+          $scope.loading = false;
         });
       };
 
@@ -2022,9 +2049,9 @@ angular.module("risevision.common.header")
 
   .controller("AddUserModalCtrl",
   ["$scope", "addUser", "$modalInstance", "companyId", "userState",
-  "userRoleMap", "humanReadableError",
+  "userRoleMap", "humanReadableError", "$loading", "$timeout",
   function ($scope, addUser, $modalInstance, companyId, userState,
-  userRoleMap, humanReadableError) {
+  userRoleMap, humanReadableError, $loading) {
     $scope.user = {};
     $scope.isAdd = true;
 
@@ -2034,7 +2061,13 @@ angular.module("risevision.common.header")
       $scope.availableRoles.push({key: k, name: v});
     });
 
+    $scope.$watch("loading", function (loading) {
+      if(loading) { $loading.start("user-settings-modal"); }
+      else { $loading.stop("user-settings-modal"); }
+    });
+
     $scope.save = function () {
+      $scope.loading = true;
       addUser(companyId, $scope.user.username, $scope.user).then(
         function () {
           $modalInstance.close("success");
@@ -2042,7 +2075,9 @@ angular.module("risevision.common.header")
         function (error) {
           alert("Error" + humanReadableError(error));
         }
-      );
+      ).finally(function () {
+        $scope.loading = false;
+      });
     };
 
     $scope.closeModal = function() {
@@ -2094,6 +2129,11 @@ angular.module("risevision.common.header")
       addUser, username, userRoleMap, $log, $loading, userState,
       uiStatusManager, humanReadableError) {
 
+      $scope.$watch("loading", function (loading) {
+        if(loading) { $loading.start("user-settings-modal"); }
+        else { $loading.stop("user-settings-modal"); }
+      });
+
       //push roles into array
       $scope.availableRoles = [];
       angular.forEach(userRoleMap, function (v, k) {
@@ -2106,9 +2146,10 @@ angular.module("risevision.common.header")
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
+      $scope.loading = true;
       getUserProfile(username).then(function (user) {
         $scope.user = user;
-      });
+      }).finally(function () {$scope.loading = false; });
 
       $scope.closeModal = function() {
         $modalInstance.dismiss("cancel");
@@ -2131,8 +2172,7 @@ angular.module("risevision.common.header")
       };
 
       $scope.save = function () {
-        $loading.start("user-settings-modal");
-
+        $scope.loading = true;
         updateUser(username, $scope.user).then(
           function () {
             $modalInstance.close("success");
@@ -2145,7 +2185,8 @@ angular.module("risevision.common.header")
           if(username === userState.getUsername()) {
             userState.refreshProfile();
           }
-          $loading.stop("user-settings-modal");});
+          $scope.loading = false;
+        });
       };
 
       $scope.editRoleAllowed = function (role) {

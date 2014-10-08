@@ -54,9 +54,7 @@
       //   stream.end();
       // });
       //
-      //click on profile pic
       element(by.css("img.profile-pic")).click();
-
 
       //shows sign-out menu item
       expect(element(by.css(".sign-out-button")).isDisplayed()).to.eventually.equal(true);
