@@ -1201,7 +1201,7 @@ app.run(["$templateCache", function($templateCache) {
     "        ng-model=\"user.email\"\n" +
     "        />\n" +
     "    </div>\n" +
-    "    <div class=\"checkbox\" ng-show=\"showEmailCampaign\">\n" +
+    "    <div class=\"checkbox\">\n" +
     "      <label>\n" +
     "        <input type=\"checkbox\"\n" +
     "          id=\"user-settings-newsletter\"\n" +

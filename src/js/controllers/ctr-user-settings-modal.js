@@ -93,9 +93,6 @@ angular.module("risevision.common.header")
         $scope.availableRoles.push({key: k, name: v});
       });
 
-      var company = userState.getCopyOfSelectedCompany();
-
-      $scope.showEmailCampaign = company.mailSyncEnabled;
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
