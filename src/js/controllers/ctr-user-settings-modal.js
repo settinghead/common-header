@@ -159,6 +159,11 @@ angular.module("risevision.common.header")
           if(role.key === "sa" || role.key === "ba") {
             return false;
           }
+          else if (role.key ==="ua" &&
+            userState.getUsername() === $scope.user.username) {
+            //cannot unassign oneself from ua
+            return false;
+          }
           else {
             return true;
           }
