@@ -1230,6 +1230,16 @@ app.run(["$templateCache", function($templateCache) {
     "      </label>\n" +
     "      <div>{{user.lastLogin | date:'MM/dd/yy HH:mm:ss Z'}}</div>\n" +
     "    </div>\n" +
+    "    <div class=\"form-group\" ng-if=\"!editingYourself\">\n" +
+    "			<label for=\"user-settings-status\">\n" +
+    "				Status\n" +
+    "			</label>\n" +
+    "			<select id=\"user-settings-status\"\n" +
+    "        class=\"form-control selectpicker\" ng-model=\"user.status\">\n" +
+    "				<option value=\"1\">Active</option>\n" +
+    "				<option value=\"0\">Inactive</option>\n" +
+    "			</select>\n" +
+    "		</div>\n" +
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
@@ -2061,6 +2071,11 @@ angular.module("risevision.common.header")
       $scope.availableRoles.push({key: k, name: v});
     });
 
+    //convert string to numbers
+    $scope.$watch("user.status", function (status) {
+       $scope.user.status = parseInt(status);
+    });
+
     $scope.$watch("loading", function (loading) {
       if(loading) { $loading.start("user-settings-modal"); }
       else { $loading.stop("user-settings-modal"); }
@@ -2140,12 +2155,19 @@ angular.module("risevision.common.header")
         $scope.availableRoles.push({key: k, name: v});
       });
 
+      //convert string to numbers
+      $scope.$watch("user.status", function (status) {
+         $scope.user.status = parseInt(status);
+      });
+
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
       $scope.loading = true;
       getUserProfile(username).then(function (user) {
         $scope.user = user;
+        $scope.editingYourself = userState.getUsername() === user.username;
+
       }).finally(function () {$scope.loading = false; });
 
       $scope.closeModal = function() {
@@ -3626,7 +3648,7 @@ angular.module("risevision.common.ui-status", [])
       $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
       profile = pick(profile, "mailSyncEnabled",
-        "email", "firstName", "lastName", "telephone", "roles");
+        "email", "firstName", "lastName", "telephone", "roles", "status");
       if(angular.isDefined(profile.mailSyncEnabled) && typeof profile.mailSyncEnabled === "boolean") {
         //covert boolean to string
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
@@ -3658,7 +3680,7 @@ angular.module("risevision.common.ui-status", [])
       var deferred = $q.defer();
       coreAPILoader().then(function (coreApi) {
         profile = pick(profile, "firstName", "lastName",
-          "email", "telephone", "roles");
+          "email", "telephone", "roles", "status");
         var request = coreApi.user.add({
           username: username,
           companyId: companyId,

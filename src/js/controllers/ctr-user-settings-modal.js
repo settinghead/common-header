@@ -14,6 +14,11 @@ angular.module("risevision.common.header")
       $scope.availableRoles.push({key: k, name: v});
     });
 
+    //convert string to numbers
+    $scope.$watch("user.status", function (status) {
+       $scope.user.status = parseInt(status);
+    });
+
     $scope.$watch("loading", function (loading) {
       if(loading) { $loading.start("user-settings-modal"); }
       else { $loading.stop("user-settings-modal"); }
@@ -93,12 +98,19 @@ angular.module("risevision.common.header")
         $scope.availableRoles.push({key: k, name: v});
       });
 
+      //convert string to numbers
+      $scope.$watch("user.status", function (status) {
+         $scope.user.status = parseInt(status);
+      });
+
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
       $scope.loading = true;
       getUserProfile(username).then(function (user) {
         $scope.user = user;
+        $scope.editingYourself = userState.getUsername() === user.username;
+
       }).finally(function () {$scope.loading = false; });
 
       $scope.closeModal = function() {
