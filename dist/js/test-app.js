@@ -2954,6 +2954,48 @@ gapiMockData.companies = [
               }
             };
           }
+        },
+        company: {
+          get: function (obj) {
+            return {
+              execute: function (cb) {
+                var company;
+                obj = obj || {};
+                if(gapi.auth._token) {
+                  if(obj.id) {
+                    company = _.findWhere(fakeDb.companies, obj);
+                  }
+                  else if (getCurrentUser().companyId){
+                    company =
+                    _.findWhere(fakeDb.companies, {id: getCurrentUser().companyId});
+                  }
+                  if(!company){
+                    delayed(cb, {
+                      "result": false,
+                      "code": 404,
+                      "message": "NOT FOUND"
+                    });
+                  } else {
+                    delayed(cb, {
+                      "result": true,
+                      "code": 200,
+                      "message": "OK",
+                      "item": _.extend(_.cloneDeep(gapiMockData.companyRespSkeleton), company),
+                    "kind": "core#companyItem",
+                    "etag": "\"MH7KOPL7ADNdruowVC6-7YuLjZw/B1RYG_QUBrbTcuW6r700m7wrgBU\""
+                    });
+                  }
+                }
+                else {
+                  delayed(cb, {
+                    "result": false,
+                    "code": 401,
+                    "message": "NOT LOGGED IN"
+                  });
+                }
+              }
+            };
+          }
         }
       },
       core: {

@@ -1201,7 +1201,7 @@ app.run(["$templateCache", function($templateCache) {
     "        ng-model=\"user.email\"\n" +
     "        />\n" +
     "    </div>\n" +
-    "    <div class=\"checkbox\" ng-show=\"showEmailCampaign\">\n" +
+    "    <div class=\"checkbox\">\n" +
     "      <label>\n" +
     "        <input type=\"checkbox\"\n" +
     "          id=\"user-settings-newsletter\"\n" +
@@ -2140,9 +2140,6 @@ angular.module("risevision.common.header")
         $scope.availableRoles.push({key: k, name: v});
       });
 
-      var company = userState.getCopyOfSelectedCompany();
-
-      $scope.showEmailCampaign = company.mailSyncEnabled;
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
