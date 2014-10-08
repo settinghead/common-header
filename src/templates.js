@@ -601,13 +601,11 @@ app.run(["$templateCache", function($templateCache) {
     "        <a class=\"action-link\" href=\"\">Default</a>\n" +
     "        <input id=\"company-settings-support-url\" type=\"url\" class=\"form-control\" />\n" +
     "      </div>\n" +
-    "      <div class=\"form-group\">\n" +
+    "      <div class=\"checkbox\" ng-if=\"isRiseStoreAdmin\">\n" +
     "        <label>\n" +
-    "          Seller ID\n" +
+    "          <input type=\"checkbox\" ng-model=\"company.isSeller\" />\n" +
+    "          Registered Seller\n" +
     "        </label>\n" +
-    "        <div>\n" +
-    "          123456\n" +
-    "        </div>\n" +
     "      </div>\n" +
     "      <div class=\"form-group\" ng-hide=\"true\">\n" +
     "        <label for=\"company-settings-status\">\n" +
