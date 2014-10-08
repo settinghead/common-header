@@ -200,11 +200,17 @@
                    }).finally(function () {
                     authorizeDeferred.resolve(authResult);
                     $rootScope.$broadcast("risevision.user.authorized");
+                    if(!attemptImmediate) {
+                      $rootScope.$broadcast("risevision.user.userSignedIn");
+                    }
                    });
                  },
                  function () {
                    authorizeDeferred.resolve(authResult);
                    $rootScope.$broadcast("risevision.user.authorized");
+                   if(!attemptImmediate) {
+                     $rootScope.$broadcast("risevision.user.userSignedIn");
+                   }
                  });
                }
                else {authorizeDeferred.resolve(authResult); }
