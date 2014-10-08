@@ -2,9 +2,9 @@ angular.module("risevision.common.header")
 
   .controller("AddUserModalCtrl",
   ["$scope", "addUser", "$modalInstance", "companyId", "userState",
-  "userRoleMap", "humanReadableError",
+  "userRoleMap", "humanReadableError", "$loading", "$timeout",
   function ($scope, addUser, $modalInstance, companyId, userState,
-  userRoleMap, humanReadableError) {
+  userRoleMap, humanReadableError, $loading) {
     $scope.user = {};
     $scope.isAdd = true;
 
@@ -14,7 +14,13 @@ angular.module("risevision.common.header")
       $scope.availableRoles.push({key: k, name: v});
     });
 
+    $scope.$watch("loading", function (loading) {
+      if(loading) { $loading.start("user-settings-modal"); }
+      else { $loading.stop("user-settings-modal"); }
+    });
+
     $scope.save = function () {
+      $scope.loading = true;
       addUser(companyId, $scope.user.username, $scope.user).then(
         function () {
           $modalInstance.close("success");
@@ -22,7 +28,9 @@ angular.module("risevision.common.header")
         function (error) {
           alert("Error" + humanReadableError(error));
         }
-      );
+      ).finally(function () {
+        $scope.loading = false;
+      });
     };
 
     $scope.closeModal = function() {
@@ -74,6 +82,11 @@ angular.module("risevision.common.header")
       addUser, username, userRoleMap, $log, $loading, userState,
       uiStatusManager, humanReadableError) {
 
+      $scope.$watch("loading", function (loading) {
+        if(loading) { $loading.start("user-settings-modal"); }
+        else { $loading.stop("user-settings-modal"); }
+      });
+
       //push roles into array
       $scope.availableRoles = [];
       angular.forEach(userRoleMap, function (v, k) {
@@ -86,9 +99,10 @@ angular.module("risevision.common.header")
       $scope.isUserAdmin = userState.isUserAdmin();
       $scope.username = username;
 
+      $scope.loading = true;
       getUserProfile(username).then(function (user) {
         $scope.user = user;
-      });
+      }).finally(function () {$scope.loading = false; });
 
       $scope.closeModal = function() {
         $modalInstance.dismiss("cancel");
@@ -111,8 +125,7 @@ angular.module("risevision.common.header")
       };
 
       $scope.save = function () {
-        $loading.start("user-settings-modal");
-
+        $scope.loading = true;
         updateUser(username, $scope.user).then(
           function () {
             $modalInstance.close("success");
@@ -125,7 +138,8 @@ angular.module("risevision.common.header")
           if(username === userState.getUsername()) {
             userState.refreshProfile();
           }
-          $loading.stop("user-settings-modal");});
+          $scope.loading = false;
+        });
       };
 
       $scope.editRoleAllowed = function (role) {

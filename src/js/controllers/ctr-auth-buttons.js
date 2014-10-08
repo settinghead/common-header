@@ -1,12 +1,11 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager",
+  "$log", "uiStatusManager", "$timeout",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager) {
+  $loading, cookieStore, $log, uiStatusManager, $timeout) {
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
-
 
     $scope.register = function () {
       cookieStore.remove("surpressRegistration");
@@ -22,9 +21,16 @@ angular.module("risevision.common.header")
     $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
     function (undetermined){
       $scope.undetermined = undetermined;
-      if (undetermined === true) { $loading.start("auth-buttons"); }
-      else { $loading.stop("auth-buttons"); }
+      $scope.loading = undetermined;
     });
+
+    //temporary hack to force stop the spinner
+    $timeout(function () {
+      $scope.$watch("loading", function (loading) {
+        if (loading) { $loading.start("auth-buttons"); }
+        else { $loading.stop("auth-buttons"); }
+        }
+      ); }, 0);
 
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiStatusManager.getStatus(); },
@@ -65,7 +71,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
+      $scope.loading = true;
       userState.authenticate(true).then().finally(function(){
+        $scope.loading = false;
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
@@ -98,8 +106,9 @@ angular.module("risevision.common.header")
         size: size
       });
     };
-
+    $scope.loading = true;
     userState.authenticate(false).then().finally(function () {
+      $scope.loading = false;
       uiStatusManager.invalidateStatus("registrationComplete");
     });
   }

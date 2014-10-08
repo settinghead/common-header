@@ -25,13 +25,14 @@ angular.module("risevision.common.header")
     $scope.forms = {};
 
     if(companyId) {
+      $scope.loading = true;
       getCompany(companyId, $scope.isRiseStoreAdmin).then(
         function (company) {
           $scope.company = company;
         },
         function (resp) {
           alert("An error has occurred. " + humanReadableError(resp));
-        });
+        }).finally(function () { $scope.loading = false; });
     }
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
@@ -41,7 +42,7 @@ angular.module("risevision.common.header")
 
       // cannot use $q.all because of the specifics of the Core API implementation
       // $q.all([
-      //   updateCompany($scope.company.id, $scope.company), 
+      //   updateCompany($scope.company.id, $scope.company),
       //   riseAPI_setCompany($scope.company.id, $scope.company)])
       // .then(
       //   function () {

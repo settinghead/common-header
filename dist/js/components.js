@@ -46997,11 +46997,11 @@ angular.module("risevision.common.loading", ["angularSpinner"])
           $rootScope.$broadcast("rv-spinner:stop", spinnerKeys[i]);
         }
       };
-  
+
       var promise = $.isArray(promises) ? $q.all(promises) : promises;
       promise.then(function() { stop(); }, function() { stop(); });
     };
-   
+
     this.getDefaultSpinnerOptions = function() {
       return self.defaultSpinnerOptions;
     };
@@ -47035,10 +47035,10 @@ angular.module("risevision.common.loading", ["angularSpinner"])
       },
       link: function postLink(scope, $element, iAttrs) {
         scope.active = angular.isDefined(iAttrs.rvSpinnerStartActive) && iAttrs.rvSpinnerStartActive === "1";
-        var tpl = "<div ng-show=\"active\" class=\"spinner-backdrop fade {{backdropClass}}\"" + 
-          " ng-class=\"{in: active}\" us-spinner=\"rvSpinnerOptions\"" + 
+        var tpl = "<div ng-show=\"active\" class=\"spinner-backdrop fade {{backdropClass}}\"" +
+          " ng-class=\"{in: active}\" us-spinner=\"rvSpinnerOptions\"" +
           " spinner-key=\"{{rvSpinnerKey}}\"";
-        
+
         if (iAttrs.rvSpinnerStartActive && iAttrs.rvSpinnerStartActive === "1") {
           tpl += " spinner-start-active=\"1\"></div>";
         }
@@ -47050,21 +47050,25 @@ angular.module("risevision.common.loading", ["angularSpinner"])
 
         scope.$on("rv-spinner:start", function (event, key) {
           if(key === scope.rvSpinnerKey){
-            usSpinnerService.spin(key);
             scope.active = true;
           }
         });
 
         scope.$on("rv-spinner:stop", function (event, key) {
           if(key === scope.rvSpinnerKey){
-            usSpinnerService.stop(key);
             scope.active = false;
           }
+        });
+
+        scope.$watch("active", function (active) {
+          if(active) { usSpinnerService.spin(scope.rvSpinnerKey); }
+          else { usSpinnerService.stop(scope.rvSpinnerKey); }
         });
       }
     };
   }])
 ;
+
 angular.module('ngBiscuit', []);
 
 
