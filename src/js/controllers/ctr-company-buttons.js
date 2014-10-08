@@ -32,7 +32,7 @@ angular.module("risevision.common.header")
     var updateSelectedCompanyFromUrl = function() {
       var newCompanyId = $location.search().cid;
       if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
-        getCompany(newCompanyId).then(function (company) {
+        getCompany(newCompanyId, userState.isRiseStoreAdmin()).then(function (company) {
           userState.switchCompany(company);
         });
       }

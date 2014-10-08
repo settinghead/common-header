@@ -192,7 +192,7 @@
 
                  refreshProfile().then(function () {
                    //populate userCompany
-                   return getCompany().then(function(company) {
+                   return getCompany(undefined, userState.isRiseStoreAdmin()).then(function(company) {
                      _clearAndCopy(company, _userCompany);
                      _clearAndCopy(company, _selectedCompany);
 
@@ -328,6 +328,7 @@
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
       isRiseAdmin: function () {return hasRole("sa"); },
+      isRiseStoreAdmin: function () {return hasRole("ba"); },
       isUserAdmin: function () {return hasRole("ua"); },
       isPurchaser: function () {return hasRole("pu"); },
       isSeller: function () {return _selectedCompany && _selectedCompany.isSeller === true; },

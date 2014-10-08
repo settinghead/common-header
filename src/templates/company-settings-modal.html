@@ -97,13 +97,11 @@
         <a class="action-link" href="">Default</a>
         <input id="company-settings-support-url" type="url" class="form-control" />
       </div>
-      <div class="form-group">
+      <div class="checkbox" ng-if="isRiseStoreAdmin">
         <label>
-          Seller ID
+          <input type="checkbox" ng-model="company.isSeller" />
+          Registered Seller
         </label>
-        <div>
-          123456
-        </div>
       </div>
       <div class="form-group" ng-hide="true">
         <label for="company-settings-status">

@@ -3,15 +3,17 @@ angular.module("risevision.common.header")
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
   "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
   "getCompany", "regenerateCompanyField", "$window", "$loading", "humanReadableError",
-  "userState",
+  "userState", "riseAPI_getCompany", "riseAPI_setCompany",
   function($scope, $modalInstance, updateCompany, companyId,
     COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField,
-    $window, $loading, humanReadableError, userState) {
+    $window, $loading, humanReadableError, userState, riseAPI_getCompany,
+    riseAPI_setCompany) {
 
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
     $scope.regionsCA = REGIONS_CA;
     $scope.regionsUS = REGIONS_US;
+    $scope.isRiseStoreAdmin = userState.isRiseStoreAdmin();
 
     $scope.$watch("loading", function (loading) {
       if(loading) { $loading.start("company-settings-modal"); }
@@ -23,7 +25,7 @@ angular.module("risevision.common.header")
     $scope.forms = {};
 
     if(companyId) {
-      getCompany(companyId).then(
+      getCompany(companyId, $scope.isRiseStoreAdmin).then(
         function (company) {
           $scope.company = company;
         },
@@ -36,14 +38,32 @@ angular.module("risevision.common.header")
     };
     $scope.save = function () {
       $scope.loading = true;
-      updateCompany($scope.company.id, $scope.company).then(
+
+      // cannot use $q.all because of the specifics of the Core API implementation
+      // $q.all([
+      //   updateCompany($scope.company.id, $scope.company), 
+      //   riseAPI_setCompany($scope.company.id, $scope.company)])
+      // .then(
+      //   function () {
+      //     userState.updateCompanySettings($scope.company);
+      //     $modalInstance.close("success");
+      //   },
+      //   function (errors) {
+      //     alert("Error(s): " + humanReadableError(errors && errors.length ? errors[0] : {}));
+      //   })
+
+      updateCompany($scope.company.id, $scope.company)
+      .then(riseAPI_setCompany($scope.company.id, $scope.company))
+      .then(
         function () {
           userState.updateCompanySettings($scope.company);
           $modalInstance.close("success");
-        },
+        })
+      .catch(
         function (error) {
-          alert("Error: " + humanReadableError(error));
-        }).finally(function () {$scope.loading = false; });
+          alert("Error(s): " + humanReadableError(error));
+        })
+      .finally(function () {$scope.loading = false; });
     };
     $scope.resetAuthKey = function() {
       if ($window.confirm("Resetting the Company Authentication Key will cause existing Data Gadgets to no longer report data until they are updated with the new Key.")) {
