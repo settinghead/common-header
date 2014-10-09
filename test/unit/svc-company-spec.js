@@ -66,6 +66,15 @@ describe("Services: companyService", function() {
     });
   });
 
+    describe("deleteCompany", function() {
+    xit("should delete company", function (done) {
+      //jshint unused:false
+      inject(function (companyService) {
+        throw "Write this";
+      });
+    });
+  });
+
   xdescribe("updateAddress", function() {
     it("should update address", function (done) {
       inject(function (companyService) {
