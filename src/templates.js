@@ -829,7 +829,6 @@ app.run(["$templateCache", function($templateCache) {
     "<div rv-spinner\n" +
     "  rv-spinner-key=\"move-company-modal\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
-    "\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -882,11 +881,13 @@ app.run(["$templateCache", function($templateCache) {
     "  </div>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <button type=\"button\" class=\"btn btn-success move-company-button\" ng-show=\"company.name\" ng-click=\"moveCompany()\">Move Company\n" +
+    "  <button type=\"button\"\n" +
+    "    class=\"btn btn-success move-company-button\"\n" +
+    "    ng-show=\"company.name && !moveSuccess\" ng-click=\"moveCompany()\">Move Company\n" +
     "    <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button>\n" +
     "  <button type=\"button\" class=\"btn btn-primary close-move-company-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
-    "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
+    "    {{dismissButtonText}} <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
     "");

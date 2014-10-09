@@ -829,7 +829,6 @@ app.run(["$templateCache", function($templateCache) {
     "<div rv-spinner\n" +
     "  rv-spinner-key=\"move-company-modal\"\n" +
     "  rv-spinner-start-active=\"1\">\n" +
-    "\n" +
     "<div class=\"modal-header\">\n" +
     "  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
@@ -882,11 +881,13 @@ app.run(["$templateCache", function($templateCache) {
     "  </div>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <button type=\"button\" class=\"btn btn-success move-company-button\" ng-show=\"company.name\" ng-click=\"moveCompany()\">Move Company\n" +
+    "  <button type=\"button\"\n" +
+    "    class=\"btn btn-success move-company-button\"\n" +
+    "    ng-show=\"company.name && !moveSuccess\" ng-click=\"moveCompany()\">Move Company\n" +
     "    <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button>\n" +
     "  <button type=\"button\" class=\"btn btn-primary close-move-company-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
-    "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
+    "    {{dismissButtonText}} <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
     "");
@@ -1771,8 +1772,9 @@ angular.module("risevision.common.header")
     $scope.moveCompany = function () {
       $scope.messages = [];
       $scope.loading = true;
-      moveCompany($scope.company.authKey).then(function () {
+      moveCompany($scope.company.authKey, userState.getSelectedCompanyId()).then(function () {
         $scope.messages.push("Success. The company has been moved under your company.");
+        $scope.moveSuccess = true;
       }, function (err) {$scope.errors.push("Error: "  + JSON.stringify(err)); })
       .finally(function () { $scope.loading = false; });
     };
@@ -1786,6 +1788,11 @@ angular.module("risevision.common.header")
         $scope.errors.push("Failed to retrieve company. " + resp.message);
       }).finally(function () {$scope.loading = false; });
     };
+
+    $scope.$watch("moveSuccess", function (moveSuccess) {
+      if(moveSuccess) {$scope.dismissButtonText = "Close"; }
+      else { $scope.dismissButtonText = "Cancel"; }
+    });
   }
 ]);
 
@@ -4158,10 +4165,10 @@ angular.module("risevision.common.company",
 
   .factory("moveCompany", ["coreAPILoader", "$q", "$log",
   function (coreAPILoader, $q, $log) {
-    return function (authKey) { //get a company either by id or authKey
+    return function (authKey, newParentId) { //get a company either by id or authKey
       var deferred = $q.defer();
         coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.move({authKey: authKey});
+          var request = coreApi.company.move({authKey: authKey, newParentId: newParentId});
           request.execute(function (resp) {
               $log.debug("moveCompany resp", resp);
               if(resp.result) {

@@ -96,6 +96,9 @@
           element(by.css(".move-company-button")).click();
           assert.eventually.isTrue(element(by.css(".alert.alert-success")).isDisplayed(),
             "Success message should show");
+          assert.eventually.isFalse(element(by.css(".move-company-button")).isDisplayed(),
+            "Move company button should hide");
+
         });
 
         it("Move Company Dialog Should Close", function () {
