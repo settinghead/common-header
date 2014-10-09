@@ -1490,7 +1490,7 @@ angular.module("risevision.common.header")
     var updateSelectedCompanyFromUrl = function() {
       var newCompanyId = $location.search().cid;
       if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
-        getCompany(newCompanyId, userState.isRiseStoreAdmin()).then(function (company) {
+        getCompany(newCompanyId).then(function (company) {
           userState.switchCompany(company);
         });
       }
@@ -1784,11 +1784,10 @@ angular.module("risevision.common.header")
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
   "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
   "getCompany", "regenerateCompanyField", "$window", "$loading", "humanReadableError",
-  "userState", "riseAPI_getCompany", "riseAPI_setCompany",
+  "userState",
   function($scope, $modalInstance, updateCompany, companyId,
     COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField,
-    $window, $loading, humanReadableError, userState, riseAPI_getCompany,
-    riseAPI_setCompany) {
+    $window, $loading, humanReadableError, userState) {
 
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -1807,9 +1806,10 @@ angular.module("risevision.common.header")
 
     if(companyId) {
       $scope.loading = true;
-      getCompany(companyId, $scope.isRiseStoreAdmin).then(
+      getCompany(companyId).then(
         function (company) {
           $scope.company = company;
+          $scope.company.isSeller = company && company.sellerId ? true : false;
         },
         function (resp) {
           alert("An error has occurred. " + humanReadableError(resp));
@@ -1821,21 +1821,8 @@ angular.module("risevision.common.header")
     $scope.save = function () {
       $scope.loading = true;
 
-      // cannot use $q.all because of the specifics of the Core API implementation
-      // $q.all([
-      //   updateCompany($scope.company.id, $scope.company),
-      //   riseAPI_setCompany($scope.company.id, $scope.company)])
-      // .then(
-      //   function () {
-      //     userState.updateCompanySettings($scope.company);
-      //     $modalInstance.close("success");
-      //   },
-      //   function (errors) {
-      //     alert("Error(s): " + humanReadableError(errors && errors.length ? errors[0] : {}));
-      //   })
-
+      setSellerId();
       updateCompany($scope.company.id, $scope.company)
-      .then(riseAPI_setCompany($scope.company.id, $scope.company))
       .then(
         function () {
           userState.updateCompanySettings($scope.company);
@@ -1869,6 +1856,15 @@ angular.module("risevision.common.header")
           });
       }
     };
+
+    function setSellerId(){
+      if ($scope.isRiseStoreAdmin) {
+        $scope.company.sellerId = $scope.company.isSeller ? "yes" : null;
+      } else {
+        //exclude sellerId from API call
+        $scope.company.sellerId = undefined;
+      }
+    }
 
   }
 ]);
@@ -3107,7 +3103,7 @@ angular.module("risevision.common.geodata", [])
 
                  refreshProfile().then(function () {
                    //populate userCompany
-                   return getCompany(undefined, userState.isRiseStoreAdmin()).then(function(company) {
+                   return getCompany().then(function(company) {
                      _clearAndCopy(company, _userCompany);
                      _clearAndCopy(company, _selectedCompany);
 
@@ -3246,7 +3242,7 @@ angular.module("risevision.common.geodata", [])
       isRiseStoreAdmin: function () {return hasRole("ba"); },
       isUserAdmin: function () {return hasRole("ua"); },
       isPurchaser: function () {return hasRole("pu"); },
-      isSeller: function () {return _selectedCompany && _selectedCompany.isSeller === true; },
+      isSeller: function () {return (_selectedCompany && _selectedCompany.sellerId) ? true : false; },
       isRiseVisionUser: isRiseVisionUser,
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
@@ -4023,7 +4019,7 @@ angular.module("risevision.common.company",
   .constant("COMPANY_WRITABLE_FIELDS", [
     "name", "street", "unit", "city", "province", "country",
     "postalCode", "timeZoneOffset", "telephone", "fax", "companyStatus",
-    "notificationEmails", "mailSyncEnabled",
+    "notificationEmails", "mailSyncEnabled", "sellerId"
   ])
 
   .factory("validateAddress", ["$q", "storeAPILoader", "$log",
@@ -4078,14 +4074,7 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("getCompany", ["coreAPI_getCompany", "riseAPI_getCompany",
-  function (coreAPI_getCompany, riseAPI_getCompany) {
-    return function (id, isRiseStoreAdmin) {
-      return isRiseStoreAdmin ? riseAPI_getCompany(id) : coreAPI_getCompany(id);
-    };
-  }])
-
-  .factory("coreAPI_getCompany", ["coreAPILoader", "$q", "$log",
+  .factory("getCompany", ["coreAPILoader", "$q", "$log",
   function (coreAPILoader, $q, $log) {
     return function (id) { //get a company either by id or authKey
       $log.debug("getCompany called", id);
@@ -4199,65 +4188,6 @@ angular.module("risevision.common.company",
         });
 
         return deferred.promise;
-    };
-  }])
-
- .factory("riseAPI_getCompany", ["$q", "$log", "riseAPILoader",
-   function ($q, $log, riseAPILoader){
-    return function (companyId) {
-        var deferred = $q.defer();
-        $log.debug("riseAPI_getCompany called", companyId);
-        riseAPILoader().then(function (riseApi) {
-          var request = riseApi.company.get({"id": companyId});
-          request.execute(
-            function (resp) {
-              $log.debug("riseAPI_getCompany resp", resp);
-              if (!resp.error) {
-                deferred.resolve(resp.item);
-              } else {
-                deferred.reject(resp.message);
-              }
-            },
-            function (resp) {
-              deferred.reject("call failed " + resp);
-            }
-            );
-        });
-
-        return deferred.promise;
-    };
-  }])
-
-// riseAPI_setCompany can only be used for saving isSeller flag
-  .factory("riseAPI_setCompany", ["$q", "$log", "riseAPILoader", "userState",
-   function ($q, $log, riseAPILoader, userState){
-    return function (companyId, company) {
-      var deferred = $q.defer();
-
-      //save it only if isRiseStoreAdmin and isSeller has changed
-      if (userState.isRiseStoreAdmin() && userState.isSeller !== company.isSeller) {
-        $log.debug("riseAPI_setCompany called", companyId, company.isSeller);
-        riseAPILoader().then(function (riseApi) {
-          var request = riseApi.company.set({"id": companyId, "isSeller": company.isSeller});
-          request.execute(
-            function (resp) {
-              $log.debug("riseAPI_setCompany resp", resp);
-              if (!resp.error) {
-                deferred.resolve();
-              } else {
-                deferred.reject(resp.message);
-              }
-            },
-            function (resp) {
-              deferred.reject("call failed " + resp);
-            }
-            );
-        });
-      } else {
-        deferred.resolve();
-      }
-
-      return deferred.promise;
     };
   }])
 
