@@ -43,19 +43,16 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("auth-buttons.html",
     "<!-- Desktop and tablet -->\n" +
     "<li\n" +
-    "  ng-show=\"isLoggedIn && !isRiseVisionUser && !undetermined\">\n" +
+    "  ng-show=\"isLoggedIn && !isRiseVisionUser && !undetermined && !loading\">\n" +
     "  <button type=\"button\" href=\"\" ng-click=\"register()\"\n" +
     "    class=\"register-user-menu-button action top-auth-button\">\n" +
     "    Create Account\n" +
     "  </a>\n" +
     "</li>\n" +
     "<li\n" +
-    "  class=\"dropdown user-profile-dropdown\"\n" +
+    "  class=\"dropdown user-profile-dropdown desktop-menu-item\"\n" +
     "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\"\n" +
     "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
@@ -72,6 +69,7 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
+    "  class=\" mobile-menu-item\"\n" +
     "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
@@ -442,6 +440,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-selector-modal.html",
+    "\n" +
     "<form role=\"form\">\n" +
     "	<div class=\"modal-header\">\n" +
     "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\"\n" +
@@ -464,7 +463,11 @@ app.run(["$templateCache", function($templateCache) {
     "		    </span>\n" +
     "		</div>\n" +
     "		<!-- List of Companies -->\n" +
-    "		<div class=\"list-group scrollable-list\" rv-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
+    "		<div class=\"list-group scrollable-list\"\n" +
+    "		  rv-scroll-event=\"handleScroll($event, isEndEvent)\"\n" +
+    "		  rv-spinner rv-spinner-key=\"company-selector-modal-list\"\n" +
+    "			rv-spinner-start-active=\"1\"\n" +
+    "		>\n" +
     "			<div class=\"list-group-item\"  ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
     "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{company.fullAddress}}</small>\n" +
     "				</p>\n" +

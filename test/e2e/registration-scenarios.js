@@ -57,6 +57,7 @@
       });
 
       it("should show validation errors if i have not agreed to terms and entered an email", function () {
+        ptor.sleep(500);
         element(by.css(".registration-save-button")).click();
         assert.eventually.isTrue(element(by.css(".validation-error-message-accepted")).isPresent(), "t&c validation error should show");
         assert.eventually.isTrue(element(by.css(".validation-error-message-email")).isPresent(), "email validation error should show");
@@ -71,7 +72,7 @@
       });
 
       it("should update auth button", function () {
-        assert.eventually.isTrue(element(by.css("img.profile-pic")).isDisplayed(), "profile pic should show");
+        assert.eventually.isTrue(element(by.css(".desktop-menu-item img.profile-pic")).isDisplayed(), "profile pic should show");
       });
   });
 })();
