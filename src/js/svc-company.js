@@ -183,6 +183,30 @@ angular.module("risevision.common.company",
     };
   }])
 
+  .factory("deleteCompany", ["coreAPILoader", "$q", "$log",
+  function (coreAPILoader, $q, $log) {
+    return function (id) { //get a company either by id or authKey
+      $log.debug("deleteCompany called", id);
+
+      var deferred = $q.defer();
+        coreAPILoader().then(function (coreApi) {
+          var criteria = {};
+          if(id) {criteria.id = id; }
+          var request = coreApi.company.delete(criteria);
+          request.execute(function (resp) {
+              $log.debug("deleteCompany resp", resp);
+              if(resp.result) {
+                deferred.resolve(resp.item);
+              }
+              else {
+                deferred.reject(resp);
+              }
+          });
+        });
+      return deferred.promise;
+    };
+  }])
+
   .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
     function (coreAPILoader, $q, $log, getCompany) {
 

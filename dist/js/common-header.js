@@ -1784,10 +1784,10 @@ angular.module("risevision.common.header")
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
   "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
   "getCompany", "regenerateCompanyField", "$window", "$loading", "humanReadableError",
-  "userState",
+  "userState", "deleteCompany",
   function($scope, $modalInstance, updateCompany, companyId,
     COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField,
-    $window, $loading, humanReadableError, userState) {
+    $window, $loading, humanReadableError, userState, deleteCompany) {
 
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -1826,6 +1826,21 @@ angular.module("risevision.common.header")
       .then(
         function () {
           userState.updateCompanySettings($scope.company);
+          $modalInstance.close("success");
+        })
+      .catch(
+        function (error) {
+          alert("Error(s): " + humanReadableError(error));
+        })
+      .finally(function () {$scope.loading = false; });
+    };
+    $scope.deleteCompany = function () {
+      $scope.loading = true;
+
+      deleteCompany($scope.company.id)
+      .then(
+        function () {
+          userState.resetCompany();
           $modalInstance.close("success");
         })
       .catch(
@@ -4188,6 +4203,30 @@ angular.module("risevision.common.company",
         });
 
         return deferred.promise;
+    };
+  }])
+
+  .factory("deleteCompany", ["coreAPILoader", "$q", "$log",
+  function (coreAPILoader, $q, $log) {
+    return function (id) { //get a company either by id or authKey
+      $log.debug("deleteCompany called", id);
+
+      var deferred = $q.defer();
+        coreAPILoader().then(function (coreApi) {
+          var criteria = {};
+          if(id) {criteria.id = id; }
+          var request = coreApi.company.delete(criteria);
+          request.execute(function (resp) {
+              $log.debug("deleteCompany resp", resp);
+              if(resp.result) {
+                deferred.resolve(resp.item);
+              }
+              else {
+                deferred.reject(resp);
+              }
+          });
+        });
+      return deferred.promise;
     };
   }])
 
