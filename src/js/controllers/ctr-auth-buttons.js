@@ -1,9 +1,11 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager", "$timeout",
+  "$log", "uiStatusManager",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager, $timeout) {
+  $loading, cookieStore, $log, uiStatusManager) {
+
+    window.$loading = $loading; //DEBUG
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
@@ -23,14 +25,6 @@ angular.module("risevision.common.header")
       $scope.undetermined = undetermined;
       $scope.loading = undetermined;
     });
-
-    //temporary hack to force stop the spinner
-    $timeout(function () {
-      $scope.$watch("loading", function (loading) {
-        if (loading) { $loading.start("auth-buttons"); }
-        else { $loading.stop("auth-buttons"); }
-        }
-      ); }, 0);
 
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiStatusManager.getStatus(); },
@@ -71,9 +65,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
-      $scope.loading = true;
+      $loading.startGlobal("auth-buttons-login");
       userState.authenticate(true).then().finally(function(){
-        $scope.loading = false;
+        $loading.stopGlobal("auth-buttons-login");
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
@@ -106,9 +100,9 @@ angular.module("risevision.common.header")
         size: size
       });
     };
-    $scope.loading = true;
+    $loading.startGlobal("auth-buttons-silent");
     userState.authenticate(false).then().finally(function () {
-      $scope.loading = false;
+      $loading.stopGlobal("auth-buttons-silent");
       uiStatusManager.invalidateStatus("registrationComplete");
     });
   }

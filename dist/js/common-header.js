@@ -43,19 +43,16 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("auth-buttons.html",
     "<!-- Desktop and tablet -->\n" +
     "<li\n" +
-    "  ng-show=\"isLoggedIn && !isRiseVisionUser && !undetermined\">\n" +
+    "  ng-show=\"isLoggedIn && !isRiseVisionUser && !undetermined && !loading\">\n" +
     "  <button type=\"button\" href=\"\" ng-click=\"register()\"\n" +
     "    class=\"register-user-menu-button action top-auth-button\">\n" +
     "    Create Account\n" +
     "  </a>\n" +
     "</li>\n" +
     "<li\n" +
-    "  class=\"dropdown user-profile-dropdown\"\n" +
+    "  class=\"dropdown user-profile-dropdown desktop-menu-item\"\n" +
     "  ng-class=\"{'hidden-xs': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
-    "  rv-spinner=\"spinnerOptions\"\n" +
-    "  rv-spinner-key=\"auth-buttons\"\n" +
-    "  rv-spinner-start-active=\"1\"\n" +
     "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
@@ -72,6 +69,7 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  ng-class=\"{'visible-xs-inline-block': isLoggedIn}\"\n" +
     "  ng-show=\"isLoggedIn\"\n" +
+    "  class=\" mobile-menu-item\"\n" +
     "  >\n" +
     "    <a href=\"\" class=\"dropdown-toggle\" action-sheet=\"'auth-buttons-menu.html'\">\n" +
     "      <img ng-src=\"{{userPicture}}\"\n" +
@@ -442,6 +440,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-selector-modal.html",
+    "\n" +
     "<form role=\"form\">\n" +
     "	<div class=\"modal-header\">\n" +
     "		<button type=\"button\" class=\"close\" data-dismiss=\"modal\"\n" +
@@ -464,7 +463,11 @@ app.run(["$templateCache", function($templateCache) {
     "		    </span>\n" +
     "		</div>\n" +
     "		<!-- List of Companies -->\n" +
-    "		<div class=\"list-group scrollable-list\" rv-scroll-event=\"handleScroll($event, isEndEvent)\">\n" +
+    "		<div class=\"list-group scrollable-list\"\n" +
+    "		  rv-scroll-event=\"handleScroll($event, isEndEvent)\"\n" +
+    "		  rv-spinner rv-spinner-key=\"company-selector-modal-list\"\n" +
+    "			rv-spinner-start-active=\"1\"\n" +
+    "		>\n" +
     "			<div class=\"list-group-item\"  ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
     "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{company.fullAddress}}</small>\n" +
     "				</p>\n" +
@@ -1338,14 +1341,29 @@ angular.module("risevision.common.header", [
       }
     };
   }
-]);
+])
+.directive("ngEnter", function() {
+        return function(scope, element, attrs) {
+            element.bind("keydown keypress", function(event) {
+                if(event.which === 13) {
+                        scope.$apply(function(){
+                                scope.$eval(attrs.ngEnter);
+                        });
+
+                        event.preventDefault();
+                }
+            });
+        };
+});
 
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager", "$timeout",
+  "$log", "uiStatusManager",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager, $timeout) {
+  $loading, cookieStore, $log, uiStatusManager) {
+
+    window.$loading = $loading; //DEBUG
 
     $scope.spinnerOptions = {color: "#999", hwaccel: true, radius: 10};
 
@@ -1365,14 +1383,6 @@ angular.module("risevision.common.header")
       $scope.undetermined = undetermined;
       $scope.loading = undetermined;
     });
-
-    //temporary hack to force stop the spinner
-    $timeout(function () {
-      $scope.$watch("loading", function (loading) {
-        if (loading) { $loading.start("auth-buttons"); }
-        else { $loading.stop("auth-buttons"); }
-        }
-      ); }, 0);
 
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiStatusManager.getStatus(); },
@@ -1413,9 +1423,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
-      $scope.loading = true;
+      $loading.startGlobal("auth-buttons-login");
       userState.authenticate(true).then().finally(function(){
-        $scope.loading = false;
+        $loading.stopGlobal("auth-buttons-login");
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
@@ -1448,9 +1458,9 @@ angular.module("risevision.common.header")
         size: size
       });
     };
-    $scope.loading = true;
+    $loading.startGlobal("auth-buttons-silent");
     userState.authenticate(false).then().finally(function () {
-      $scope.loading = false;
+      $loading.stopGlobal("auth-buttons-silent");
       uiStatusManager.invalidateStatus("registrationComplete");
     });
   }
@@ -1928,9 +1938,9 @@ angular.module("risevision.common.header")
 ])
 
 .controller("companySelectorCtr", ["$scope", "$modalInstance",
-    "companyService", "companyId", "BaseList",
+    "companyService", "companyId", "BaseList", "$loading",
     function ($scope, $modalInstance, companyService,
-      companyId, BaseList) {
+      companyId, BaseList, $loading) {
 
     var DB_MAX_COUNT = 20; //number of records to load at a time
 
@@ -1939,11 +1949,20 @@ angular.module("risevision.common.header")
         searchString: ""
     };
 
+    $scope.$watch("loading", function (loading) {
+      if(loading) {
+        $loading.start("company-selector-modal");
+        $loading.start("company-selector-modal-list"); }
+      else { $loading.stop("company-selector-modal");
+      $loading.stop("company-selector-modal-list"); }
+    });
+
     $scope.closeModal = function () {
         $modalInstance.dismiss("cancel");
     };
 
     function loadCompanies() {
+      $scope.loading = true;
       if (!$scope.companies.endOfList) {
         companyService.getCompanies(
           companyId, $scope.search.searchString,
@@ -1951,6 +1970,8 @@ angular.module("risevision.common.header")
           if (result && result.items) {
             $scope.companies.add(result.items, result.cursor);
           }
+        }).finally(function () {
+          $scope.loading = false;
         });
       }
     }
@@ -1969,7 +1990,7 @@ angular.module("risevision.common.header")
     };
 
     $scope.handleScroll = function (event, isEndEvent) {
-      console.log(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
+      // $log.debug(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
       if (isEndEvent) {
         if ((event.target.scrollHeight - event.target.clientHeight - event.target.scrollTop) < 20) {
           //load more rows if less than 20px left to the bottom

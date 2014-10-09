@@ -42,9 +42,9 @@ angular.module("risevision.common.header")
 ])
 
 .controller("companySelectorCtr", ["$scope", "$modalInstance",
-    "companyService", "companyId", "BaseList",
+    "companyService", "companyId", "BaseList", "$loading",
     function ($scope, $modalInstance, companyService,
-      companyId, BaseList) {
+      companyId, BaseList, $loading) {
 
     var DB_MAX_COUNT = 20; //number of records to load at a time
 
@@ -53,11 +53,20 @@ angular.module("risevision.common.header")
         searchString: ""
     };
 
+    $scope.$watch("loading", function (loading) {
+      if(loading) {
+        $loading.start("company-selector-modal");
+        $loading.start("company-selector-modal-list"); }
+      else { $loading.stop("company-selector-modal");
+      $loading.stop("company-selector-modal-list"); }
+    });
+
     $scope.closeModal = function () {
         $modalInstance.dismiss("cancel");
     };
 
     function loadCompanies() {
+      $scope.loading = true;
       if (!$scope.companies.endOfList) {
         companyService.getCompanies(
           companyId, $scope.search.searchString,
@@ -65,6 +74,8 @@ angular.module("risevision.common.header")
           if (result && result.items) {
             $scope.companies.add(result.items, result.cursor);
           }
+        }).finally(function () {
+          $scope.loading = false;
         });
       }
     }
@@ -83,7 +94,7 @@ angular.module("risevision.common.header")
     };
 
     $scope.handleScroll = function (event, isEndEvent) {
-      console.log(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
+      // $log.debug(event.target.scrollTop + " / " + event.target.scrollHeight + " / " + isEndEvent);
       if (isEndEvent) {
         if ((event.target.scrollHeight - event.target.clientHeight - event.target.scrollTop) < 20) {
           //load more rows if less than 20px left to the bottom

@@ -42,7 +42,7 @@
     it("should retain auth status upon refresh", function () {
       ptor.driver.navigate().refresh();
       assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
-      assert.eventually.isTrue(element(by.css("img.profile-pic")).isDisplayed(), "profile pic should show");
+      assert.eventually.isTrue(element(by.css(".desktop-menu-item img.profile-pic")).isDisplayed(), "profile pic should show");
       assert.eventually.isFalse((element(by.css(".sign-out-button")).isDisplayed()), "sign out button should not show");
     });
 
@@ -54,7 +54,7 @@
       //   stream.end();
       // });
       //
-      element(by.css("img.profile-pic")).click();
+      element(by.css(".desktop-menu-item img.profile-pic")).click();
 
       //shows sign-out menu item
       expect(element(by.css(".sign-out-button")).isDisplayed()).to.eventually.equal(true);

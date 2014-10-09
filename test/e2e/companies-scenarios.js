@@ -65,6 +65,7 @@
           element(by.css(".add-subcompany-menu-button")).click();
           assert.eventually.isTrue(element(by.css(".add-subcompany-modal")).isDisplayed(),
             "Add subcompany dialog should show");
+            ptor.sleep(500);
         });
 
         it("Opens Move Company Dialog", function() {

@@ -1,18 +1,15 @@
 <!-- Desktop and tablet -->
 <li
-  ng-show="isLoggedIn && !isRiseVisionUser && !undetermined">
+  ng-show="isLoggedIn && !isRiseVisionUser && !undetermined && !loading">
   <button type="button" href="" ng-click="register()"
     class="register-user-menu-button action top-auth-button">
     Create Account
   </a>
 </li>
 <li
-  class="dropdown user-profile-dropdown"
+  class="dropdown user-profile-dropdown desktop-menu-item"
   ng-class="{'hidden-xs': isLoggedIn}"
   ng-show="isLoggedIn"
-  rv-spinner="spinnerOptions"
-  rv-spinner-key="auth-buttons"
-  rv-spinner-start-active="1"
   >
     <a href="" class="dropdown-toggle">
       <img ng-src="{{userPicture}}"
@@ -29,6 +26,7 @@
 <li
   ng-class="{'visible-xs-inline-block': isLoggedIn}"
   ng-show="isLoggedIn"
+  class=" mobile-menu-item"
   >
     <a href="" class="dropdown-toggle" action-sheet="'auth-buttons-menu.html'">
       <img ng-src="{{userPicture}}"

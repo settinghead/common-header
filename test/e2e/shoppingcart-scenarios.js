@@ -87,7 +87,7 @@
         element(by.id("buy-product-3")).click();
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "2", "Cart badge should display 2");
 
-        element(by.css("img.profile-pic")).click();
+        element(by.css(".desktop-menu-item img.profile-pic")).click();
         //shows sign-out menu item
         expect(element(by.css(".sign-out-button")).isDisplayed()).to.eventually.equal(true);
         //click sign out

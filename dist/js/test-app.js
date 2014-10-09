@@ -284,9 +284,7 @@
       "cp",
       "da",
       "ua",
-      "pu",
-      "ba",
-      "sa"
+      "pu"
       ],
       "termsAcceptanceDate": "2014-06-19T18:01:33.000Z",
       "showTutorial": false,
