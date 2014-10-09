@@ -3,11 +3,10 @@ angular.module("risevision.common.header")
 .controller("CompanySettingsModalCtrl", ["$scope", "$modalInstance",
   "updateCompany", "companyId", "COUNTRIES", "REGIONS_CA", "REGIONS_US",
   "getCompany", "regenerateCompanyField", "$window", "$loading", "humanReadableError",
-  "userState", "riseAPI_getCompany", "riseAPI_setCompany",
+  "userState",
   function($scope, $modalInstance, updateCompany, companyId,
     COUNTRIES, REGIONS_CA, REGIONS_US, getCompany, regenerateCompanyField,
-    $window, $loading, humanReadableError, userState, riseAPI_getCompany,
-    riseAPI_setCompany) {
+    $window, $loading, humanReadableError, userState) {
 
     $scope.company = {id: companyId};
     $scope.countries = COUNTRIES;
@@ -26,9 +25,10 @@ angular.module("risevision.common.header")
 
     if(companyId) {
       $scope.loading = true;
-      getCompany(companyId, $scope.isRiseStoreAdmin).then(
+      getCompany(companyId).then(
         function (company) {
           $scope.company = company;
+          $scope.company.isSeller = company && company.sellerId ? true : false;
         },
         function (resp) {
           alert("An error has occurred. " + humanReadableError(resp));
@@ -40,21 +40,8 @@ angular.module("risevision.common.header")
     $scope.save = function () {
       $scope.loading = true;
 
-      // cannot use $q.all because of the specifics of the Core API implementation
-      // $q.all([
-      //   updateCompany($scope.company.id, $scope.company),
-      //   riseAPI_setCompany($scope.company.id, $scope.company)])
-      // .then(
-      //   function () {
-      //     userState.updateCompanySettings($scope.company);
-      //     $modalInstance.close("success");
-      //   },
-      //   function (errors) {
-      //     alert("Error(s): " + humanReadableError(errors && errors.length ? errors[0] : {}));
-      //   })
-
+      setSellerId();
       updateCompany($scope.company.id, $scope.company)
-      .then(riseAPI_setCompany($scope.company.id, $scope.company))
       .then(
         function () {
           userState.updateCompanySettings($scope.company);
@@ -88,6 +75,15 @@ angular.module("risevision.common.header")
           });
       }
     };
+
+    function setSellerId(){
+      if ($scope.isRiseStoreAdmin) {
+        $scope.company.sellerId = $scope.company.isSeller ? "yes" : null;
+      } else {
+        //exclude sellerId from API call
+        $scope.company.sellerId = undefined;
+      }
+    }
 
   }
 ]);

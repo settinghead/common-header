@@ -11,7 +11,7 @@ angular.module("risevision.common.company",
   .constant("COMPANY_WRITABLE_FIELDS", [
     "name", "street", "unit", "city", "province", "country",
     "postalCode", "timeZoneOffset", "telephone", "fax", "companyStatus",
-    "notificationEmails", "mailSyncEnabled",
+    "notificationEmails", "mailSyncEnabled", "sellerId"
   ])
 
   .factory("validateAddress", ["$q", "storeAPILoader", "$log",
@@ -66,14 +66,7 @@ angular.module("risevision.common.company",
     };
   }])
 
-  .factory("getCompany", ["coreAPI_getCompany", "riseAPI_getCompany",
-  function (coreAPI_getCompany, riseAPI_getCompany) {
-    return function (id, isRiseStoreAdmin) {
-      return isRiseStoreAdmin ? riseAPI_getCompany(id) : coreAPI_getCompany(id);
-    };
-  }])
-
-  .factory("coreAPI_getCompany", ["coreAPILoader", "$q", "$log",
+  .factory("getCompany", ["coreAPILoader", "$q", "$log",
   function (coreAPILoader, $q, $log) {
     return function (id) { //get a company either by id or authKey
       $log.debug("getCompany called", id);
@@ -187,65 +180,6 @@ angular.module("risevision.common.company",
         });
 
         return deferred.promise;
-    };
-  }])
-
- .factory("riseAPI_getCompany", ["$q", "$log", "riseAPILoader",
-   function ($q, $log, riseAPILoader){
-    return function (companyId) {
-        var deferred = $q.defer();
-        $log.debug("riseAPI_getCompany called", companyId);
-        riseAPILoader().then(function (riseApi) {
-          var request = riseApi.company.get({"id": companyId});
-          request.execute(
-            function (resp) {
-              $log.debug("riseAPI_getCompany resp", resp);
-              if (!resp.error) {
-                deferred.resolve(resp.item);
-              } else {
-                deferred.reject(resp.message);
-              }
-            },
-            function (resp) {
-              deferred.reject("call failed " + resp);
-            }
-            );
-        });
-
-        return deferred.promise;
-    };
-  }])
-
-// riseAPI_setCompany can only be used for saving isSeller flag
-  .factory("riseAPI_setCompany", ["$q", "$log", "riseAPILoader", "userState",
-   function ($q, $log, riseAPILoader, userState){
-    return function (companyId, company) {
-      var deferred = $q.defer();
-
-      //save it only if isRiseStoreAdmin and isSeller has changed
-      if (userState.isRiseStoreAdmin() && userState.isSeller !== company.isSeller) {
-        $log.debug("riseAPI_setCompany called", companyId, company.isSeller);
-        riseAPILoader().then(function (riseApi) {
-          var request = riseApi.company.set({"id": companyId, "isSeller": company.isSeller});
-          request.execute(
-            function (resp) {
-              $log.debug("riseAPI_setCompany resp", resp);
-              if (!resp.error) {
-                deferred.resolve();
-              } else {
-                deferred.reject(resp.message);
-              }
-            },
-            function (resp) {
-              deferred.reject("call failed " + resp);
-            }
-            );
-        });
-      } else {
-        deferred.resolve();
-      }
-
-      return deferred.promise;
     };
   }])
 

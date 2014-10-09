@@ -192,7 +192,7 @@
 
                  refreshProfile().then(function () {
                    //populate userCompany
-                   return getCompany(undefined, userState.isRiseStoreAdmin()).then(function(company) {
+                   return getCompany().then(function(company) {
                      _clearAndCopy(company, _userCompany);
                      _clearAndCopy(company, _selectedCompany);
 
@@ -331,7 +331,7 @@
       isRiseStoreAdmin: function () {return hasRole("ba"); },
       isUserAdmin: function () {return hasRole("ua"); },
       isPurchaser: function () {return hasRole("pu"); },
-      isSeller: function () {return _selectedCompany && _selectedCompany.isSeller === true; },
+      isSeller: function () {return (_selectedCompany && _selectedCompany.sellerId) ? true : false; },
       isRiseVisionUser: isRiseVisionUser,
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
