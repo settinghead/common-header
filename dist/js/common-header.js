@@ -612,7 +612,8 @@ app.run(["$templateCache", function($templateCache) {
     "      ng-disabled=\"forms.companyForm.$invalid\">Save\n" +
     "      <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "    </button>\n" +
-    "    <button type=\"button\" class=\"btn btn-danger btn-fixed-width\" ng-show=\"!isDeletingCompany\" ng-click=\"deleteCompany()\">\n" +
+    "    <button type=\"button\" class=\"btn btn-danger btn-fixed-width delete-company-button\"\n" +
+    "    ng-show=\"!isDeletingCompany\" ng-click=\"deleteCompany()\">\n" +
     "      Delete <i class=\"fa fa-white fa-trash-o icon-right\"></i>\n" +
     "    </button>\n" +
     "    <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +
@@ -1856,7 +1857,12 @@ angular.module("risevision.common.header")
       deleteCompany($scope.company.id)
       .then(
         function () {
-          userState.resetCompany();
+          if(userState.getUserCompanyId() === $scope.company.id) {
+            userState.signOut();
+          }
+          else if(userState.getSelectedCompanyId() === $scope.company.id) {
+            userState.resetCompany();
+          }
           $modalInstance.close("success");
         })
       .catch(
@@ -3257,6 +3263,8 @@ angular.module("risevision.common.geodata", [])
     };
 
     var userState = {
+      getUserCompanyId: function () {
+        return (_userCompany && _userCompany.id) || null; },
       getSelectedCompanyId: function () {
         return (_selectedCompany && _selectedCompany.id) || null; },
       getSelectedCompanyName: function () {

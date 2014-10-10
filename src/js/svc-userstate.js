@@ -302,6 +302,8 @@
     };
 
     var userState = {
+      getUserCompanyId: function () {
+        return (_userCompany && _userCompany.id) || null; },
       getSelectedCompanyId: function () {
         return (_selectedCompany && _selectedCompany.id) || null; },
       getSelectedCompanyName: function () {

@@ -59,7 +59,12 @@ angular.module("risevision.common.header")
       deleteCompany($scope.company.id)
       .then(
         function () {
-          userState.resetCompany();
+          if(userState.getUserCompanyId() === $scope.company.id) {
+            userState.signOut();
+          }
+          else if(userState.getSelectedCompanyId() === $scope.company.id) {
+            userState.resetCompany();
+          }
           $modalInstance.close("success");
         })
       .catch(
