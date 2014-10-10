@@ -13,7 +13,7 @@ angular.module("risevision.common.ui-status", [])
 .factory("uiStatusManager", ["$log", "$q", "$injector", "uiStatusDependencies",
   function ($log, $q, $injector, uiStatusDependencies) {
 
-  var _status;
+  var _status, _goalStatus;
   var _dependencyMap = uiStatusDependencies._dependencies;
 
   //internal method that attempt to reach a particular status
@@ -85,7 +85,14 @@ angular.module("risevision.common.ui-status", [])
   };
 
   var _recheckStatus = function (desiredStatus) {
-    if(!desiredStatus) {desiredStatus = "registrationComplete"; }
+    if(!desiredStatus) {
+      if(_goalStatus) { desiredStatus = _goalStatus; }
+      else { throw "You must specify an initial status to achieve. "; }
+    }
+    else {
+      //register what the goal status it for subsequent attempts
+      _goalStatus = desiredStatus;
+    }
     return _attemptStatus(desiredStatus).then(
       function () {
         _status = desiredStatus;

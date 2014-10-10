@@ -2,9 +2,9 @@ angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
   "$scope", "$modalInstance",
   "$loading", "registerAccount", "$log", "cookieStore",
-  "userState", "pick", "uiStatusManager",
-  function($scope, $modalInstance, $loading,
-    registerAccount, $log, cookieStore, userState, pick, uiStatusManager) {
+  "userState", "pick", "uiStatusManager", "humanReadableError",
+  function($scope, $modalInstance, $loading, registerAccount, $log,
+    cookieStore, userState, pick, uiStatusManager, humanReadableError) {
 
       var copyOfProfile = userState.getCopyOfProfile() || {};
 
@@ -61,7 +61,7 @@ angular.module("risevision.common.header")
                  $modalInstance.close("success");
                });
              },
-             function (err) {alert("Error: " + JSON.stringify(err));
+             function (err) {alert("Error: " + humanReadableError(err));
              $log.error(err);}).finally(function () {
                $scope.registering = false;
                $loading.stop("registration-modal");

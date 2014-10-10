@@ -13,14 +13,7 @@ angular.module("risevision.common.header")
       else { $loading.stop("move-company-modal"); }
     });
 
-    $scope.$watch(
-      function () {return userState.getUsername(); },
-      function (newUsername) {
-        if(angular.isDefined(newUsername) && newUsername !== null) {
-          $scope.userCompany = userState.getCopyOfUserCompany();
-        }
-      }
-    );
+    $scope.selectedCompany = userState.getCopyOfSelectedCompany();
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");

@@ -863,10 +863,10 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
     "    <div class=\"to-company\">\n" +
-    "      {{userCompany.name}}<br>\n" +
-    "      {{userCompany.address}}<br>\n" +
-    "      {{userCompany.city}}, {{userCompany.province}},\n" +
-    "      {{userCompany.country}} {{userCompany.postalCode}}\n" +
+    "      {{selectedCompany.name}}<br>\n" +
+    "      {{selectedCompany.address}}<br>\n" +
+    "      {{selectedCompany.city}}, {{selectedCompany.province}},\n" +
+    "      {{selectedCompany.country}} {{selectedCompany.postalCode}}\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div ng-show=\"errors.length > 0\">\n" +
@@ -1385,6 +1385,8 @@ angular.module("risevision.common.header")
       $scope.loading = undetermined;
     });
 
+    var registrationModalInstance = null;
+
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiStatusManager.getStatus(); },
     function (newStatus, oldStatus){
@@ -1393,13 +1395,17 @@ angular.module("risevision.common.header")
 
         //render a dialog based on the status current UI is in
         if(newStatus === "registerdAsRiseVisionUser") {
-          var modalInstance = $modal.open({
-            template: $templateCache.get("registration-modal.html"),
-            controller: "RegistrationModalCtrl",
-            backdrop: "static"
-          });
-          modalInstance.result.finally(function (){
-            uiStatusManager.invalidateStatus("registrationComplete");
+          if(registrationModalInstance === null) { // avoid duplicate registration modals
+            registrationModalInstance = $modal.open({
+              template: $templateCache.get("registration-modal.html"),
+              controller: "RegistrationModalCtrl",
+              backdrop: "static"
+            });
+          }
+
+          registrationModalInstance.result.finally(function (){
+            registrationModalInstance = null;
+            uiStatusManager.invalidateStatus();
           });
         }
       }
@@ -1669,9 +1675,9 @@ angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
   "$scope", "$modalInstance",
   "$loading", "registerAccount", "$log", "cookieStore",
-  "userState", "pick", "uiStatusManager",
-  function($scope, $modalInstance, $loading,
-    registerAccount, $log, cookieStore, userState, pick, uiStatusManager) {
+  "userState", "pick", "uiStatusManager", "humanReadableError",
+  function($scope, $modalInstance, $loading, registerAccount, $log,
+    cookieStore, userState, pick, uiStatusManager, humanReadableError) {
 
       var copyOfProfile = userState.getCopyOfProfile() || {};
 
@@ -1728,7 +1734,7 @@ angular.module("risevision.common.header")
                  $modalInstance.close("success");
                });
              },
-             function (err) {alert("Error: " + JSON.stringify(err));
+             function (err) {alert("Error: " + humanReadableError(err));
              $log.error(err);}).finally(function () {
                $scope.registering = false;
                $loading.stop("registration-modal");
@@ -1756,14 +1762,7 @@ angular.module("risevision.common.header")
       else { $loading.stop("move-company-modal"); }
     });
 
-    $scope.$watch(
-      function () {return userState.getUsername(); },
-      function (newUsername) {
-        if(angular.isDefined(newUsername) && newUsername !== null) {
-          $scope.userCompany = userState.getCopyOfUserCompany();
-        }
-      }
-    );
+    $scope.selectedCompany = userState.getCopyOfSelectedCompany();
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
@@ -3314,7 +3313,7 @@ angular.module("risevision.common.ui-status", [])
 .factory("uiStatusManager", ["$log", "$q", "$injector", "uiStatusDependencies",
   function ($log, $q, $injector, uiStatusDependencies) {
 
-  var _status;
+  var _status, _goalStatus;
   var _dependencyMap = uiStatusDependencies._dependencies;
 
   //internal method that attempt to reach a particular status
@@ -3386,7 +3385,14 @@ angular.module("risevision.common.ui-status", [])
   };
 
   var _recheckStatus = function (desiredStatus) {
-    if(!desiredStatus) {desiredStatus = "registrationComplete"; }
+    if(!desiredStatus) {
+      if(_goalStatus) { desiredStatus = _goalStatus; }
+      else { throw "You must specify an initial status to achieve. "; }
+    }
+    else {
+      //register what the goal status it for subsequent attempts
+      _goalStatus = desiredStatus;
+    }
     return _attemptStatus(desiredStatus).then(
       function () {
         _status = desiredStatus;
