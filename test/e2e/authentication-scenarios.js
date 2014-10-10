@@ -25,10 +25,10 @@
 
       //clear local storage
       browser.executeScript("localStorage.clear();");
-
-      ptor.driver.navigate().refresh();
       element(by.id("server-delay")).clear();
       element(by.id("server-delay")).sendKeys("0");
+      ptor.driver.navigate().refresh();
+
       element(by.id("reset-db")).click();
     });
 

@@ -29,8 +29,9 @@ angular.module("risevision.common.header")
     $scope.moveCompany = function () {
       $scope.messages = [];
       $scope.loading = true;
-      moveCompany($scope.company.authKey).then(function () {
+      moveCompany($scope.company.authKey, userState.getSelectedCompanyId()).then(function () {
         $scope.messages.push("Success. The company has been moved under your company.");
+        $scope.moveSuccess = true;
       }, function (err) {$scope.errors.push("Error: "  + JSON.stringify(err)); })
       .finally(function () { $scope.loading = false; });
     };
@@ -44,5 +45,10 @@ angular.module("risevision.common.header")
         $scope.errors.push("Failed to retrieve company. " + resp.message);
       }).finally(function () {$scope.loading = false; });
     };
+
+    $scope.$watch("moveSuccess", function (moveSuccess) {
+      if(moveSuccess) {$scope.dismissButtonText = "Close"; }
+      else { $scope.dismissButtonText = "Cancel"; }
+    });
   }
 ]);

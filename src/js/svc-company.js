@@ -114,10 +114,10 @@ angular.module("risevision.common.company",
 
   .factory("moveCompany", ["coreAPILoader", "$q", "$log",
   function (coreAPILoader, $q, $log) {
-    return function (authKey) { //get a company either by id or authKey
+    return function (authKey, newParentId) { //get a company either by id or authKey
       var deferred = $q.defer();
         coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.move({authKey: authKey});
+          var request = coreApi.company.move({authKey: authKey, newParentId: newParentId});
           request.execute(function (resp) {
               $log.debug("moveCompany resp", resp);
               if(resp.result) {

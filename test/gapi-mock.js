@@ -411,7 +411,7 @@
               if(gapi.auth._token) {
                 if(obj.authKey) {
                   if(obj.id || obj.authKey) {
-                    company = _.findWhere(window.gapi._fakeDb.companies, obj);
+                    company = _.findWhere(window.gapi._fakeDb.companies, {authKey: obj.authKey});
                     company.parentId = getCurrentUser().companyId;
                   }
                   if(!company){
