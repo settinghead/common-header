@@ -863,10 +863,10 @@ app.run(["$templateCache", function($templateCache) {
     "    </div>\n" +
     "    <h3>Details of the Company You Are Moving the Above Company Under</h3>\n" +
     "    <div class=\"to-company\">\n" +
-    "      {{userCompany.name}}<br>\n" +
-    "      {{userCompany.address}}<br>\n" +
-    "      {{userCompany.city}}, {{userCompany.province}},\n" +
-    "      {{userCompany.country}} {{userCompany.postalCode}}\n" +
+    "      {{selectedCompany.name}}<br>\n" +
+    "      {{selectedCompany.address}}<br>\n" +
+    "      {{selectedCompany.city}}, {{selectedCompany.province}},\n" +
+    "      {{selectedCompany.country}} {{selectedCompany.postalCode}}\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div ng-show=\"errors.length > 0\">\n" +

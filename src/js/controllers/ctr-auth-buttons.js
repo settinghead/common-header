@@ -26,6 +26,8 @@ angular.module("risevision.common.header")
       $scope.loading = undetermined;
     });
 
+    var registrationModalInstance = null;
+
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiStatusManager.getStatus(); },
     function (newStatus, oldStatus){
@@ -34,13 +36,17 @@ angular.module("risevision.common.header")
 
         //render a dialog based on the status current UI is in
         if(newStatus === "registerdAsRiseVisionUser") {
-          var modalInstance = $modal.open({
-            template: $templateCache.get("registration-modal.html"),
-            controller: "RegistrationModalCtrl",
-            backdrop: "static"
-          });
-          modalInstance.result.finally(function (){
-            uiStatusManager.invalidateStatus("registrationComplete");
+          if(registrationModalInstance === null) { // avoid duplicate registration modals
+            registrationModalInstance = $modal.open({
+              template: $templateCache.get("registration-modal.html"),
+              controller: "RegistrationModalCtrl",
+              backdrop: "static"
+            });
+          }
+
+          registrationModalInstance.result.finally(function (){
+            registrationModalInstance = null;
+            uiStatusManager.invalidateStatus();
           });
         }
       }
