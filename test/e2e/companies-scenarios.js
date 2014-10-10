@@ -171,5 +171,21 @@
         });
       });
 
+      describe("Delete Company", function () {
+        it("Opens Company Settings Dialog", function() {
+          element(by.css(".company-buttons-icon")).click();
+          assert.eventually.isTrue(element(by.css(".company-settings-menu-button")).isDisplayed(),
+            "Company settings menu item should present");
+          element(by.css(".company-settings-menu-button")).click();
+          assert.eventually.isTrue(element(by.css(".company-settings-modal")).isDisplayed(),
+            "Company settings dialog should show");
+        });
+
+        it("Should sign me out when deleting company", function () {
+          element(by.css("button.delete-company-button")).click();
+          assert.eventually.isTrue(element(by.css("button.sign-in")).isDisplayed(), "Should be signed out");
+        });
+      });
+
   });
 })();

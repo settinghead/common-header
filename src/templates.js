@@ -612,7 +612,8 @@ app.run(["$templateCache", function($templateCache) {
     "      ng-disabled=\"forms.companyForm.$invalid\">Save\n" +
     "      <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "    </button>\n" +
-    "    <button type=\"button\" class=\"btn btn-danger btn-fixed-width\" ng-show=\"!isDeletingCompany\" ng-click=\"deleteCompany()\">\n" +
+    "    <button type=\"button\" class=\"btn btn-danger btn-fixed-width delete-company-button\"\n" +
+    "    ng-show=\"!isDeletingCompany\" ng-click=\"deleteCompany()\">\n" +
     "      Delete <i class=\"fa fa-white fa-trash-o icon-right\"></i>\n" +
     "    </button>\n" +
     "    <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCompany\" ng-click=\"closeModal()\">\n" +

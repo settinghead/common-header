@@ -538,6 +538,51 @@
               });
             }
           };
+        },
+        delete: function (obj) {
+          return {
+            execute: function (cb) {
+              if(!obj || !obj.id) {
+                delayed(cb, {
+                 "error": {
+                  "errors": [
+                   {
+                    "domain": "global",
+                    "reason": "required",
+                    "message": "Required parameter: id",
+                    "locationType": "parameter",
+                    "location": "id"
+                   }
+                  ],
+                  "code": 400,
+                  "message": "Required parameter: id"
+                 }
+                });
+              }
+              else{
+                var company = _.findWhere(fakeDb.companies, {id: obj.id});
+                if(!company) {
+                  delayed(cb, {
+                   "error": {
+                    "errors": [
+                     {
+                      "domain": "global",
+                      "reason": "notFound",
+                      "message": "Company not found."
+                     }
+                    ],
+                    "code": 404,
+                    "message": "Company not found."
+                   }
+                 });
+                }
+                else {
+                  fakeDb.companies = _.without(fakeDb.companies, company);
+                  delayed(cb, resp({}));
+                }
+              }
+            }
+          };
         }
       },
       user: {
