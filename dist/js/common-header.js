@@ -2193,11 +2193,11 @@ angular.module("risevision.common.header")
         $scope.availableRoles.push({key: k, name: v});
       });
 
-      $scope.$watch("user", function (user) {
-        //user is undefined when $watch triggers first time
-        if (user) {
-         $scope.user.status = parseInt(user.status);
-        }
+      // convert string to numbers
+      $scope.$watch("user.status", function (status) {
+        try {
+         $scope.user.status = parseInt(status);
+        } catch (e) {  }
       });
 
       $scope.isUserAdmin = userState.isUserAdmin();
