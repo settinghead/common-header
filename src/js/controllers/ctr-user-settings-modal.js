@@ -16,7 +16,9 @@ angular.module("risevision.common.header")
 
     //convert string to numbers
     $scope.$watch("user.status", function (status) {
-       $scope.user.status = parseInt(status);
+       if(typeof $scope.user.status === "string") {
+          $scope.user.status = parseInt(status);
+       }
     });
 
     $scope.$watch("loading", function (loading) {
@@ -25,17 +27,23 @@ angular.module("risevision.common.header")
     });
 
     $scope.save = function () {
-      $scope.loading = true;
-      addUser(companyId, $scope.user.username, $scope.user).then(
-        function () {
-          $modalInstance.close("success");
-        },
-        function (error) {
-          alert("Error" + humanReadableError(error));
-        }
-      ).finally(function () {
-        $scope.loading = false;
-      });
+
+      $scope.forms.userSettingsForm.email.$pristine = false;
+      $scope.forms.userSettingsForm.username.$pristine = false;
+
+      if(!$scope.forms.userSettingsForm.$invalid) {
+        $scope.loading = true;
+        addUser(companyId, $scope.user.username, $scope.user).then(
+          function () {
+            $modalInstance.close("success");
+          },
+          function (error) {
+            alert("Error" + humanReadableError(error));
+          }
+        ).finally(function () {
+          $scope.loading = false;
+        });
+      }
     };
 
     $scope.closeModal = function() {
@@ -77,6 +85,9 @@ angular.module("risevision.common.header")
         return false;
       }
     };
+
+    $scope.forms = {};
+
   }])
 
   .controller("UserSettingsModalCtrl", [
@@ -86,7 +97,7 @@ angular.module("risevision.common.header")
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
       addUser, username, userRoleMap, $log, $loading, userState,
       uiStatusManager, humanReadableError) {
-
+      $scope.user = {};
       $scope.$watch("loading", function (loading) {
         if(loading) { $loading.start("user-settings-modal"); }
         else { $loading.stop("user-settings-modal"); }
@@ -100,7 +111,9 @@ angular.module("risevision.common.header")
 
       //convert string to numbers
       $scope.$watch("user.status", function (status) {
-         $scope.user.status = parseInt(status);
+         if(typeof $scope.user.status === "string") {
+            $scope.user.status = parseInt(status);
+         }
       });
 
       $scope.isUserAdmin = userState.isUserAdmin();
@@ -134,21 +147,25 @@ angular.module("risevision.common.header")
       };
 
       $scope.save = function () {
-        $scope.loading = true;
-        updateUser(username, $scope.user).then(
-          function () {
-            $modalInstance.close("success");
-          },
-          function (error) {
-            $log.debug(error);
-            alert("Error: " + humanReadableError(error));
-          }
-        ).finally(function (){
-          if(username === userState.getUsername()) {
-            userState.refreshProfile();
-          }
-          $scope.loading = false;
-        });
+        $scope.forms.userSettingsForm.email.$pristine = false;
+
+        if(!$scope.forms.userSettingsForm.$invalid) {
+          $scope.loading = true;
+          updateUser(username, $scope.user).then(
+            function () {
+              $modalInstance.close("success");
+            },
+            function (error) {
+              $log.debug(error);
+              alert("Error: " + humanReadableError(error));
+            }
+          ).finally(function (){
+            if(username === userState.getUsername()) {
+              userState.refreshProfile();
+            }
+            $scope.loading = false;
+          });
+        }
       };
 
       $scope.editRoleAllowed = function (role) {
@@ -191,5 +208,8 @@ angular.module("risevision.common.header")
           return false;
         }
       };
+
+      $scope.forms = {};
+
     }
   ]);
