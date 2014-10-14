@@ -15,7 +15,7 @@ rv-spinner-start-active="1">
   with anyone else.</p>
 
   <form novalidate role="form" name="forms.registrationForm">
-    <div class="form-group" ng-class="{ 'has-error' : forms.registrationForm.email.$invalid && !userForm.email.$pristine }">
+    <div class="form-group" ng-class="{ 'has-error' : forms.registrationForm.email.$invalid && !forms.registrationForm.email.$pristine }">
       <label for="email">Email</label>
       <input type="email" class="form-control email"
       name="email"

@@ -976,7 +976,7 @@ app.run(["$templateCache", function($templateCache) {
     "  with anyone else.</p>\n" +
     "\n" +
     "  <form novalidate role=\"form\" name=\"forms.registrationForm\">\n" +
-    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.email.$invalid && !userForm.email.$pristine }\">\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.email.$invalid && !forms.registrationForm.email.$pristine }\">\n" +
     "      <label for=\"email\">Email</label>\n" +
     "      <input type=\"email\" class=\"form-control email\"\n" +
     "      name=\"email\"\n" +
@@ -1151,18 +1151,22 @@ app.run(["$templateCache", function($templateCache) {
     "  </h2>\n" +
     "</div>\n" +
     "<div class=\"modal-body user-settings-modal\">\n" +
-    "  <form role=\"form\">\n" +
-    "    <div class=\"form-group\">\n" +
+    "  <form role=\"form\" novalidate name=\"forms.userSettingsForm\">\n" +
+    "    <div class=\"form-group\"\n" +
+    "      ng-class=\"{ 'has-error' : forms.userSettingsForm.username.$invalid && !forms.userSettingsForm.username.$pristine }\"\n" +
+    "    >\n" +
     "      <label>\n" +
-    "        Username\n" +
+    "        Username *\n" +
     "      </label>\n" +
-    "      <span ng-if=\"!isAdd\">{{user.username}}</span>\n" +
+    "      <div ng-if=\"!isAdd\">{{user.username}}</div>\n" +
     "      <input id=\"user-settings-username\"\n" +
-    "        type=\"text\"\n" +
+    "        type=\"email\" required name=\"username\"\n" +
     "        class=\"form-control\"\n" +
     "        ng-if=\"isAdd\"\n" +
     "        ng-model=\"user.username\"\n" +
     "        />\n" +
+    "        <p ng-show=\"forms.userSettingsForm.username.$invalid && !forms.userSettingsForm.username.$pristine\"\n" +
+    "          class=\"help-block validation-error-message-email\">User name must be a valid email address.</p>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-first-name\">\n" +
@@ -1195,16 +1199,19 @@ app.run(["$templateCache", function($templateCache) {
     "        ng-model=\"user.telephone\"\n" +
     "         />\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\"\n" +
+    "      ng-class=\"{ 'has-error' : forms.userSettingsForm.email.$invalid && !forms.userSettingsForm.email.$pristine }\">\n" +
     "      <label for=\"user-settings-email\">\n" +
-    "        Email\n" +
+    "        Email *\n" +
     "      </label>\n" +
     "      <input\n" +
     "        id=\"user-settings-email\"\n" +
-    "        type=\"email\"\n" +
+    "        type=\"email\" required name=\"email\"\n" +
     "        class=\"form-control\"\n" +
     "        ng-model=\"user.email\"\n" +
     "        />\n" +
+    "        <p ng-show=\"forms.userSettingsForm.email.$invalid && !forms.userSettingsForm.email.$pristine\"\n" +
+    "          class=\"help-block validation-error-message-email\">A valid email address is required.</p>\n" +
     "    </div>\n" +
     "    <div class=\"checkbox\">\n" +
     "      <label>\n" +
@@ -1235,7 +1242,7 @@ app.run(["$templateCache", function($templateCache) {
     "      </label>\n" +
     "      <div>{{user.lastLogin | date:'MM/dd/yy HH:mm:ss Z'}}</div>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\" ng-if=\"!editingYourself\">\n" +
+    "    <div class=\"form-group\" ng-if=\"!editingYourself && !isAdd\">\n" +
     "			<label for=\"user-settings-status\">\n" +
     "				Status\n" +
     "			</label>\n" +
