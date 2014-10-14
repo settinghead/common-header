@@ -30,8 +30,8 @@
         element(by.id("reset-db")).click();
       });
 
-      xdescribe("Select Subcompany", function () {
-        it("Opens select subcompany dialog", function () {
+      describe("Select Subcompany", function () {
+        xit("Opens select subcompany dialog", function () {
           element(by.css("button.sign-in")).click();
           assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
           element(by.css(".company-buttons-icon")).click();
@@ -43,22 +43,33 @@
             "Move company dialog should show");
         });
 
-        it("Switches to subcompany", function () {
+        xit("Switches to subcompany", function () {
           //TODO
         });
 
-        it("Switches back to parent company", function () {
+        xit("Switches back to parent company", function () {
           //TODO
         });
-      });
 
-      describe("Add subcompany & move company", function () {
-        it("Opens Add Subcompany dialog", function () {
+        it("can specify subcompany via URL parameter", function () {
 
           browser.executeScript("gapi.setPendingSignInUser('michael.sanchez@awesome.io')");
           element(by.css("button.sign-in")).click();
           assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
 
+          browser.get("/test/e2e/index.html#/shopping-cart?cid=" +
+            "bfaf9b18-fd5b-475b-afe1-a511cd73662f");
+          assert.eventually.isTrue(element(by.css(".sub-company-alert")).isDisplayed(),
+            "subcompany alert should show");
+          browser.get("/test/e2e/index.html#/shopping-cart");
+          protractor.getInstance().driver.navigate().refresh();
+          assert.eventually.isFalse(element(by.css(".sub-company-alert")).isPresent(),
+            "subcompany alert should hide");
+        });
+      });
+
+      describe("Add subcompany & move company", function () {
+        it("Opens Add Subcompany dialog", function () {
           element(by.css(".company-buttons-icon")).click();
           assert.eventually.isTrue(element(by.css(".add-subcompany-menu-button")).isDisplayed(),
             "Add subcompany menu item should show");
@@ -113,6 +124,7 @@
             "Add subcompany dialog should hide");
         });
       });
+
 
       describe("Company Users", function () {
         it("Opens Company Users Dialog and load company users", function() {
