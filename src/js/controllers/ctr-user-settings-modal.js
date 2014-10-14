@@ -109,7 +109,7 @@ angular.module("risevision.common.header")
         $scope.availableRoles.push({key: k, name: v});
       });
 
-      //convert string to numbers
+      // convert string to numbers
       $scope.$watch("user.status", function (status) {
          if(typeof $scope.user.status === "string") {
             $scope.user.status = parseInt(status);
