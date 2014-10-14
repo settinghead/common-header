@@ -7,6 +7,20 @@ angular.module("risevision.common.header")
     function (newCompanyId) {
       if(newCompanyId) {
         $scope.isSubcompanySelected = userState.isSubcompanySelected();
+
+        // This parameter is only appended to the url if the user is logged in
+        if (newCompanyId !== userState.getUserCompanyId() &&
+          $location.search().cid !== newCompanyId) {
+          $location.search("cid", newCompanyId);
+        }
+        else if (newCompanyId === userState.getUserCompanyId()) {
+          $location.search({"cid" : null});
+        }
+      }
+      else {
+        if($location.search().cid) {
+          $location.search({"cid" : null});
+        }
       }
     });
 
@@ -38,7 +52,18 @@ angular.module("risevision.common.header")
       }
     };
 
+    // This parameter is only appended to the url if the user is logged in
+    if (!$location.search().cid && userState.getSelectedCompanyId() &&
+        userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+      $location.search("cid", userState.getSelectedCompanyId());
+    }
+    else if($location.search().cid &&
+      userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+      $location.search("cid", null);
+    }
+
     //detect selectCompany changes on route UI
+    $scope.$on("$stateChangeSuccess", updateSelectedCompanyFromUrl);
     $scope.$on("$routeChangeSuccess", updateSelectedCompanyFromUrl);
     updateSelectedCompanyFromUrl();
 
