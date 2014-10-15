@@ -103,17 +103,5 @@ angular.module("risevision.common.header")
       }
     };
 
-    $scope.getFullAddress = function (company) {
-      var res = (company.street ? company.street + ", " : "") + 
-        (company.city ? company.city + ", " : "") +
-        (company.province ? company.province + ", " : "") +
-        (company.country ? company.country + ", " : "") +
-        (company.postalCode ? company.postalCode + ", " : "");
-      if (res) {
-        res = res.substr(0, res.length - 2);
-      }
-      return res;
-    };
-
 }
 ]);

@@ -469,7 +469,7 @@ app.run(["$templateCache", function($templateCache) {
     "			rv-spinner-start-active=\"1\"\n" +
     "		>\n" +
     "			<div class=\"list-group-item\"  ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
-    "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{getFullAddress(company)}}</small>\n" +
+    "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{company | fullAddress}}</small>\n" +
     "				</p>\n" +
     "			</div>\n" +
     "		</div>\n" +
@@ -2041,18 +2041,6 @@ angular.module("risevision.common.header")
           loadCompanies();
         }
       }
-    };
-
-    $scope.getFullAddress = function (company) {
-      var res = (company.street ? company.street + ", " : "") + 
-      (company.city ? company.city + ", " : "") +
-      (company.province ? company.province + ", " : "") +
-      (company.country ? company.country + ", " : "") +
-      (company.postalCode ? company.postalCode + ", " : "");
-      if (res) {
-        res = res.substr(0, res.length - 2);
-      }
-      return res;
     };
 
 }
@@ -4433,7 +4421,22 @@ angular.module("risevision.common.company",
       return errors;
     };
 
-  }]);
+  }])
+
+.filter("fullAddress", function () {
+  return function (company) {
+    var res = (company.street ? company.street + ", " : "") + 
+      (company.city ? company.city + ", " : "") +
+      (company.province ? company.province + ", " : "") +
+      (company.country ? company.country + ", " : "") +
+      (company.postalCode ? company.postalCode + ", " : "");
+    if (res) {
+      res = res.substr(0, res.length - 2);
+    }
+    return res;
+  };
+});
+
 
 /*
  * App Configuration File

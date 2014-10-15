@@ -469,7 +469,7 @@ app.run(["$templateCache", function($templateCache) {
     "			rv-spinner-start-active=\"1\"\n" +
     "		>\n" +
     "			<div class=\"list-group-item\"  ng-repeat=\"company in companies.list\" ng-click=\"setCompany(company)\">\n" +
-    "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{getFullAddress(company)}}</small>\n" +
+    "				<p class=\"list-group-item-text\"><strong>{{company.name}}</strong><br/><small class=\"text-muted\">{{company | fullAddress}}</small>\n" +
     "				</p>\n" +
     "			</div>\n" +
     "		</div>\n" +
