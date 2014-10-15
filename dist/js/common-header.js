@@ -3492,12 +3492,13 @@ angular.module("risevision.common.ui-status", [])
 
   var uiStateManager = {
     invalidateStatus: invalidateStatus,
+    cancelValidation: function () {_status = ""; },
     getStatus: function () { return _status; },
     isStatusUndetermined: function () { return _status === "pendingCheck"; }
   };
 
 
-  window.state = uiStateManager;
+  window.uiStateManager = uiStateManager;
 
   return uiStateManager;
 }]);

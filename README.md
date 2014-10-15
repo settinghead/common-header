@@ -51,6 +51,8 @@ npm run dev-install
 gulp server-watch
 ```
 
+And navigate to http://localhost:8099/test/e2e/index.html
+
 #### bower.json
 ``` js
 "dependencies": {
