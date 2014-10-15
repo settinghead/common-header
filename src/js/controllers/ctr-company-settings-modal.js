@@ -54,24 +54,26 @@ angular.module("risevision.common.header")
       .finally(function () {$scope.loading = false; });
     };
     $scope.deleteCompany = function () {
-      $scope.loading = true;
+      if (confirm("Are you sure you want to delete this company?")) {
+        $scope.loading = true;
 
-      deleteCompany($scope.company.id)
-      .then(
-        function () {
-          if(userState.getUserCompanyId() === $scope.company.id) {
-            userState.signOut();
-          }
-          else if(userState.getSelectedCompanyId() === $scope.company.id) {
-            userState.resetCompany();
-          }
-          $modalInstance.close("success");
-        })
-      .catch(
-        function (error) {
-          alert("Error(s): " + humanReadableError(error));
-        })
-      .finally(function () {$scope.loading = false; });
+        deleteCompany($scope.company.id)
+        .then(
+          function () {
+            if(userState.getUserCompanyId() === $scope.company.id) {
+              userState.signOut();
+            }
+            else if(userState.getSelectedCompanyId() === $scope.company.id) {
+              userState.resetCompany();
+            }
+            $modalInstance.close("success");
+          })
+        .catch(
+          function (error) {
+            alert("Error(s): " + humanReadableError(error));
+          })
+        .finally(function () {$scope.loading = false; });
+      }
     };
     $scope.resetAuthKey = function() {
       if ($window.confirm("Resetting the Company Authentication Key will cause existing Data Gadgets to no longer report data until they are updated with the new Key.")) {
