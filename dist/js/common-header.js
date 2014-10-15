@@ -3028,9 +3028,11 @@ angular.module("risevision.common.geodata", [])
     "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
+    "$interval",
     function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
-    getOAuthUserInfo, getUserProfile, getCompany, $rootScope) {
+    getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
+    $interval) {
     //singleton factory that represents userState throughout application
     var _profile = {}; //Rise vision profile
     var _user = {};  //Google user
@@ -3038,6 +3040,7 @@ angular.module("risevision.common.geodata", [])
     var _selectedCompany = {};
     var _roleMap = {};
     var _accessToken = cookieStore.get("rv-token");
+    var _accessTokenRefreshHandler = null;
 
       //
       var _follow = function(source) {
@@ -3062,6 +3065,7 @@ angular.module("risevision.common.geodata", [])
 
     var _setAccessToken = function (obj) {
       if(typeof obj === "object") {
+        _scheduleAccessTokenAutoRefresh();
         //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
         _accessToken = obj = pick(obj, "access_token", "state");
         cookieStore.put(
@@ -3077,6 +3081,7 @@ angular.module("risevision.common.geodata", [])
 
     var _clearAccessToken = function () {
       $log.debug("Clearing access token...");
+      _cancelAccessTokenAutoRefresh();
       _accessToken = null;
       cookieStore.remove("rv-token",
         {domain: "." + _getBaseDomain()});
@@ -3086,6 +3091,21 @@ angular.module("risevision.common.geodata", [])
       });
     };
 
+    var _scheduleAccessTokenAutoRefresh = function () {
+      //cancel any existing $interval(s)
+      $interval.cancel(_accessTokenRefreshHandler);
+      _accessTokenRefreshHandler = $interval(function(){
+        //cancel current $interval. It will be re-sheduled if authentication succeeds
+        $interval.cancel(_accessTokenRefreshHandler);
+        //refresh Access Token
+        _authorize(true);
+      }, 55 * 60 * 1000); //refresh every 55 minutes
+    };
+
+    var _cancelAccessTokenAutoRefresh = function () {
+      $interval.cancel(_accessTokenRefreshHandler);
+      _accessTokenRefreshHandler = null;
+    };
 
     var _looksLikeIp = function (addr)
     {
