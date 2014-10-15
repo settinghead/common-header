@@ -283,4 +283,19 @@ angular.module("risevision.common.company",
       return errors;
     };
 
-  }]);
+  }])
+
+.filter("fullAddress", function () {
+  return function (company) {
+    var res = (company.street ? company.street + ", " : "") + 
+      (company.city ? company.city + ", " : "") +
+      (company.province ? company.province + ", " : "") +
+      (company.country ? company.country + ", " : "") +
+      (company.postalCode ? company.postalCode + ", " : "");
+    if (res) {
+      res = res.substr(0, res.length - 2);
+    }
+    return res;
+  };
+});
+

@@ -27,7 +27,7 @@
 			rv-spinner-start-active="1"
 		>
 			<div class="list-group-item"  ng-repeat="company in companies.list" ng-click="setCompany(company)">
-				<p class="list-group-item-text"><strong>{{company.name}}</strong><br/><small class="text-muted">{{company.fullAddress}}</small>
+				<p class="list-group-item-text"><strong>{{company.name}}</strong><br/><small class="text-muted">{{company | fullAddress}}</small>
 				</p>
 			</div>
 		</div>

@@ -102,5 +102,6 @@ angular.module("risevision.common.header")
         }
       }
     };
+
 }
 ]);
