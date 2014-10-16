@@ -1,6 +1,6 @@
 <!-- Desktop and tablet -->
 <li class="dropdown system-messages hidden-xs"
-ng-show="isRiseVisionUser">
+ng-show="isRiseVisionUser && messages.length > 0">
   <a href="" class="dropdown-toggle system-messages-button">
     <i class="fa fa-bell"></i>
     <span class="label label-danger system-messages-badge">{{messages.length | surpressZero}}</span>
@@ -15,7 +15,7 @@ ng-show="isRiseVisionUser">
 <!-- Mobile -->
 <li
   class="system-messages"
-  ng-show="isRiseVisionUser"
+  ng-show="isRiseVisionUser  && messages.length > 0"
   ng-class="{'visible-xs-inline-block': isRiseVisionUser}">
     <a href=""
       class="system-messages-button"
