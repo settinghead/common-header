@@ -241,10 +241,11 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-if=\"isSubcompanySelected\"\n" +
-    "	  class=\"sub-company-alert\">\n" +
-    "		You're in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}\n" +
-    "	</div>\n" +
+    "	<ng-include\n" +
+    "		replace-include\n" +
+    "		ng-controller=\"SubcompanyBannerCtrl\"\n" +
+    "		src=\"'subcompany-banner.html'\"></ng-include>\n" +
+    "\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
     "\n" +
@@ -999,7 +1000,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <!-- Newsletter -->\n" +
     "    <div class=\"checkbox form-group\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our newsletter\n" +
+    "        <input type=\"checkbox\" class=\"sign-up-newsletter-checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our newsletter\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
@@ -1035,6 +1036,21 @@ app.run(["$templateCache", function($templateCache) {
     "    {{cart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
     "</li>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("subcompany-banner.html",
+    "<div ng-show=\"isSubcompanySelected\"\n" +
+    "  class=\"sub-company-alert\">\n" +
+    "  You're in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}.\n" +
+    "  <a href=\"#\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
+    "</div>\n" +
     "");
 }]);
 })();

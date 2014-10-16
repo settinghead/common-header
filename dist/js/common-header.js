@@ -241,10 +241,11 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-if=\"isSubcompanySelected\"\n" +
-    "	  class=\"sub-company-alert\">\n" +
-    "		You're in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}\n" +
-    "	</div>\n" +
+    "	<ng-include\n" +
+    "		replace-include\n" +
+    "		ng-controller=\"SubcompanyBannerCtrl\"\n" +
+    "		src=\"'subcompany-banner.html'\"></ng-include>\n" +
+    "\n" +
     "</nav>\n" +
     "<!-- END Common Header Navbar -->\n" +
     "\n" +
@@ -999,7 +1000,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <!-- Newsletter -->\n" +
     "    <div class=\"checkbox form-group\">\n" +
     "      <label>\n" +
-    "        <input type=\"checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our newsletter\n" +
+    "        <input type=\"checkbox\" class=\"sign-up-newsletter-checkbox\" ng-model=\"profile.mailSyncEnabled\"> Sign up for our newsletter\n" +
     "      </label>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
@@ -1035,6 +1036,21 @@ app.run(["$templateCache", function($templateCache) {
     "    {{cart.items.length | surpressZero}}</span>\n" +
     "</a>\n" +
     "</li>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("subcompany-banner.html",
+    "<div ng-show=\"isSubcompanySelected\"\n" +
+    "  class=\"sub-company-alert\">\n" +
+    "  You're in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}.\n" +
+    "  <a href=\"#\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
+    "</div>\n" +
     "");
 }]);
 })();
@@ -1330,20 +1346,6 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $scope.$watch(function () { return userState.getSelectedCompanyId(); },
-        function (selectedCompanyId) {
-          if(selectedCompanyId) {
-            $scope.isSubcompanySelected = userState.isSubcompanySelected();
-          }
-        });
-
-        $scope.$watch(function () { return userState.getSelectedCompanyName(); },
-        function (selectedCompanyName) {
-          if(selectedCompanyName) {
-            $scope.selectedCompanyName = userState.getSelectedCompanyName();
-          }
-        });
-
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 
@@ -1364,6 +1366,25 @@ angular.module("risevision.common.header", [
             });
         };
 });
+
+angular.module("risevision.common.header")
+
+  .controller("SubcompanyBannerCtrl", ["$scope", "$modal",
+   "$loading", "userState",
+    function($scope, $modal, $loading, userState) {
+      $scope.$watch(function () { return userState.getSelectedCompanyId(); },
+      function (selectedCompanyId) {
+        if(selectedCompanyId) {
+          $scope.isSubcompanySelected = userState.isSubcompanySelected();
+          $scope.selectedCompanyName = userState.getSelectedCompanyName();
+        }
+      });
+
+      $scope.switchToMyCompany = function () {
+        userState.resetCompany();
+      };
+    }
+  ]);
 
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
@@ -3793,7 +3814,6 @@ angular.module("risevision.common.ui-status", [])
   "userInfoCache", "userState", "getUserProfile", "pick",
   function ($q, coreAPILoader, $log, userInfoCache, userState, getUserProfile, pick) {
     return function (username, profile) {
-      $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
       profile = pick(profile, "mailSyncEnabled",
         "email", "firstName", "lastName", "telephone", "roles", "status");
@@ -3801,6 +3821,7 @@ angular.module("risevision.common.ui-status", [])
         //covert boolean to string
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
       }
+      $log.debug("updateUser called", username, profile);
       coreAPILoader().then(function (coreApi) {
         var request = coreApi.user.update({
           username: username, data: JSON.stringify(profile)});
