@@ -63,7 +63,8 @@
             "subcompany alert should show");
           browser.get("/test/e2e/index.html#/shopping-cart");
           protractor.getInstance().driver.navigate().refresh();
-          assert.eventually.isFalse(element(by.css(".sub-company-alert")).isPresent(),
+          assert.eventually.isFalse(element(by.css(".sub-company-alert")).isPresent() &&
+            element(by.css(".sub-company-alert")).isDisplayed(),
             "subcompany alert should hide");
         });
       });
@@ -122,81 +123,6 @@
           element(by.css(".cancel-add-subcompany-button")).click();
           assert.eventually.isFalse(element(by.css(".add-subcompany-modal")).isPresent(),
             "Add subcompany dialog should hide");
-        });
-      });
-
-
-      describe("Company Users", function () {
-        it("Opens Company Users Dialog and load company users", function() {
-          element(by.css(".company-buttons-icon")).click();
-          assert.eventually.isTrue(element(by.css(".company-users-menu-button")).isDisplayed(),
-            "Company users menu item should present");
-          element(by.css(".company-users-menu-button")).click();
-          assert.eventually.isTrue(element(by.css(".company-users-modal")).isDisplayed(),
-            "Company users dialog should show");
-        });
-
-        it("loads up a list of users for the company", function () {
-          assert.eventually.strictEqual(element.all(by.css(".company-users-list-item")).count(), 34,
-            "Loads up 34 users");
-        });
-
-        it("opens up Add User dialog", function () {
-          element(by.css("button.add-company-user-button")).click();
-          assert.eventually.isTrue(element(by.css(".user-settings-modal")).isPresent(), "Add user dialog should show");
-        });
-
-        it("adds a user", function () {
-          element(by.id("user-settings-username")).sendKeys("noobuser@somecompany.com");
-          element(by.id("user-settings-first-name")).sendKeys("John");
-          element(by.id("user-settings-last-name")).sendKeys("Noob");
-          element(by.id("user-settings-phone")).sendKeys("000-000-0000");
-          element(by.id("user-settings-email")).sendKeys("noobuser@somecompany.com");
-          element(by.id("save-button")).click();
-          assert.eventually.isFalse(element(by.css(".user-settings-modal")).isPresent(), "Add user dialog should hide");
-
-          assert.eventually.strictEqual(element.all(by.css(".company-users-list-item")).count(), 35,
-            "Loads up 35 users");
-        });
-
-        it("Company Users Dialog Should Close", function () {
-          element(by.css("button.close-company-users-button")).click();
-          assert.eventually.isFalse(element(by.css(".company-users-modal")).isPresent(),
-            "Company Users dialog should hide");
-        });
-      });
-
-      describe("Company Settings", function () {
-        it("Opens Company Settings Dialog", function() {
-          element(by.css(".company-buttons-icon")).click();
-          assert.eventually.isTrue(element(by.css(".company-settings-menu-button")).isDisplayed(),
-            "Company settings menu item should present");
-          element(by.css(".company-settings-menu-button")).click();
-          assert.eventually.isTrue(element(by.css(".company-settings-modal")).isDisplayed(),
-            "Company settings dialog should show");
-        });
-
-        it("Company Settings Dialog Should Close", function () {
-          element(by.css("button.close-company-settings-button")).click();
-          assert.eventually.isFalse(element(by.css(".company-settings-modal")).isPresent(),
-            "Company Settings dialog should hide");
-        });
-      });
-
-      describe("Delete Company", function () {
-        it("Opens Company Settings Dialog", function() {
-          element(by.css(".company-buttons-icon")).click();
-          assert.eventually.isTrue(element(by.css(".company-settings-menu-button")).isDisplayed(),
-            "Company settings menu item should present");
-          element(by.css(".company-settings-menu-button")).click();
-          assert.eventually.isTrue(element(by.css(".company-settings-modal")).isDisplayed(),
-            "Company settings dialog should show");
-        });
-
-        it("Should sign me out when deleting company", function () {
-          element(by.css("button.delete-company-button")).click();
-          browser.switchTo().alert().then(function (prompt){ prompt.accept(); });
-          assert.eventually.isTrue(element(by.css("button.sign-in")).isDisplayed(), "Should be signed out");
         });
       });
 

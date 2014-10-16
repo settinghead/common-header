@@ -53,20 +53,6 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $scope.$watch(function () { return userState.getSelectedCompanyId(); },
-        function (selectedCompanyId) {
-          if(selectedCompanyId) {
-            $scope.isSubcompanySelected = userState.isSubcompanySelected();
-          }
-        });
-
-        $scope.$watch(function () { return userState.getSelectedCompanyName(); },
-        function (selectedCompanyName) {
-          if(selectedCompanyName) {
-            $scope.selectedCompanyName = userState.getSelectedCompanyName();
-          }
-        });
-
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
 

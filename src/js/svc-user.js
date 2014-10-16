@@ -69,7 +69,6 @@
   "userInfoCache", "userState", "getUserProfile", "pick",
   function ($q, coreAPILoader, $log, userInfoCache, userState, getUserProfile, pick) {
     return function (username, profile) {
-      $log.debug("updateUser called", username, profile);
       var deferred = $q.defer();
       profile = pick(profile, "mailSyncEnabled",
         "email", "firstName", "lastName", "telephone", "roles", "status");
@@ -77,6 +76,7 @@
         //covert boolean to string
         profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
       }
+      $log.debug("updateUser called", username, profile);
       coreAPILoader().then(function (coreApi) {
         var request = coreApi.user.update({
           username: username, data: JSON.stringify(profile)});

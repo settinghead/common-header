@@ -67,12 +67,21 @@
         element(by.css(".registration-modal .email")).sendKeys("john.doe@awesomecompany.io");
         //click authorize
         element(by.css(".accept-terms-checkbox")).click();
+        element(by.css(".sign-up-newsletter-checkbox")).click();
         element(by.css(".registration-save-button")).click();
         assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
       });
 
       it("should update auth button", function () {
         assert.eventually.isTrue(element(by.css(".desktop-menu-item img.profile-pic")).isDisplayed(), "profile pic should show");
+      });
+
+      it("should sign up newsletter in db", function () {
+        var profilePromise = browser.executeScript(function () {
+            return _.find(window.gapi._fakeDb.users, function (user) {return user.username === "john.doe@awesome.io";});
+          });
+        expect(profilePromise).to.eventually.have.property("mailSyncEnabled", "true");
+        expect(profilePromise).to.eventually.have.property("email", "john.doe@awesomecompany.io");
       });
   });
 })();
