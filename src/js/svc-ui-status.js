@@ -10,8 +10,9 @@ angular.module("risevision.common.ui-status", [])
   }
 })
 
-.factory("uiStatusManager", ["$log", "$q", "$injector", "uiStatusDependencies",
-  function ($log, $q, $injector, uiStatusDependencies) {
+.factory("uiStatusManager", ["$log", "$q", "$injector",
+"uiStatusDependencies", "$rootScope",
+  function ($log, $q, $injector, uiStatusDependencies, $rootScope) {
 
   var _status, _goalStatus;
   var _dependencyMap = uiStatusDependencies._dependencies;
@@ -112,7 +113,11 @@ angular.module("risevision.common.ui-status", [])
 
   var uiStateManager = {
     invalidateStatus: invalidateStatus,
-    cancelValidation: function () {_status = ""; },
+    cancelValidation: function () {
+      _status = "";
+      $rootScope.$broadcast("risevision.uiStatus.validationCancelled");
+      $log.debug("UI status validation cancelled.");
+    },
     getStatus: function () { return _status; },
     isStatusUndetermined: function () { return _status === "pendingCheck"; }
   };

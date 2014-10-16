@@ -19,6 +19,10 @@ angular.module("risevision.common.header")
       cookieStore.remove("surpressRegistration");
     });
 
+    $scope.$on("risevision.uiStatus.validationCancelled", function () {
+      cookieStore.remove("surpressRegistration");
+    });
+
     //spinner
     $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
     function (undetermined){
@@ -26,7 +30,6 @@ angular.module("risevision.common.header")
       $scope.loading = undetermined;
     });
 
-    var registrationModalInstance = null;
 
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiStatusManager.getStatus(); },
@@ -36,16 +39,17 @@ angular.module("risevision.common.header")
 
         //render a dialog based on the status current UI is in
         if(newStatus === "registerdAsRiseVisionUser") {
-          if(registrationModalInstance === null) { // avoid duplicate registration modals
-            registrationModalInstance = $modal.open({
+          if(!userState.registrationModalInstance && userState.isLoggedIn()) { // avoid duplicate registration modals
+            userState.registrationModalInstance = $modal.open({
               template: $templateCache.get("registration-modal.html"),
               controller: "RegistrationModalCtrl",
               backdrop: "static"
             });
           }
 
-          registrationModalInstance.result.finally(function (){
-            registrationModalInstance = null;
+          userState.registrationModalInstance.result.finally(function (){
+            //TODO: put it somewhere else
+            userState.registrationModalInstance = null;
             uiStatusManager.invalidateStatus();
           });
         }
@@ -106,10 +110,15 @@ angular.module("risevision.common.header")
         size: size
       });
     };
+
     $loading.startGlobal("auth-buttons-silent");
     userState.authenticate(false).then().finally(function () {
       $loading.stopGlobal("auth-buttons-silent");
-      uiStatusManager.invalidateStatus("registrationComplete");
+      if(!uiStatusManager.isStatusUndetermined()) {
+        //attempt to reach a stable registration state only
+        //when there is currently no validating checking
+        uiStatusManager.invalidateStatus("registrationComplete");
+      }
     });
   }
 ]);
