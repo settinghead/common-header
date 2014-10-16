@@ -21,7 +21,7 @@
       before(function() {
         ptor = protractor.getInstance();
         ptor.manage().deleteAllCookies();
-        browser.get("/test/e2e/index.html#/");
+        browser.get("/test/e2e/index.html#/system-messages");
         //clear local storage
         browser.executeScript("localStorage.clear();");
         ptor.driver.navigate().refresh();
@@ -41,6 +41,13 @@
 
         assert.eventually.isTrue(element(by.css(".system-messages-button")).isDisplayed(), "Should show system messages icon");
         assert.eventually.strictEqual(element(by.css(".system-messages-badge")).getText(), "2", "Badge should show correct number of system messages");
+      });
+
+      it("should hide system messages icon when there are no messages", function() {
+        element(by.id("clear-system-messages-button")).click();
+        ptor.driver.navigate().refresh();
+
+        assert.eventually.isFalse(element(by.css(".system-messages-button")).isDisplayed(), "Should hide system messages icon");
       });
   });
 })();

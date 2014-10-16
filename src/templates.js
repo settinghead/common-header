@@ -1104,7 +1104,7 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("system-messages-button.html",
     "<!-- Desktop and tablet -->\n" +
     "<li class=\"dropdown system-messages hidden-xs\"\n" +
-    "ng-show=\"isRiseVisionUser\">\n" +
+    "ng-show=\"isRiseVisionUser && messages.length > 0\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle system-messages-button\">\n" +
     "    <i class=\"fa fa-bell\"></i>\n" +
     "    <span class=\"label label-danger system-messages-badge\">{{messages.length | surpressZero}}</span>\n" +
@@ -1119,7 +1119,7 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- Mobile -->\n" +
     "<li\n" +
     "  class=\"system-messages\"\n" +
-    "  ng-show=\"isRiseVisionUser\"\n" +
+    "  ng-show=\"isRiseVisionUser  && messages.length > 0\"\n" +
     "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
