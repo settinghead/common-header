@@ -146,6 +146,13 @@
           itemsMap[itemToAdd.productId].selected = itemToAdd.orderedPricing[pricingIndex];
           persistToStorage();
         }
+      },
+      itemExists: function(item) {
+
+        if (userState.isRiseVisionUser() && item && itemsMap[item.productId]) {
+          return true;
+        }
+        return false;
       }
     };
     cartManager.initialize();
