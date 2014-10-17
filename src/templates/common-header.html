@@ -5,20 +5,20 @@
 
 		<div class="navbar-header" style="width: 100%;">
 			<a class="navbar-brand visible-md visible-lg"
-			  href="http://www.risevision.com/" target="_blank">
+			  href="http://www.risevision.com/" target="_blank" ng-if="!inRVAFrame">
 				<img src="//s3.amazonaws.com/rise-common/images/logo-small.png" class="img-responsive logo-small" width="113" height="42" alt="Rise Vision">
 			</a>
 			<a class="navbar-brand hidden-md hidden-lg text-center"
 				href="" off-canvas-toggle>
 				<i class="fa fa-bars"></i>
 			</a>
-
 			<!-- If User Authenticated -->
 			<!-- Action Nav -->
 			<ul class="nav navbar-nav navbar-right actions-nav pull-right">
 				<!-- Notifications -->
 				<ng-include
 					replace-include
+					ng-if="!inRVAFrame"
 				  ng-controller="SystemMessagesButtonCtrl"
 					src="'system-messages-button.html'"
 				></ng-include>
@@ -27,6 +27,13 @@
 					replace-include
 					ng-controller="ShoppingCartButtonCtrl"
 					src="'shoppingcart-button.html'"
+				></ng-include>
+				<!-- Shopping Cart -->
+				<ng-include
+					replace-include
+					ng-if="inRVAFrame"
+					ng-controller="CloseFrameButtonCtrl"
+					src="'close-frame-button.html'"
 				></ng-include>
 				<!-- Current App -->
 				<li class="dropdown" ng-show="false">
@@ -89,13 +96,14 @@
 				<!-- Company Dropdown -->
 				<ng-include
 					replace-include
-					ng-if="isRiseVisionUser"
+					ng-if="isRiseVisionUser && !inRVAFrame"
 				  ng-controller="CompanyButtonsCtrl"
 					src="'company-buttons.html'"
 				></ng-include>
 				<!-- Auth -->
 				<ng-include
 					replace-include
+					ng-if="!inRVAFrame"
 				  ng-controller="AuthButtonsCtr"
 					src="'auth-buttons.html'"
 				></ng-include>
@@ -108,7 +116,7 @@
 					<li ng-repeat="opt in navOptions">
 						<a ng-href="{{opt.link}}" target="{{opt.target}}">{{opt.title}}</a>
 					</li>
-					<li>
+					<li ng-if="!inRVAFrame">
 						<a href="http://www.risevision.com/help/" target="_blank">
 							Help
 						</a>

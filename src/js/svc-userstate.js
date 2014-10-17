@@ -30,6 +30,7 @@
     var _roleMap = {};
     var _accessToken = cookieStore.get("rv-token");
     var _accessTokenRefreshHandler = null;
+    var _inRVAFrame = angular.isDefined($location.search().inRVA);
 
       //
       var _follow = function(source) {
@@ -349,6 +350,7 @@
         return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
+      inRVAFrame: function () {return _inRVAFrame; },
       isRiseAdmin: function () {return hasRole("sa"); },
       isRiseStoreAdmin: function () {return hasRole("ba"); },
       isUserAdmin: function () {return hasRole("ua"); },
