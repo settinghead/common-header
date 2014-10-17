@@ -2449,9 +2449,10 @@ angular.module("risevision.common.header")
     service.enabled = angular.element($window).width() <= 1200 ? true : false;
 
     service.toggle = function(event) {
+
       if (event) { event.stopPropagation(); }
 
-      if(!service.enabled) { return; }
+      if(!service.enabled && !service.visible) { return; }
 
       service.visible = !service.visible;
       if (service.visible) {
