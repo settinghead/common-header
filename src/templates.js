@@ -1048,7 +1048,7 @@ app.run(["$templateCache", function($templateCache) {
   $templateCache.put("subcompany-banner.html",
     "<div ng-show=\"isSubcompanySelected\"\n" +
     "  class=\"sub-company-alert\">\n" +
-    "  You're in a Sub-Company of your Company. Current Company - {{selectedCompanyName}}.\n" +
+    "  You're in Sub-Company {{selectedCompanyName}}&nbsp;\n" +
     "  <a href=\"#\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
     "</div>\n" +
     "");
