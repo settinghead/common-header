@@ -5,8 +5,8 @@
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.common.cache",
     "risevision.common.oauth2", "ngBiscuit",
-    "risevision.common.util", "risevision.common.userprofile",
-    "risevision.common.company", "risevision.common.loading"
+    "risevision.core.util", "risevision.common.userprofile",
+    "risevision.core.company", "risevision.common.loading"
   ])
 
   // constants (you can override them in your app as needed)

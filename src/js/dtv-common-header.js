@@ -3,6 +3,7 @@ angular.module("risevision.common.header", [
   "risevision.common.account",
   "risevision.common.gapi",
   "risevision.common.cache",
+  "risevision.core.company",
   "risevision.common.company",
   "risevision.common.localstorage",
   "risevision.common.header.templates",

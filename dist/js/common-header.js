@@ -1385,6 +1385,7 @@ angular.module("risevision.common.header", [
   "risevision.common.account",
   "risevision.common.gapi",
   "risevision.common.cache",
+  "risevision.core.company",
   "risevision.common.company",
   "risevision.common.localstorage",
   "risevision.common.header.templates",
@@ -2507,7 +2508,7 @@ angular.module("risevision.common.header")
   ]);
 
 angular.module("risevision.common.header")
-.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "$window", "userState",
+.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "$window", "userState", 
   function($scope, $modalInstance, $log, $window, userState) {
 
     $scope.closeModal = function() {
@@ -2788,55 +2789,6 @@ angular.module("risevision.common.header")
       this.remove = function (index) {
           this.list.splice(index, 1);
       };
-  })
-  .factory("pick", function () {
-  var ArrayProto = Array.prototype;
-  var
-    slice            = ArrayProto.slice,
-    concat           = ArrayProto.concat;
-    // Internal function that returns an efficient (for current engines) version
-  // of the passed-in callback, to be repeatedly applied in other Underscore
-  // functions.
-  var createCallback = function(func, context, argCount) {
-    if (context === void 0) { return func; }
-    switch (argCount === null ? 3 : argCount) {
-      case 1: return function(value) {
-        return func.call(context, value);
-      };
-      case 2: return function(value, other) {
-        return func.call(context, value, other);
-      };
-      case 3: return function(value, index, collection) {
-        return func.call(context, value, index, collection);
-      };
-      case 4: return function(accumulator, value, index, collection) {
-        return func.call(context, accumulator, value, index, collection);
-      };
-    }
-    return function() {
-      return func.apply(context, arguments);
-    };
-  };
-
-    return function(obj, iteratee, context) {
-      var result = {}, key;
-      if (obj === null) {return result;}
-      if (angular.isFunction(iteratee)) {
-        iteratee = createCallback(iteratee, context);
-        for (key in obj) {
-          var value = obj[key];
-          if (iteratee(value, key, obj)) { result[key] = value; }
-        }
-      } else {
-        var keys = concat.apply([], slice.call(arguments, 1));
-        obj = new Object(obj);
-        for (var i = 0, length = keys.length; i < length; i++) {
-          key = keys[i];
-          if (key in obj) { result[key] = obj[key]; }
-        }
-      }
-      return result;
-    };
   })
 
   .factory("dateIsInRange", [ function () {
@@ -3236,8 +3188,8 @@ angular.module("risevision.common.geodata", [])
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.common.cache",
     "risevision.common.oauth2", "ngBiscuit",
-    "risevision.common.util", "risevision.common.userprofile",
-    "risevision.common.company", "risevision.common.loading"
+    "risevision.core.util", "risevision.common.userprofile",
+    "risevision.core.company", "risevision.common.loading"
   ])
 
   // constants (you can override them in your app as needed)
@@ -3425,57 +3377,59 @@ angular.module("risevision.common.geodata", [])
        else {
          opts.prompt = "select_account";
        }
+       gapiLoader().then(function (gApi) {
+         oauth2APILoader().then(function () {
+           gApi.auth.authorize(opts, function (authResult) {
+             $log.debug("authResult", authResult);
+             if (authResult && !authResult.error) {
+               _setAccessToken(authResult);
 
-       oauth2APILoader().then(function (gApi) {
-         gApi.auth.authorize(opts, function (authResult) {
-           $log.debug("authResult", authResult);
-           if (authResult && !authResult.error) {
-             _setAccessToken(authResult);
+               getOAuthUserInfo().then(function (oauthUserInfo) {
+                 if(!_user.username || !_profile.username ||
+                   _user.username !== oauthUserInfo.email) {
 
-             getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!_user.username || !_profile.username ||
-                 _user.username !== oauthUserInfo.email) {
+                   //populate user
+                   _clearAndCopy({
+                     username: oauthUserInfo.email,
+                     picture: oauthUserInfo.picture
+                   }, _user);
 
-                 //populate user
-                 _clearAndCopy({
-                   username: oauthUserInfo.email,
-                   picture: oauthUserInfo.picture
-                 }, _user);
+                   refreshProfile().then(function () {
+                     //populate userCompany
+                     return getCompany().then(function(company) {
+                       _clearAndCopy(company, _userCompany);
+                       _clearAndCopy(company, _selectedCompany);
 
-                 refreshProfile().then(function () {
-                   //populate userCompany
-                   return getCompany().then(function(company) {
-                     _clearAndCopy(company, _userCompany);
-                     _clearAndCopy(company, _selectedCompany);
-
-                   }, function () { _clearObj(_userCompany);
-                   }).finally(function () {
-                    authorizeDeferred.resolve(authResult);
-                    $rootScope.$broadcast("risevision.user.authorized");
-                    if(!attemptImmediate) {
-                      $rootScope.$broadcast("risevision.user.userSignedIn");
-                    }
+                     }, function () { _clearObj(_userCompany);
+                     }).finally(function () {
+                      authorizeDeferred.resolve(authResult);
+                      $rootScope.$broadcast("risevision.user.authorized");
+                      if(!attemptImmediate) {
+                        $rootScope.$broadcast("risevision.user.userSignedIn");
+                      }
+                     });
+                   },
+                   function () {
+                     authorizeDeferred.resolve(authResult);
+                     $rootScope.$broadcast("risevision.user.authorized");
+                     if(!attemptImmediate) {
+                       $rootScope.$broadcast("risevision.user.userSignedIn");
+                     }
                    });
-                 },
-                 function () {
-                   authorizeDeferred.resolve(authResult);
-                   $rootScope.$broadcast("risevision.user.authorized");
-                   if(!attemptImmediate) {
-                     $rootScope.$broadcast("risevision.user.userSignedIn");
-                   }
-                 });
-               }
-               else {authorizeDeferred.resolve(authResult); }
-             }, function(err){
+                 }
+                 else {authorizeDeferred.resolve(authResult); }
+               }, function(err){
+                 _clearObj(_user);
+               authorizeDeferred.reject(err); });
+             }
+             else {
                _clearObj(_user);
-             authorizeDeferred.reject(err); });
-           }
-           else {
-             _clearObj(_user);
-             authorizeDeferred.reject("not authorized");
-           }
-         });
-       }, authorizeDeferred.reject);
+               authorizeDeferred.reject("not authorized");
+             }
+           });
+         }, authorizeDeferred.reject); //oauth2APILoader
+       }, authorizeDeferred.reject); //gapiLoader
+
        return authorizeDeferred.promise;
      };
 
@@ -3903,40 +3857,65 @@ angular.module("risevision.common.ui-status", [])
 
     .factory("userInfoCache", ["$cacheFactory", function ($cacheFactory) {
       return $cacheFactory("user-info-cache");
-    }])
+    }]);
 
-    .service("cacheService", ["rvStorage", function (rvStorage) {
-      var products = [];
-      this.clear = function () {
-          rvStorage.clear();
+})(angular);
+
+(function (angular){
+
+  "use strict";
+
+  angular.module("risevision.core.util", [])
+
+.factory("pick", function () {
+  var ArrayProto = Array.prototype;
+  var
+    slice            = ArrayProto.slice,
+    concat           = ArrayProto.concat;
+    // Internal function that returns an efficient (for current engines) version
+  // of the passed-in callback, to be repeatedly applied in other Underscore
+  // functions.
+  var createCallback = function(func, context, argCount) {
+    if (context === void 0) { return func; }
+    switch (argCount === null ? 3 : argCount) {
+      case 1: return function(value) {
+        return func.call(context, value);
       };
-
-      this.getProduct = function (productId) {
-          if (products && products.length > 0) {
-              for (var i = 0; i < products.length; i++) {
-                  if (products[i].id === productId) {
-                      return products[i];
-                  }
-              }
-          }
-          return null;
+      case 2: return function(value, other) {
+        return func.call(context, value, other);
       };
-
-      this.get = function (key, defaultValue) {
-          try {
-              var res = rvStorage.getItem(key);
-              if (res) {
-                  return JSON.parse(res);
-              } else {
-                  return defaultValue;
-              }
-          }
-          catch (e) {
-              return defaultValue;
-          }
+      case 3: return function(value, index, collection) {
+        return func.call(context, value, index, collection);
       };
+      case 4: return function(accumulator, value, index, collection) {
+        return func.call(context, accumulator, value, index, collection);
+      };
+    }
+    return function() {
+      return func.apply(context, arguments);
+    };
+  };
 
-  } ]);
+    return function(obj, iteratee, context) {
+      var result = {}, key;
+      if (obj === null) {return result;}
+      if (angular.isFunction(iteratee)) {
+        iteratee = createCallback(iteratee, context);
+        for (key in obj) {
+          var value = obj[key];
+          if (iteratee(value, key, obj)) { result[key] = value; }
+        }
+      } else {
+        var keys = concat.apply([], slice.call(arguments, 1));
+        obj = new Object(obj);
+        for (var i = 0, length = keys.length; i < length; i++) {
+          key = keys[i];
+          if (key in obj) { result[key] = obj[key]; }
+        }
+      }
+      return result;
+    };
+  });
 
 })(angular);
 
@@ -3945,8 +3924,7 @@ angular.module("risevision.common.ui-status", [])
   "use strict";
   angular.module("risevision.common.userprofile", [
   "risevision.common.gapi", "risevision.common.oauth2",
-  "risevision.common.cache", "risevision.common.util",
-  "risevision.common.userstate"])
+  "risevision.common.cache"])
 
   .value("userRoleMap", {
     "ce": "Content Editor",
@@ -4008,8 +3986,8 @@ angular.module("risevision.common.ui-status", [])
   }])
 
   .factory("updateUser", ["$q", "coreAPILoader", "$log",
-  "userInfoCache", "userState", "getUserProfile", "pick",
-  function ($q, coreAPILoader, $log, userInfoCache, userState, getUserProfile, pick) {
+  "userInfoCache", "getUserProfile", "pick",
+  function ($q, coreAPILoader, $log, userInfoCache, getUserProfile, pick) {
     return function (username, profile) {
       var deferred = $q.defer();
       profile = pick(profile, "mailSyncEnabled",
@@ -4104,6 +4082,348 @@ angular.module("risevision.common.ui-status", [])
   }]);
 
 })(angular);
+
+(function (angular){
+
+  "use strict";
+
+  angular.module("risevision.core.company",
+    [
+      "risevision.common.gapi",
+      "risevision.common.cache",
+      "risevision.core.util"
+    ])
+
+    .constant("COMPANY_WRITABLE_FIELDS", [
+      "name", "street", "unit", "city", "province", "country",
+      "postalCode", "timeZoneOffset", "telephone", "fax", "companyStatus",
+      "notificationEmails", "mailSyncEnabled", "sellerId"
+    ])
+
+    .factory("createCompany", ["$q", "coreAPILoader", "COMPANY_WRITABLE_FIELDS",
+      "pick",
+      function ($q, coreAPILoader, COMPANY_WRITABLE_FIELDS, pick) {
+      return function (parentCompanyId, company) {
+        var deferred = $q.defer();
+        coreAPILoader().then(function (coreApi) {
+          var fields = pick.apply(this, [company].concat(COMPANY_WRITABLE_FIELDS));
+          var request = coreApi.company.add({
+            parentId: parentCompanyId,
+            data: JSON.stringify(fields)
+          });
+          request.execute(function (resp) {
+            if(resp.result) {
+              deferred.resolve(resp.item);
+            }
+            else {
+              deferred.reject(resp);
+            }
+          }, deferred.reject);
+        });
+        return deferred.promise;
+      };
+    }])
+
+    .factory("getCompany", ["coreAPILoader", "$q", "$log",
+    function (coreAPILoader, $q, $log) {
+      return function (id) { //get a company either by id or authKey
+        $log.debug("getCompany called", id);
+
+        var deferred = $q.defer();
+          coreAPILoader().then(function (coreApi) {
+            var criteria = {};
+            if(id) {criteria.id = id; }
+            var request = coreApi.company.get(criteria);
+            request.execute(function (resp) {
+                $log.debug("getCompany resp", resp);
+                if(resp.result) {
+                  deferred.resolve(resp.item);
+                }
+                else {
+                  deferred.reject(resp);
+                }
+            });
+          });
+        return deferred.promise;
+      };
+    }])
+
+    .factory("lookupCompany", ["coreAPILoader", "$q", "$log",
+    function (coreAPILoader, $q, $log) {
+      return function (authKey) { //get a company either by id or authKey
+        $log.debug("lookupCompany called", authKey);
+
+        var deferred = $q.defer();
+          coreAPILoader().then(function (coreApi) {
+            var request = coreApi.company.lookup({authKey: authKey});
+            request.execute(function (resp) {
+                $log.debug("lookupCompany resp", resp);
+                if(resp.result) {
+                  deferred.resolve(resp.item);
+                }
+                else {
+                  deferred.reject(resp);
+                }
+            });
+          });
+        return deferred.promise;
+      };
+    }])
+
+    .factory("moveCompany", ["coreAPILoader", "$q", "$log",
+    function (coreAPILoader, $q, $log) {
+      return function (authKey, newParentId) { //get a company either by id or authKey
+        var deferred = $q.defer();
+          coreAPILoader().then(function (coreApi) {
+            var request = coreApi.company.move({authKey: authKey, newParentId: newParentId});
+            request.execute(function (resp) {
+                $log.debug("moveCompany resp", resp);
+                if(resp.result) {
+                  deferred.resolve(resp.item);
+                }
+                else {
+                  deferred.reject(resp);
+                }
+            });
+          });
+        return deferred.promise;
+      };
+    }])
+
+    .factory("updateCompany", ["$q", "$log", "coreAPILoader", "pick",
+    "COMPANY_WRITABLE_FIELDS",
+     function ($q, $log, coreAPILoader, pick, COMPANY_WRITABLE_FIELDS){
+      return function (companyId, fields) {
+          var deferred = $q.defer();
+          fields = pick.apply(this, [fields].concat(COMPANY_WRITABLE_FIELDS));
+          $log.debug("updateCompany called", companyId, fields);
+          // fields.validate = validationRequired || false;
+          coreAPILoader().then(function (coreApi) {
+            var request = coreApi.company.update({id: companyId, data: JSON.stringify(fields)});
+            request.execute(function (resp) {
+              $log.debug("updateCompany resp", resp);
+              if(resp.result) {
+                deferred.resolve(resp);
+              }
+              else {
+                deferred.reject(resp);
+              }
+            });
+          });
+
+          return deferred.promise;
+      };
+    }])
+
+    .factory("regenerateCompanyField", ["$q", "$log", "coreAPILoader",
+     function ($q, $log, coreAPILoader){
+      return function (companyId, fieldName) {
+          var deferred = $q.defer();
+          $log.debug("regenerateField called", companyId, fieldName);
+          coreAPILoader().then(function (coreApi) {
+            var request = coreApi.company.regenerateField({"id": companyId, "fieldName": fieldName});
+            request.execute(
+              function (resp) {
+                $log.debug("regenerateField resp", resp);
+                if (!resp.error) {
+                  deferred.resolve(resp);
+                } else {
+                  deferred.reject(resp.message);
+                }
+              },
+              function (resp) {
+                deferred.reject("call failed " + resp);
+              }
+              );
+          });
+
+          return deferred.promise;
+      };
+    }])
+
+    .factory("deleteCompany", ["coreAPILoader", "$q", "$log",
+    function (coreAPILoader, $q, $log) {
+      return function (id) { //get a company either by id or authKey
+        $log.debug("deleteCompany called", id);
+
+        var deferred = $q.defer();
+          coreAPILoader().then(function (coreApi) {
+            var criteria = {};
+            if(id) {criteria.id = id; }
+            var request = coreApi.company.delete(criteria);
+            request.execute(function (resp) {
+                $log.debug("deleteCompany resp", resp);
+                if(resp.result) {
+                  deferred.resolve(resp.item);
+                }
+                else {
+                  deferred.reject(resp);
+                }
+            });
+          });
+        return deferred.promise;
+      };
+    }])
+
+    .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
+      function (coreAPILoader, $q, $log, getCompany) {
+
+      this.getCompanies = function (companyId, search, cursor, count, sort) {
+        var deferred = $q.defer();
+        var obj = {
+          "companyId": companyId,
+          "search": search,
+          "cursor": cursor,
+          "count": count,
+          "sort": sort
+        };
+        $log.debug("getCompanies called with", obj);
+        coreAPILoader().then(function (coreApi) {
+          var request = coreApi.company.list(obj);
+          request.execute(function (resp) {
+              $log.debug("getCompanies resp", resp);
+              deferred.resolve(resp);
+          });
+        });
+        return deferred.promise;
+      };
+
+      this.loadSelectedCompany = function (selectedCompanyId, userCompany) {
+          //this funtion assumes user and user.company are loaded
+          var deferred = $q.defer();
+          if (selectedCompanyId && selectedCompanyId !== userCompany.id) {
+              getCompany(selectedCompanyId).then(function(res) {
+                  if (res.code === 0 && res.item) {
+                      deferred.resolve(res.item);
+                  } else {
+                      deferred.resolve(userCompany);
+                  }
+              });
+          } else {
+              deferred.resolve(userCompany);
+          }
+          return deferred.promise;
+      };
+
+      this.validateAddressSimple = function(company, contact) {
+        var errors = [];
+        if (contact) {
+            if (!contact.firstName) {
+                errors.push("Missing First Name");
+            }
+            if (!contact.lastName) {
+                errors.push("Missing Last Name");
+            }
+            if (!contact.email) {
+                errors.push("Missing Email");
+            } else {
+                var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if (!re.test(contact.email)) {
+                    errors.push("Invalid Email");
+                }
+            }
+        }
+        if (!company.street) {
+            errors.push("Missing Address (Line 1)");
+        }
+        if (!company.city) {
+            errors.push("Missing City");
+        }
+        if (!company.country) {
+            errors.push("Missing Country");
+        }
+        if (!company.province) {
+            errors.push("Missing State / Province");
+        }
+        if (!company.postalCode) {
+            errors.push("Missing Zip / Postal Code");
+        }
+        return errors;
+      };
+
+    }])
+
+  .filter("fullAddress", function () {
+    return function (company) {
+      var res = (company.street ? company.street + ", " : "") +
+        (company.city ? company.city + ", " : "") +
+        (company.province ? company.province + ", " : "") +
+        (company.country ? company.country + ", " : "") +
+        (company.postalCode ? company.postalCode + ", " : "");
+      if (res) {
+        res = res.substr(0, res.length - 2);
+      }
+      return res;
+    };
+  });
+
+})(angular);
+
+(function (angular){
+
+  "use strict";
+
+  angular.module("risevision.common.company", ["risevision.core.company",
+  "risevision.common.userstate"])
+
+    .service("selectedCompanyUrlHandler", ["$location", "userState",
+      "getCompany", "$rootScope", "$log",
+      function ($location, userState, getCompany, $rootScope, $log) {
+
+        var that = this;
+        if($location.search().cid && !userState.isLoggedIn()) {
+          $log.debug("cid", $location.search().cid, "saved for later processing.");
+          this.pendingSelectedCompany = $location.search().cid;
+        }
+
+        $rootScope.$on("risevision.user.userSignedIn", function () {
+          if(that.pendingSelectedCompany) {
+            $location.search("cid", that.pendingSelectedCompany);
+            delete(that.pendingSelectedCompany);
+            that.updateSelectedCompanyFromUrl();
+          }
+        });
+
+        this.init = function () {
+          // This parameter is only appended to the url if the user is logged in
+          if (!$location.search().cid && userState.getSelectedCompanyId() &&
+              userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+            $location.search("cid", userState.getSelectedCompanyId());
+          }
+          else if($location.search().cid &&
+            userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+            $location.search("cid", null);
+          }
+          that.updateSelectedCompanyFromUrl();
+        };
+
+        this.updateUrl = function () {
+          var selectedCompanyId = userState.getSelectedCompanyId();
+          // This parameter is only appended to the url if the user is logged in
+          if (selectedCompanyId) {
+            if (selectedCompanyId !== userState.getUserCompanyId() &&
+              $location.search().cid !== selectedCompanyId) {
+              $location.search("cid", selectedCompanyId);
+            }
+          }
+          else {
+            if($location.search().cid) {
+              $location.search({"cid" : null});
+            }
+          }
+        };
+        this.updateSelectedCompanyFromUrl = function () {
+          var newCompanyId = $location.search().cid;
+          if(userState.getSelectedCompanyId() &&
+            newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+            getCompany(newCompanyId).then(function (company) {
+              userState.switchCompany(company);
+            });
+          }
+        };
+    }]);
+  }
+)(angular);
 
 (function (angular) {
   "use strict";
@@ -4361,8 +4681,8 @@ angular.module("risevision.common.ui-status", [])
         }
       }
       else {
-        oauth2APILoader().then(function (gApi){
-          gApi.client.oauth2.userinfo.get().execute(function (resp){
+        oauth2APILoader().then(function (oauth2){
+          oauth2.userinfo.get().execute(function (resp){
             $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
             if(!resp) {
               userInfoCache.remove("oauth2UserInfo");
@@ -4385,364 +4705,6 @@ angular.module("risevision.common.ui-status", [])
   }]);
 
 })(angular);
-
-"use strict";
-
-angular.module("risevision.common.company",
-  [
-    "risevision.common.config",
-    "risevision.common.gapi",
-    "risevision.common.cache",
-    "risevision.common.util"
-  ])
-
-  .constant("COMPANY_WRITABLE_FIELDS", [
-    "name", "street", "unit", "city", "province", "country",
-    "postalCode", "timeZoneOffset", "telephone", "fax", "companyStatus",
-    "notificationEmails", "mailSyncEnabled", "sellerId"
-  ])
-
-  .factory("validateAddress", ["$q", "storeAPILoader", "$log",
-  function ($q, storeAPILoader, $log) {
-      return function (company) {
-
-        var deferred = $q.defer();
-        $log.debug("validateAddress called", company);
-
-        var obj = {
-            "street": company.street,
-            "unit": company.unit,
-            "city": company.city,
-            "country": company.country,
-            "postalCode": company.postalCode,
-            "province": company.province,
-        };
-
-        storeAPILoader.get().then(function (storeApi) {
-          var request = storeApi.company.validateAddress(obj);
-          request.execute(function (resp) {
-              $log.debug("validateAddress resp", resp);
-              deferred.resolve(resp);
-          });
-        });
-
-        return deferred.promise;
-    };
-  }])
-
-  .factory("createCompany", ["$q", "coreAPILoader", "COMPANY_WRITABLE_FIELDS",
-    "pick",
-    function ($q, coreAPILoader, COMPANY_WRITABLE_FIELDS, pick) {
-    return function (parentCompanyId, company) {
-      var deferred = $q.defer();
-      coreAPILoader().then(function (coreApi) {
-        var fields = pick.apply(this, [company].concat(COMPANY_WRITABLE_FIELDS));
-        var request = coreApi.company.add({
-          parentId: parentCompanyId,
-          data: JSON.stringify(fields)
-        });
-        request.execute(function (resp) {
-          if(resp.result) {
-            deferred.resolve(resp.item);
-          }
-          else {
-            deferred.reject(resp);
-          }
-        }, deferred.reject);
-      });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("getCompany", ["coreAPILoader", "$q", "$log",
-  function (coreAPILoader, $q, $log) {
-    return function (id) { //get a company either by id or authKey
-      $log.debug("getCompany called", id);
-
-      var deferred = $q.defer();
-        coreAPILoader().then(function (coreApi) {
-          var criteria = {};
-          if(id) {criteria.id = id; }
-          var request = coreApi.company.get(criteria);
-          request.execute(function (resp) {
-              $log.debug("getCompany resp", resp);
-              if(resp.result) {
-                deferred.resolve(resp.item);
-              }
-              else {
-                deferred.reject(resp);
-              }
-          });
-        });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("lookupCompany", ["coreAPILoader", "$q", "$log",
-  function (coreAPILoader, $q, $log) {
-    return function (authKey) { //get a company either by id or authKey
-      $log.debug("lookupCompany called", authKey);
-
-      var deferred = $q.defer();
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.lookup({authKey: authKey});
-          request.execute(function (resp) {
-              $log.debug("lookupCompany resp", resp);
-              if(resp.result) {
-                deferred.resolve(resp.item);
-              }
-              else {
-                deferred.reject(resp);
-              }
-          });
-        });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("moveCompany", ["coreAPILoader", "$q", "$log",
-  function (coreAPILoader, $q, $log) {
-    return function (authKey, newParentId) { //get a company either by id or authKey
-      var deferred = $q.defer();
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.move({authKey: authKey, newParentId: newParentId});
-          request.execute(function (resp) {
-              $log.debug("moveCompany resp", resp);
-              if(resp.result) {
-                deferred.resolve(resp.item);
-              }
-              else {
-                deferred.reject(resp);
-              }
-          });
-        });
-      return deferred.promise;
-    };
-  }])
-
-  .factory("updateCompany", ["$q", "$log", "coreAPILoader", "pick",
-  "COMPANY_WRITABLE_FIELDS",
-   function ($q, $log, coreAPILoader, pick, COMPANY_WRITABLE_FIELDS){
-    return function (companyId, fields) {
-        var deferred = $q.defer();
-        fields = pick.apply(this, [fields].concat(COMPANY_WRITABLE_FIELDS));
-        $log.debug("updateCompany called", companyId, fields);
-        // fields.validate = validationRequired || false;
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.update({id: companyId, data: JSON.stringify(fields)});
-          request.execute(function (resp) {
-            $log.debug("updateCompany resp", resp);
-            if(resp.result) {
-              deferred.resolve(resp);
-            }
-            else {
-              deferred.reject(resp);
-            }
-          });
-        });
-
-        return deferred.promise;
-    };
-  }])
-
-  .factory("regenerateCompanyField", ["$q", "$log", "coreAPILoader",
-   function ($q, $log, coreAPILoader){
-    return function (companyId, fieldName) {
-        var deferred = $q.defer();
-        $log.debug("regenerateField called", companyId, fieldName);
-        coreAPILoader().then(function (coreApi) {
-          var request = coreApi.company.regenerateField({"id": companyId, "fieldName": fieldName});
-          request.execute(
-            function (resp) {
-              $log.debug("regenerateField resp", resp);
-              if (!resp.error) {
-                deferred.resolve(resp);
-              } else {
-                deferred.reject(resp.message);
-              }
-            },
-            function (resp) {
-              deferred.reject("call failed " + resp);
-            }
-            );
-        });
-
-        return deferred.promise;
-    };
-  }])
-
-  .factory("deleteCompany", ["coreAPILoader", "$q", "$log",
-  function (coreAPILoader, $q, $log) {
-    return function (id) { //get a company either by id or authKey
-      $log.debug("deleteCompany called", id);
-
-      var deferred = $q.defer();
-        coreAPILoader().then(function (coreApi) {
-          var criteria = {};
-          if(id) {criteria.id = id; }
-          var request = coreApi.company.delete(criteria);
-          request.execute(function (resp) {
-              $log.debug("deleteCompany resp", resp);
-              if(resp.result) {
-                deferred.resolve(resp.item);
-              }
-              else {
-                deferred.reject(resp);
-              }
-          });
-        });
-      return deferred.promise;
-    };
-  }])
-
-  .service("selectedCompanyUrlHandler", ["$location", "userState",
-    "getCompany", "$rootScope", "$log",
-    function ($location, userState, getCompany, $rootScope, $log) {
-
-      var that = this;
-      if($location.search().cid && !userState.isLoggedIn()) {
-        $log.debug("cid", $location.search().cid, "saved for later processing.");
-        this.pendingSelectedCompany = $location.search().cid;
-      }
-
-      $rootScope.$on("risevision.user.userSignedIn", function () {
-        if(that.pendingSelectedCompany) {
-          $location.search("cid", that.pendingSelectedCompany);
-          delete(that.pendingSelectedCompany);
-          that.updateSelectedCompanyFromUrl();
-        }
-      });
-
-      this.init = function () {
-        // This parameter is only appended to the url if the user is logged in
-        if (!$location.search().cid && userState.getSelectedCompanyId() &&
-            userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
-          $location.search("cid", userState.getSelectedCompanyId());
-        }
-        else if($location.search().cid &&
-          userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
-          $location.search("cid", null);
-        }
-        that.updateSelectedCompanyFromUrl();
-      };
-
-      this.updateUrl = function () {
-        var selectedCompanyId = userState.getSelectedCompanyId();
-        // This parameter is only appended to the url if the user is logged in
-        if (selectedCompanyId) {
-          if (selectedCompanyId !== userState.getUserCompanyId() &&
-            $location.search().cid !== selectedCompanyId) {
-            $location.search("cid", selectedCompanyId);
-          }
-        }
-        else {
-          if($location.search().cid) {
-            $location.search({"cid" : null});
-          }
-        }
-      };
-      this.updateSelectedCompanyFromUrl = function () {
-        var newCompanyId = $location.search().cid;
-        if(userState.getSelectedCompanyId() &&
-          newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
-          getCompany(newCompanyId).then(function (company) {
-            userState.switchCompany(company);
-          });
-        }
-      };
-  }])
-
-  .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
-    function (coreAPILoader, $q, $log, getCompany) {
-
-    this.getCompanies = function (companyId, search, cursor, count, sort) {
-      var deferred = $q.defer();
-      var obj = {
-        "companyId": companyId,
-        "search": search,
-        "cursor": cursor,
-        "count": count,
-        "sort": sort
-      };
-      $log.debug("getCompanies called with", obj);
-      coreAPILoader().then(function (coreApi) {
-        var request = coreApi.company.list(obj);
-        request.execute(function (resp) {
-            $log.debug("getCompanies resp", resp);
-            deferred.resolve(resp);
-        });
-      });
-      return deferred.promise;
-    };
-
-    this.loadSelectedCompany = function (selectedCompanyId, userCompany) {
-        //this funtion assumes user and user.company are loaded
-        var deferred = $q.defer();
-        if (selectedCompanyId && selectedCompanyId !== userCompany.id) {
-            getCompany(selectedCompanyId).then(function(res) {
-                if (res.code === 0 && res.item) {
-                    deferred.resolve(res.item);
-                } else {
-                    deferred.resolve(userCompany);
-                }
-            });
-        } else {
-            deferred.resolve(userCompany);
-        }
-        return deferred.promise;
-    };
-
-    this.validateAddressSimple = function(company, contact) {
-      var errors = [];
-      if (contact) {
-          if (!contact.firstName) {
-              errors.push("Missing First Name");
-          }
-          if (!contact.lastName) {
-              errors.push("Missing Last Name");
-          }
-          if (!contact.email) {
-              errors.push("Missing Email");
-          } else {
-              var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-              if (!re.test(contact.email)) {
-                  errors.push("Invalid Email");
-              }
-          }
-      }
-      if (!company.street) {
-          errors.push("Missing Address (Line 1)");
-      }
-      if (!company.city) {
-          errors.push("Missing City");
-      }
-      if (!company.country) {
-          errors.push("Missing Country");
-      }
-      if (!company.province) {
-          errors.push("Missing State / Province");
-      }
-      if (!company.postalCode) {
-          errors.push("Missing Zip / Postal Code");
-      }
-      return errors;
-    };
-
-  }])
-
-.filter("fullAddress", function () {
-  return function (company) {
-    var res = (company.street ? company.street + ", " : "") +
-      (company.city ? company.city + ", " : "") +
-      (company.province ? company.province + ", " : "") +
-      (company.country ? company.country + ", " : "") +
-      (company.postalCode ? company.postalCode + ", " : "");
-    if (res) {
-      res = res.substr(0, res.length - 2);
-    }
-    return res;
-  };
-});
 
 /*
  * App Configuration File
@@ -4775,9 +4737,9 @@ angular.module("risevision.common.config")
 
 /* jshint ignore:start */
 var gapiLoadingStatus = null;
-function handleClientJSLoad() {
+var handleClientJSLoad = function() {
     gapiLoadingStatus = "loaded";
-    console.log("ClientJS is loaded.");
+    console.debug("ClientJS is loaded.");
     //Ready: create a generic event
     var evt = document.createEvent("Events");
     //Aim: initialize it to be the event we want
@@ -4788,25 +4750,6 @@ function handleClientJSLoad() {
 /* jshint ignore:end */
 
 angular.module("risevision.common.gapi", [])
-  .factory("oauth2APILoader", ["gapiLoader", "$q", "$log",
-   function (gapiLoader, $q, $log) {
-    var deferred = $q.defer();
-    var promise;
-
-    return function () {
-      if (!promise) {
-        promise = deferred.promise;
-        gapiLoader().then(function (gApi) {
-          gApi.client.load("oauth2", "v2", function () {
-              $log.debug("OAuth2 API is loaded");
-              deferred.resolve(gApi);
-          });
-        });
-      }
-      return promise;
-    };
-
-  }])
   .factory("gapiLoader", ["$q", "$window", function ($q, $window) {
     var deferred = $q.defer();
 
@@ -4837,59 +4780,54 @@ angular.module("risevision.common.gapi", [])
       return deferred.promise;
     };
   }])
-  .factory("coreAPILoader", ["gapiLoader", "$q", "CORE_URL",
-    "$location", "$log",
-    function (gapiLoader, $q, CORE_URL, $location, $log) {
-    var deferred = $q.defer();
-    var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
-    return function () {
-      gapiLoader().then(function (gApi) {
-        if(gApi.client.core){
-          //already loaded. return right away
-          deferred.resolve(gApi.client.core);
-        }
-        else {
-          gApi.client.load("core", "v0", function () {
-            if (gApi.client.core) {
-              $log.debug("Core API Loaded");
-              deferred.resolve(gApi.client.core);
-            } else {
-              var errMsg = "Core API Load Failed";
-              $log.error(errMsg);
-              deferred.reject(errMsg);
-            }
-          }, baseUrl);
-        }
-      });
-      return deferred.promise;
+
+  //abstract method for creading a loader factory service that loads any
+  //custom Google Client API library
+
+  .factory("gapiClientLoaderGenerator", ["$q", "gapiLoader", "$log",
+    function ($q, gapiLoader, $log) {
+    return function (libName, libVer, baseUrl) {
+      return function () {
+        var deferred = $q.defer();
+        gapiLoader().then(function (gApi) {
+          if(gApi.client[libName]){
+            //already loaded. return right away
+            deferred.resolve(gApi.client[libName]);
+          }
+          else {
+            gApi.client.load.apply(this, [libName, libVer].concat([function () {
+              if (gApi.client[libName]) {
+                $log.debug(libName + "." + libVer + " Loaded");
+                deferred.resolve(gApi.client[libName]);
+              } else {
+                var errMsg = libName + "." + libVer  + " Load Failed";
+                $log.error(errMsg);
+                deferred.reject(errMsg);
+              }
+            }, baseUrl]));
+          }
+        });
+        return deferred.promise;
+      };
     };
   }])
-  .factory("riseAPILoader", ["gapiLoader", "$q", "CORE_URL",
-    "$location", "$log",
-    function (gapiLoader, $q, CORE_URL, $location, $log) {
-    var deferred = $q.defer();
+
+  .factory("oauth2APILoader", ["gapiClientLoaderGenerator",
+    function(gapiClientLoaderGenerator) {
+      return gapiClientLoaderGenerator("oauth2", "v2");
+  }])
+
+  .factory("coreAPILoader", ["CORE_URL", "gapiClientLoaderGenerator",
+    "$location",
+    function (CORE_URL, gapiClientLoaderGenerator, $location) {
+      var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
+      return gapiClientLoaderGenerator("core", "v0", baseUrl);
+  }])
+
+  .factory("riseAPILoader", ["CORE_URL", "gapiClientLoaderGenerator", "$location",
+    function (CORE_URL, gapiClientLoaderGenerator, $location) {
     var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
-    return function () {
-      gapiLoader().then(function (gApi) {
-        if(gApi.client.rise){
-          //already loaded. return right away
-          deferred.resolve(gApi.client.rise);
-        }
-        else {
-          gApi.client.load("rise", "v0", function () {
-            if (gApi.client.core) {
-              $log.debug("Rise API Loaded");
-              deferred.resolve(gApi.client.rise);
-            } else {
-              var errMsg = "Rise API Load Failed";
-              $log.error(errMsg);
-              deferred.reject(errMsg);
-            }
-          }, baseUrl);
-        }
-      });
-      return deferred.promise;
-    };
+    return gapiClientLoaderGenerator("rise", "v0", baseUrl);
   }]);
 
 (function (angular){
