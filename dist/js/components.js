@@ -46966,7 +46966,7 @@ angular.module("risevision.common.loading", ["angularSpinner"])
     /* Global Spinner */
     //append global spinner
     angular.element($document[0].body).append(
-      "<div rv-global-spinner class=\"ng-hide\" style=\"position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 9999; \"></div>");
+      "<div rv-global-spinner class=\"ng-hide\" style=\"position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 1040; \"></div>");
 
     function _addKeyToRegistry(key) {
       if(_rvGlobalSpinnerRegistry.indexOf(key) < 0) { _rvGlobalSpinnerRegistry.push(key); }
