@@ -3,9 +3,9 @@
   "use strict";
   angular.module("risevision.common.oauth2",
   ["risevision.common.gapi", "risevision.common.cache"]).
-  factory("getOAuthUserInfo", ["oauthAPILoader", "$q", "userInfoCache",
+  factory("getOAuthUserInfo", ["oauth2APILoader", "$q", "userInfoCache",
   "$log",
-  function (oauthAPILoader, $q, userInfoCache, $log) {
+  function (oauth2APILoader, $q, userInfoCache, $log) {
     return function () {
 
       var deferred = $q.defer();
@@ -19,8 +19,8 @@
         }
       }
       else {
-        oauthAPILoader().then(function (gApi){
-          gApi.client.oauth2.userinfo.get().execute(function (resp){
+        oauth2APILoader().then(function (oauth2){
+          oauth2.userinfo.get().execute(function (resp){
             $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
             if(!resp) {
               userInfoCache.remove("oauth2UserInfo");

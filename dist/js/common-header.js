@@ -1400,10 +1400,10 @@ angular.module("risevision.common.header", [
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
-   "$interval", "oauthAPILoader", "$log",
+   "$interval", "oauth2APILoader", "$log",
     "$templateCache", "userState", "$location",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache, userState, $location) {
+    oauth2APILoader, $log, $templateCache, userState, $location) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
@@ -1504,9 +1504,9 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager", "oauthAPILoader",
+  "$log", "uiStatusManager", "oauth2APILoader",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager, oauthAPILoader) {
+  $loading, cookieStore, $log, uiStatusManager, oauth2APILoader) {
 
     window.$loading = $loading; //DEBUG
 
@@ -1619,7 +1619,7 @@ angular.module("risevision.common.header")
     };
 
     $loading.startGlobal("auth-buttons-silent");
-    oauthAPILoader() //force loading oauth api on startup
+    oauth2APILoader() //force loading oauth api on startup
                       //to avoid popup blocker
     .then().finally(function () {
       userState.authenticate(false).then().finally(function () {
@@ -2507,7 +2507,7 @@ angular.module("risevision.common.header")
   ]);
 
 angular.module("risevision.common.header")
-.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "$window", "userState", 
+.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "$window", "userState",
   function($scope, $modalInstance, $log, $window, userState) {
 
     $scope.closeModal = function() {
@@ -3245,11 +3245,11 @@ angular.module("risevision.common.geodata", [])
   .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
   .factory("userState", [
-    "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
+    "$injector", "$q", "$log", "oauth2APILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
     "$interval", "$loading",
-    function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
+    function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
     $interval, $loading) {
@@ -3426,7 +3426,7 @@ angular.module("risevision.common.geodata", [])
          opts.prompt = "select_account";
        }
 
-       oauthAPILoader().then(function (gApi) {
+       oauth2APILoader().then(function (gApi) {
          gApi.auth.authorize(opts, function (authResult) {
            $log.debug("authResult", authResult);
            if (authResult && !authResult.error) {
@@ -3753,8 +3753,8 @@ angular.module("risevision.common.ui-status", [])
     return function () {
       $log.debug("agreeToTerms called.");
       var deferred = $q.defer();
-      riseAPILoader().then(function (coreApi) {
-        var request = coreApi.account.agreeToTerms();
+      riseAPILoader().then(function (riseApi) {
+        var request = riseApi.account.agreeToTerms();
         request.execute(function (resp) {
           $log.debug("agreeToTerms resp", resp);
           userInfoCache.removeAll();
@@ -3794,8 +3794,8 @@ angular.module("risevision.common.ui-status", [])
     return function () {
       $log.debug("addAccount called.");
       var deferred = $q.defer();
-      riseAPILoader().then(function (coreApi) {
-        var request = coreApi.account.add();
+      riseAPILoader().then(function (riseApi) {
+        var request = riseApi.account.add();
         request.execute(function (resp) {
             $log.debug("addAccount resp", resp);
             if(resp.result) {
@@ -3958,9 +3958,9 @@ angular.module("risevision.common.ui-status", [])
     "ba": "Rise Store Administrator"
   })
 
-  .factory("getUserProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
+  .factory("getUserProfile", ["oauth2APILoader", "coreAPILoader", "$q", "$log",
   "getOAuthUserInfo", "userInfoCache",
-  function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
+  function (oauth2APILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
     return function (username, clearCache) {
       var deferred = $q.defer();
@@ -3985,7 +3985,7 @@ angular.module("risevision.common.ui-status", [])
           deferred.resolve(userInfoCache.get("profile-" + username));
         }
         else {
-          $q.all([oauthAPILoader(), coreAPILoader()]).then(function (results){
+          $q.all([oauth2APILoader(), coreAPILoader()]).then(function (results){
             var coreApi = results[1];
             // var oauthUserInfo = results[2];
             coreApi.user.get(criteria).execute(function (resp){
@@ -4345,9 +4345,9 @@ angular.module("risevision.common.ui-status", [])
   "use strict";
   angular.module("risevision.common.oauth2",
   ["risevision.common.gapi", "risevision.common.cache"]).
-  factory("getOAuthUserInfo", ["oauthAPILoader", "$q", "userInfoCache",
+  factory("getOAuthUserInfo", ["oauth2APILoader", "$q", "userInfoCache",
   "$log",
-  function (oauthAPILoader, $q, userInfoCache, $log) {
+  function (oauth2APILoader, $q, userInfoCache, $log) {
     return function () {
 
       var deferred = $q.defer();
@@ -4361,7 +4361,7 @@ angular.module("risevision.common.ui-status", [])
         }
       }
       else {
-        oauthAPILoader().then(function (gApi){
+        oauth2APILoader().then(function (gApi){
           gApi.client.oauth2.userinfo.get().execute(function (resp){
             $log.debug("getOAuthUserInfo oauth2.userinfo.get() resp", resp);
             if(!resp) {
@@ -4788,7 +4788,7 @@ function handleClientJSLoad() {
 /* jshint ignore:end */
 
 angular.module("risevision.common.gapi", [])
-  .factory("oauthAPILoader", ["gapiLoader", "$q", "$log",
+  .factory("oauth2APILoader", ["gapiLoader", "$q", "$log",
    function (gapiLoader, $q, $log) {
     var deferred = $q.defer();
     var promise;

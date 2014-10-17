@@ -14,11 +14,11 @@
   .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
 
   .factory("userState", [
-    "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
+    "$injector", "$q", "$log", "oauth2APILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
     "$interval", "$loading",
-    function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
+    function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
     $interval, $loading) {
@@ -194,57 +194,59 @@
        else {
          opts.prompt = "select_account";
        }
+       gapiLoader().then(function (gApi) {
+         oauth2APILoader().then(function () {
+           gApi.auth.authorize(opts, function (authResult) {
+             $log.debug("authResult", authResult);
+             if (authResult && !authResult.error) {
+               _setAccessToken(authResult);
 
-       oauthAPILoader().then(function (gApi) {
-         gApi.auth.authorize(opts, function (authResult) {
-           $log.debug("authResult", authResult);
-           if (authResult && !authResult.error) {
-             _setAccessToken(authResult);
+               getOAuthUserInfo().then(function (oauthUserInfo) {
+                 if(!_user.username || !_profile.username ||
+                   _user.username !== oauthUserInfo.email) {
 
-             getOAuthUserInfo().then(function (oauthUserInfo) {
-               if(!_user.username || !_profile.username ||
-                 _user.username !== oauthUserInfo.email) {
+                   //populate user
+                   _clearAndCopy({
+                     username: oauthUserInfo.email,
+                     picture: oauthUserInfo.picture
+                   }, _user);
 
-                 //populate user
-                 _clearAndCopy({
-                   username: oauthUserInfo.email,
-                   picture: oauthUserInfo.picture
-                 }, _user);
+                   refreshProfile().then(function () {
+                     //populate userCompany
+                     return getCompany().then(function(company) {
+                       _clearAndCopy(company, _userCompany);
+                       _clearAndCopy(company, _selectedCompany);
 
-                 refreshProfile().then(function () {
-                   //populate userCompany
-                   return getCompany().then(function(company) {
-                     _clearAndCopy(company, _userCompany);
-                     _clearAndCopy(company, _selectedCompany);
-
-                   }, function () { _clearObj(_userCompany);
-                   }).finally(function () {
-                    authorizeDeferred.resolve(authResult);
-                    $rootScope.$broadcast("risevision.user.authorized");
-                    if(!attemptImmediate) {
-                      $rootScope.$broadcast("risevision.user.userSignedIn");
-                    }
+                     }, function () { _clearObj(_userCompany);
+                     }).finally(function () {
+                      authorizeDeferred.resolve(authResult);
+                      $rootScope.$broadcast("risevision.user.authorized");
+                      if(!attemptImmediate) {
+                        $rootScope.$broadcast("risevision.user.userSignedIn");
+                      }
+                     });
+                   },
+                   function () {
+                     authorizeDeferred.resolve(authResult);
+                     $rootScope.$broadcast("risevision.user.authorized");
+                     if(!attemptImmediate) {
+                       $rootScope.$broadcast("risevision.user.userSignedIn");
+                     }
                    });
-                 },
-                 function () {
-                   authorizeDeferred.resolve(authResult);
-                   $rootScope.$broadcast("risevision.user.authorized");
-                   if(!attemptImmediate) {
-                     $rootScope.$broadcast("risevision.user.userSignedIn");
-                   }
-                 });
-               }
-               else {authorizeDeferred.resolve(authResult); }
-             }, function(err){
+                 }
+                 else {authorizeDeferred.resolve(authResult); }
+               }, function(err){
+                 _clearObj(_user);
+               authorizeDeferred.reject(err); });
+             }
+             else {
                _clearObj(_user);
-             authorizeDeferred.reject(err); });
-           }
-           else {
-             _clearObj(_user);
-             authorizeDeferred.reject("not authorized");
-           }
-         });
-       }, authorizeDeferred.reject);
+               authorizeDeferred.reject("not authorized");
+             }
+           });
+         }, authorizeDeferred.reject); //oauth2APILoader
+       }, authorizeDeferred.reject); //gapiLoader
+
        return authorizeDeferred.promise;
      };
 

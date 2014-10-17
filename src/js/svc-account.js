@@ -11,8 +11,8 @@
     return function () {
       $log.debug("agreeToTerms called.");
       var deferred = $q.defer();
-      riseAPILoader().then(function (coreApi) {
-        var request = coreApi.account.agreeToTerms();
+      riseAPILoader().then(function (riseApi) {
+        var request = riseApi.account.agreeToTerms();
         request.execute(function (resp) {
           $log.debug("agreeToTerms resp", resp);
           userInfoCache.removeAll();
@@ -52,8 +52,8 @@
     return function () {
       $log.debug("addAccount called.");
       var deferred = $q.defer();
-      riseAPILoader().then(function (coreApi) {
-        var request = coreApi.account.add();
+      riseAPILoader().then(function (riseApi) {
+        var request = riseApi.account.add();
         request.execute(function (resp) {
             $log.debug("addAccount resp", resp);
             if(resp.result) {

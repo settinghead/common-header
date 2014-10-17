@@ -110,6 +110,7 @@ var unitTestFiles = [
   "components/angular-spinner/angular-spinner.js",
   "components/ng-biscuit/dist/ng-biscuit.js",
   "components/rv-loading/loading.js",
+  "components/ng-gapi-loader/src/js/*.js",
   "src/js/config/config.js",
   "test/unit/fixtures/*.js",
   "src/js/*.js",
