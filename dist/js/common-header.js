@@ -118,6 +118,19 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("close-frame-button.html",
+    "<li class=\"close-frame\">\n" +
+    "	<i class=\"glyphicons remove_2 close-iframe\" ng-click=\"closeIFrame()\"></i>\n" +
+    "</li>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("common-header.html",
     "<!-- Common Header Navbar -->\n" +
     "<nav class=\"navbar navbar-default navbar-static-top\"\n" +
@@ -126,20 +139,20 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "		<div class=\"navbar-header\" style=\"width: 100%;\">\n" +
     "			<a class=\"navbar-brand visible-md visible-lg\"\n" +
-    "			  href=\"http://www.risevision.com/\" target=\"_blank\">\n" +
+    "			  href=\"http://www.risevision.com/\" target=\"_blank\" ng-if=\"!inRVAFrame\">\n" +
     "				<img src=\"//s3.amazonaws.com/rise-common/images/logo-small.png\" class=\"img-responsive logo-small\" width=\"113\" height=\"42\" alt=\"Rise Vision\">\n" +
     "			</a>\n" +
     "			<a class=\"navbar-brand hidden-md hidden-lg text-center\"\n" +
     "				href=\"\" off-canvas-toggle>\n" +
     "				<i class=\"fa fa-bars\"></i>\n" +
     "			</a>\n" +
-    "\n" +
     "			<!-- If User Authenticated -->\n" +
     "			<!-- Action Nav -->\n" +
     "			<ul class=\"nav navbar-nav navbar-right actions-nav pull-right\">\n" +
     "				<!-- Notifications -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
+    "					ng-if=\"!inRVAFrame\"\n" +
     "				  ng-controller=\"SystemMessagesButtonCtrl\"\n" +
     "					src=\"'system-messages-button.html'\"\n" +
     "				></ng-include>\n" +
@@ -148,6 +161,13 @@ app.run(["$templateCache", function($templateCache) {
     "					replace-include\n" +
     "					ng-controller=\"ShoppingCartButtonCtrl\"\n" +
     "					src=\"'shoppingcart-button.html'\"\n" +
+    "				></ng-include>\n" +
+    "				<!-- Shopping Cart -->\n" +
+    "				<ng-include\n" +
+    "					replace-include\n" +
+    "					ng-if=\"inRVAFrame\"\n" +
+    "					ng-controller=\"CloseFrameButtonCtrl\"\n" +
+    "					src=\"'close-frame-button.html'\"\n" +
     "				></ng-include>\n" +
     "				<!-- Current App -->\n" +
     "				<li class=\"dropdown\" ng-show=\"false\">\n" +
@@ -210,13 +230,14 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
-    "					ng-if=\"isRiseVisionUser\"\n" +
+    "					ng-if=\"isRiseVisionUser && !inRVAFrame\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
     "				<!-- Auth -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
+    "					ng-if=\"!inRVAFrame\"\n" +
     "				  ng-controller=\"AuthButtonsCtr\"\n" +
     "					src=\"'auth-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -229,7 +250,7 @@ app.run(["$templateCache", function($templateCache) {
     "					<li ng-repeat=\"opt in navOptions\">\n" +
     "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "					</li>\n" +
-    "					<li>\n" +
+    "					<li ng-if=\"!inRVAFrame\">\n" +
     "						<a href=\"http://www.risevision.com/help/\" target=\"_blank\">\n" +
     "							Help\n" +
     "						</a>\n" +
@@ -1314,16 +1335,16 @@ angular.module("risevision.common.header", [
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
-    "$templateCache",
-    "userState",
+    "$templateCache", "userState", "$location",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache, userState) {
+    oauthAPILoader, $log, $templateCache, userState, $location) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
       link: function($scope) {
         $scope.navCollapsed = true;
+        $scope.inRVAFrame = userState.inRVAFrame();
 
         // If nav options not provided use defaults
         if (!$scope.navOptions) {
@@ -1348,6 +1369,12 @@ angular.module("risevision.common.header", [
 
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
+        $rootScope.$on("$stateChangeSuccess", function() {
+          if ($scope.inRVAFrame) {
+            $location.search("inRVA", $scope.inRVAFrame);
+          }
+        });
 
       }
     };
@@ -1675,6 +1702,21 @@ angular.module("risevision.common.header")
     $scope.$on("risevision.user.signedOut", function () {
       shoppingCart.destroy();
     });
+  }
+]);
+
+angular.module("risevision.common.header")
+
+.controller("CloseFrameButtonCtrl", [
+  "$scope", "$log", "gadgetsService",
+  function($scope, $log, gadgetsService) {
+      $log.debug("close button");
+
+      $scope.closeIFrame = function () {
+      $log.debug("gadgetsService.closeIFrame");
+          gadgetsService.closeIFrame();
+      };
+
   }
 ]);
 
@@ -3087,6 +3129,7 @@ angular.module("risevision.common.geodata", [])
     var _roleMap = {};
     var _accessToken = cookieStore.get("rv-token");
     var _accessTokenRefreshHandler = null;
+    var _inRVAFrame = angular.isDefined($location.search().inRVA);
 
       //
       var _follow = function(source) {
@@ -3406,6 +3449,7 @@ angular.module("risevision.common.geodata", [])
         return _selectedCompany && _selectedCompany.id !== (_userCompany && _userCompany.id); },
       getUserPicture: function () { return _user.picture; },
       hasRole: hasRole,
+      inRVAFrame: function () {return _inRVAFrame; },
       isRiseAdmin: function () {return hasRole("sa"); },
       isRiseStoreAdmin: function () {return hasRole("ba"); },
       isUserAdmin: function () {return hasRole("ua"); },
@@ -4729,3 +4773,24 @@ angular.module("risevision.common.gapi", [])
   }]);
 
 })(angular);
+
+"use strict";
+/*global gadgets: false */
+
+angular.module("risevision.store.data-gadgets", [])
+  .service("gadgetsService", ["$q", function ($q) {
+
+    this.closeIFrame = function () {
+      var deferred = $q.defer();
+      gadgets.rpc.call("", "rscmd_closeSettings", function() { deferred.resolve(true); });
+      return deferred.promise;
+    };
+
+    this.sendProductCode = function (productCode) {
+      var deferred = $q.defer();
+      var data = { params: productCode };
+      gadgets.rpc.call("", "rscmd_saveSettings", function() { deferred.resolve(true); }, data);
+      return deferred.promise;
+    };
+
+  }]);

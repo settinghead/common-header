@@ -21,16 +21,16 @@ angular.module("risevision.common.header", [
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauthAPILoader", "$log",
-    "$templateCache",
-    "userState",
+    "$templateCache", "userState", "$location",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache, userState) {
+    oauthAPILoader, $log, $templateCache, userState, $location) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
       link: function($scope) {
         $scope.navCollapsed = true;
+        $scope.inRVAFrame = userState.inRVAFrame();
 
         // If nav options not provided use defaults
         if (!$scope.navOptions) {
@@ -55,6 +55,12 @@ angular.module("risevision.common.header", [
 
         $scope.$watch(function () { return userState.isRiseVisionUser(); },
         function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+
+        $rootScope.$on("$stateChangeSuccess", function() {
+          if ($scope.inRVAFrame) {
+            $location.search("inRVA", $scope.inRVAFrame);
+          }
+        });
 
       }
     };
