@@ -2211,7 +2211,7 @@ angular.module("risevision.common.header")
     return function (d) {
       if(d) {
         d = new Date(d);
-        return d.getMonth() + "/" + d.getDate() + "/" + d.getFullYear() +
+        return (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear() +
         " at " + d.toLocaleTimeString() + " EST"; //always assume EST
       }
       else {
