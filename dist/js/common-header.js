@@ -120,7 +120,9 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("close-frame-button.html",
     "<li class=\"close-frame\">\n" +
-    "	<i class=\"glyphicons remove_2 close-iframe\" ng-click=\"closeIFrame()\"></i>\n" +
+    "  <a href=\"\" class=\"close-frame-button\" ng-click=\"closeIFrame()\">\n" +
+    "    <i class=\"fa fa-times\"></i>\n" +
+    "  </a>\n" +
     "</li>\n" +
     "");
 }]);
