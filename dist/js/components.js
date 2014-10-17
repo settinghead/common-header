@@ -46966,7 +46966,7 @@ angular.module("risevision.common.loading", ["angularSpinner"])
     /* Global Spinner */
     //append global spinner
     angular.element($document[0].body).append(
-      "<div rv-global-spinner style=\"position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 9999; \"></div>");
+      "<div rv-global-spinner class=\"ng-hide\" style=\"position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 1040; \"></div>");
 
     function _addKeyToRegistry(key) {
       if(_rvGlobalSpinnerRegistry.indexOf(key) < 0) { _rvGlobalSpinnerRegistry.push(key); }
@@ -47032,15 +47032,15 @@ angular.module("risevision.common.loading", ["angularSpinner"])
   }])
 
   .directive("rvGlobalSpinner", ["usSpinnerService", "$compile", "_rvGlobalSpinnerRegistry",
-    "$timeout",
-    function (usSpinnerService, $compile, _rvGlobalSpinnerRegistry, $timeout) {
+    "$timeout", "$rootScope",
+    function (usSpinnerService, $compile, _rvGlobalSpinnerRegistry, $timeout, $rootScope) {
     return {
       scope: true,
       link: function (scope, $element) {
 
         var tpl = "<div ng-show=\"active\" class=\"spinner-backdrop fade\"" +
           " ng-class=\"{in: active}\" us-spinner=\"rvSpinnerOptions\"" +
-          " spinner-key=\"_rv-global-spinner\"></div>";
+          " spinner-key=\"_rv-global-spinner\" ng-focus=\"spinnerFocused()\"></div>";
           $element.prepend($compile(tpl)(scope));
 
         scope.rvSpinnerOptions = {
@@ -47081,6 +47081,13 @@ angular.module("risevision.common.loading", ["angularSpinner"])
             $element.addClass("ng-hide");
           }
         });
+
+        //to be used if user has closed Google authentication popup dialog
+        //without completing the registration process
+
+        scope.spinnerFocused = function () {
+          $rootScope.$broadcast("rv-spinner:global:focused");
+        };
 
         $timeout(function () {
           usSpinnerService.spin("_rv-global-spinner");

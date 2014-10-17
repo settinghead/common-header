@@ -283,7 +283,7 @@ app.run(["$templateCache", function($templateCache) {
     "			<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "		</li>\n" +
     "		<li>\n" +
-    "			<a target=\"_blank\" href=\"http://help.risevision.com/\">Help</a>\n" +
+    "			<a target=\"_blank\" href=\"http://www.risevision.com/help\">Help</a>\n" +
     "		</li>\n" +
     "  </ul>\n" +
     "</nav>\n" +
