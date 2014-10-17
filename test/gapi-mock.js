@@ -150,28 +150,7 @@
       };
     };
 
-    var systemMessages = {
-     "items": [
-        {
-         "text": "We have updated our <a href=\"http://www.risevision." +
-           "com/terms-service-privacy/\" target=_blank>Service Agreement" +
-           "</a> with you. Please <a href=\"http://www.risevision.com/" +
-           "terms-service-privacy/\" target=_blank>CLICK HERE</a> here to" +
-           " review. Thank You.",
-         "startDate": "2001-01-01T00:00:00.000Z",
-         "endDate": "2014-05-13T00:00:00.000Z",
-         "kind": "core#systemmessageItem"
-       },
-       {
-        "text": "Everything 10% Off in the next 10 seconds",
-        "startDate": "2001-01-01T00:00:00.000Z",
-        "endDate": "2014-09-13T00:00:00.000Z",
-        "kind": "core#systemmessageItem"
-       }
-     ],
-     "kind": "core#systemmessage",
-     "etag": "\"DxU-6pohsdi2UIVUQMfQkq7ADWs/7wbH6LlcDW2l8ZyL1nAod1Q9wFE\""
-   };
+    var systemMessages = gapiMockData.systemMessages;
 
    if(localStorage.getItem("fakeGoogleDb")) {
      fakeDb = window.gapi._fakeDb = JSON.parse(localStorage.getItem("fakeGoogleDb"));
