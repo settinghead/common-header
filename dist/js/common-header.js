@@ -4145,6 +4145,18 @@ angular.module("risevision.common.ui-status", [])
 
       messages.addMessages = function (newMessages) {
         if(newMessages && newMessages instanceof Array) {
+          newMessages = (function filterNewMessages(items) {
+            var _newItems = [];
+            angular.forEach(items, function (msg) {
+              var endDate = new Date(msg.endDate || "2199-12-31"),
+                  startDate = new Date(msg.startDate || 0),
+                  currentDate = new Date();
+              if(currentDate > startDate && currentDate < endDate ) {
+                _newItems.push(msg);
+              }
+            });
+            return _newItems;
+          })(newMessages);
           newMessages.forEach(function (m) {
             //temporary logic to avoid duplicate messages
             var duplicate = false;
@@ -4734,6 +4746,18 @@ angular.module("risevision.common.gapi", [])
 
       messages.addMessages = function (newMessages) {
         if(newMessages && newMessages instanceof Array) {
+          newMessages = (function filterNewMessages(items) {
+            var _newItems = [];
+            angular.forEach(items, function (msg) {
+              var endDate = new Date(msg.endDate || "2199-12-31"),
+                  startDate = new Date(msg.startDate || 0),
+                  currentDate = new Date();
+              if(currentDate > startDate && currentDate < endDate ) {
+                _newItems.push(msg);
+              }
+            });
+            return _newItems;
+          })(newMessages);
           newMessages.forEach(function (m) {
             //temporary logic to avoid duplicate messages
             var duplicate = false;
