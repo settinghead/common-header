@@ -208,10 +208,23 @@ angular.module("risevision.common.company",
   }])
 
   .service("selectedCompanyUrlHandler", ["$location", "userState",
-    "getCompany",
-    function ($location, userState, getCompany) {
+    "getCompany", "$rootScope", "$log",
+    function ($location, userState, getCompany, $rootScope, $log) {
 
       var that = this;
+      if($location.search().cid && !userState.isLoggedIn()) {
+        $log.debug("cid", $location.search().cid, "saved for later processing.");
+        this.pendingSelectedCompany = $location.search().cid;
+      }
+
+      $rootScope.$on("risevision.user.userSignedIn", function () {
+        if(that.pendingSelectedCompany) {
+          $location.search("cid", that.pendingSelectedCompany);
+          delete(that.pendingSelectedCompany);
+          that.updateSelectedCompanyFromUrl();
+        }
+      });
+
       this.init = function () {
         // This parameter is only appended to the url if the user is logged in
         if (!$location.search().cid && userState.getSelectedCompanyId() &&
@@ -233,9 +246,6 @@ angular.module("risevision.common.company",
             $location.search().cid !== selectedCompanyId) {
             $location.search("cid", selectedCompanyId);
           }
-          else if (selectedCompanyId === userState.getUserCompanyId()) {
-            $location.search({"cid" : null});
-          }
         }
         else {
           if($location.search().cid) {
@@ -245,7 +255,8 @@ angular.module("risevision.common.company",
       };
       this.updateSelectedCompanyFromUrl = function () {
         var newCompanyId = $location.search().cid;
-        if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+        if(userState.getSelectedCompanyId() &&
+          newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
           getCompany(newCompanyId).then(function (company) {
             userState.switchCompany(company);
           });
