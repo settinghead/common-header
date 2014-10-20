@@ -232,7 +232,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
-    "					ng-if=\"isRiseVisionUser && !inRVAFrame\"\n" +
+    "					ng-if=\"isRiseVisionUser\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -355,7 +355,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li class=\"dropdown hidden-xs\" ng-show=\"isRiseVisionUser\">\n" +
+    "<li class=\"dropdown hidden-xs\" ng-show=\"isRiseVisionUser && !inRVAFrame\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle company-buttons-icon\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -369,7 +369,7 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    " ng-show=\"isRiseVisionUser\"\n" +
+    " ng-show=\"isRiseVisionUser && !inRVAFrame\"\n" +
     " ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
     "  <a href=\"\" class=\"company-buttons-icon-mobile\"\n" +
     "    action-sheet=\"'company-buttons-menu.html'\">\n" +
@@ -1069,7 +1069,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("subcompany-banner.html",
-    "<div ng-show=\"isSubcompanySelected\"\n" +
+    "<div ng-show=\"isSubcompanySelected && !inRVAFrame\"\n" +
     "  class=\"sub-company-alert\">\n" +
     "  You're in Sub-Company {{selectedCompanyName}}&nbsp;\n" +
     "  <a href=\"#\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +

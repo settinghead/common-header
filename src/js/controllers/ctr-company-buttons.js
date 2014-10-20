@@ -1,26 +1,15 @@
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "userState", "getCompany", "$location",
-  function($scope, $modal, $templateCache, userState, getCompany, $location) {
+  "userState", "getCompany", "$location", "selectedCompanyUrlHandler",
+  function($scope, $modal, $templateCache, userState, getCompany, $location,
+    selectedCompanyUrlHandler) {
+    $scope.inRVAFrame = userState.inRVAFrame();
 
     $scope.$watch(function () {return userState.getSelectedCompanyId(); },
     function (newCompanyId) {
       if(newCompanyId) {
         $scope.isSubcompanySelected = userState.isSubcompanySelected();
-
-        // This parameter is only appended to the url if the user is logged in
-        if (newCompanyId !== userState.getUserCompanyId() &&
-          $location.search().cid !== newCompanyId) {
-          $location.search("cid", newCompanyId);
-        }
-        else if (newCompanyId === userState.getUserCompanyId()) {
-          $location.search({"cid" : null});
-        }
-      }
-      else {
-        if($location.search().cid) {
-          $location.search({"cid" : null});
-        }
+        selectedCompanyUrlHandler.updateUrl();
       }
     });
 
@@ -43,29 +32,11 @@ angular.module("risevision.common.header")
     $scope.$watch(function () {return userState.isRiseAdmin(); },
     function (isRvAdmin) { $scope.isRiseVisionAdmin = isRvAdmin; });
 
-    var updateSelectedCompanyFromUrl = function() {
-      var newCompanyId = $location.search().cid;
-      if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
-        getCompany(newCompanyId).then(function (company) {
-          userState.switchCompany(company);
-        });
-      }
-    };
-
-    // This parameter is only appended to the url if the user is logged in
-    if (!$location.search().cid && userState.getSelectedCompanyId() &&
-        userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
-      $location.search("cid", userState.getSelectedCompanyId());
-    }
-    else if($location.search().cid &&
-      userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
-      $location.search("cid", null);
-    }
+    selectedCompanyUrlHandler.init();
 
     //detect selectCompany changes on route UI
-    $scope.$on("$stateChangeSuccess", updateSelectedCompanyFromUrl);
-    $scope.$on("$routeChangeSuccess", updateSelectedCompanyFromUrl);
-    updateSelectedCompanyFromUrl();
+    $scope.$on("$stateChangeSuccess", selectedCompanyUrlHandler.updateSelectedCompanyFromUrl);
+    $scope.$on("$routeChangeSuccess", selectedCompanyUrlHandler.updateSelectedCompanyFromUrl);
 
     $scope.addSubCompany = function(size) {
       $modal.open({
