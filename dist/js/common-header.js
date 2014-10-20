@@ -232,7 +232,7 @@ app.run(["$templateCache", function($templateCache) {
     "				<!-- Company Dropdown -->\n" +
     "				<ng-include\n" +
     "					replace-include\n" +
-    "					ng-if=\"isRiseVisionUser && !inRVAFrame\"\n" +
+    "					ng-if=\"isRiseVisionUser\"\n" +
     "				  ng-controller=\"CompanyButtonsCtrl\"\n" +
     "					src=\"'company-buttons.html'\"\n" +
     "				></ng-include>\n" +
@@ -355,7 +355,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("company-buttons.html",
     "<!-- Desktop and tablet -->\n" +
-    "<li class=\"dropdown hidden-xs\" ng-show=\"isRiseVisionUser\">\n" +
+    "<li class=\"dropdown hidden-xs\" ng-show=\"isRiseVisionUser && !inRVAFrame\">\n" +
     "  <a href=\"\" class=\"dropdown-toggle company-buttons-icon\">\n" +
     "    <i class=\"fa fa-cog\"></i>\n" +
     "  </a>\n" +
@@ -369,7 +369,7 @@ app.run(["$templateCache", function($templateCache) {
     "\n" +
     "<!-- Mobile -->\n" +
     "<li\n" +
-    " ng-show=\"isRiseVisionUser\"\n" +
+    " ng-show=\"isRiseVisionUser && !inRVAFrame\"\n" +
     " ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
     "  <a href=\"\" class=\"company-buttons-icon-mobile\"\n" +
     "    action-sheet=\"'company-buttons-menu.html'\">\n" +
@@ -1069,7 +1069,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("subcompany-banner.html",
-    "<div ng-show=\"isSubcompanySelected\"\n" +
+    "<div ng-show=\"isSubcompanySelected && !inRVAFrame\"\n" +
     "  class=\"sub-company-alert\">\n" +
     "  You're in Sub-Company {{selectedCompanyName}}&nbsp;\n" +
     "  <a href=\"#\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
@@ -1401,6 +1401,8 @@ angular.module("risevision.common.header")
   .controller("SubcompanyBannerCtrl", ["$scope", "$modal",
    "$loading", "userState",
     function($scope, $modal, $loading, userState) {
+      $scope.inRVAFrame = userState.inRVAFrame();
+
       $scope.$watch(function () { return userState.getSelectedCompanyId(); },
       function (selectedCompanyId) {
         if(selectedCompanyId) {
@@ -1542,27 +1544,16 @@ angular.module("risevision.common.header")
 
 angular.module("risevision.common.header")
 .controller("CompanyButtonsCtrl", [ "$scope", "$modal", "$templateCache",
-  "userState", "getCompany", "$location",
-  function($scope, $modal, $templateCache, userState, getCompany, $location) {
+  "userState", "getCompany", "$location", "selectedCompanyUrlHandler",
+  function($scope, $modal, $templateCache, userState, getCompany, $location,
+    selectedCompanyUrlHandler) {
+    $scope.inRVAFrame = userState.inRVAFrame();
 
     $scope.$watch(function () {return userState.getSelectedCompanyId(); },
     function (newCompanyId) {
       if(newCompanyId) {
         $scope.isSubcompanySelected = userState.isSubcompanySelected();
-
-        // This parameter is only appended to the url if the user is logged in
-        if (newCompanyId !== userState.getUserCompanyId() &&
-          $location.search().cid !== newCompanyId) {
-          $location.search("cid", newCompanyId);
-        }
-        else if (newCompanyId === userState.getUserCompanyId()) {
-          $location.search({"cid" : null});
-        }
-      }
-      else {
-        if($location.search().cid) {
-          $location.search({"cid" : null});
-        }
+        selectedCompanyUrlHandler.updateUrl();
       }
     });
 
@@ -1585,29 +1576,11 @@ angular.module("risevision.common.header")
     $scope.$watch(function () {return userState.isRiseAdmin(); },
     function (isRvAdmin) { $scope.isRiseVisionAdmin = isRvAdmin; });
 
-    var updateSelectedCompanyFromUrl = function() {
-      var newCompanyId = $location.search().cid;
-      if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
-        getCompany(newCompanyId).then(function (company) {
-          userState.switchCompany(company);
-        });
-      }
-    };
-
-    // This parameter is only appended to the url if the user is logged in
-    if (!$location.search().cid && userState.getSelectedCompanyId() &&
-        userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
-      $location.search("cid", userState.getSelectedCompanyId());
-    }
-    else if($location.search().cid &&
-      userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
-      $location.search("cid", null);
-    }
+    selectedCompanyUrlHandler.init();
 
     //detect selectCompany changes on route UI
-    $scope.$on("$stateChangeSuccess", updateSelectedCompanyFromUrl);
-    $scope.$on("$routeChangeSuccess", updateSelectedCompanyFromUrl);
-    updateSelectedCompanyFromUrl();
+    $scope.$on("$stateChangeSuccess", selectedCompanyUrlHandler.updateSelectedCompanyFromUrl);
+    $scope.$on("$routeChangeSuccess", selectedCompanyUrlHandler.updateSelectedCompanyFromUrl);
 
     $scope.addSubCompany = function(size) {
       $modal.open({
@@ -4462,6 +4435,52 @@ angular.module("risevision.common.company",
     };
   }])
 
+  .service("selectedCompanyUrlHandler", ["$location", "userState",
+    "getCompany",
+    function ($location, userState, getCompany) {
+
+      var that = this;
+      this.init = function () {
+        // This parameter is only appended to the url if the user is logged in
+        if (!$location.search().cid && userState.getSelectedCompanyId() &&
+            userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+          $location.search("cid", userState.getSelectedCompanyId());
+        }
+        else if($location.search().cid &&
+          userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+          $location.search("cid", null);
+        }
+        that.updateSelectedCompanyFromUrl();
+      };
+
+      this.updateUrl = function () {
+        var selectedCompanyId = userState.getSelectedCompanyId();
+        // This parameter is only appended to the url if the user is logged in
+        if (selectedCompanyId) {
+          if (selectedCompanyId !== userState.getUserCompanyId() &&
+            $location.search().cid !== selectedCompanyId) {
+            $location.search("cid", selectedCompanyId);
+          }
+          else if (selectedCompanyId === userState.getUserCompanyId()) {
+            $location.search({"cid" : null});
+          }
+        }
+        else {
+          if($location.search().cid) {
+            $location.search({"cid" : null});
+          }
+        }
+      };
+      this.updateSelectedCompanyFromUrl = function () {
+        var newCompanyId = $location.search().cid;
+        if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+          getCompany(newCompanyId).then(function (company) {
+            userState.switchCompany(company);
+          });
+        }
+      };
+  }])
+
   .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
     function (coreAPILoader, $q, $log, getCompany) {
 
@@ -4542,7 +4561,7 @@ angular.module("risevision.common.company",
 
 .filter("fullAddress", function () {
   return function (company) {
-    var res = (company.street ? company.street + ", " : "") + 
+    var res = (company.street ? company.street + ", " : "") +
       (company.city ? company.city + ", " : "") +
       (company.province ? company.province + ", " : "") +
       (company.country ? company.country + ", " : "") +
@@ -4553,7 +4572,6 @@ angular.module("risevision.common.company",
     return res;
   };
 });
-
 
 /*
  * App Configuration File

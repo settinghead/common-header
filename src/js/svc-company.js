@@ -207,6 +207,52 @@ angular.module("risevision.common.company",
     };
   }])
 
+  .service("selectedCompanyUrlHandler", ["$location", "userState",
+    "getCompany",
+    function ($location, userState, getCompany) {
+
+      var that = this;
+      this.init = function () {
+        // This parameter is only appended to the url if the user is logged in
+        if (!$location.search().cid && userState.getSelectedCompanyId() &&
+            userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+          $location.search("cid", userState.getSelectedCompanyId());
+        }
+        else if($location.search().cid &&
+          userState.getSelectedCompanyId() !== userState.getUserCompanyId()) {
+          $location.search("cid", null);
+        }
+        that.updateSelectedCompanyFromUrl();
+      };
+
+      this.updateUrl = function () {
+        var selectedCompanyId = userState.getSelectedCompanyId();
+        // This parameter is only appended to the url if the user is logged in
+        if (selectedCompanyId) {
+          if (selectedCompanyId !== userState.getUserCompanyId() &&
+            $location.search().cid !== selectedCompanyId) {
+            $location.search("cid", selectedCompanyId);
+          }
+          else if (selectedCompanyId === userState.getUserCompanyId()) {
+            $location.search({"cid" : null});
+          }
+        }
+        else {
+          if($location.search().cid) {
+            $location.search({"cid" : null});
+          }
+        }
+      };
+      this.updateSelectedCompanyFromUrl = function () {
+        var newCompanyId = $location.search().cid;
+        if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+          getCompany(newCompanyId).then(function (company) {
+            userState.switchCompany(company);
+          });
+        }
+      };
+  }])
+
   .service("companyService", ["coreAPILoader", "$q", "$log", "getCompany",
     function (coreAPILoader, $q, $log, getCompany) {
 
@@ -287,7 +333,7 @@ angular.module("risevision.common.company",
 
 .filter("fullAddress", function () {
   return function (company) {
-    var res = (company.street ? company.street + ", " : "") + 
+    var res = (company.street ? company.street + ", " : "") +
       (company.city ? company.city + ", " : "") +
       (company.province ? company.province + ", " : "") +
       (company.country ? company.country + ", " : "") +
@@ -298,4 +344,3 @@ angular.module("risevision.common.company",
     return res;
   };
 });
-
