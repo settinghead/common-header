@@ -122,9 +122,6 @@ angular.module("risevision.common.ui-status", [])
     isStatusUndetermined: function () { return _status === "pendingCheck"; }
   };
 
-
-  window.uiStateManager = uiStateManager;
-
   return uiStateManager;
 }]);
 

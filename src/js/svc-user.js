@@ -72,10 +72,6 @@
       var deferred = $q.defer();
       profile = pick(profile, "mailSyncEnabled",
         "email", "firstName", "lastName", "telephone", "roles", "status");
-      if(angular.isDefined(profile.mailSyncEnabled) && typeof profile.mailSyncEnabled === "boolean") {
-        //covert boolean to string
-        profile.mailSyncEnabled = profile.mailSyncEnabled ? "true" : "false";
-      }
       $log.debug("updateUser called", username, profile);
       coreAPILoader().then(function (coreApi) {
         var request = coreApi.user.update({

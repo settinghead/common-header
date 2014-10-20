@@ -80,7 +80,7 @@
         var profilePromise = browser.executeScript(function () {
             return _.find(window.gapi._fakeDb.users, function (user) {return user.username === "john.doe@awesome.io";});
           });
-        expect(profilePromise).to.eventually.have.property("mailSyncEnabled", "true");
+        expect(profilePromise).to.eventually.have.property("mailSyncEnabled", true);
         expect(profilePromise).to.eventually.have.property("email", "john.doe@awesomecompany.io");
       });
   });
