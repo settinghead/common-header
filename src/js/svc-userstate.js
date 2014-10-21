@@ -119,10 +119,10 @@
           var parts = hostname.split(".");
           if(parts.length > 1) {
             //localhost
-            result = "." + parts.slice(parts.length -2).join(".") + port;
+            result = parts.slice(parts.length -2).join(".") + port;
           }
           else {
-            result = "." + hostname + port;
+            result = hostname + port;
           }
         }
 
