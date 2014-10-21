@@ -61,7 +61,6 @@ angular.module("risevision.common.header", [
             $location.search("inRVA", $scope.inRVAFrame);
           }
         });
-
       }
     };
   }

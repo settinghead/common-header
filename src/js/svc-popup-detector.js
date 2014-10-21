@@ -28,9 +28,8 @@
                deferred.reject(errorMsg);
                try {popup.close(); } catch(e1) {}
              }
-         }, 25);
-       }, 50);
-
+          }, 25);
+        }, 2500);
       return deferred.promise;
     };
   }]);

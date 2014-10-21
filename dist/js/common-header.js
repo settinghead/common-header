@@ -1404,7 +1404,6 @@ angular.module("risevision.common.header", [
             $location.search("inRVA", $scope.inRVAFrame);
           }
         });
-
       }
     };
   }
@@ -1468,9 +1467,9 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager",
+  "$log", "uiStatusManager", "oauthAPILoader",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager) {
+  $loading, cookieStore, $log, uiStatusManager, oauthAPILoader) {
 
     window.$loading = $loading; //DEBUG
 
@@ -1542,9 +1541,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
-      userState.authenticate(true).then(null, function (message) {
-        $scope.$emit("risevision.common.globalError", message);
-      }).finally(function(){
+      $loading.startGlobal("auth-buttons-login");
+      userState.authenticate(true).then().finally(function(){
+        $loading.stopGlobal("auth-buttons-login");
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
@@ -1579,14 +1578,20 @@ angular.module("risevision.common.header")
     };
 
     $loading.startGlobal("auth-buttons-silent");
-    userState.authenticate(false).then().finally(function () {
-      $loading.stopGlobal("auth-buttons-silent");
-      if(!uiStatusManager.isStatusUndetermined()) {
-        //attempt to reach a stable registration state only
-        //when there is currently no validating checking
-        uiStatusManager.invalidateStatus("registrationComplete");
-      }
+    oauthAPILoader() //force loading oauth api on startup
+                      //to avoid popup blocker
+    .then().finally(function () {
+      userState.authenticate(false).then().finally(function () {
+        $loading.stopGlobal("auth-buttons-silent");
+        if(!uiStatusManager.isStatusUndetermined()) {
+          //attempt to reach a stable registration state only
+          //when there is currently no validating checking
+          uiStatusManager.invalidateStatus("registrationComplete");
+        }
+      });
     });
+
+
   }
 ]);
 
@@ -3153,9 +3158,8 @@ angular.module("risevision.common.geodata", [])
                deferred.reject(errorMsg);
                try {popup.close(); } catch(e1) {}
              }
-         }, 25);
-       }, 50);
-
+          }, 25);
+        }, 2500);
       return deferred.promise;
     };
   }]);
@@ -3170,8 +3174,7 @@ angular.module("risevision.common.geodata", [])
     "risevision.common.config", "risevision.common.cache",
     "risevision.common.oauth2", "ngBiscuit",
     "risevision.common.util", "risevision.common.userprofile",
-    "risevision.common.company", "risevision.common.popupdetector",
-    "risevision.common.loading"
+    "risevision.common.company", "risevision.common.loading"
   ])
 
   // constants (you can override them in your app as needed)
@@ -3182,11 +3185,11 @@ angular.module("risevision.common.geodata", [])
     "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval", "popupTest", "$loading",
+    "$interval", "$loading",
     function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval, popupTest, $loading) {
+    $interval, $loading) {
     //singleton factory that represents userState throughout application
     var _profile = {}; //Rise vision profile
     var _user = {};  //Google user
@@ -3418,9 +3421,8 @@ angular.module("risevision.common.geodata", [])
        var authenticateDeferred = $q.defer();
        $log.debug("authentication called");
 
-       var _auth = function () {
+       var _proceed = function () {
          if(forceAuth) {
-           $loading.startGlobal("risevision.user.authenticate", {cancelOnRefocus: true});
            _resetUserState();
            userInfoCache.removeAll();
          }
@@ -3453,14 +3455,11 @@ angular.module("risevision.common.geodata", [])
            $loading.stopGlobal("risevision.user.authenticate");
          }
        };
+       _proceed();
 
        if(forceAuth) {
-         popupTest().then(_auth, authenticateDeferred.reject);
+         $loading.startGlobal("risevision.user.authenticate");
        }
-       else {
-         _auth();
-       }
-
 
        return authenticateDeferred.promise;
      };

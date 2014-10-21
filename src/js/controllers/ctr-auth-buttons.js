@@ -1,9 +1,9 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager",
+  "$log", "uiStatusManager", "oauthAPILoader",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager) {
+  $loading, cookieStore, $log, uiStatusManager, oauthAPILoader) {
 
     window.$loading = $loading; //DEBUG
 
@@ -75,9 +75,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
-      userState.authenticate(true).then(null, function (message) {
-        $scope.$emit("risevision.common.globalError", message);
-      }).finally(function(){
+      $loading.startGlobal("auth-buttons-login");
+      userState.authenticate(true).then().finally(function(){
+        $loading.stopGlobal("auth-buttons-login");
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
@@ -112,13 +112,19 @@ angular.module("risevision.common.header")
     };
 
     $loading.startGlobal("auth-buttons-silent");
-    userState.authenticate(false).then().finally(function () {
-      $loading.stopGlobal("auth-buttons-silent");
-      if(!uiStatusManager.isStatusUndetermined()) {
-        //attempt to reach a stable registration state only
-        //when there is currently no validating checking
-        uiStatusManager.invalidateStatus("registrationComplete");
-      }
+    oauthAPILoader() //force loading oauth api on startup
+                      //to avoid popup blocker
+    .then().finally(function () {
+      userState.authenticate(false).then().finally(function () {
+        $loading.stopGlobal("auth-buttons-silent");
+        if(!uiStatusManager.isStatusUndetermined()) {
+          //attempt to reach a stable registration state only
+          //when there is currently no validating checking
+          uiStatusManager.invalidateStatus("registrationComplete");
+        }
+      });
     });
+
+
   }
 ]);
