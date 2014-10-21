@@ -267,8 +267,13 @@ app.run(["$templateCache", function($templateCache) {
     "		replace-include\n" +
     "		ng-controller=\"SubcompanyBannerCtrl\"\n" +
     "		src=\"'subcompany-banner.html'\"></ng-include>\n" +
-    "\n" +
     "</nav>\n" +
+    "\n" +
+    "<ng-include\n" +
+    "	replace-include\n" +
+    "	ng-controller=\"GlobalAlertsCtrl\"\n" +
+    "	src=\"'global-alerts.html'\"></ng-include>\n" +
+    "\n" +
     "<!-- END Common Header Navbar -->\n" +
     "\n" +
     "<!-- Off Canvas Version of the Nav -->\n" +
@@ -837,6 +842,29 @@ app.run(["$templateCache", function($templateCache) {
     "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
     "        <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("global-alerts.html",
+    "<div class=\"container\">\n" +
+    "  <div class=\"row\">\n" +
+    "    <div class=\"col-md-12\">\n" +
+    "      <div class=\"alert alert-danger\" role=\"alert\" ng-repeat=\"msg in errors\">\n" +
+    "        <span ng-bind-html=\"msg\"></span>\n" +
+    "        <button type=\"button\" class=\"close pull-right\"\n" +
+    "          ng-click=\"dismiss('errors', $index);\">\n" +
+    "          <i class=\"fa fa-times\"></i>\n" +
+    "        </button>\n" +
+    "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n" +
