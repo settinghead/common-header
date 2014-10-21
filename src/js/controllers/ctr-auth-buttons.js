@@ -75,9 +75,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
-      $loading.startGlobal("auth-buttons-login");
-      userState.authenticate(true).then().finally(function(){
-        $loading.stopGlobal("auth-buttons-login");
+      userState.authenticate(true).then(null, function (message) {
+        $scope.$emit("risevision.common.globalError", message);
+      }).finally(function(){
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };

@@ -109,6 +109,7 @@ var unitTestFiles = [
   "components/angular-mocks/angular-mocks.js",
   "components/angular-spinner/angular-spinner.js",
   "components/ng-biscuit/dist/ng-biscuit.js",
+  "components/rv-loading/loading.js",
   "src/js/config/config.js",
   "test/unit/fixtures/*.js",
   "src/js/*.js",

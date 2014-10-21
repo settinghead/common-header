@@ -6,7 +6,8 @@
     "risevision.common.config", "risevision.common.cache",
     "risevision.common.oauth2", "ngBiscuit",
     "risevision.common.util", "risevision.common.userprofile",
-    "risevision.common.company"
+    "risevision.common.company", "risevision.common.popupdetector",
+    "risevision.common.loading"
   ])
 
   // constants (you can override them in your app as needed)
@@ -17,11 +18,11 @@
     "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval",
+    "$interval", "popupTest", "$loading",
     function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval) {
+    $interval, popupTest, $loading) {
     //singleton factory that represents userState throughout application
     var _profile = {}; //Rise vision profile
     var _user = {};  //Google user
@@ -249,38 +250,53 @@
      };
 
      var authenticate = function(forceAuth) {
-           var authenticateDeferred = $q.defer();
-           $log.debug("authentication called");
-           if(forceAuth) {
-             _resetUserState();
-             userInfoCache.removeAll();
-           }
 
-           // This flag indicates a potentially authenticated user.
-           var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
-           $log.debug("userAuthed", userAuthed);
+       var authenticateDeferred = $q.defer();
+       $log.debug("authentication called");
 
-           if (forceAuth || userAuthed === true) {
-             _authorize(!forceAuth)
-             .then(function(authResult) {
-               if (authResult && ! authResult.error) {
-                 authenticateDeferred.resolve();
-               }
-               else {
-                 _clearAccessToken();
-                 authenticateDeferred.reject("Authentication Error: " + authResult.error);
-               }
-             }, function () {
+       var _auth = function () {
+         if(forceAuth) {
+           $loading.startGlobal("risevision.user.authenticate", {cancelOnRefocus: true});
+           _resetUserState();
+           userInfoCache.removeAll();
+         }
+         // This flag indicates a potentially authenticated user.
+         var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
+         $log.debug("userAuthed", userAuthed);
+
+         if (forceAuth || userAuthed === true) {
+           _authorize(!forceAuth)
+           .then(function(authResult) {
+             if (authResult && ! authResult.error) {
+               authenticateDeferred.resolve();
+             }
+             else {
                _clearAccessToken();
-               authenticateDeferred.reject();});
-           }
-           else {
-             var msg = "user is not authenticated";
-             $log.debug(msg);
+               authenticateDeferred.reject("Authentication Error: " + authResult.error);
+             }
+           }, function () {
              _clearAccessToken();
-             authenticateDeferred.reject(msg);
-             _clearObj(_user);
-           }
+             authenticateDeferred.reject();}).finally(function (){
+               $loading.stopGlobal("risevision.user.authenticate");
+             });
+         }
+         else {
+           var msg = "user is not authenticated";
+           $log.debug(msg);
+           _clearAccessToken();
+           authenticateDeferred.reject(msg);
+           _clearObj(_user);
+           $loading.stopGlobal("risevision.user.authenticate");
+         }
+       };
+
+       if(forceAuth) {
+         popupTest().then(_auth, authenticateDeferred.reject);
+       }
+       else {
+         _auth();
+       }
+
 
        return authenticateDeferred.promise;
      };

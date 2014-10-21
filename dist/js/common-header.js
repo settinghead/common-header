@@ -267,8 +267,13 @@ app.run(["$templateCache", function($templateCache) {
     "		replace-include\n" +
     "		ng-controller=\"SubcompanyBannerCtrl\"\n" +
     "		src=\"'subcompany-banner.html'\"></ng-include>\n" +
-    "\n" +
     "</nav>\n" +
+    "\n" +
+    "<ng-include\n" +
+    "	replace-include\n" +
+    "	ng-controller=\"GlobalAlertsCtrl\"\n" +
+    "	src=\"'global-alerts.html'\"></ng-include>\n" +
+    "\n" +
     "<!-- END Common Header Navbar -->\n" +
     "\n" +
     "<!-- Off Canvas Version of the Nav -->\n" +
@@ -849,6 +854,29 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("global-alerts.html",
+    "<div class=\"container\">\n" +
+    "  <div class=\"row\">\n" +
+    "    <div class=\"col-md-12\">\n" +
+    "      <div class=\"alert alert-danger\" role=\"alert\" ng-repeat=\"msg in errors\">\n" +
+    "        <span ng-bind-html=\"msg\"></span>\n" +
+    "        <button type=\"button\" class=\"close pull-right\"\n" +
+    "          ng-click=\"dismiss('errors', $index);\">\n" +
+    "          <i class=\"fa fa-times\"></i>\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("move-company-modal.html",
     "<div rv-spinner\n" +
     "  rv-spinner-key=\"move-company-modal\"\n" +
@@ -1417,6 +1445,27 @@ angular.module("risevision.common.header")
   ]);
 
 angular.module("risevision.common.header")
+
+  .controller("GlobalAlertsCtrl", ["$scope", "$rootScope",
+    function($scope, $rootScope) {
+
+      $scope.errors = [];
+
+      $scope.$on("risevision.user.authorized", function () {
+        $scope.errors.length = 0;
+      });
+
+      $rootScope.$on("risevision.common.globalError", function (event, message) {
+        $scope.errors.push(message);
+      });
+
+      $scope.dismiss = function (messageType, index) {
+        $scope[messageType].splice(index, 1);
+      };
+    }
+  ]);
+
+angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
   "$log", "uiStatusManager",
@@ -1493,9 +1542,9 @@ angular.module("risevision.common.header")
 
     // Login Modal
     $scope.login = function() {
-      $loading.startGlobal("auth-buttons-login");
-      userState.authenticate(true).then().finally(function(){
-        $loading.stopGlobal("auth-buttons-login");
+      userState.authenticate(true).then(null, function (message) {
+        $scope.$emit("risevision.common.globalError", message);
+      }).finally(function(){
         uiStatusManager.invalidateStatus("registrationComplete");
       });
     };
@@ -3077,12 +3126,43 @@ angular.module("risevision.common.geodata", [])
 (function (angular) {
   "use strict";
 
+  angular.module("risevision.common.popupdetector",
+  [])
+
+  .factory("popupTest", ["$q", "$window", "$timeout",
+    function ($q, $window, $timeout) {
+    return function () {
+      var deferred = $q.defer();
+
+      var popup = $window.open("","","width=50, height=50",true);
+       $timeout( function() {
+          if(!popup || popup.outerHeight === 0) {
+            //First Checking Condition Works For IE & Firefox
+            //Second Checking Condition Works For Chrome
+            deferred.reject("<strong>Sign In Pop-Up Blocked</strong> - " +
+              "Allow pop-ups from store.risevision.com in the browser settings and Sign In again.");
+          } else {
+            popup.close();
+            deferred.resolve(true);
+          }
+      }, 25);
+
+      return deferred.promise;
+    };
+  }]);
+
+})(angular);
+
+(function (angular) {
+  "use strict";
+
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.common.cache",
     "risevision.common.oauth2", "ngBiscuit",
     "risevision.common.util", "risevision.common.userprofile",
-    "risevision.common.company"
+    "risevision.common.company", "risevision.common.popupdetector",
+    "risevision.common.loading"
   ])
 
   // constants (you can override them in your app as needed)
@@ -3093,11 +3173,11 @@ angular.module("risevision.common.geodata", [])
     "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval",
+    "$interval", "popupTest", "$loading",
     function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval) {
+    $interval, popupTest, $loading) {
     //singleton factory that represents userState throughout application
     var _profile = {}; //Rise vision profile
     var _user = {};  //Google user
@@ -3325,38 +3405,53 @@ angular.module("risevision.common.geodata", [])
      };
 
      var authenticate = function(forceAuth) {
-           var authenticateDeferred = $q.defer();
-           $log.debug("authentication called");
-           if(forceAuth) {
-             _resetUserState();
-             userInfoCache.removeAll();
-           }
 
-           // This flag indicates a potentially authenticated user.
-           var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
-           $log.debug("userAuthed", userAuthed);
+       var authenticateDeferred = $q.defer();
+       $log.debug("authentication called");
 
-           if (forceAuth || userAuthed === true) {
-             _authorize(!forceAuth)
-             .then(function(authResult) {
-               if (authResult && ! authResult.error) {
-                 authenticateDeferred.resolve();
-               }
-               else {
-                 _clearAccessToken();
-                 authenticateDeferred.reject("Authentication Error: " + authResult.error);
-               }
-             }, function () {
+       var _auth = function () {
+         if(forceAuth) {
+           $loading.startGlobal("risevision.user.authenticate", {cancelOnRefocus: true});
+           _resetUserState();
+           userInfoCache.removeAll();
+         }
+         // This flag indicates a potentially authenticated user.
+         var userAuthed = (angular.isDefined(_accessToken) && _accessToken !== null);
+         $log.debug("userAuthed", userAuthed);
+
+         if (forceAuth || userAuthed === true) {
+           _authorize(!forceAuth)
+           .then(function(authResult) {
+             if (authResult && ! authResult.error) {
+               authenticateDeferred.resolve();
+             }
+             else {
                _clearAccessToken();
-               authenticateDeferred.reject();});
-           }
-           else {
-             var msg = "user is not authenticated";
-             $log.debug(msg);
+               authenticateDeferred.reject("Authentication Error: " + authResult.error);
+             }
+           }, function () {
              _clearAccessToken();
-             authenticateDeferred.reject(msg);
-             _clearObj(_user);
-           }
+             authenticateDeferred.reject();}).finally(function (){
+               $loading.stopGlobal("risevision.user.authenticate");
+             });
+         }
+         else {
+           var msg = "user is not authenticated";
+           $log.debug(msg);
+           _clearAccessToken();
+           authenticateDeferred.reject(msg);
+           _clearObj(_user);
+           $loading.stopGlobal("risevision.user.authenticate");
+         }
+       };
+
+       if(forceAuth) {
+         popupTest().then(_auth, authenticateDeferred.reject);
+       }
+       else {
+         _auth();
+       }
+
 
        return authenticateDeferred.promise;
      };
