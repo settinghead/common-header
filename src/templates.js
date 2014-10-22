@@ -242,6 +242,8 @@ app.run(["$templateCache", function($templateCache) {
     "				  ng-controller=\"AuthButtonsCtr\"\n" +
     "					src=\"'auth-buttons.html'\"\n" +
     "				></ng-include>\n" +
+    "				<li ng-if=\"inRVAFrame\"\n" +
+    "				  ng-controller=\"AuthButtonsCtr\"></li>\n" +
     "			</ul>\n" +
     "			<!-- END Action Nav -->\n" +
     "\n" +
