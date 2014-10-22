@@ -242,6 +242,8 @@ app.run(["$templateCache", function($templateCache) {
     "				  ng-controller=\"AuthButtonsCtr\"\n" +
     "					src=\"'auth-buttons.html'\"\n" +
     "				></ng-include>\n" +
+    "				<li ng-if=\"inRVAFrame\"\n" +
+    "				  ng-controller=\"AuthButtonsCtr\"></li>\n" +
     "			</ul>\n" +
     "			<!-- END Action Nav -->\n" +
     "\n" +
@@ -1781,8 +1783,6 @@ angular.module("risevision.common.header")
 .controller("CloseFrameButtonCtrl", [
   "$scope", "$log", "gadgetsService",
   function($scope, $log, gadgetsService) {
-      $log.debug("close button");
-
       $scope.closeIFrame = function () {
       $log.debug("gadgetsService.closeIFrame");
           gadgetsService.closeIFrame();
