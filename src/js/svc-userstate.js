@@ -6,8 +6,7 @@
     "risevision.common.config", "risevision.common.cache",
     "risevision.common.oauth2", "ngBiscuit",
     "risevision.common.util", "risevision.common.userprofile",
-    "risevision.common.company", "risevision.common.popupdetector",
-    "risevision.common.loading"
+    "risevision.common.company", "risevision.common.loading"
   ])
 
   // constants (you can override them in your app as needed)
@@ -18,11 +17,11 @@
     "$injector", "$q", "$log", "oauthAPILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval", "popupTest", "$loading",
+    "$interval", "$loading",
     function ($injector, $q, $log, oauthAPILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval, popupTest, $loading) {
+    $interval, $loading) {
     //singleton factory that represents userState throughout application
     var _profile = {}; //Rise vision profile
     var _user = {};  //Google user
@@ -254,9 +253,8 @@
        var authenticateDeferred = $q.defer();
        $log.debug("authentication called");
 
-       var _auth = function () {
+       var _proceed = function () {
          if(forceAuth) {
-           $loading.startGlobal("risevision.user.authenticate", {cancelOnRefocus: true});
            _resetUserState();
            userInfoCache.removeAll();
          }
@@ -289,14 +287,11 @@
            $loading.stopGlobal("risevision.user.authenticate");
          }
        };
+       _proceed();
 
        if(forceAuth) {
-         popupTest().then(_auth, authenticateDeferred.reject);
+         $loading.startGlobal("risevision.user.authenticate");
        }
-       else {
-         _auth();
-       }
-
 
        return authenticateDeferred.promise;
      };
