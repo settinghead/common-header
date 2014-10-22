@@ -1095,6 +1095,43 @@ try { app = angular.module("risevision.common.header.templates"); }
 catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("signout-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "  <button type=\"button\" class=\"close\" ng-click=\"closeModal()\" aria-hidden=\"true\">\n" +
+    "    <i class=\"fa fa-times\"></i>\n" +
+    "  </button>\n" +
+    "  <h2 id=\"sign-out-label\" class=\"modal-title\">Sign Out</h2>\n" +
+    "</div>\n" +
+    "<div class=\"modal-body sign-out-modal\">\n" +
+    "  <form role=\"form\">\n" +
+    "    <p>\n" +
+    "      Signing out does not sign you out of your Google Account.\n" +
+    "    </p>\n" +
+    "    <p>\n" +
+    "      If you are on a shared computer you should sign out of your Google Account.\n" +
+    "    </p>\n" +
+    "    <p>\n" +
+    "      <button type=\"button\" class=\"btn sign-out-rv-only-button\" ng-click=\"singOut()\">Sign Out\n" +
+    "        <i class=\"fa fa-sign-out fa-lg icon-right\"></i>\n" +
+    "      </button>\n" +
+    "    </p>\n" +
+    "      <button type=\"button\" class=\"btn\" ng-click=\"singOutGoogleAccount()\">Sign Out of your Google Account\n" +
+    "        <i class=\"fa fa-google-plus-square fa-lg icon-right\"></i>\n" +
+    "      </button>\n" +
+    "    <p>\n" +
+    "    </p>\n" +
+    "  </form>\n" +
+    "</div>\n" +
+    "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { app = angular.module("risevision.common.header.templates"); }
+catch(err) { app = angular.module("risevision.common.header.templates", []); }
+app.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("subcompany-banner.html",
     "<div ng-show=\"isSubcompanySelected && !inRVAFrame\"\n" +
     "  class=\"sub-company-alert\">\n" +
