@@ -20,10 +20,10 @@ angular.module("risevision.common.header", [
 ])
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
-   "$interval", "oauthAPILoader", "$log",
+   "$interval", "oauth2APILoader", "$log",
     "$templateCache", "userState", "$location",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauthAPILoader, $log, $templateCache, userState, $location) {
+    oauth2APILoader, $log, $templateCache, userState, $location) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),

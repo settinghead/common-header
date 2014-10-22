@@ -16,9 +16,9 @@
     "ba": "Rise Store Administrator"
   })
 
-  .factory("getUserProfile", ["oauthAPILoader", "coreAPILoader", "$q", "$log",
+  .factory("getUserProfile", ["oauth2APILoader", "coreAPILoader", "$q", "$log",
   "getOAuthUserInfo", "userInfoCache",
-  function (oauthAPILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
+  function (oauth2APILoader, coreAPILoader, $q, $log, getOAuthUserInfo,
     userInfoCache) {
     return function (username, clearCache) {
       var deferred = $q.defer();
@@ -43,7 +43,7 @@
           deferred.resolve(userInfoCache.get("profile-" + username));
         }
         else {
-          $q.all([oauthAPILoader(), coreAPILoader()]).then(function (results){
+          $q.all([oauth2APILoader(), coreAPILoader()]).then(function (results){
             var coreApi = results[1];
             // var oauthUserInfo = results[2];
             coreApi.user.get(criteria).execute(function (resp){
