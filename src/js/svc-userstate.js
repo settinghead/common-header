@@ -3,10 +3,10 @@
 
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
-    "risevision.common.config", "risevision.common.cache",
-    "risevision.common.oauth2", "ngBiscuit",
-    "risevision.common.util", "risevision.common.userprofile",
-    "risevision.common.company", "risevision.common.loading"
+    "risevision.common.config", "risevision.core.cache",
+    "risevision.core.oauth2", "ngBiscuit",
+    "risevision.core.util", "risevision.core.userprofile",
+    "risevision.core.company", "risevision.common.loading"
   ])
 
   // constants (you can override them in your app as needed)

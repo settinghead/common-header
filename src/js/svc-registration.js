@@ -3,7 +3,7 @@
 
   angular.module("risevision.common.registration",
   ["risevision.common.userstate", "risevision.common.ui-status",
-  "risevision.common.userprofile", "risevision.common.gapi"])
+  "risevision.core.userprofile", "risevision.common.gapi"])
 
   .config(["uiStatusDependencies", function (uiStatusDependencies) {
     uiStatusDependencies.addDependencies({
