@@ -2,7 +2,7 @@
 
   "use strict";
   angular.module("risevision.common.userprofile", [
-  "risevision.common.gapi", "risevision.common.oauth2",
+  "risevision.common.gapi", "risevision.core.oauth2",
   "risevision.common.cache", "risevision.common.util",
   "risevision.common.userstate"])
 

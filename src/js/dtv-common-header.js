@@ -10,7 +10,7 @@ angular.module("risevision.common.header", [
   "risevision.common.loading",
   "risevision.common.userstate",   "risevision.common.ui-status",
   "risevision.common.systemmessages",
-  "risevision.common.oauth2",
+  "risevision.core.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
   "risevision.common.userprofile",
