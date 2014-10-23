@@ -2508,7 +2508,7 @@ angular.module("risevision.common.header")
   ]);
 
 angular.module("risevision.common.header")
-.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "$window", "userState",
+.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "$window", "userState", 
   function($scope, $modalInstance, $log, $window, userState) {
 
     $scope.closeModal = function() {
@@ -4541,6 +4541,7 @@ angular.module("risevision.common.ui-status", [])
         for (var key in itemsMap) {
           delete itemsMap[key];
         }
+        persistToStorage();
         $log.debug("Shopping cart cleared.");
       },
       destroy: function () {
