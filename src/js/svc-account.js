@@ -4,7 +4,7 @@
   angular.module("risevision.common.account", [
   "risevision.common.gapi", "risevision.core.oauth2",
   "risevision.common.company",
-  "risevision.common.cache"])
+  "risevision.core.cache"])
 
   .factory("agreeToTerms", ["$q", "riseAPILoader", "$log", "userInfoCache",
   function ($q, riseAPILoader, $log, userInfoCache) {

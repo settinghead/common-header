@@ -2,7 +2,7 @@ angular.module("risevision.common.header", [
   "risevision.common.userstate",
   "risevision.common.account",
   "risevision.common.gapi",
-  "risevision.common.cache",
+  "risevision.core.cache",
   "risevision.core.company",
   "risevision.common.company",
   "risevision.common.localstorage",

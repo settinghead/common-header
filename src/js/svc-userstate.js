@@ -3,7 +3,7 @@
 
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
-    "risevision.common.config", "risevision.common.cache",
+    "risevision.common.config", "risevision.core.cache",
     "risevision.core.oauth2", "ngBiscuit",
     "risevision.core.util", "risevision.core.userprofile",
     "risevision.core.company", "risevision.common.loading"

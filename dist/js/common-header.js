@@ -1384,7 +1384,7 @@ angular.module("risevision.common.header", [
   "risevision.common.userstate",
   "risevision.common.account",
   "risevision.common.gapi",
-  "risevision.common.cache",
+  "risevision.core.cache",
   "risevision.core.company",
   "risevision.common.company",
   "risevision.common.localstorage",
@@ -3186,7 +3186,7 @@ angular.module("risevision.common.geodata", [])
 
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
-    "risevision.common.config", "risevision.common.cache",
+    "risevision.common.config", "risevision.core.cache",
     "risevision.core.oauth2", "ngBiscuit",
     "risevision.core.util", "risevision.core.userprofile",
     "risevision.core.company", "risevision.common.loading"
@@ -3700,7 +3700,7 @@ angular.module("risevision.common.ui-status", [])
   angular.module("risevision.common.account", [
   "risevision.common.gapi", "risevision.core.oauth2",
   "risevision.common.company",
-  "risevision.common.cache"])
+  "risevision.core.cache"])
 
   .factory("agreeToTerms", ["$q", "riseAPILoader", "$log", "userInfoCache",
   function ($q, riseAPILoader, $log, userInfoCache) {
@@ -3851,7 +3851,7 @@ angular.module("risevision.common.ui-status", [])
 
   "use strict";
 
-  angular.module("risevision.common.cache", [])
+  angular.module("risevision.core.cache", [])
 
     .value("rvStorage", sessionStorage)
 
@@ -3924,7 +3924,7 @@ angular.module("risevision.common.ui-status", [])
   "use strict";
   angular.module("risevision.core.userprofile", [
   "risevision.common.gapi", "risevision.core.oauth2",
-  "risevision.common.cache"])
+  "risevision.core.cache"])
 
   .value("userRoleMap", {
     "ce": "Content Editor",
@@ -4090,7 +4090,7 @@ angular.module("risevision.common.ui-status", [])
   angular.module("risevision.core.company",
     [
       "risevision.common.gapi",
-      "risevision.common.cache",
+      "risevision.core.cache",
       "risevision.core.util"
     ])
 
@@ -4363,7 +4363,7 @@ angular.module("risevision.common.ui-status", [])
 
   "use strict";
   angular.module("risevision.core.oauth2",
-  ["risevision.common.gapi", "risevision.common.cache"]).
+  ["risevision.common.gapi", "risevision.core.cache"]).
   factory("getOAuthUserInfo", ["oauth2APILoader", "$q", "userInfoCache",
   "$log",
   function (oauth2APILoader, $q, userInfoCache, $log) {
