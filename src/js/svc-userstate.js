@@ -5,7 +5,7 @@
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.common.cache",
     "risevision.core.oauth2", "ngBiscuit",
-    "risevision.core.util", "risevision.common.userprofile",
+    "risevision.core.util", "risevision.core.userprofile",
     "risevision.core.company", "risevision.common.loading"
   ])
 

@@ -13,7 +13,7 @@ angular.module("risevision.common.header", [
   "risevision.core.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
-  "risevision.common.userprofile",
+  "risevision.core.userprofile",
   "risevision.common.registration",
   "risevision.common.shoppingcart",
   "checklist-model",

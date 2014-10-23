@@ -1395,7 +1395,7 @@ angular.module("risevision.common.header", [
   "risevision.core.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
-  "risevision.common.userprofile",
+  "risevision.core.userprofile",
   "risevision.common.registration",
   "risevision.common.shoppingcart",
   "checklist-model",
@@ -3188,7 +3188,7 @@ angular.module("risevision.common.geodata", [])
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.common.cache",
     "risevision.core.oauth2", "ngBiscuit",
-    "risevision.core.util", "risevision.common.userprofile",
+    "risevision.core.util", "risevision.core.userprofile",
     "risevision.core.company", "risevision.common.loading"
   ])
 
@@ -3771,7 +3771,7 @@ angular.module("risevision.common.ui-status", [])
 
   angular.module("risevision.common.registration",
   ["risevision.common.userstate", "risevision.common.ui-status",
-  "risevision.common.userprofile", "risevision.common.gapi"])
+  "risevision.core.userprofile", "risevision.common.gapi"])
 
   .config(["uiStatusDependencies", function (uiStatusDependencies) {
     uiStatusDependencies.addDependencies({
@@ -3922,7 +3922,7 @@ angular.module("risevision.common.ui-status", [])
 (function (angular) {
 
   "use strict";
-  angular.module("risevision.common.userprofile", [
+  angular.module("risevision.core.userprofile", [
   "risevision.common.gapi", "risevision.core.oauth2",
   "risevision.common.cache"])
 
