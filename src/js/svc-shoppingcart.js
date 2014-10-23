@@ -68,6 +68,7 @@
         for (var key in itemsMap) {
           delete itemsMap[key];
         }
+        persistToStorage();
         $log.debug("Shopping cart cleared.");
       },
       destroy: function () {
