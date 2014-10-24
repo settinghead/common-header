@@ -1113,11 +1113,11 @@ app.run(["$templateCache", function($templateCache) {
     "      If you are on a shared computer you should sign out of your Google Account.\n" +
     "    </p>\n" +
     "    <p>\n" +
-    "      <button type=\"button\" class=\"btn sign-out-rv-only-button\" ng-click=\"singOut()\">Sign Out\n" +
+    "      <button type=\"button\" class=\"btn btn-default sign-out-rv-only-button\" ng-click=\"singOut()\">Sign Out\n" +
     "        <i class=\"fa fa-sign-out fa-lg icon-right\"></i>\n" +
     "      </button>\n" +
     "    </p>\n" +
-    "      <button type=\"button\" class=\"btn\" ng-click=\"singOutGoogleAccount()\">Sign Out of your Google Account\n" +
+    "      <button type=\"button\" class=\"btn btn-default sign-out-google-account\" ng-click=\"singOutGoogleAccount()\">Sign Out of your Google Account\n" +
     "        <i class=\"fa fa-google-plus-square fa-lg icon-right\"></i>\n" +
     "      </button>\n" +
     "    <p>\n" +
@@ -1391,7 +1391,7 @@ angular.module("risevision.common.header", [
   "risevision.common.header.templates",
   "risevision.common.loading",
   "risevision.common.userstate",   "risevision.common.ui-status",
-  "risevision.common.systemmessages",
+  "risevision.common.systemmessages", "risevision.core.systemmessages",
   "risevision.core.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
@@ -4413,6 +4413,32 @@ angular.module("risevision.common.ui-status", [])
 
 })(angular);
 
+(function (angular) {
+
+  "use strict";
+
+  angular.module("risevision.core.systemmessages", ["risevision.common.gapi"])
+
+  .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",
+      function (gapiLoader, $q, $log) {
+        return function (companyId) {
+          var deferred = $q.defer();
+          gapiLoader().then(function (gApi) {
+            var request = gApi.client.core.systemmessage.list(
+              { "companyId": companyId });
+            request.execute(function (resp) {
+              var items = resp;
+              if(!(items instanceof Array) && items.items) { items = items.items; }
+              $log.debug("getCoreSystemMessage resp", items);
+              deferred.resolve(items);
+            });
+          });
+          return deferred.promise;
+        };
+    }]);
+
+})(angular);
+
 (function (angular){
 
   "use strict";
@@ -4648,8 +4674,7 @@ angular.module("risevision.common.ui-status", [])
 
   "use strict";
 
-  angular.module("risevision.common.systemmessages",
-  ["risevision.common.gapi"])
+  angular.module("risevision.common.systemmessages", [])
 
     .factory("systemMessages", [function () {
 
@@ -4693,25 +4718,7 @@ angular.module("risevision.common.ui-status", [])
 
       return messages;
 
-    }])
-
-    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",
-    function (gapiLoader, $q, $log) {
-      return function (companyId) {
-        var deferred = $q.defer();
-        gapiLoader().then(function (gApi) {
-          var request = gApi.client.core.systemmessage.list(
-            { "companyId": companyId });
-          request.execute(function (resp) {
-            var items = resp;
-            if(!(items instanceof Array) && items.items) { items = items.items; }
-            $log.debug("getCoreSystemMessage resp", items);
-            deferred.resolve(items);
-          });
-        });
-        return deferred.promise;
-      };
-  }]);
+    }]);
 
 })(angular);
 
@@ -4877,8 +4884,7 @@ angular.module("risevision.common.gapi", [])
 
   "use strict";
 
-  angular.module("risevision.common.systemmessages",
-  ["risevision.common.gapi"])
+  angular.module("risevision.common.systemmessages", [])
 
     .factory("systemMessages", [function () {
 
@@ -4922,25 +4928,7 @@ angular.module("risevision.common.gapi", [])
 
       return messages;
 
-    }])
-
-    .factory("getCoreSystemMessages", ["gapiLoader", "$q", "$log",
-    function (gapiLoader, $q, $log) {
-      return function (companyId) {
-        var deferred = $q.defer();
-        gapiLoader().then(function (gApi) {
-          var request = gApi.client.core.systemmessage.list(
-            { "companyId": companyId });
-          request.execute(function (resp) {
-            var items = resp;
-            if(!(items instanceof Array) && items.items) { items = items.items; }
-            $log.debug("getCoreSystemMessage resp", items);
-            deferred.resolve(items);
-          });
-        });
-        return deferred.promise;
-      };
-  }]);
+    }]);
 
 })(angular);
 
