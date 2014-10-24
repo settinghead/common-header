@@ -1,0 +1,9 @@
+install:
+  - npm install -g bower
+  - npm install -g gulp
+  - npm install
+  - bower install
+script:
+  - CHROME_INSTANCES=3 gulp test
+before_script:
+  - /etc/init.d/xvfb start

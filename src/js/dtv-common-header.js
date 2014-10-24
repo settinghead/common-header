@@ -9,7 +9,7 @@ angular.module("risevision.common.header", [
   "risevision.common.header.templates",
   "risevision.common.loading",
   "risevision.common.userstate",   "risevision.common.ui-status",
-  "risevision.common.systemmessages",
+  "risevision.common.systemmessages", "risevision.core.systemmessages",
   "risevision.core.oauth2",
   "risevision.common.geodata",
   "risevision.common.util",
