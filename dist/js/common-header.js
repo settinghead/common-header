@@ -2051,24 +2051,32 @@ angular.module("risevision.common.header")
     };
     $scope.resetAuthKey = function() {
       if ($window.confirm("Resetting the Company Authentication Key will cause existing Data Gadgets to no longer report data until they are updated with the new Key.")) {
+        $loading.start("company-settings-modal");
         regenerateCompanyField($scope.company.id, "authKey").then(
           function(resp) {
             $scope.company.authKey = resp.item;
           },
           function (error) {
             alert("Error: " + humanReadableError(error));
-          });
+        })
+        .finally(function() {
+          $loading.stop("company-settings-modal");
+        });
       }
     };
     $scope.resetClaimId = function() {
       if ($window.confirm("Resetting the Company Claim Id will cause existing installations to no longer be associated with your Company.")) {
+        $loading.start("company-settings-modal");
         regenerateCompanyField($scope.company.id, "claimId").then(
           function(resp) {
             $scope.company.claimId = resp.item;
           },
           function (error) {
             alert("Error: " + humanReadableError(error));
-          });
+        })
+        .finally(function() {
+          $loading.stop("company-settings-modal");
+        });
       }
     };
 
