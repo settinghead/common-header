@@ -79,7 +79,7 @@ app.run(["$templateCache", function($templateCache) {
     "<!-- If User NOT Authenticated -->\n" +
     "<li ng-show=\"!undetermined && isLoggedIn === false\">\n" +
     "  <button type=\"button\" class=\"sign-in top-auth-button\" ng-click=\"login()\">\n" +
-    "    Sign In <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
+    "    Sign In <img src=\"//rise-vision.github.io/style-guide/img/avatar_2x.jpg\">\n" +
     "  </button>\n" +
     "</li>\n" +
     "");
@@ -102,7 +102,7 @@ app.run(["$templateCache", function($templateCache) {
     "  rv-spinner-key=\"authenticate-button\"\n" +
     "  rv-spinner-start-active=\"0\"\n" +
     ">\n" +
-    "  <img src=\"http://rise-vision.github.io/style-guide/img/avatar_2x.jpg\" class=\"profile-img\">\n" +
+    "  <img src=\"//rise-vision.github.io/style-guide/img/avatar_2x.jpg\" class=\"profile-img\">\n" +
     "  <p>Please authorize your Google Account to register with Rise Vision.</p>\n" +
     "\n" +
     "  <button type=\"button\" class=\"btn btn-success btn-fixed-width btn-block authorize-button\" ng-click=\"authenticate(true)\">\n" +
