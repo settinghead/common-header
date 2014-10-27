@@ -31,6 +31,7 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 - [Rise Vision Gulp Factory](https://github.com/Rise-Vision/widget-tester.git)
 
 ## Development
+- [Development FAQ](https://github.com/Rise-Vision/common-header/wiki/FAQ-for-Developers)
 - [Developer's Guide](https://github.com/Rise-Vision/common-header/wiki/Developer's-Guide-to-Rise-Vision-Common-Header)
 
 ### Prerequisites
