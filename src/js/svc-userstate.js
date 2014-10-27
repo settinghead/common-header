@@ -376,7 +376,8 @@
       isLoggedIn: isLoggedIn,
       authenticate: authenticate,
       signOut: signOut,
-      refreshProfile: refreshProfile
+      refreshProfile: refreshProfile,
+      getAccessToken: function () { return _follow(_accessToken); }
     };
 
     window.userState = userState;
