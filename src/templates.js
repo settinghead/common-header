@@ -293,6 +293,7 @@ app.run(["$templateCache", function($templateCache) {
     "		</li>\n" +
     "  </ul>\n" +
     "</nav>\n" +
+    "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
     "");
 }]);
 })();
@@ -1113,18 +1114,17 @@ app.run(["$templateCache", function($templateCache) {
     "      If you are on a shared computer you should sign out of your Google Account.\n" +
     "    </p>\n" +
     "    <p>\n" +
-    "      <button type=\"button\" class=\"btn btn-default sign-out-rv-only-button\" ng-click=\"singOut()\">Sign Out\n" +
+    "      <button type=\"button\" class=\"btn btn-default sign-out-rv-only-button\" ng-click=\"signOut(false)\">Sign Out\n" +
     "        <i class=\"fa fa-sign-out fa-lg icon-right\"></i>\n" +
     "      </button>\n" +
     "    </p>\n" +
-    "      <button type=\"button\" class=\"btn btn-default sign-out-google-account\" ng-click=\"singOutGoogleAccount()\">Sign Out of your Google Account\n" +
+    "      <button type=\"button\" class=\"btn btn-default sign-out-google-account\" ng-click=\"signOut(true)\">Sign Out of your Google Account\n" +
     "        <i class=\"fa fa-google-plus-square fa-lg icon-right\"></i>\n" +
     "      </button>\n" +
     "    <p>\n" +
     "    </p>\n" +
     "  </form>\n" +
     "</div>\n" +
-    "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
     "");
 }]);
 })();
