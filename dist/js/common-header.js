@@ -293,6 +293,7 @@ app.run(["$templateCache", function($templateCache) {
     "		</li>\n" +
     "  </ul>\n" +
     "</nav>\n" +
+    "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
     "");
 }]);
 })();
@@ -1113,18 +1114,17 @@ app.run(["$templateCache", function($templateCache) {
     "      If you are on a shared computer you should sign out of your Google Account.\n" +
     "    </p>\n" +
     "    <p>\n" +
-    "      <button type=\"button\" class=\"btn btn-default sign-out-rv-only-button\" ng-click=\"singOut()\">Sign Out\n" +
+    "      <button type=\"button\" class=\"btn btn-default sign-out-rv-only-button\" ng-click=\"signOut(false)\">Sign Out\n" +
     "        <i class=\"fa fa-sign-out fa-lg icon-right\"></i>\n" +
     "      </button>\n" +
     "    </p>\n" +
-    "      <button type=\"button\" class=\"btn btn-default sign-out-google-account\" ng-click=\"singOutGoogleAccount()\">Sign Out of your Google Account\n" +
+    "      <button type=\"button\" class=\"btn btn-default sign-out-google-account\" ng-click=\"signOut(true)\">Sign Out of your Google Account\n" +
     "        <i class=\"fa fa-google-plus-square fa-lg icon-right\"></i>\n" +
     "      </button>\n" +
     "    <p>\n" +
     "    </p>\n" +
     "  </form>\n" +
     "</div>\n" +
-    "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
     "");
 }]);
 })();
@@ -2516,23 +2516,19 @@ angular.module("risevision.common.header")
   ]);
 
 angular.module("risevision.common.header")
-.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "$window", "userState", 
-  function($scope, $modalInstance, $log, $window, userState) {
+.controller("SignOutModalCtrl", ["$scope", "$modalInstance", "$log", "userState",
+  function($scope, $modalInstance, $log, userState) {
 
     $scope.closeModal = function() {
       $modalInstance.dismiss("cancel");
     };
-    $scope.singOut = function () {
-      userState.signOut().then(function (){
-        $log.error("user signed out");
+    $scope.signOut = function (signOutGoogle) {
+      userState.signOut(signOutGoogle).then(function (){
+        $log.debug("user signed out");
       }, function (err) {
         $log.error("sign out failed", err);
       });
       $modalInstance.dismiss("success");
-    };
-    $scope.singOutGoogleAccount = function () {
-      $window.logoutFrame.location = "https://accounts.google.com/Logout";
-      $scope.singOut();
     };
   }
 ]);
@@ -3208,11 +3204,11 @@ angular.module("risevision.common.geodata", [])
     "$injector", "$q", "$log", "oauth2APILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval", "$loading",
+    "$interval", "$loading", "$window",
     function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval, $loading) {
+    $interval, $loading, $window) {
     //singleton factory that represents userState throughout application
     var _profile = {}; //Rise vision profile
     var _user = {};  //Google user
@@ -3489,10 +3485,13 @@ angular.module("risevision.common.geodata", [])
        return authenticateDeferred.promise;
      };
 
-     var signOut = function() {
+     var signOut = function(signOutGoogle) {
        var deferred = $q.defer();
        userInfoCache.removeAll();
        gapiLoader().then(function (gApi) {
+         if (signOutGoogle) {
+           $window.logoutFrame.location = "https://accounts.google.com/Logout";
+         }
          gApi.auth.signOut();
          // The flag the indicates a user is potentially
          // authenticated already, must be destroyed.

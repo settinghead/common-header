@@ -17,11 +17,11 @@
     "$injector", "$q", "$log", "oauth2APILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval", "$loading",
+    "$interval", "$loading", "$window",
     function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval, $loading) {
+    $interval, $loading, $window) {
     //singleton factory that represents userState throughout application
     var _profile = {}; //Rise vision profile
     var _user = {};  //Google user
@@ -298,10 +298,13 @@
        return authenticateDeferred.promise;
      };
 
-     var signOut = function() {
+     var signOut = function(signOutGoogle) {
        var deferred = $q.defer();
        userInfoCache.removeAll();
        gapiLoader().then(function (gApi) {
+         if (signOutGoogle) {
+           $window.logoutFrame.location = "https://accounts.google.com/Logout";
+         }
          gApi.auth.signOut();
          // The flag the indicates a user is potentially
          // authenticated already, must be destroyed.
