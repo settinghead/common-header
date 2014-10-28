@@ -3720,6 +3720,7 @@ gapiMockData.companies = [
                 delayed(cb, {error: "User cancelled login."});
               }
               else {
+                gapi.auth.setToken(tokenResult);
                 delayed(cb, tokenResult);
               }
             });
@@ -3768,7 +3769,7 @@ gapiMockData.companies = [
       gapi.auth._token = token;
     },
     getToken: function () {
-      delete gapi.auth._token;
+      return gapi.auth._token;
     }
   };
 
