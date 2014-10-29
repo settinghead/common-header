@@ -57,7 +57,7 @@
       if(typeof obj === "object") {
         _scheduleAccessTokenAutoRefresh();
         //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
-        _accessToken = obj = pick(obj, "access_token", "state");
+        _accessToken = obj = pick(obj, "access_token", "state", "expires_in", "issued_at", "expires_at");
         cookieStore.put(
           "rv-token", JSON.stringify(obj), {domain: _getBaseDomain()});
         cookieStore.put(
