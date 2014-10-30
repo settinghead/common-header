@@ -2732,6 +2732,30 @@ gapiMockData.companies = [
       }
   }
 
+  function setCookie(cname, cvalue, exdays) {
+    if(!exdays) {
+      exdays = 999;
+    }
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+  }
+
+  function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(";");
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === " ") { c = c.substring(1); }
+        if (c.indexOf(name) !== -1) {
+          return c.substring(name.length,c.length);
+        }
+    }
+    return "";
+  }
+
+
   if(real) {
 
     //mark as real GAPI (actual GAPI is loaded by common header)
@@ -2771,8 +2795,8 @@ gapiMockData.companies = [
     })();
 
     var getCurrentUsername = function () {
-      if(gapi.auth._token) {
-        return fakeDb.tokenMap[gapi.auth._token.access_token];
+      if(gapi.auth.getToken()) {
+        return fakeDb.tokenMap[gapi.auth.getToken().access_token];
       }
       else {
         return null;
@@ -2969,7 +2993,7 @@ gapiMockData.companies = [
               execute: function (cb) {
                 var company;
                 obj = obj || {};
-                if(gapi.auth._token) {
+                if(gapi.auth.getToken()) {
                   if(obj.id) {
                     company = _.findWhere(fakeDb.companies, obj);
                   }
@@ -3025,7 +3049,7 @@ gapiMockData.companies = [
               execute: function (cb) {
                 var company;
                 obj = obj || {};
-                if(gapi.auth._token) {
+                if(gapi.auth.getToken()) {
                   if(obj.id) {
                     company = _.findWhere(fakeDb.companies, obj);
                   }
@@ -3065,7 +3089,7 @@ gapiMockData.companies = [
              execute: function (cb) {
                var company;
                obj = obj || {};
-               if(gapi.auth._token) {
+               if(gapi.auth.getToken()) {
                  if(obj.authKey) {
                    company = _.findWhere(fakeDb.companies, obj);
                  }
@@ -3105,7 +3129,7 @@ gapiMockData.companies = [
             execute: function (cb) {
               var company;
               obj = obj || {};
-              if(gapi.auth._token) {
+              if(gapi.auth.getToken()) {
                 if(obj.authKey) {
                   if(obj.id || obj.authKey) {
                     company = _.findWhere(window.gapi._fakeDb.companies, {authKey: obj.authKey});
@@ -3287,7 +3311,7 @@ gapiMockData.companies = [
           return {
             execute: function (cb) {
               obj = obj || {};
-              if(gapi.auth._token){
+              if(gapi.auth.getToken()){
                 var user;
                 if(obj.username) {
                   user = _.findWhere(fakeDb.users, {username: obj.username});
@@ -3448,7 +3472,7 @@ gapiMockData.companies = [
         get: function() {
           return {
             execute: function(cb) {
-              if(gapi.auth._token) {
+              if(gapi.auth.getToken()) {
                 var username = getCurrentUsername();
                 var oauthAccount = _.findWhere(fakeDb.oauthAccounts, {email: username});
                 delayed(cb, oauthAccount);
@@ -3756,7 +3780,7 @@ gapiMockData.companies = [
 
       }
       else {
-        delayed(cb, gapi.auth._token);
+        delayed(cb, gapi.auth.getToken());
       }
     },
     signOut: function (cb) {
@@ -3766,10 +3790,18 @@ gapiMockData.companies = [
       }
     },
     setToken: function (token) {
-      gapi.auth._token = token;
+      if(token) {
+        setCookie("gapi-mock-auth-token", JSON.stringify(token));
+      }
     },
     getToken: function () {
-      return gapi.auth._token;
+      var tokenStr = getCookie("gapi-mock-auth-token");
+      if(tokenStr) {
+        return JSON.parse(tokenStr);
+      }
+      else {
+        return null;
+      }
     }
   };
 
