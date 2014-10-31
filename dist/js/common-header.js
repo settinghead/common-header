@@ -3197,8 +3197,6 @@ angular.module("risevision.common.geodata", [])
 (function (angular) {
   "use strict";
 
-  // var pendingAccessToken, pendingState;
-
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.core.cache",
@@ -3227,75 +3225,41 @@ angular.module("risevision.common.geodata", [])
     $interval, $loading, rvStorage, $window) {
     //singleton factory that represents userState throughout application
 
-     function _getParameterByName(name) {
-      name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-      var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-          results = regex.exec(location.search);
-      return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-    }
-
-    function _getAccessTokenFromUrl () {
-      var token = _getParameterByName("access_token");
-      if(token) {
-        return {access_token: token};
-      }
-      else {
-        return null;
-      }
-    }
-
     var _state = {
       profile: {}, //Rise vision profile
       user: {}, //Google user
       userCompany: {},
       selectedCompany: {},
       roleMap: {},
-      accessToken: _getAccessTokenFromUrl() || cookieStore.get("rv-token"),
+      userToken: cookieStore.get("rv-token"),
       inRVAFrame: angular.isDefined($location.search().inRVA)
     };
 
     var _accessTokenRefreshHandler = null;
 
       //
-      var _follow = function(source) {
-        var Follower = function(){};
-        Follower.prototype = source;
-        return new Follower();
-      };
-
-    var initializeAccessToken = function () {
-      //load token from cookie
-      if(_state.accessToken) {
-        _state.accessToken = JSON.parse(_state.accessToken);
-        gapiLoader().then(function (gApi) {
-          gApi.auth.setToken(_state.accessToken);
-        });
-      }
-      $log.debug("Access token", _state.accessToken);
+    var _follow = function(source) {
+      var Follower = function(){};
+      Follower.prototype = source;
+      return new Follower();
     };
 
-    initializeAccessToken();
-
-    var _setAccessToken = function (obj) {
-      if(typeof obj === "object") {
-        _scheduleAccessTokenAutoRefresh();
-        //As per doc: https://developers.google.com/api-client-library/javascript/reference/referencedocs#OAuth20TokenObject
-        _state.accessToken = obj = pick(obj, "access_token", "state", "expires_in", "issued_at", "expires_at");
-        cookieStore.put(
-          "rv-token", JSON.stringify(obj), {domain: _getBaseDomain()});
-        cookieStore.put(
-          "rv-token", JSON.stringify(obj));
-      }
-
-      return gapiLoader().then(function (gApi) {
-        gApi.auth.setToken(obj);
-      });
+    var _getUserId = function () {
+      return _state.user ? _state.user.userId : null;
     };
 
-    var _clearAccessToken = function () {
-      $log.debug("Clearing access token...");
+    var _setUserToken = function () {
+      _state.userToken = _getUserId();
+      cookieStore.put(
+        "rv-token", _state.userToken, {domain: _getBaseDomain()});
+      cookieStore.put(
+        "rv-token", _state.userToken);
+    };
+
+    var _clearUserToken = function () {
+      $log.debug("Clearing user token...");
       _cancelAccessTokenAutoRefresh();
-      _state.accessToken = null;
+      _state.userToken = null;
       cookieStore.remove("rv-token",
         {domain: "." + _getBaseDomain()});
       cookieStore.remove("rv-token");
@@ -3316,8 +3280,8 @@ angular.module("risevision.common.geodata", [])
     };
 
     var _cancelAccessTokenAutoRefresh = function () {
-      $interval.cancel(_state.accessTokenRefreshHandler);
-      _state.accessTokenRefreshHandler = null;
+      $interval.cancel(_accessTokenRefreshHandler);
+      _accessTokenRefreshHandler = null;
     };
 
     var _looksLikeIp = function (addr)
@@ -3426,17 +3390,19 @@ angular.module("risevision.common.geodata", [])
            gApi.auth.authorize(opts, function (authResult) {
              $log.debug("authResult", authResult);
              if (authResult && !authResult.error) {
-               _setAccessToken(authResult);
+               _scheduleAccessTokenAutoRefresh();
                  getOAuthUserInfo().then(function (oauthUserInfo) {
                    if(!_state.user.username || !_state.profile.username ||
                      _state.user.username !== oauthUserInfo.email) {
 
                      //populate user
                      _clearAndCopy({
+                       userId: oauthUserInfo.id, //TODO: ideally we should not use real user ID or email, but use hash value instead
                        username: oauthUserInfo.email,
                        picture: oauthUserInfo.picture
                      }, _state.user);
 
+                     _setUserToken();
                      refreshProfile().then(function () {
                        //populate userCompany
                        return getCompany().then(function(company) {
@@ -3512,7 +3478,7 @@ angular.module("risevision.common.geodata", [])
            userInfoCache.removeAll();
          }
          // This flag indicates a potentially authenticated user.
-         var userAuthed = (angular.isDefined(_state.accessToken) && _state.accessToken !== null);
+         var userAuthed = (angular.isDefined(_state.userToken) && _state.userToken !== null);
          $log.debug("userAuthed", userAuthed);
 
          if (forceAuth || userAuthed === true) {
@@ -3522,12 +3488,12 @@ angular.module("risevision.common.geodata", [])
                authenticateDeferred.resolve();
              }
              else {
-               _clearAccessToken();
+               _clearUserToken();
                $log.debug("Authentication Error: " + authResult.error);
                authenticateDeferred.reject("Authentication Error: " + authResult.error);
              }
            }, function () {
-             _clearAccessToken();
+             _clearUserToken();
              authenticateDeferred.reject();}).finally(function (){
                $loading.stopGlobal("risevision.user.authenticate");
              });
@@ -3535,7 +3501,7 @@ angular.module("risevision.common.geodata", [])
          else {
            var msg = "user is not authenticated";
            $log.debug(msg);
-           _clearAccessToken();
+           _clearUserToken();
            authenticateDeferred.reject(msg);
            _clearObj(_state.user);
            $loading.stopGlobal("risevision.user.authenticate");
@@ -3560,7 +3526,7 @@ angular.module("risevision.common.geodata", [])
          gApi.auth.signOut();
          // The flag the indicates a user is potentially
          // authenticated already, must be destroyed.
-         _clearAccessToken().then(function () {
+         _clearUserToken().then(function () {
            //clear auth token
            // The majority of state is in here
            _resetUserState();
@@ -3588,6 +3554,10 @@ angular.module("risevision.common.geodata", [])
 
     var hasRole = function (role) {
       return angular.isDefined(_state.roleMap[role]);
+    };
+
+    var getAccessToken = function () {
+      return $window.gapi ? $window.gapi.auth.getToken() : null;
     };
 
     var userState = {
@@ -3629,7 +3599,7 @@ angular.module("risevision.common.geodata", [])
       authenticate: redirect? authenticateRedirect : authenticate,
       signOut: signOut,
       refreshProfile: refreshProfile,
-      getAccessToken: function () { return _follow(_state.accessToken); }
+      getAccessToken: getAccessToken
     };
 
     window.userState = userState;
