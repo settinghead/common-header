@@ -45,7 +45,8 @@
     "angular-mocks": "1.2.24",
     "lodash": "~2.4.1",
     "JSONedit": "~0.1.0",
-    "q": "1.0.1"
+    "q": "1.0.1",
+    "rv-gapi-mock": "https://github.com/Rise-Vision/gapi-mock.git"
   },
   "resolutions": {
     "jquery": "~1.11.1"
