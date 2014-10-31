@@ -1,6 +1,23 @@
 (function (angular) {
   "use strict";
 
+
+  // var pendingAccessToken, pendingState;
+
+  var stripLeadingSlash = function (str) {
+    if(str[0] === "/") { str = str.slice(1); }
+    return str;
+  };
+
+  var parseParams = function (str) {
+    var params = {};
+    str.split("&").forEach(function (fragment) {
+      var fragmentArray = fragment.split("=");
+      params[fragmentArray[0]] = fragmentArray[1];
+    });
+    return params;
+  };
+
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.core.cache",
@@ -12,21 +29,40 @@
   // constants (you can override them in your app as needed)
   .value("DEFAULT_PROFILE_PICTURE", "http://api.randomuser.me/portraits/med/men/33.jpg")
   .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
+  .value("GOOGLE_OAUTH2_URL", "https://accounts.google.com/o/oauth2/auth")
 
-
-    // .run(["$location", function ($location) {
-    //   // alert(JSON.stringify($location.search()));
-    // }])
+    .run(["$location", "userState", "$log", "gapiLoader",
+      function ($location, userState, $log, gapiLoader) {
+      var path = $location.path();
+      var params = parseParams(stripLeadingSlash(path));
+      $log.debug("URL params", params);
+      if(params.access_token) {
+        gapiLoader().then(function (gApi) {
+          $log.debug("Setting token", params.access_token);
+          gApi.auth.setToken( {access_token: params.access_token});
+          userState.authenticate();
+        });
+      }
+      if (params.state) {
+        var state = JSON.parse(params.state);
+        if(state.s) {
+          userState._restoreState(state.s);
+        }
+        if(state.u) {
+          $location.path(state.u);
+        }
+      }
+    }])
 
   .factory("userState", [
     "$injector", "$q", "$log", "oauth2APILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval", "$loading", "rvStorage", "$window",
+    "$interval", "$loading", "rvStorage", "$window", "GOOGLE_OAUTH2_URL",
     function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval, $loading, rvStorage, $window) {
+    $interval, $loading, rvStorage, $window, GOOGLE_OAUTH2_URL) {
     //singleton factory that represents userState throughout application
 
     var _state = {
@@ -245,7 +281,7 @@
        return authorizeDeferred.promise;
      };
 
-     var redirect = false;
+     var redirect = true;
 
      var authenticateRedirect = function(forceAuth) {
 
@@ -258,12 +294,12 @@
 
         var loc = $window.location.href.substr(0, $window.location.href.indexOf("#")) || $window.location.href;
 
-        $window.location = "https://accounts.google.com/o/oauth2/auth" +
+        $window.location = GOOGLE_OAUTH2_URL +
           "?response_type=token" +
           "&scope=" + encodeURIComponent(OAUTH2_SCOPES) +
           "&client_id=" + CLIENT_ID +
           "&redirect_uri=" + encodeURIComponent(loc) +
-          "&state=" + encodeURIComponent(JSON.stringify({u: _state, f: $location.href}));
+          "&state=" + encodeURIComponent(JSON.stringify({s: _state, u: $location.path()}));
 
         var deferred = $q.defer();
         // returns a promise that never get fulfilled since we are redirecting
@@ -282,34 +318,36 @@
            userInfoCache.removeAll();
          }
          // This flag indicates a potentially authenticated user.
-         var userAuthed = (angular.isDefined(_state.userToken) && _state.userToken !== null);
-         $log.debug("userAuthed", userAuthed);
+         gapiLoader().then(function (gApi) {
+          var userAuthed = gApi.auth.getToken() !== null;
+          $log.debug("userAuthed", userAuthed);
 
-         if (forceAuth || userAuthed === true) {
-           _authorize(!forceAuth)
-           .then(function(authResult) {
-             if (authResult && ! authResult.error) {
-               authenticateDeferred.resolve();
-             }
-             else {
-               _clearUserToken();
-               $log.debug("Authentication Error: " + authResult.error);
-               authenticateDeferred.reject("Authentication Error: " + authResult.error);
-             }
-           }, function () {
-             _clearUserToken();
-             authenticateDeferred.reject();}).finally(function (){
-               $loading.stopGlobal("risevision.user.authenticate");
-             });
-         }
-         else {
-           var msg = "user is not authenticated";
-           $log.debug(msg);
-           _clearUserToken();
-           authenticateDeferred.reject(msg);
-           _clearObj(_state.user);
-           $loading.stopGlobal("risevision.user.authenticate");
-         }
+          if (forceAuth || userAuthed === true) {
+            _authorize(!forceAuth)
+            .then(function(authResult) {
+              if (authResult && ! authResult.error) {
+                authenticateDeferred.resolve();
+              }
+              else {
+                _clearUserToken();
+                $log.debug("Authentication Error: " + authResult.error);
+                authenticateDeferred.reject("Authentication Error: " + authResult.error);
+              }
+            }, function () {
+              _clearUserToken();
+              authenticateDeferred.reject();}).finally(function (){
+                $loading.stopGlobal("risevision.user.authenticate");
+              });
+          }
+          else {
+            var msg = "user is not authenticated";
+            $log.debug(msg);
+           //  _clearUserToken();
+            authenticateDeferred.reject(msg);
+            _clearObj(_state.user);
+            $loading.stopGlobal("risevision.user.authenticate");
+          }
+         });
        };
        _proceed();
 
@@ -403,7 +441,10 @@
       authenticate: redirect? authenticateRedirect : authenticate,
       signOut: signOut,
       refreshProfile: refreshProfile,
-      getAccessToken: getAccessToken
+      getAccessToken: getAccessToken,
+      _restoreState: function (s) {
+        angular.extend(_state, s);
+        $log.debug("userState restored with", s); }
     };
 
     window.userState = userState;
