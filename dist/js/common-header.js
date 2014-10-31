@@ -1401,12 +1401,21 @@ angular.module("risevision.common.header", [
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
+
+.factory("bindToScopeWithWatch", [function () {
+  return function (fnToWatch, scopeVar, scope) {
+    scope.$watch(function () { return fnToWatch.call(); },
+    function (val) { scope[scopeVar] = val; });
+  };
+}])
+
 .directive("commonHeader",
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauth2APILoader", "$log",
-    "$templateCache", "userState", "$location",
+    "$templateCache", "userState", "$location", "bindToScopeWithWatch",
   function($modal, $rootScope, $q, $loading, $interval,
-    oauth2APILoader, $log, $templateCache, userState, $location) {
+    oauth2APILoader, $log, $templateCache, userState, $location,
+    bindToScopeWithWatch) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
@@ -1436,8 +1445,7 @@ angular.module("risevision.common.header", [
           }];
         }
 
-        $scope.$watch(function () { return userState.isRiseVisionUser(); },
-        function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+        bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 
         $rootScope.$on("$stateChangeSuccess", function() {
           if ($scope.inRVAFrame) {
@@ -1448,18 +1456,19 @@ angular.module("risevision.common.header", [
     };
   }
 ])
-.directive("ngEnter", function() {
-        return function(scope, element, attrs) {
-            element.bind("keydown keypress", function(event) {
-                if(event.which === 13) {
-                        scope.$apply(function(){
-                                scope.$eval(attrs.ngEnter);
-                        });
 
-                        event.preventDefault();
-                }
-            });
-        };
+.directive("ngEnter", function() {
+  return function(scope, element, attrs) {
+    element.bind("keydown keypress", function(event) {
+      if(event.which === 13) {
+        scope.$apply(function(){
+          scope.$eval(attrs.ngEnter);
+        });
+
+        event.preventDefault();
+      }
+    });
+  };
 });
 
 angular.module("risevision.common.header")
@@ -3241,7 +3250,7 @@ angular.module("risevision.common.geodata", [])
       userCompany: {},
       selectedCompany: {},
       roleMap: {},
-      accessToken: _getAccessTokenFromUrl() || null,
+      accessToken: _getAccessTokenFromUrl() || cookieStore.get("rv-token"),
       inRVAFrame: angular.isDefined($location.search().inRVA)
     };
 
