@@ -37,9 +37,10 @@
       var params = parseParams(stripLeadingSlash(path));
       $log.debug("URL params", params);
       if(params.access_token) {
-        gapiLoader().then(function (gApi) {
+        gapiLoader().then(function () {
           $log.debug("Setting token", params.access_token);
-          gApi.auth.setToken( {access_token: params.access_token});
+          //gApi.auth.setToken( {access_token: params.access_token});
+          if (params.access_token) { userState._setUserToken(params.access_token); }
           userState.authenticate();
         });
       }
@@ -318,8 +319,9 @@
            userInfoCache.removeAll();
          }
          // This flag indicates a potentially authenticated user.
-         gapiLoader().then(function (gApi) {
-          var userAuthed = gApi.auth.getToken() !== null;
+         gapiLoader().then(function () {
+          var userAuthed = (angular.isDefined(_state.userToken) && _state.userToken !== null);
+          //var userAuthed = gApi.auth.getToken() !== null;
           $log.debug("userAuthed", userAuthed);
 
           if (forceAuth || userAuthed === true) {
@@ -444,7 +446,9 @@
       getAccessToken: getAccessToken,
       _restoreState: function (s) {
         angular.extend(_state, s);
-        $log.debug("userState restored with", s); }
+        $log.debug("userState restored with", s); },
+      _setUserToken: function (token) {
+        _state.userToken = token; }
     };
 
     window.userState = userState;
