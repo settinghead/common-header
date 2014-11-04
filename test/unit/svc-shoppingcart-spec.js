@@ -6,7 +6,7 @@ describe("Services: Shopping Cart", function() {
 
   it("should exist", function() {
     inject(function(shoppingCart) {
-      expect(shoppingCart).be.defined;
+      expect(shoppingCart).to.be.ok;
     });
   });
 

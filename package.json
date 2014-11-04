@@ -20,7 +20,7 @@
   },
   "scripts": {
     "test": "gulp test",
-    "dev-install": "npm install; bower install"
+    "dev": "npm install; bower install"
   },
   "repository": {
     "type": "git",

@@ -3666,12 +3666,31 @@ angular.module("risevision.common.ui-status", [])
   var _status, _goalStatus;
   var _dependencyMap = uiStatusDependencies._dependencies;
 
+  //generate a status that always resolves to true
+  var genedateDummyStatus = function (){
+    return function () {
+      var deferred = $q.defer();
+      deferred.resolve(true);
+      return deferred.promise;
+    };
+  };
+
+  var _getOrCreateDummyFactory = function (status) {
+    var factory;
+    try {
+      factory = $injector.get(status);
+    }
+    catch (e) {
+      factory = genedateDummyStatus();
+    }
+    return factory;
+  };
+
   //internal method that attempt to reach a particular status
   var _attemptStatus = function(status){
     var lastD;
     $log.debug("Attempting to reach status", status, "...");
     var dependencies = _dependencyMap[status];
-
     if(dependencies) {
       if(!(dependencies instanceof Array)) {
         dependencies = [dependencies];
@@ -3689,7 +3708,8 @@ angular.module("risevision.common.ui-status", [])
               $log.debug("Deps for status", dep, "satisfied.");
             }
             //find factory function and check for satisfaction
-            $injector.get(status)().then(
+
+            _getOrCreateDummyFactory(status)().then(
               function () {
                 $log.debug("Status", status, "satisfied.");
                 currentD.resolve(true);
@@ -3719,7 +3739,7 @@ angular.module("risevision.common.ui-status", [])
     else {
       //at deep level of termination status
       lastD = $q.defer();
-      $injector.get(status)().then(
+      _getOrCreateDummyFactory(status)().then(
         function () {
           $log.debug("Termination status", status, "satisfied.");
           lastD.resolve(true);
@@ -3768,7 +3788,8 @@ angular.module("risevision.common.ui-status", [])
       $log.debug("UI status validation cancelled.");
     },
     getStatus: function () { return _status; },
-    isStatusUndetermined: function () { return _status === "pendingCheck"; }
+    isStatusUndetermined: function () { return _status === "pendingCheck"; },
+    generateDummyStatus: genedateDummyStatus
   };
 
   return uiStateManager;
@@ -3860,14 +3881,6 @@ angular.module("risevision.common.ui-status", [])
       "registerdAsRiseVisionUser" : "signedInWithGoogle",
       "registrationComplete": ["notLoggedIn", "registerdAsRiseVisionUser"]
     });
-  }])
-
-  .factory("registrationComplete", ["$q", function ($q) {
-    return function () {
-      var deferred = $q.defer();
-      deferred.resolve(true);
-      return deferred.promise;
-    };
   }])
 
   .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "userState",

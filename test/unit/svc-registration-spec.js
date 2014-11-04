@@ -6,7 +6,7 @@ describe("Services: Registration", function() {
 
   it("should exist", function(done) {
     inject(function(uiStatusDependencies) {
-      expect(uiStatusDependencies).be.defined;
+      expect(uiStatusDependencies).to.be.ok;
       done();
     });
   });

@@ -7,8 +7,8 @@ describe("Services: auth & user state", function() {
 
   it("should exist", function(done) {
     inject(function(userState) {
-      expect(userState.authenticate).be.defined;
-      expect(userState.signOut).be.defined;
+      expect(userState.authenticate).to.be.ok;
+      expect(userState.signOut).to.be.ok;
       done();
     });
   });
