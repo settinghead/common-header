@@ -12,14 +12,6 @@
     });
   }])
 
-  .factory("registrationComplete", ["$q", function ($q) {
-    return function () {
-      var deferred = $q.defer();
-      deferred.resolve(true);
-      return deferred.promise;
-    };
-  }])
-
   .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "userState",
   function ($q, getOAuthUserInfo, userState) {
     return function () {

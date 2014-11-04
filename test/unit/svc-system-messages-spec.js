@@ -14,7 +14,7 @@ describe("Services: Core System Messages", function() {
 
   it("should exist", function() {
     inject(function(systemMessages) {
-      expect(systemMessages).be.defined;
+      expect(systemMessages).to.be.ok;
     });
   });
 
