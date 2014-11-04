@@ -22,11 +22,11 @@
     "$injector", "$q", "$log", "oauth2APILoader", "$location", "CLIENT_ID",
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval", "$loading", "rvStorage", "$window",
+    "$interval", "$loading", "rvStorage", "$window", "$document",
     function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval, $loading, rvStorage, $window) {
+    $interval, $loading, rvStorage, $window, $document) {
     //singleton factory that represents userState throughout application
 
     var _state = {
@@ -40,6 +40,45 @@
     };
 
     var _accessTokenRefreshHandler = null;
+
+    var _detectUserOrAuthChange = function() {
+      var tocken = cookieStore.get("rv-token");
+      if (tocken !== _state.userToken) {
+        //token change indicates that user either signed in, or signed out, or changed account in other app
+        $window.location.reload();
+      }
+    };
+
+    var _addEventListenerVisibilityAPI = function() {
+      var visibilityState, visibilityChange;
+      var document = $document[0];
+      if (typeof document.hidden !== "undefined") {
+        visibilityChange = "visibilitychange";
+        visibilityState = "visibilityState";
+      }
+      else if (typeof document.mozHidden !== "undefined") {
+        visibilityChange = "mozvisibilitychange";
+        visibilityState = "mozVisibilityState";
+      }
+      else if (typeof document.msHidden !== "undefined") {
+        visibilityChange = "msvisibilitychange";
+        visibilityState = "msVisibilityState";
+      }
+      else if (typeof document.webkitHidden !== "undefined") {
+        visibilityChange = "webkitvisibilitychange";
+        visibilityState = "webkitVisibilityState";
+      }
+
+      document.addEventListener(visibilityChange, function() {
+        $log.debug("visibility: " + document[visibilityState]);
+        if ("visible" === document[visibilityState]) {
+          _detectUserOrAuthChange();
+        }
+      });
+
+    };
+
+    _addEventListenerVisibilityAPI();
 
       //
     var _follow = function(source) {
