@@ -3236,20 +3236,24 @@ angular.module("risevision.common.geodata", [])
     $interval, $loading, rvStorage, $window, $document) {
     //singleton factory that represents userState throughout application
 
+    var _readRvToken = function () {
+      return cookieStore.get("rv-token");
+    };
+
     var _state = {
       profile: {}, //Rise vision profile
       user: {}, //Google user
       userCompany: {},
       selectedCompany: {},
       roleMap: {},
-      userToken: cookieStore.get("rv-token"),
+      userToken: _readRvToken(),
       inRVAFrame: angular.isDefined($location.search().inRVA)
     };
 
     var _accessTokenRefreshHandler = null;
 
     var _detectUserOrAuthChange = function() {
-      var tocken = cookieStore.get("rv-token");
+      var tocken = _readRvToken();
       if (tocken !== _state.userToken) {
         //token change indicates that user either signed in, or signed out, or changed account in other app
         $window.location.reload();
@@ -3309,19 +3313,14 @@ angular.module("risevision.common.geodata", [])
 
     var _setUserToken = function () {
       _state.userToken = _getUserId();
-      cookieStore.put(
-        "rv-token", _state.userToken, {domain: _getBaseDomain()});
-      cookieStore.put(
-        "rv-token", _state.userToken);
+      _writeRvToken(_state.userToken);
     };
 
     var _clearUserToken = function () {
       $log.debug("Clearing user token...");
       _cancelAccessTokenAutoRefresh();
       _state.userToken = null;
-      cookieStore.remove("rv-token",
-        {domain: "." + _getBaseDomain()});
-      cookieStore.remove("rv-token");
+      _clearRvToken();
       return gapiLoader().then(function (gApi) {
         gApi.auth.setToken();
       });
@@ -3356,19 +3355,18 @@ angular.module("risevision.common.geodata", [])
       var result;
       if(!result) {
         var hostname = $location.host();
-        var port = $location.port() ? ":" + $location.port() : "";
 
         if(_looksLikeIp(hostname)) {
-          result = hostname + port;
+          result = hostname;
         }
         else {
           var parts = hostname.split(".");
           if(parts.length > 1) {
-            //localhost
-            result = parts.slice(parts.length -2).join(".") + port;
+            result = parts.slice(parts.length -2).join(".");
           }
           else {
-            result = hostname + port;
+            //localhost
+            result = hostname;
           }
         }
 
@@ -3387,11 +3385,6 @@ angular.module("risevision.common.geodata", [])
       _clearObj(dest);
       angular.extend(dest, src);
     };
-
-    // var _persist = function () {
-    //   rvStorage.setItem("risevision.userState", JSON.stringify(_state));
-    //   $log.debug("userState persisted", _state);
-    // };
 
     var _resetUserState = function () {
        _clearObj(_state.user);
@@ -3617,6 +3610,24 @@ angular.module("risevision.common.geodata", [])
 
     var getAccessToken = function () {
       return $window.gapi ? $window.gapi.auth.getToken() : null;
+    };
+
+    var _writeRvToken = function (value) {
+      var baseDomain = _getBaseDomain();
+      if (baseDomain === "localhost") {
+        cookieStore.put("rv-token", value);
+      } else {
+        cookieStore.put("rv-token", value, {domain: baseDomain, path: "/"});
+      }
+    };
+
+    var _clearRvToken = function () {
+      var baseDomain = _getBaseDomain();
+      if (baseDomain === "localhost") {
+        cookieStore.remove("rv-token");
+      } else {
+        cookieStore.remove("rv-token", {domain: baseDomain, path: "/"});
+      }
     };
 
     var userState = {
