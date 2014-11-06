@@ -116,6 +116,7 @@ var unitTestFiles = [
   "components/q/q.js",
   "components/ngstorage/ngStorage.js",
   "components/angular-bootstrap/ui-bootstrap-tpls.js",
+  "components/angular-ui-flow-manager/src/js/*.js",
   "components/angular-mocks/angular-mocks.js",
   "components/angular-spinner/angular-spinner.js",
   "components/ng-biscuit/dist/ng-biscuit.js",

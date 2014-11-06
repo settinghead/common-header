@@ -1157,9 +1157,9 @@ app.run(["$templateCache", function($templateCache) {
     "  <button type=\"button\" class=\"close\" ng-click=\"closeModal()\" aria-hidden=\"true\">\n" +
     "    <i class=\"fa fa-times\"></i>\n" +
     "  </button>\n" +
-    "  <h2 id=\"sub-company-label\" class=\"modal-title add-subcompany-modal\">Add Sub-Company</h2>\n" +
+    "  <h2 id=\"sub-company-label\" class=\"modal-title\">Add Sub-Company</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body select-subcompany-modal\">\n" +
+    "<div class=\"modal-body select-subcompany-modal pt-add-subcompany-modal\">\n" +
     "  <form role=\"form\" name=\"forms.companyForm\">\n" +
     "    <div ng-include=\"'company-fields.html'\"></div>\n" +
     "    <div class=\"form-group\">\n" +
@@ -1390,7 +1390,7 @@ angular.module("risevision.common.header", [
   "risevision.common.localstorage",
   "risevision.common.header.templates",
   "risevision.common.loading",
-  "risevision.common.userstate",   "risevision.common.ui-status",
+  "risevision.common.userstate",   "risevision.ui-flow",
   "risevision.common.systemmessages", "risevision.core.systemmessages",
   "risevision.core.oauth2",
   "risevision.common.geodata",
@@ -1516,9 +1516,9 @@ angular.module("risevision.common.header")
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager", "oauth2APILoader",
+  "$log", "uiFlowManager", "oauth2APILoader",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager, oauth2APILoader) {
+  $loading, cookieStore, $log, uiFlowManager, oauth2APILoader) {
 
     window.$loading = $loading; //DEBUG
 
@@ -1526,7 +1526,7 @@ angular.module("risevision.common.header")
 
     $scope.register = function () {
       cookieStore.remove("surpressRegistration");
-      uiStatusManager.invalidateStatus("registrationComplete");
+      uiFlowManager.invalidateStatus("registrationComplete");
     };
 
     //clear state where user registration is surpressed
@@ -1539,7 +1539,7 @@ angular.module("risevision.common.header")
     });
 
     //spinner
-    $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
+    $scope.$watch(function () {return uiFlowManager.isStatusUndetermined(); },
     function (undetermined){
       $scope.undetermined = undetermined;
       $scope.loading = undetermined;
@@ -1547,7 +1547,7 @@ angular.module("risevision.common.header")
 
 
     //render dialogs based on status the UI is stuck on
-    $scope.$watch(function () { return uiStatusManager.getStatus(); },
+    $scope.$watch(function () { return uiFlowManager.getStatus(); },
     function (newStatus, oldStatus){
       if(newStatus) {
         $log.debug("status changed from", oldStatus, "to", newStatus);
@@ -1565,7 +1565,7 @@ angular.module("risevision.common.header")
           userState.registrationModalInstance.result.finally(function (){
             //TODO: put it somewhere else
             userState.registrationModalInstance = null;
-            uiStatusManager.invalidateStatus();
+            uiFlowManager.invalidateStatus();
           });
         }
       }
@@ -1588,12 +1588,23 @@ angular.module("risevision.common.header")
           $scope.profile = userState.getCopyOfProfile();
         }});
 
+    //render dialogs based on status the UI is stuck on
+    $scope.$watch(function () { return uiFlowManager.getStatus(); },
+      function (newStatus){
+        if(newStatus) {
+        //render a dialog based on the status current UI is in
+        if(newStatus === "signedInWithGoogle") {
+          $scope.login();
+        }
+      }
+    });
+
     // Login Modal
     $scope.login = function() {
       $loading.startGlobal("auth-buttons-login");
       userState.authenticate(true).then().finally(function(){
         $loading.stopGlobal("auth-buttons-login");
-        uiStatusManager.invalidateStatus("registrationComplete");
+        uiFlowManager.invalidateStatus("registrationComplete");
       });
     };
 
@@ -1636,10 +1647,10 @@ angular.module("risevision.common.header")
     .then().finally(function () {
       userState.authenticate(false).then().finally(function () {
         $loading.stopGlobal("auth-buttons-silent");
-        if(!uiStatusManager.isStatusUndetermined()) {
+        if(!uiFlowManager.isStatusUndetermined()) {
           //attempt to reach a stable registration state only
           //when there is currently no validating checking
-          uiStatusManager.invalidateStatus("registrationComplete");
+          uiFlowManager.invalidateStatus("registrationComplete");
         }
       });
     });
@@ -1861,9 +1872,9 @@ angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
   "$scope", "$modalInstance",
   "$loading", "registerAccount", "$log", "cookieStore",
-  "userState", "pick", "uiStatusManager", "humanReadableError",
+  "userState", "pick", "uiFlowManager", "humanReadableError",
   function($scope, $modalInstance, $loading, registerAccount, $log,
-    cookieStore, userState, pick, uiStatusManager, humanReadableError) {
+    cookieStore, userState, pick, uiFlowManager, humanReadableError) {
 
       var copyOfProfile = userState.getCopyOfProfile() || {};
 
@@ -1890,14 +1901,14 @@ angular.module("risevision.common.header")
 
       // check status, load spinner, or close dialog if registration is complete
       var watch = $scope.$watch(
-        function () { return uiStatusManager.isStatusUndetermined(); },
+        function () { return uiFlowManager.isStatusUndetermined(); },
         function (undetermined) {
           if(undetermined === true) {
               //start the spinner
               $loading.start("registration-modal");
           }
           else if (undetermined === false) {
-            if(uiStatusManager.getStatus() === "registrationComplete") {
+            if(uiFlowManager.getStatus() === "registrationComplete") {
               $modalInstance.close("success");
               //stop the watch
               watch();
@@ -2403,10 +2414,10 @@ angular.module("risevision.common.header")
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
-    "uiStatusManager", "humanReadableError",
+    "uiFlowManager", "humanReadableError",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
       addUser, username, userRoleMap, $log, $loading, userState,
-      uiStatusManager, humanReadableError) {
+      uiFlowManager, humanReadableError) {
       $scope.user = {};
       $scope.$watch("loading", function (loading) {
         if(loading) { $loading.start("user-settings-modal"); }
@@ -2446,7 +2457,7 @@ angular.module("risevision.common.header")
             .then(function () {
               if($scope.username === userState.getUsername()) {
                 userState.signOut().then().finally(function() {
-                  uiStatusManager.invalidateStatus("registrationComplete");
+                  uiFlowManager.invalidateStatus("registrationComplete");
                 });
               }
             })
@@ -3659,7 +3670,7 @@ angular.module("risevision.common.geodata", [])
 (function (angular) {
   "use strict";
 
-angular.module("risevision.common.ui-status", [])
+angular.module("risevision.ui-flow", [])
 
 .constant("uiStatusDependencies", {
   _dependencies: {},
@@ -3668,7 +3679,7 @@ angular.module("risevision.common.ui-status", [])
   }
 })
 
-.factory("uiStatusManager", ["$log", "$q", "$injector",
+.factory("uiFlowManager", ["$log", "$q", "$injector",
 "uiStatusDependencies", "$rootScope",
   function ($log, $q, $injector, uiStatusDependencies, $rootScope) {
 
@@ -3882,7 +3893,7 @@ angular.module("risevision.common.ui-status", [])
   "use strict";
 
   angular.module("risevision.common.registration",
-  ["risevision.common.userstate", "risevision.common.ui-status",
+  ["risevision.common.userstate", "risevision.ui-flow",
   "risevision.core.userprofile", "risevision.common.gapi"])
 
   .config(["uiStatusDependencies", function (uiStatusDependencies) {

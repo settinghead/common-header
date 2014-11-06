@@ -2,7 +2,7 @@
   "use strict";
 
   angular.module("risevision.common.registration",
-  ["risevision.common.userstate", "risevision.common.ui-status",
+  ["risevision.common.userstate", "risevision.ui-flow",
   "risevision.core.userprofile", "risevision.common.gapi"])
 
   .config(["uiStatusDependencies", function (uiStatusDependencies) {

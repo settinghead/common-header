@@ -106,10 +106,10 @@ angular.module("risevision.common.header")
   .controller("UserSettingsModalCtrl", [
     "$scope", "$modalInstance", "updateUser", "getUserProfile", "deleteUser",
     "addUser", "username", "userRoleMap", "$log", "$loading", "userState",
-    "uiStatusManager", "humanReadableError",
+    "uiFlowManager", "humanReadableError",
     function($scope, $modalInstance, updateUser, getUserProfile, deleteUser,
       addUser, username, userRoleMap, $log, $loading, userState,
-      uiStatusManager, humanReadableError) {
+      uiFlowManager, humanReadableError) {
       $scope.user = {};
       $scope.$watch("loading", function (loading) {
         if(loading) { $loading.start("user-settings-modal"); }
@@ -149,7 +149,7 @@ angular.module("risevision.common.header")
             .then(function () {
               if($scope.username === userState.getUsername()) {
                 userState.signOut().then().finally(function() {
-                  uiStatusManager.invalidateStatus("registrationComplete");
+                  uiFlowManager.invalidateStatus("registrationComplete");
                 });
               }
             })
