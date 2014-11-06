@@ -1,9 +1,9 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiStatusManager", "oauth2APILoader",
+  "$log", "uiFlowManager", "oauth2APILoader",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiStatusManager, oauth2APILoader) {
+  $loading, cookieStore, $log, uiFlowManager, oauth2APILoader) {
 
     window.$loading = $loading; //DEBUG
 
@@ -11,7 +11,7 @@ angular.module("risevision.common.header")
 
     $scope.register = function () {
       cookieStore.remove("surpressRegistration");
-      uiStatusManager.invalidateStatus("registrationComplete");
+      uiFlowManager.invalidateStatus("registrationComplete");
     };
 
     //clear state where user registration is surpressed
@@ -24,7 +24,7 @@ angular.module("risevision.common.header")
     });
 
     //spinner
-    $scope.$watch(function () {return uiStatusManager.isStatusUndetermined(); },
+    $scope.$watch(function () {return uiFlowManager.isStatusUndetermined(); },
     function (undetermined){
       $scope.undetermined = undetermined;
       $scope.loading = undetermined;
@@ -32,7 +32,7 @@ angular.module("risevision.common.header")
 
 
     //render dialogs based on status the UI is stuck on
-    $scope.$watch(function () { return uiStatusManager.getStatus(); },
+    $scope.$watch(function () { return uiFlowManager.getStatus(); },
     function (newStatus, oldStatus){
       if(newStatus) {
         $log.debug("status changed from", oldStatus, "to", newStatus);
@@ -50,7 +50,7 @@ angular.module("risevision.common.header")
           userState.registrationModalInstance.result.finally(function (){
             //TODO: put it somewhere else
             userState.registrationModalInstance = null;
-            uiStatusManager.invalidateStatus();
+            uiFlowManager.invalidateStatus();
           });
         }
       }
@@ -73,12 +73,23 @@ angular.module("risevision.common.header")
           $scope.profile = userState.getCopyOfProfile();
         }});
 
+    //render dialogs based on status the UI is stuck on
+    $scope.$watch(function () { return uiFlowManager.getStatus(); },
+      function (newStatus){
+        if(newStatus) {
+        //render a dialog based on the status current UI is in
+        if(newStatus === "signedInWithGoogle") {
+          $scope.login();
+        }
+      }
+    });
+
     // Login Modal
     $scope.login = function() {
       $loading.startGlobal("auth-buttons-login");
       userState.authenticate(true).then().finally(function(){
         $loading.stopGlobal("auth-buttons-login");
-        uiStatusManager.invalidateStatus("registrationComplete");
+        uiFlowManager.invalidateStatus("registrationComplete");
       });
     };
 
@@ -121,10 +132,10 @@ angular.module("risevision.common.header")
     .then().finally(function () {
       userState.authenticate(false).then().finally(function () {
         $loading.stopGlobal("auth-buttons-silent");
-        if(!uiStatusManager.isStatusUndetermined()) {
+        if(!uiFlowManager.isStatusUndetermined()) {
           //attempt to reach a stable registration state only
           //when there is currently no validating checking
-          uiStatusManager.invalidateStatus("registrationComplete");
+          uiFlowManager.invalidateStatus("registrationComplete");
         }
       });
     });

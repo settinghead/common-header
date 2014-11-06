@@ -2,9 +2,9 @@ angular.module("risevision.common.header")
 .controller("RegistrationModalCtrl", [
   "$scope", "$modalInstance",
   "$loading", "registerAccount", "$log", "cookieStore",
-  "userState", "pick", "uiStatusManager", "humanReadableError",
+  "userState", "pick", "uiFlowManager", "humanReadableError",
   function($scope, $modalInstance, $loading, registerAccount, $log,
-    cookieStore, userState, pick, uiStatusManager, humanReadableError) {
+    cookieStore, userState, pick, uiFlowManager, humanReadableError) {
 
       var copyOfProfile = userState.getCopyOfProfile() || {};
 
@@ -31,14 +31,14 @@ angular.module("risevision.common.header")
 
       // check status, load spinner, or close dialog if registration is complete
       var watch = $scope.$watch(
-        function () { return uiStatusManager.isStatusUndetermined(); },
+        function () { return uiFlowManager.isStatusUndetermined(); },
         function (undetermined) {
           if(undetermined === true) {
               //start the spinner
               $loading.start("registration-modal");
           }
           else if (undetermined === false) {
-            if(uiStatusManager.getStatus() === "registrationComplete") {
+            if(uiFlowManager.getStatus() === "registrationComplete") {
               $modalInstance.close("success");
               //stop the watch
               watch();

@@ -23,6 +23,7 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 
 - [ng-gapi-loader](https://github.com/Rise-Vision/ng-gapi-loader.git)
 - [ng-core-api-client](https://github.com/Rise-Vision/ng-core-api-client.git)
+- [angular-ui-flow-manager](https://github.com/Rise-Vision/angular-ui-flow-manager.git)
 - [NPM (node package manager)](https://www.npmjs.org/)
 - [Bower](http://bower.io/)
 - [AngularJS](https://https://angularjs.org/)
