@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/style.min.css"/>
   </head>
   <body ng-controller="MainController">
-    <common-header nav-options="navOptions"></common-header>
+    <common-header nav-options="navOptions" hide-shopping-cart="false"></common-header>
     <button ng-show="realGapiLoaded" ng-click="loadFakeGAPI()" class="btn btn-secondary">Load Fake GAPI</button>
     <div ng-if="db">
       This app was built for the sole purpose of testing &amp; demoing common header.
@@ -93,9 +93,9 @@
     <button class="btn" id="clear-cart" ng-click="clearCart()">Clear Cart</button>
 
     </script>
-    <script src="js/dependencies.js"></script>
+    <script src="js/dependencies.min.js"></script>
 
-    <script src="js/common-header.js"></script>
+    <script src="js/common-header.min.js"></script>
 
     <script type="text/javascript" src="../../components/rv-gapi-mock/observed-browser.js"></script>
     <script type="text/javascript" src="../../components/JSONedit/js/JSONEdit.js"></script>
@@ -106,7 +106,7 @@
     <script type="text/javascript" src="../../components/rv-gapi-mock/gapi-mock-data/systemmessages.js"></script>
     <script type="text/javascript" src="../../components/mustache/mustache.js"></script>
     <script type="text/javascript" src="../../components/rv-gapi-mock/gapi-mock.js"></script>
-    
+
     <style>
     .jsonView .deleteKeyBtn, .jsonView .moveArrayItemBtn {
       z-index: 800;

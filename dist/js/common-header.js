@@ -1082,7 +1082,7 @@ catch(err) { app = angular.module("risevision.common.header.templates", []); }
 app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("shoppingcart-button.html",
-    "<li class=\"shopping-cart\" ng-show=\"isRiseVisionUser\">\n" +
+    "<li class=\"shopping-cart\" ng-show=\"!hideShoppingCart && isRiseVisionUser\">\n" +
     "<a href=\"{{shoppingCartUrl}}\" class=\"shopping-cart-button\">\n" +
     "  <i class=\"fa fa-shopping-cart\"></i>\n" +
     "  <span id=\"cartBadge\" class=\"label label-primary\" ng-show=\"cart.items.length\">\n" +
@@ -1421,12 +1421,12 @@ angular.module("risevision.common.header", [
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
-      link: function($scope) {
+      link: function($scope, element, attr) {
         $scope.navCollapsed = true;
         $scope.inRVAFrame = userState.inRVAFrame();
 
         // If nav options not provided use defaults
-        if (!$scope.navOptions) {
+        if (!$scope[attr.navOptions]) {
           $scope.navOptions = [{
             title: "Home",
             link: "#/"
@@ -1445,6 +1445,12 @@ angular.module("risevision.common.header", [
             target: "_blank"
           }];
         }
+
+        //default to true
+        $scope.hideShoppingCart = attr.hideShoppingCart &&
+          attr.hideShoppingCart !== "0" && attr.hideShoppingCart !== "false";
+
+        console.log($scope);
 
         bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 
