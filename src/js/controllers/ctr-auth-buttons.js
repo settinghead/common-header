@@ -1,9 +1,10 @@
 angular.module("risevision.common.header")
 .controller("AuthButtonsCtr", ["$scope", "$modal", "$templateCache",
   "userState", "$loading", "cookieStore",
-  "$log", "uiFlowManager", "oauth2APILoader",
+  "$log", "uiFlowManager", "oauth2APILoader", "bindToScopeWithWatch",
   function($scope, $modal, $templateCache, userState,
-  $loading, cookieStore, $log, uiFlowManager, oauth2APILoader) {
+  $loading, cookieStore, $log, uiFlowManager, oauth2APILoader,
+  bindToScopeWithWatch) {
 
     window.$loading = $loading; //DEBUG
 
@@ -63,8 +64,7 @@ angular.module("risevision.common.header")
       function (loggedIn) { $scope.isLoggedIn = loggedIn;
         if(loggedIn === true) { $scope.userPicture = userState.getUserPicture();}
       });
-    $scope.$watch(function () {return userState.isRiseVisionUser();},
-      function (isRvUser) { $scope.isRiseVisionUser = isRvUser; });
+    bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 
     //repopulate profile upon change of current user
     $scope.$watch(function () {return userState.getUsername();},
@@ -75,6 +75,7 @@ angular.module("risevision.common.header")
 
     //render dialogs based on status the UI is stuck on
     $scope.$watch(function () { return uiFlowManager.getStatus(); },
+
       function (newStatus){
         if(newStatus) {
         //render a dialog based on the status current UI is in
@@ -85,11 +86,11 @@ angular.module("risevision.common.header")
     });
 
     // Login Modal
-    $scope.login = function() {
+    $scope.login = function (endStatus) {
       $loading.startGlobal("auth-buttons-login");
       userState.authenticate(true).then().finally(function(){
         $loading.stopGlobal("auth-buttons-login");
-        uiFlowManager.invalidateStatus("registrationComplete");
+        uiFlowManager.invalidateStatus(endStatus);
       });
     };
 
