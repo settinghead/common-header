@@ -39,12 +39,12 @@ angular.module("risevision.common.header", [
       restrict: "E",
       template: $templateCache.get("common-header.html"),
       scope: false,
-      link: function($scope) {
+      link: function($scope, element, attr) {
         $scope.navCollapsed = true;
         $scope.inRVAFrame = userState.inRVAFrame();
 
         // If nav options not provided use defaults
-        if (!$scope.navOptions) {
+        if (!$scope[attr.navOptions]) {
           $scope.navOptions = [{
             title: "Home",
             link: "#/"
@@ -63,6 +63,12 @@ angular.module("risevision.common.header", [
             target: "_blank"
           }];
         }
+
+        //default to true
+        $scope.hideShoppingCart = attr.hideShoppingCart &&
+          attr.hideShoppingCart !== "0" && attr.hideShoppingCart !== "false";
+
+        console.log($scope);
 
         bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 
