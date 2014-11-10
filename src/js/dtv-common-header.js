@@ -68,8 +68,6 @@ angular.module("risevision.common.header", [
         $scope.hideShoppingCart = attr.hideShoppingCart &&
           attr.hideShoppingCart !== "0" && attr.hideShoppingCart !== "false";
 
-        console.log($scope);
-
         bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 
         $rootScope.$on("$stateChangeSuccess", function() {
