@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <link rel="stylesheet" href="css/style.min.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
   </head>
   <body ng-controller="MainController">
     <common-header nav-options="navOptions" hide-shopping-cart="false"></common-header>
@@ -93,9 +93,9 @@
     <button class="btn" id="clear-cart" ng-click="clearCart()">Clear Cart</button>
 
     </script>
-    <script src="js/dependencies.min.js"></script>
+    <script src="js/dependencies.js"></script>
 
-    <script src="js/common-header.min.js"></script>
+    <script src="js/common-header.js"></script>
 
     <script type="text/javascript" src="../../components/rv-gapi-mock/observed-browser.js"></script>
     <script type="text/javascript" src="../../components/JSONedit/js/JSONEdit.js"></script>
@@ -132,6 +132,7 @@
       }])
 
       .controller("MainController", function($rootScope, $scope) {
+
         $rootScope.navOptions = [{
           title: 'Accounts & Users',
           link: '#/users'

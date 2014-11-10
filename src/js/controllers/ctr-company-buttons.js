@@ -6,8 +6,12 @@ angular.module("risevision.common.header")
     $scope.inRVAFrame = userState.inRVAFrame();
 
     $scope.$watch(function () {return userState.getSelectedCompanyId(); },
-    function (newCompanyId) {
+    function (newCompanyId, oldCompanyId) {
       if(newCompanyId) {
+        $scope.isSubcompanySelected = userState.isSubcompanySelected();
+        selectedCompanyUrlHandler.updateUrl();
+      }
+      else if(!newCompanyId && oldCompanyId) {
         $scope.isSubcompanySelected = userState.isSubcompanySelected();
         selectedCompanyUrlHandler.updateUrl();
       }

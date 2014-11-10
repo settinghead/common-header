@@ -1450,8 +1450,6 @@ angular.module("risevision.common.header", [
         $scope.hideShoppingCart = attr.hideShoppingCart &&
           attr.hideShoppingCart !== "0" && attr.hideShoppingCart !== "false";
 
-        console.log($scope);
-
         bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 
         $rootScope.$on("$stateChangeSuccess", function() {
@@ -1675,8 +1673,12 @@ angular.module("risevision.common.header")
     $scope.inRVAFrame = userState.inRVAFrame();
 
     $scope.$watch(function () {return userState.getSelectedCompanyId(); },
-    function (newCompanyId) {
+    function (newCompanyId, oldCompanyId) {
       if(newCompanyId) {
+        $scope.isSubcompanySelected = userState.isSubcompanySelected();
+        selectedCompanyUrlHandler.updateUrl();
+      }
+      else if(!newCompanyId && oldCompanyId) {
         $scope.isSubcompanySelected = userState.isSubcompanySelected();
         selectedCompanyUrlHandler.updateUrl();
       }
@@ -2161,8 +2163,9 @@ angular.module("risevision.common.header")
       });
     };
   }
-])
+]);
 
+angular.module("risevision.common.header")
 .controller("companySelectorCtr", ["$scope", "$modalInstance",
     "companyService", "companyId", "BaseList", "$loading",
     function ($scope, $modalInstance, companyService,
