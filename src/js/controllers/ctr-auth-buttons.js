@@ -99,10 +99,13 @@ angular.module("risevision.common.header")
     };
 
     $scope.confirmSignOut = function(size) {
-      $modal.open({
+      var modalInstance =$modal.open({
         template: $templateCache.get("signout-modal.html"),
         controller: "SignOutModalCtrl",
         size: size
+      });
+      modalInstance.result.finally(function () {
+        uiFlowManager.invalidateStatus("registrationComplete");
       });
     };
 

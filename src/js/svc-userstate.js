@@ -24,7 +24,7 @@
     "risevision.core.oauth2", "ngBiscuit",
     "risevision.core.util", "risevision.core.userprofile",
     "risevision.core.company", "risevision.common.loading",
-    "LocalStorageModule"
+    "LocalStorageModule", "risevision.ui-flow"
   ])
 
   // constants (you can override them in your app as needed)
@@ -32,8 +32,8 @@
   .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
   .value("GOOGLE_OAUTH2_URL", "https://accounts.google.com/o/oauth2/auth")
 
-    .run(["$location", "userState", "$log", "gapiLoader", "localStorageService",
-      function ($location, userState, $log, gapiLoader, localStorageService) {
+    .run(["$location", "userState", "$log", "gapiLoader",
+      function ($location, userState, $log, gapiLoader) {
       var path = $location.path();
       var params = parseParams(stripLeadingSlash(path));
       $log.debug("URL params", params);
@@ -45,11 +45,7 @@
           userState.authenticate();
         });
       }
-      var sFromStorage = localStorageService.get("risevision.common.userState");
-      if(sFromStorage) {
-        userState._restoreState(sFromStorage);
-        localStorageService.remove("risevision.common.userState"); //clear
-      }
+      userState._restoreState();
       if (params.state) {
         var state = JSON.parse(params.state);
         if(state.u) {
@@ -63,12 +59,12 @@
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
     "$interval", "$loading", "rvStorage", "$window", "GOOGLE_OAUTH2_URL",
-    "localStorageService", "$document",
+    "localStorageService", "$document", "uiFlowManager",
     function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
     $interval, $loading, rvStorage, $window, GOOGLE_OAUTH2_URL,
-    localStorageService, $document) {
+    localStorageService, $document, uiFlowManager) {
     //singleton factory that represents userState throughout application
 
     var _readRvToken = function () {
@@ -340,6 +336,7 @@
         var loc = $window.location.href.substr(0, $window.location.href.indexOf("#")) || $window.location.href;
 
         localStorageService.set("risevision.common.userState", _state);
+        uiFlowManager.persist();
 
         $window.location = GOOGLE_OAUTH2_URL +
           "?response_type=token" +
@@ -470,6 +467,15 @@
       }
     };
 
+    var _restoreState = function () {
+      var sFromStorage = localStorageService.get("risevision.common.userState");
+      if(sFromStorage) {
+        angular.extend(_state, sFromStorage);
+        localStorageService.remove("risevision.common.userState"); //clear
+        $log.debug("userState restored with", sFromStorage);
+      }
+    };
+
     var userState = {
       getUserCompanyId: function () {
         return (_state.userCompany && _state.userCompany.id) || null; },
@@ -510,9 +516,7 @@
       signOut: signOut,
       refreshProfile: refreshProfile,
       getAccessToken: getAccessToken,
-      _restoreState: function (s) {
-        angular.extend(_state, s);
-        $log.debug("userState restored with", s); },
+      _restoreState: _restoreState,
       _setUserToken: function (token) {
         _state.userToken = token; }
     };

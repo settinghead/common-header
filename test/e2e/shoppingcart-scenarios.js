@@ -53,11 +53,11 @@
 
         // ptor.driver.navigate().refresh();
 
-        browser.takeScreenshot().then(function(png) {
-        var stream = fs.createWriteStream("/tmp/screenshot.png");
-          stream.write(new Buffer(png, "base64"));
-          stream.end();
-        });
+        // browser.takeScreenshot().then(function(png) {
+        // var stream = fs.createWriteStream("/tmp/screenshot.png");
+        //   stream.write(new Buffer(png, "base64"));
+        //   stream.end();
+        // });
 
         //add to cart
         element(by.id("buy-product-2")).click();

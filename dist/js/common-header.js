@@ -1621,10 +1621,13 @@ angular.module("risevision.common.header")
     };
 
     $scope.confirmSignOut = function(size) {
-      $modal.open({
+      var modalInstance =$modal.open({
         template: $templateCache.get("signout-modal.html"),
         controller: "SignOutModalCtrl",
         size: size
+      });
+      modalInstance.result.finally(function () {
+        uiFlowManager.invalidateStatus("registrationComplete");
       });
     };
 
@@ -3240,7 +3243,7 @@ angular.module("risevision.common.geodata", [])
     "risevision.core.oauth2", "ngBiscuit",
     "risevision.core.util", "risevision.core.userprofile",
     "risevision.core.company", "risevision.common.loading",
-    "LocalStorageModule"
+    "LocalStorageModule", "risevision.ui-flow"
   ])
 
   // constants (you can override them in your app as needed)
@@ -3248,8 +3251,8 @@ angular.module("risevision.common.geodata", [])
   .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
   .value("GOOGLE_OAUTH2_URL", "https://accounts.google.com/o/oauth2/auth")
 
-    .run(["$location", "userState", "$log", "gapiLoader", "localStorageService",
-      function ($location, userState, $log, gapiLoader, localStorageService) {
+    .run(["$location", "userState", "$log", "gapiLoader",
+      function ($location, userState, $log, gapiLoader) {
       var path = $location.path();
       var params = parseParams(stripLeadingSlash(path));
       $log.debug("URL params", params);
@@ -3261,11 +3264,7 @@ angular.module("risevision.common.geodata", [])
           userState.authenticate();
         });
       }
-      var sFromStorage = localStorageService.get("risevision.common.userState");
-      if(sFromStorage) {
-        userState._restoreState(sFromStorage);
-        localStorageService.remove("risevision.common.userState"); //clear
-      }
+      userState._restoreState();
       if (params.state) {
         var state = JSON.parse(params.state);
         if(state.u) {
@@ -3279,12 +3278,12 @@ angular.module("risevision.common.geodata", [])
     "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
     "$interval", "$loading", "rvStorage", "$window", "GOOGLE_OAUTH2_URL",
-    "localStorageService", "$document",
+    "localStorageService", "$document", "uiFlowManager",
     function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
     gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
     $interval, $loading, rvStorage, $window, GOOGLE_OAUTH2_URL,
-    localStorageService, $document) {
+    localStorageService, $document, uiFlowManager) {
     //singleton factory that represents userState throughout application
 
     var _readRvToken = function () {
@@ -3556,6 +3555,7 @@ angular.module("risevision.common.geodata", [])
         var loc = $window.location.href.substr(0, $window.location.href.indexOf("#")) || $window.location.href;
 
         localStorageService.set("risevision.common.userState", _state);
+        uiFlowManager.persist();
 
         $window.location = GOOGLE_OAUTH2_URL +
           "?response_type=token" +
@@ -3686,6 +3686,15 @@ angular.module("risevision.common.geodata", [])
       }
     };
 
+    var _restoreState = function () {
+      var sFromStorage = localStorageService.get("risevision.common.userState");
+      if(sFromStorage) {
+        angular.extend(_state, sFromStorage);
+        localStorageService.remove("risevision.common.userState"); //clear
+        $log.debug("userState restored with", sFromStorage);
+      }
+    };
+
     var userState = {
       getUserCompanyId: function () {
         return (_state.userCompany && _state.userCompany.id) || null; },
@@ -3726,9 +3735,7 @@ angular.module("risevision.common.geodata", [])
       signOut: signOut,
       refreshProfile: refreshProfile,
       getAccessToken: getAccessToken,
-      _restoreState: function (s) {
-        angular.extend(_state, s);
-        $log.debug("userState restored with", s); },
+      _restoreState: _restoreState,
       _setUserToken: function (token) {
         _state.userToken = token; }
     };
@@ -3742,7 +3749,7 @@ angular.module("risevision.common.geodata", [])
 (function (angular) {
   "use strict";
 
-angular.module("risevision.ui-flow", [])
+angular.module("risevision.ui-flow", ["LocalStorageModule"])
 
 .constant("uiStatusDependencies", {
   _dependencies: {},
@@ -3752,8 +3759,9 @@ angular.module("risevision.ui-flow", [])
 })
 
 .factory("uiFlowManager", ["$log", "$q", "$injector",
-"uiStatusDependencies", "$rootScope",
-  function ($log, $q, $injector, uiStatusDependencies, $rootScope) {
+"uiStatusDependencies", "$rootScope", "localStorageService",
+  function ($log, $q, $injector, uiStatusDependencies, $rootScope,
+  localStorageService) {
 
   var _status, _goalStatus;
   var _dependencyMap = uiStatusDependencies._dependencies;
@@ -3773,6 +3781,7 @@ angular.module("risevision.ui-flow", [])
       factory = $injector.get(status);
     }
     catch (e) {
+      $log.debug("Generating dummy status", status);
       factory = genedateDummyStatus();
     }
     return factory;
@@ -3781,6 +3790,7 @@ angular.module("risevision.ui-flow", [])
   //internal method that attempt to reach a particular status
   var _attemptStatus = function(status){
     var lastD;
+
     $log.debug("Attempting to reach status", status, "...");
     var dependencies = _dependencyMap[status];
     if(dependencies) {
@@ -3846,33 +3856,62 @@ angular.module("risevision.ui-flow", [])
     return lastD.promise;
   };
 
+  var deferred, final = true;
   var _recheckStatus = function (desiredStatus) {
-    if(!desiredStatus) {
-      if(_goalStatus) { desiredStatus = _goalStatus; }
-      else { throw "You must specify an initial status to achieve. "; }
+    if(!desiredStatus && !_goalStatus) {
+      //no goal, no desired status. resolve to true immediately
+      var d = $q.defer(); d.resolve();
+      return d.promise;
     }
-    else {
-      //register what the goal status it for subsequent attempts
+    if(!_goalStatus && final) {
       _goalStatus = desiredStatus;
+      deferred = $q.defer();
+      final = false;
     }
-    return _attemptStatus(desiredStatus).then(
-      function () {
-        _status = desiredStatus;
-      },
-      function (status) {
-        // if rejected at any given step,
-        // show the dialog of that relevant step
-        _status = status;
-      });
+    if(_goalStatus) {
+      _attemptStatus(_goalStatus).then(
+        function (s) {
+          if(_goalStatus) {
+            _status = _goalStatus;
+          }
+          deferred.resolve(s);
+          _goalStatus = null;
+          final = true;
+        },
+        function (status) {
+          // if rejected at any given step,
+          // show the dialog of that relevant step
+          _status = status;
+          deferred.reject(status);
+          final = true;
+        });
+    }
+    return deferred && deferred.promise;
   };
 
 
   var invalidateStatus = function (desiredStatus) {
-    _status = "pendingCheck";
-    return _recheckStatus(desiredStatus);
+      _status = "pendingCheck";
+      return _recheckStatus(desiredStatus);
   };
 
-  var uiStateManager = {
+  var persist = function () {
+    localStorageService.set("risevision.ui-flow.state",
+      {goalStatus: _goalStatus});
+  };
+
+  //restore
+  if(localStorageService.get("risevision.ui-flow.state")) {
+    var state = localStorageService.get("risevision.ui-flow.state");
+    if(state && state.goalStatus) {
+      $log.debug("uiFlowManager.goalStatus restored to", state.goalStatus);
+      _goalStatus = state.goalStatus;
+      deferred = $q.defer(); final = false;
+    }
+    localStorageService.remove("risevision.ui-flow.state");
+  }
+
+  var manager = {
     invalidateStatus: invalidateStatus,
     cancelValidation: function () {
       _status = "";
@@ -3881,10 +3920,13 @@ angular.module("risevision.ui-flow", [])
     },
     getStatus: function () { return _status; },
     isStatusUndetermined: function () { return _status === "pendingCheck"; },
-    generateDummyStatus: genedateDummyStatus
+    persist: persist
   };
 
-  return uiStateManager;
+  //DEBUG
+  // window.uiFlowManager = manager;
+
+  return manager;
 }]);
 
 })(angular);
