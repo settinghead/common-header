@@ -15,7 +15,8 @@ describe("Services: Shopping Cart", function() {
     $provide.service("$q", function() {return Q;});
 
     $provide.value("userState", {
-      isRiseVisionUser: function () {return true; }
+      isRiseVisionUser: function () {return true; },
+      _restoreState: function () {}
     });
   }));
 

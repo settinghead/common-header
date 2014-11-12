@@ -8,7 +8,8 @@ describe("Services: Core System Messages", function() {
     //stub services
     $provide.service("$q", function() {return Q;});
     $provide.value("userState", {
-      isRiseVisionUser: function () {return true; }
+      isRiseVisionUser: function () {return true; },
+      _restoreState: function () {}
     });
   }));
 
