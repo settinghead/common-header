@@ -9,7 +9,8 @@
     <!-- endbuild -->
   </head>
   <body ng-controller="MainController">
-    <common-header nav-options="navOptions" hide-shopping-cart="false"></common-header>
+    <common-header nav-options="navOptions"
+    hide-shopping-cart="false" hide-help-menu="false"></common-header>
     <button ng-show="realGapiLoaded" ng-click="loadFakeGAPI()" class="btn btn-secondary">Load Fake GAPI</button>
     <div ng-if="db">
       This app was built for the sole purpose of testing &amp; demoing common header.

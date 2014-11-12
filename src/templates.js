@@ -253,7 +253,7 @@ app.run(["$templateCache", function($templateCache) {
     "					<li ng-repeat=\"opt in navOptions\">\n" +
     "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "					</li>\n" +
-    "					<li ng-if=\"!inRVAFrame\">\n" +
+    "					<li ng-if=\"!inRVAFrame && !hideHelpMenu\">\n" +
     "						<a href=\"http://www.risevision.com/help/\" target=\"_blank\">\n" +
     "							Help\n" +
     "						</a>\n" +
@@ -288,7 +288,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <li ng-repeat=\"opt in navOptions\">\n" +
     "			<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "		</li>\n" +
-    "		<li>\n" +
+    "		<li ng-if=\"!hideHelpMenu\">\n" +
     "			<a target=\"_blank\" href=\"http://www.risevision.com/help\">Help</a>\n" +
     "		</li>\n" +
     "  </ul>\n" +

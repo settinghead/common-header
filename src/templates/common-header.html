@@ -117,7 +117,7 @@
 					<li ng-repeat="opt in navOptions">
 						<a ng-href="{{opt.link}}" target="{{opt.target}}">{{opt.title}}</a>
 					</li>
-					<li ng-if="!inRVAFrame">
+					<li ng-if="!inRVAFrame && !hideHelpMenu">
 						<a href="http://www.risevision.com/help/" target="_blank">
 							Help
 						</a>
@@ -152,7 +152,7 @@
     <li ng-repeat="opt in navOptions">
 			<a ng-href="{{opt.link}}" target="{{opt.target}}">{{opt.title}}</a>
 		</li>
-		<li>
+		<li ng-if="!hideHelpMenu">
 			<a target="_blank" href="http://www.risevision.com/help">Help</a>
 		</li>
   </ul>

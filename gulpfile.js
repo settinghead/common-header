@@ -35,9 +35,10 @@ gulp.task("html", ["lint"], function () {
     //minified
     gulp.src("test/e2e/index.html")
     .pipe(usemin({
-      js: [uglify(), rename({suffix: ".min"})],
-      css: [minifyCss(), rename({suffix: ".min"})]
+      js: [uglify()],
+      css: [minifyCss()]
     }))
+    .pipe(rename({suffix: ".min"}))
     .pipe(gulp.dest("dist/"))
   );
 });
