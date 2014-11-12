@@ -67,6 +67,8 @@ angular.module("risevision.common.header", [
         //default to true
         $scope.hideShoppingCart = attr.hideShoppingCart &&
           attr.hideShoppingCart !== "0" && attr.hideShoppingCart !== "false";
+        $scope.hideHelpMenu = attr.hideHelpMenu &&
+          attr.hideHelpMenu !== "0" && attr.hideHelpMenu !== "false";
 
         bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 

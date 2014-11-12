@@ -253,7 +253,7 @@ app.run(["$templateCache", function($templateCache) {
     "					<li ng-repeat=\"opt in navOptions\">\n" +
     "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "					</li>\n" +
-    "					<li ng-if=\"!inRVAFrame\">\n" +
+    "					<li ng-if=\"!inRVAFrame && !hideHelpMenu\">\n" +
     "						<a href=\"http://www.risevision.com/help/\" target=\"_blank\">\n" +
     "							Help\n" +
     "						</a>\n" +
@@ -288,7 +288,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <li ng-repeat=\"opt in navOptions\">\n" +
     "			<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
     "		</li>\n" +
-    "		<li>\n" +
+    "		<li ng-if=\"!hideHelpMenu\">\n" +
     "			<a target=\"_blank\" href=\"http://www.risevision.com/help\">Help</a>\n" +
     "		</li>\n" +
     "  </ul>\n" +
@@ -1449,6 +1449,8 @@ angular.module("risevision.common.header", [
         //default to true
         $scope.hideShoppingCart = attr.hideShoppingCart &&
           attr.hideShoppingCart !== "0" && attr.hideShoppingCart !== "false";
+        $scope.hideHelpMenu = attr.hideHelpMenu &&
+          attr.hideHelpMenu !== "0" && attr.hideHelpMenu !== "false";
 
         bindToScopeWithWatch(userState.isRiseVisionUser, "isRiseVisionUser", $scope);
 
