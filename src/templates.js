@@ -1138,7 +1138,7 @@ app.run(["$templateCache", function($templateCache) {
     "<div ng-show=\"isSubcompanySelected && !inRVAFrame\"\n" +
     "  class=\"sub-company-alert\">\n" +
     "  You're in Sub-Company {{selectedCompanyName}}&nbsp;\n" +
-    "  <a href=\"#\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
+    "  <a href=\"\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
     "</div>\n" +
     "");
 }]);
