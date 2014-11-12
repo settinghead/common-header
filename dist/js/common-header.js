@@ -1138,7 +1138,7 @@ app.run(["$templateCache", function($templateCache) {
     "<div ng-show=\"isSubcompanySelected && !inRVAFrame\"\n" +
     "  class=\"sub-company-alert\">\n" +
     "  You're in Sub-Company {{selectedCompanyName}}&nbsp;\n" +
-    "  <a href=\"#\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
+    "  <a href=\"\" ng-click=\"switchToMyCompany()\">Switch to My Company</a>\n" +
     "</div>\n" +
     "");
 }]);
@@ -2559,8 +2559,9 @@ angular.module("risevision.common.header")
         $log.debug("user signed out");
       }, function (err) {
         $log.error("sign out failed", err);
+      }).finally(function () {
+        $modalInstance.dismiss("success");
       });
-      $modalInstance.dismiss("success");
     };
   }
 ]);
