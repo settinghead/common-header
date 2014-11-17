@@ -49,6 +49,8 @@ angular.module("risevision.common.header")
 
       $scope.save = function () {
         $scope.forms.registrationForm.accepted.$pristine = false;
+        $scope.forms.registrationForm.firstName.$pristine = false;
+        $scope.forms.registrationForm.lastName.$pristine = false;
         $scope.forms.registrationForm.email.$pristine = false;
 
         if(!$scope.forms.registrationForm.$invalid) {

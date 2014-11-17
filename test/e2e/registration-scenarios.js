@@ -60,10 +60,14 @@
         ptor.sleep(500);
         element(by.css(".registration-save-button")).click();
         assert.eventually.isTrue(element(by.css(".validation-error-message-accepted")).isPresent(), "t&c validation error should show");
+        assert.eventually.isTrue(element(by.css(".validation-error-message-first-name")).isPresent(), "first name validation error should show");
+        assert.eventually.isTrue(element(by.css(".validation-error-message-last-name")).isPresent(), "last name validation error should show");
         assert.eventually.isTrue(element(by.css(".validation-error-message-email")).isPresent(), "email validation error should show");
       });
 
       it("should complete the registration process", function () {
+        element(by.css(".registration-modal .firstName")).sendKeys("John");
+        element(by.css(".registration-modal .lastName")).sendKeys("Doe");
         element(by.css(".registration-modal .email")).sendKeys("john.doe@awesomecompany.io");
         //click authorize
         element(by.css(".accept-terms-checkbox")).click();
