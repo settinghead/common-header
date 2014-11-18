@@ -1030,6 +1030,27 @@ app.run(["$templateCache", function($templateCache) {
     "  with anyone else.</p>\n" +
     "\n" +
     "  <form novalidate role=\"form\" name=\"forms.registrationForm\">\n" +
+    "    <!-- First Name -->\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.firstName.$invalid && !forms.registrationForm.firstName.$pristine }\">\n" +
+    "      <label for=\"firstName\">First Name</label>\n" +
+    "      <input type=\"text\" class=\"form-control firstName\"\n" +
+    "      name=\"firstName\"\n" +
+    "      id=\"firstName\" required\n" +
+    "      ng-model=\"profile.firstName\">\n" +
+    "      <p ng-show=\"forms.registrationForm.firstName.$invalid && !forms.registrationForm.firstName.$pristine\"\n" +
+    "        class=\"help-block validation-error-message-first-name\">Enter First Name.</p>\n" +
+    "    </div>\n" +
+    "    <!-- Last Name -->\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.lastName.$invalid && !forms.registrationForm.lastName.$pristine }\">\n" +
+    "      <label for=\"lastName\">Last Name</label>\n" +
+    "      <input type=\"text\" class=\"form-control lastName\"\n" +
+    "      name=\"lastName\"\n" +
+    "      id=\"lastName\" required\n" +
+    "      ng-model=\"profile.lastName\">\n" +
+    "      <p ng-show=\"forms.registrationForm.lastName.$invalid && !forms.registrationForm.lastName.$pristine\"\n" +
+    "        class=\"help-block validation-error-message-last-name\">Enter Last Name.</p>\n" +
+    "    </div>\n" +
+    "    <!-- Email -->\n" +
     "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.email.$invalid && !forms.registrationForm.email.$pristine }\">\n" +
     "      <label for=\"email\">Email</label>\n" +
     "      <input type=\"email\" class=\"form-control email\"\n" +

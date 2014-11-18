@@ -1030,6 +1030,27 @@ app.run(["$templateCache", function($templateCache) {
     "  with anyone else.</p>\n" +
     "\n" +
     "  <form novalidate role=\"form\" name=\"forms.registrationForm\">\n" +
+    "    <!-- First Name -->\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.firstName.$invalid && !forms.registrationForm.firstName.$pristine }\">\n" +
+    "      <label for=\"firstName\">First Name</label>\n" +
+    "      <input type=\"text\" class=\"form-control\"\n" +
+    "      name=\"firstName\"\n" +
+    "      id=\"firstName\" required\n" +
+    "      ng-model=\"profile.firstName\">\n" +
+    "      <p ng-show=\"forms.registrationForm.firstName.$invalid && !forms.registrationForm.firstName.$pristine\"\n" +
+    "        class=\"help-block validation-error-message-first-name\">Enter First Name.</p>\n" +
+    "    </div>\n" +
+    "    <!-- Last Name -->\n" +
+    "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.lastName.$invalid && !forms.registrationForm.lastName.$pristine }\">\n" +
+    "      <label for=\"lastName\">Last Name</label>\n" +
+    "      <input type=\"text\" class=\"form-control\"\n" +
+    "      name=\"lastName\"\n" +
+    "      id=\"lastName\" required\n" +
+    "      ng-model=\"profile.lastName\">\n" +
+    "      <p ng-show=\"forms.registrationForm.lastName.$invalid && !forms.registrationForm.lastName.$pristine\"\n" +
+    "        class=\"help-block validation-error-message-last-name\">Enter Last Name.</p>\n" +
+    "    </div>\n" +
+    "    <!-- Email -->\n" +
     "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.email.$invalid && !forms.registrationForm.email.$pristine }\">\n" +
     "      <label for=\"email\">Email</label>\n" +
     "      <input type=\"email\" class=\"form-control email\"\n" +
@@ -1930,6 +1951,8 @@ angular.module("risevision.common.header")
 
       $scope.save = function () {
         $scope.forms.registrationForm.accepted.$pristine = false;
+        $scope.forms.registrationForm.firstName.$pristine = false;
+        $scope.forms.registrationForm.lastName.$pristine = false;
         $scope.forms.registrationForm.email.$pristine = false;
 
         if(!$scope.forms.registrationForm.$invalid) {
@@ -3857,58 +3880,44 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
     return lastD.promise;
   };
 
-  var deferred, final = true;
   var _recheckStatus = function (desiredStatus) {
-    if(!desiredStatus && !_goalStatus) {
-      //no goal, no desired status. resolve to true immediately
-      var d = $q.defer(); d.resolve();
-      return d.promise;
+    var deferred = $q.defer();
+    if(!desiredStatus) {
+      if(_goalStatus) { desiredStatus = _goalStatus; }
+      else { throw "You must specify an initial status to achieve. "; }
     }
-    if(!_goalStatus && final) {
+    else {
+      //register what the goal status it for subsequent attempts
       _goalStatus = desiredStatus;
-      deferred = $q.defer();
-      final = false;
     }
-    if(_goalStatus) {
-      _attemptStatus(_goalStatus).then(
-        function (s) {
-          if(_goalStatus) {
-            _status = _goalStatus;
-          }
-          deferred.resolve(s);
-          _goalStatus = null;
-          final = true;
-        },
-        function (status) {
-          // if rejected at any given step,
-          // show the dialog of that relevant step
-          _status = status;
-          deferred.reject(status);
-          final = true;
-        });
-    }
-    return deferred && deferred.promise;
+    _attemptStatus(desiredStatus).then(
+      function (s) {
+        _status = desiredStatus;
+        deferred.resolve(s);
+      },
+      function (status) {
+        // if rejected at any given step,
+        // show the dialog of that relevant step
+        _status = status;
+        deferred.reject(status);
+      });
+    return deferred.promise;
   };
 
 
   var invalidateStatus = function (desiredStatus) {
-      _status = "pendingCheck";
-      return _recheckStatus(desiredStatus);
+    _status = "pendingCheck";
+    return _recheckStatus(desiredStatus);
   };
 
   var persist = function () {
-    localStorageService.set("risevision.ui-flow.state",
-      {goalStatus: _goalStatus});
+    localStorageService.set("risevision.ui-flow.state", {status : _status});
   };
 
   //restore
   if(localStorageService.get("risevision.ui-flow.state")) {
     var state = localStorageService.get("risevision.ui-flow.state");
-    if(state && state.goalStatus) {
-      $log.debug("uiFlowManager.goalStatus restored to", state.goalStatus);
-      _goalStatus = state.goalStatus;
-      deferred = $q.defer(); final = false;
-    }
+    _status = state.status;
     localStorageService.remove("risevision.ui-flow.state");
   }
 
@@ -3923,9 +3932,6 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
     isStatusUndetermined: function () { return _status === "pendingCheck"; },
     persist: persist
   };
-
-  //DEBUG
-  // window.uiFlowManager = manager;
 
   return manager;
 }]);

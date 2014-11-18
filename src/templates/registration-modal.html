@@ -15,6 +15,27 @@ rv-spinner-start-active="1">
   with anyone else.</p>
 
   <form novalidate role="form" name="forms.registrationForm">
+    <!-- First Name -->
+    <div class="form-group" ng-class="{ 'has-error' : forms.registrationForm.firstName.$invalid && !forms.registrationForm.firstName.$pristine }">
+      <label for="firstName">First Name</label>
+      <input type="text" class="form-control firstName"
+      name="firstName"
+      id="firstName" required
+      ng-model="profile.firstName">
+      <p ng-show="forms.registrationForm.firstName.$invalid && !forms.registrationForm.firstName.$pristine"
+        class="help-block validation-error-message-first-name">Enter First Name.</p>
+    </div>
+    <!-- Last Name -->
+    <div class="form-group" ng-class="{ 'has-error' : forms.registrationForm.lastName.$invalid && !forms.registrationForm.lastName.$pristine }">
+      <label for="lastName">Last Name</label>
+      <input type="text" class="form-control lastName"
+      name="lastName"
+      id="lastName" required
+      ng-model="profile.lastName">
+      <p ng-show="forms.registrationForm.lastName.$invalid && !forms.registrationForm.lastName.$pristine"
+        class="help-block validation-error-message-last-name">Enter Last Name.</p>
+    </div>
+    <!-- Email -->
     <div class="form-group" ng-class="{ 'has-error' : forms.registrationForm.email.$invalid && !forms.registrationForm.email.$pristine }">
       <label for="email">Email</label>
       <input type="email" class="form-control email"
