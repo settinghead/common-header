@@ -1033,7 +1033,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <!-- First Name -->\n" +
     "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.firstName.$invalid && !forms.registrationForm.firstName.$pristine }\">\n" +
     "      <label for=\"firstName\">First Name</label>\n" +
-    "      <input type=\"text\" class=\"form-control\"\n" +
+    "      <input type=\"text\" class=\"form-control firstName\"\n" +
     "      name=\"firstName\"\n" +
     "      id=\"firstName\" required\n" +
     "      ng-model=\"profile.firstName\">\n" +
@@ -1043,7 +1043,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <!-- Last Name -->\n" +
     "    <div class=\"form-group\" ng-class=\"{ 'has-error' : forms.registrationForm.lastName.$invalid && !forms.registrationForm.lastName.$pristine }\">\n" +
     "      <label for=\"lastName\">Last Name</label>\n" +
-    "      <input type=\"text\" class=\"form-control\"\n" +
+    "      <input type=\"text\" class=\"form-control lastName\"\n" +
     "      name=\"lastName\"\n" +
     "      id=\"lastName\" required\n" +
     "      ng-model=\"profile.lastName\">\n" +
@@ -1294,25 +1294,31 @@ app.run(["$templateCache", function($templateCache) {
     "        <p ng-show=\"forms.userSettingsForm.username.$invalid && !forms.userSettingsForm.username.$pristine\"\n" +
     "          class=\"help-block validation-error-message-email\">User name must be a valid email address.</p>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\"\n" +
+    "      ng-class=\"{ 'has-error' : forms.userSettingsForm.firstName.$invalid && !forms.userSettingsForm.firstName.$pristine }\">\n" +
     "      <label for=\"user-settings-first-name\">\n" +
-    "        First Name\n" +
+    "        First Name *\n" +
     "      </label>\n" +
     "      <input id=\"user-settings-first-name\"\n" +
-    "        type=\"text\"\n" +
+    "        type=\"text\" required name=\"firstName\"\n" +
     "        class=\"form-control\"\n" +
     "        ng-model=\"user.firstName\"\n" +
     "        />\n" +
+    "        <p ng-show=\"forms.userSettingsForm.firstName.$invalid && !forms.userSettingsForm.firstName.$pristine\"\n" +
+    "          class=\"help-block validation-error-message-firstName\">First Name is required.</p>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\"\n" +
+    "      ng-class=\"{ 'has-error' : forms.userSettingsForm.lastName.$invalid && !forms.userSettingsForm.lastName.$pristine }\">\n" +
     "      <label for=\"user-settings-last-name\">\n" +
-    "        Last Name\n" +
+    "        Last Name *\n" +
     "      </label>\n" +
     "      <input id=\"user-settings-last-name\"\n" +
-    "        type=\"text\"\n" +
+    "        type=\"text\" required name=\"lastName\"\n" +
     "        class=\"form-control\"\n" +
     "        ng-model=\"user.lastName\"\n" +
     "        />\n" +
+    "        <p ng-show=\"forms.userSettingsForm.lastName.$invalid && !forms.userSettingsForm.lastName.$pristine\"\n" +
+    "          class=\"help-block validation-error-message-lastName\">Last Name is required.</p>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-phone\">\n" +
@@ -2386,6 +2392,8 @@ angular.module("risevision.common.header")
 
       $scope.forms.userSettingsForm.email.$pristine = false;
       $scope.forms.userSettingsForm.username.$pristine = false;
+      $scope.forms.userSettingsForm.firstName.$pristine = false;
+      $scope.forms.userSettingsForm.lastName.$pristine = false;
 
       if(!$scope.forms.userSettingsForm.$invalid) {
         $scope.loading = true;
@@ -2504,6 +2512,8 @@ angular.module("risevision.common.header")
 
       $scope.save = function () {
         $scope.forms.userSettingsForm.email.$pristine = false;
+        $scope.forms.userSettingsForm.firstName.$pristine = false;
+        $scope.forms.userSettingsForm.lastName.$pristine = false;
 
         if(!$scope.forms.userSettingsForm.$invalid) {
           $scope.loading = true;

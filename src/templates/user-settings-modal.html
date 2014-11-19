@@ -28,25 +28,31 @@ rv-spinner-start-active="1">
         <p ng-show="forms.userSettingsForm.username.$invalid && !forms.userSettingsForm.username.$pristine"
           class="help-block validation-error-message-email">User name must be a valid email address.</p>
     </div>
-    <div class="form-group">
+    <div class="form-group"
+      ng-class="{ 'has-error' : forms.userSettingsForm.firstName.$invalid && !forms.userSettingsForm.firstName.$pristine }">
       <label for="user-settings-first-name">
-        First Name
+        First Name *
       </label>
       <input id="user-settings-first-name"
-        type="text"
+        type="text" required name="firstName"
         class="form-control"
         ng-model="user.firstName"
         />
+        <p ng-show="forms.userSettingsForm.firstName.$invalid && !forms.userSettingsForm.firstName.$pristine"
+          class="help-block validation-error-message-firstName">First Name is required.</p>
     </div>
-    <div class="form-group">
+    <div class="form-group"
+      ng-class="{ 'has-error' : forms.userSettingsForm.lastName.$invalid && !forms.userSettingsForm.lastName.$pristine }">
       <label for="user-settings-last-name">
-        Last Name
+        Last Name *
       </label>
       <input id="user-settings-last-name"
-        type="text"
+        type="text" required name="lastName"
         class="form-control"
         ng-model="user.lastName"
         />
+        <p ng-show="forms.userSettingsForm.lastName.$invalid && !forms.userSettingsForm.lastName.$pristine"
+          class="help-block validation-error-message-lastName">Last Name is required.</p>
     </div>
     <div class="form-group">
       <label for="user-settings-phone">

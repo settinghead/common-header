@@ -1294,25 +1294,31 @@ app.run(["$templateCache", function($templateCache) {
     "        <p ng-show=\"forms.userSettingsForm.username.$invalid && !forms.userSettingsForm.username.$pristine\"\n" +
     "          class=\"help-block validation-error-message-email\">User name must be a valid email address.</p>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\"\n" +
+    "      ng-class=\"{ 'has-error' : forms.userSettingsForm.firstName.$invalid && !forms.userSettingsForm.firstName.$pristine }\">\n" +
     "      <label for=\"user-settings-first-name\">\n" +
-    "        First Name\n" +
+    "        First Name *\n" +
     "      </label>\n" +
     "      <input id=\"user-settings-first-name\"\n" +
-    "        type=\"text\"\n" +
+    "        type=\"text\" required name=\"firstName\"\n" +
     "        class=\"form-control\"\n" +
     "        ng-model=\"user.firstName\"\n" +
     "        />\n" +
+    "        <p ng-show=\"forms.userSettingsForm.firstName.$invalid && !forms.userSettingsForm.firstName.$pristine\"\n" +
+    "          class=\"help-block validation-error-message-firstName\">First Name is required.</p>\n" +
     "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
+    "    <div class=\"form-group\"\n" +
+    "      ng-class=\"{ 'has-error' : forms.userSettingsForm.lastName.$invalid && !forms.userSettingsForm.lastName.$pristine }\">\n" +
     "      <label for=\"user-settings-last-name\">\n" +
-    "        Last Name\n" +
+    "        Last Name *\n" +
     "      </label>\n" +
     "      <input id=\"user-settings-last-name\"\n" +
-    "        type=\"text\"\n" +
+    "        type=\"text\" required name=\"lastName\"\n" +
     "        class=\"form-control\"\n" +
     "        ng-model=\"user.lastName\"\n" +
     "        />\n" +
+    "        <p ng-show=\"forms.userSettingsForm.lastName.$invalid && !forms.userSettingsForm.lastName.$pristine\"\n" +
+    "          class=\"help-block validation-error-message-lastName\">Last Name is required.</p>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
     "      <label for=\"user-settings-phone\">\n" +
