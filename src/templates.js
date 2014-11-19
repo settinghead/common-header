@@ -251,7 +251,7 @@ app.run(["$templateCache", function($templateCache) {
     "			<div class=\"navbar-collapse navbar-left hidden-xs hidden-sm\">\n" +
     "				<ul class=\"nav navbar-nav\">\n" +
     "					<li ng-repeat=\"opt in navOptions\">\n" +
-    "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\">{{opt.title}}</a>\n" +
+    "						<a ng-href=\"{{opt.link}}\" target=\"{{opt.target}}\" ng-class=\"{'selected': opt.states && opt.states.indexOf(navSelected) > -1}\">{{opt.title}}</a>\n" +
     "					</li>\n" +
     "					<li ng-if=\"!inRVAFrame && !hideHelpMenu\">\n" +
     "						<a href=\"http://www.risevision.com/help/\" target=\"_blank\">\n" +
