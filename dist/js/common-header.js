@@ -2696,7 +2696,7 @@ angular.module("risevision.common.header")
 // Action Sheet
 // ------------------------------------
 angular.module("risevision.common.header")
-  .directive("actionSheet", ["$document", "$compile", function($document, $compile) {
+  .directive("actionSheet", ["$document", "$compile", "$timeout", function($document, $compile, $timeout) {
     return {
       restrict: "A",
       link: function (scope, iElement, iAttrs) {
@@ -2715,15 +2715,31 @@ angular.module("risevision.common.header")
         scope.templateUrl = scope.$eval(iAttrs.actionSheet);
         scope.title = scope.$eval(iAttrs.title);
 
-        var angularDomEl = angular.element("<div class=\"action-sheet\"><ng-include src=\"templateUrl\"></ng-include></div>");
+        var angularDomEl = angular.element("<div class=\"action-sheet is-action-sheet-closed\"><ng-include src=\"templateUrl\"></ng-include></div>");
 
         var actionSheetDomEl = $compile(angularDomEl)(scope);
         body.append(actionSheetDomEl);
 
         var toggle = function () {
           isVisible = !isVisible;
-          actionSheetDomEl.toggleClass("is-action-sheet-opened");
-          backdropDomEl.toggleClass("is-action-sheet-opened");
+          //fix for #298 - BEGIN
+          //need to completly hide element 
+          if (isVisible) {
+            //make element visible first, then apply transformation
+            actionSheetDomEl.toggleClass("is-action-sheet-closed");
+            $timeout(function() {
+              actionSheetDomEl.toggleClass("is-action-sheet-opened");
+              backdropDomEl.toggleClass("is-action-sheet-opened");
+            });
+          } else {
+            //apply transformation first, then hide element
+            actionSheetDomEl.toggleClass("is-action-sheet-opened");
+            backdropDomEl.toggleClass("is-action-sheet-opened");
+            $timeout(function() {
+              actionSheetDomEl.toggleClass("is-action-sheet-closed");
+            }, 500);
+          }
+          //fix for #298 - END
 
           if (isVisible) {
             backdropDomEl.bind("tap", toggle);
@@ -5100,6 +5116,12 @@ angular.module("risevision.common.gapi", [])
     function (CORE_URL, gapiClientLoaderGenerator, $location) {
     var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
     return gapiClientLoaderGenerator("rise", "v0", baseUrl);
+  }])
+
+  .factory("discoveryAPILoader", ["CORE_URL", "gapiClientLoaderGenerator", "$location",
+    function (CORE_URL, gapiClientLoaderGenerator, $location) {
+        var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
+        return gapiClientLoaderGenerator("discovery", "v1", baseUrl);
   }]);
 
 (function (angular){
