@@ -506,7 +506,7 @@ app.run(["$templateCache", function($templateCache) {
     "		</div>\n" +
     "	</div>\n" +
     "	<div class=\"modal-footer\">\n" +
-    "		<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">Cancel\n" +
+    "		<button type=\"button\" class=\"btn btn-default btn-fixed-width\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"closeModal()\">Cancel\n" +
     "			<i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "		</button>\n" +
     "	</div>\n" +
@@ -651,7 +651,7 @@ app.run(["$templateCache", function($templateCache) {
     "      Confirm Deletion <i class=\"fa fa-white fa-warning icon-right\"></i>\n" +
     "    </button>\n" +
     "    <button type=\"button\"\n" +
-    "      class=\"btn btn-primary btn-fixed-width close-company-settings-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
+    "      class=\"btn btn-default btn-fixed-width close-company-settings-button\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
     "      <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "    </button>\n" +
     "  </div>\n" +
@@ -709,7 +709,7 @@ app.run(["$templateCache", function($templateCache) {
     "    ng-click=\"addUser()\">Add User\n" +
     "    <i class=\"fa fa-white fa-plus icon-right\"></i>\n" +
     "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-primary close-company-users-button\"\n" +
+    "  <button type=\"button\" class=\"btn btn-default close-company-users-button\"\n" +
     "    data-dismiss=\"modal\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
@@ -842,7 +842,7 @@ app.run(["$templateCache", function($templateCache) {
     "      <button type=\"button\" class=\"btn btn-danger btn-confirm-delete\" data-dismiss=\"modal\" ng-show=\"isDeletingCard\" ng-click=\"closeModal()\">\n" +
     "        Confirm Deletion <i class=\"fa fa-white fa-warning icon-right\"></i>\n" +
     "      </button>\n" +
-    "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
+    "      <button type=\"button\" class=\"btn btn-default btn-fixed-width\" data-dismiss=\"modal\" ng-click=\"closeModal()\">Cancel\n" +
     "        <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "      </button>\n" +
     "    </div>\n" +
@@ -997,7 +997,7 @@ app.run(["$templateCache", function($templateCache) {
     "      </a>\n" +
     "    </div>\n" +
     "    <div class=\"col-sm-9\">\n" +
-    "      <button type=\"button\" class=\"btn btn-primary\" ng-click=\"closeModal()\">\n" +
+    "      <button type=\"button\" class=\"btn btn-default\" ng-click=\"closeModal()\">\n" +
     "        Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "      </button>\n" +
     "    </div>\n" +
@@ -1084,7 +1084,7 @@ app.run(["$templateCache", function($templateCache) {
     "        ng-disabled=\"registering\">\n" +
     "        Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "      </button>\n" +
-    "      <button type=\"button\" class=\"btn btn-primary btn-fixed-width registration-cancel-button\"\n" +
+    "      <button type=\"button\" class=\"btn btn-default btn-fixed-width registration-cancel-button\"\n" +
     "      ng-disabled=\"registering\"\n" +
     "      ng-click=\"closeModal()\">\n" +
     "        Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
@@ -1195,7 +1195,7 @@ app.run(["$templateCache", function($templateCache) {
     "    ng-click=\"save()\" ng-disabled=\"forms.companyForm.$invalid\">Save\n" +
     "    <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
     "  </button>\n" +
-    "  <button type=\"button\" class=\"btn btn-primary btn-fixed-width cancel-add-subcompany-button\" ng-click=\"closeModal()\">Cancel\n" +
+    "  <button type=\"button\" class=\"btn btn-default btn-fixed-width cancel-add-subcompany-button\" ng-click=\"closeModal()\">Cancel\n" +
     "    <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +
@@ -1375,30 +1375,29 @@ app.run(["$templateCache", function($templateCache) {
     "      <div>{{user.lastLogin | humanReadableDateTime}}</div>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\" ng-if=\"!editingYourself && !isAdd\">\n" +
-    "			<label for=\"user-settings-status\">\n" +
-    "				Status\n" +
-    "			</label>\n" +
-    "			<select id=\"user-settings-status\"\n" +
+    "      <label for=\"user-settings-status\">\n" +
+    "        Status\n" +
+    "      </label>\n" +
+    "      <select id=\"user-settings-status\"\n" +
     "        class=\"form-control selectpicker\" ng-model=\"user.status\">\n" +
-    "				<option value=\"1\">Active</option>\n" +
-    "				<option value=\"0\">Inactive</option>\n" +
-    "			</select>\n" +
-    "		</div>\n" +
+    "        <option value=\"1\">Active</option>\n" +
+    "        <option value=\"0\">Inactive</option>\n" +
+    "      </select>\n" +
+    "    </div>\n" +
     "  </form>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
-    "  <!-- Save -->\n" +
     "  <button type=\"button\"\n" +
     "    class=\"btn btn-success btn-fixed-width\"\n" +
     "    data-dismiss=\"modal\"\n" +
     "    ng-click=\"save()\" id=\"save-button\">\n" +
     "    Save <i class=\"fa fa-white fa-check icon-right\"></i>\n" +
-    "  </button><!-- Cancel\n" +
-    "  --><button type=\"button\" class=\"btn btn-danger btn-fixed-width\"\n" +
+    "  </button>\n" +
+    "  <button type=\"button\" class=\"btn btn-danger btn-fixed-width\"\n" +
     "    ng-if=\"!isAdd\" ng-click=\"deleteUser()\">\n" +
-    "		Delete <i class=\"fa fa-white fa-trash-o icon-right\"></i>\n" +
-    "	</button><!-- Delete\n" +
-    "   --><button type=\"button\" class=\"btn btn-primary btn-fixed-width\" ng-click=\"closeModal()\">\n" +
+    "    Delete <i class=\"fa fa-white fa-trash-o icon-right\"></i>\n" +
+    "  </button>\n" +
+    "  <button type=\"button\" class=\"btn btn-default btn-fixed-width\" ng-click=\"closeModal()\">\n" +
     "    Cancel <i class=\"fa fa-white fa-times icon-right\"></i>\n" +
     "  </button>\n" +
     "</div>\n" +

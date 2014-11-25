@@ -109,30 +109,29 @@ rv-spinner-start-active="1">
       <div>{{user.lastLogin | humanReadableDateTime}}</div>
     </div>
     <div class="form-group" ng-if="!editingYourself && !isAdd">
-			<label for="user-settings-status">
-				Status
-			</label>
-			<select id="user-settings-status"
+      <label for="user-settings-status">
+        Status
+      </label>
+      <select id="user-settings-status"
         class="form-control selectpicker" ng-model="user.status">
-				<option value="1">Active</option>
-				<option value="0">Inactive</option>
-			</select>
-		</div>
+        <option value="1">Active</option>
+        <option value="0">Inactive</option>
+      </select>
+    </div>
   </form>
 </div>
 <div class="modal-footer">
-  <!-- Save -->
   <button type="button"
     class="btn btn-success btn-fixed-width"
     data-dismiss="modal"
     ng-click="save()" id="save-button">
     Save <i class="fa fa-white fa-check icon-right"></i>
-  </button><!-- Cancel
-  --><button type="button" class="btn btn-danger btn-fixed-width"
+  </button>
+  <button type="button" class="btn btn-danger btn-fixed-width"
     ng-if="!isAdd" ng-click="deleteUser()">
-		Delete <i class="fa fa-white fa-trash-o icon-right"></i>
-	</button><!-- Delete
-   --><button type="button" class="btn btn-primary btn-fixed-width" ng-click="closeModal()">
+    Delete <i class="fa fa-white fa-trash-o icon-right"></i>
+  </button>
+  <button type="button" class="btn btn-default btn-fixed-width" ng-click="closeModal()">
     Cancel <i class="fa fa-white fa-times icon-right"></i>
   </button>
 </div>
