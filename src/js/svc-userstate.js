@@ -495,6 +495,7 @@
           return (_state.selectedCompany && _state.selectedCompany.country) || null;},
       getUsername: function () {
         return (_state.user && _state.user.username) || null; },
+      getUserEmail: function () { return _state.profile.email; },
       getCopyOfProfile: function () { return _follow(_state.profile); },
       resetCompany: function () { _clearAndCopy(_state.userCompany, _state.selectedCompany); },
       getCopyOfUserCompany: function () { return _follow(_state.userCompany); },
