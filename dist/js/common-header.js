@@ -293,6 +293,7 @@ app.run(["$templateCache", function($templateCache) {
     "		</li>\n" +
     "  </ul>\n" +
     "</nav>\n" +
+    "<fastpass></fastpass>\n" +
     "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
     "");
 }]);
@@ -1425,6 +1426,7 @@ angular.module("risevision.common.header", [
   "risevision.core.userprofile",
   "risevision.common.registration",
   "risevision.common.shoppingcart",
+  "risevision.common.fastpass",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
@@ -3763,6 +3765,7 @@ angular.module("risevision.common.geodata", [])
           return (_state.selectedCompany && _state.selectedCompany.country) || null;},
       getUsername: function () {
         return (_state.user && _state.user.username) || null; },
+      getUserEmail: function () { return _state.profile.email; },
       getCopyOfProfile: function () { return _follow(_state.profile); },
       resetCompany: function () { _clearAndCopy(_state.userCompany, _state.selectedCompany); },
       getCopyOfUserCompany: function () { return _follow(_state.userCompany); },
@@ -4710,6 +4713,62 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
 
 })(angular);
 
+"use strict";
+
+angular.module("risevision.common.fastpass", [])
+.factory("loadFastpass", ["$q", "$http", "$document", "$timeout", "GSFP_URL", "$log",
+function ($q, $http, $document, $timeout, GSFP_URL, $log) {
+
+  var loadScript = function (src) {
+    var deferred = $q.defer();
+    var script = $document[0].createElement("script");
+    script.onload = script.onreadystatechange = function (e) {
+      deferred.resolve(e);
+    };
+    script.onerror = function (e) {
+        deferred.reject(e);
+    };
+    script.src = src;
+    $document[0].body.appendChild(script);
+    return deferred.promise;
+  };
+
+  return function (username, email) {
+    var deferred = $q.defer();
+    $log.debug("loadFastpass called", username, email);
+    $http.get(GSFP_URL +
+      "/geturl?userEmail=" + email +
+      "&userName=" + username).then(function (res){
+        loadScript(res.data).then(function (result) {
+          $log.debug("loadFastpass result", result);
+          deferred.resolve(true);
+        }).catch(function (rej) {
+          $log.error("loadFastpass rejected", rej);
+          deferred.reject("loadFastpass rejected " + rej);
+        });
+      }, deferred.reject);
+
+      return deferred.promise;
+    };
+
+  }]);
+
+angular.module("risevision.common.header")
+.directive("fastpass", ["loadFastpass", "userState",
+function (loadFastpass, userState) {
+  return {
+    restrict: "AE",
+    scope: {},
+    link: function ($scope) {
+      $scope.$watch(function () { return userState.getUserEmail(); }, function (email) {
+        if(email) {
+          loadFastpass(userState.getUsername(), userState.getUserEmail());
+        }
+      });
+    }
+  };
+}]);
+
 (function (angular){
 
   "use strict";
@@ -5011,6 +5070,7 @@ catch(err) { angular.module("risevision.common.config", []); }
   angular.module("risevision.common.config")
     .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
     .value("STORE_URL", "https://store.risevision.com")
+    .value("GSFP_URL", "gsfp-dot-rvaserver2.appspot.com/fp")
   ;
 })(angular);
 

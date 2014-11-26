@@ -293,6 +293,7 @@ app.run(["$templateCache", function($templateCache) {
     "		</li>\n" +
     "  </ul>\n" +
     "</nav>\n" +
+    "<fastpass></fastpass>\n" +
     "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
     "");
 }]);
