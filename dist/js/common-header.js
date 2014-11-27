@@ -1865,12 +1865,16 @@ angular.module("risevision.common.header")
     $scope.renderHtml = function(html_code)
     { return $sce.trustAsHtml(html_code); };
 
+    //register core message retriever
+    systemMessages.registerRetriever(function () {
+      return getCoreSystemMessages(userState.getSelectedCompanyId());
+    });
+
     $scope.$watch(
       function () { return userState.getSelectedCompanyId(); },
       function (newCompanyId) {
         if(newCompanyId !== null) {
-          systemMessages.clear();
-          getCoreSystemMessages(newCompanyId).then(systemMessages.addMessages);
+          systemMessages.resetAndGetMessages().then($scope.apply);
         }
         else {
           systemMessages.clear();
@@ -5006,12 +5010,14 @@ function (loadFastpass, userState) {
 
   angular.module("risevision.common.systemmessages", [])
 
-    .factory("systemMessages", [function () {
+    .factory("systemMessages", ["$log", "$q", function ($log, $q) {
 
       var messages = [];
+      var _retrievers = [];
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
+        $log.debug("pushing message", m);
         list.push(m);
       }
 
@@ -5044,6 +5050,21 @@ function (loadFastpass, userState) {
 
       messages.clear = function () {
         messages.length = 0;
+        $log.debug("System message cleared.");
+      };
+
+      messages.registerRetriever = function (func) {
+        //the retriever must return a promise that resolves to an array
+        // of messages
+        _retrievers.push(func);
+      };
+
+      messages.resetAndGetMessages = function () {
+        messages.clear();
+        var promises = _retrievers.map(function (func) {return func.call(); });
+        return $q.all(promises).then(function (messageArrays) {
+          messageArrays.forEach(messages.addMessages);
+        });
       };
 
       return messages;
@@ -5223,12 +5244,14 @@ angular.module("risevision.common.gapi", [])
 
   angular.module("risevision.common.systemmessages", [])
 
-    .factory("systemMessages", [function () {
+    .factory("systemMessages", ["$log", "$q", function ($log, $q) {
 
       var messages = [];
+      var _retrievers = [];
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
+        $log.debug("pushing message", m);
         list.push(m);
       }
 
@@ -5261,6 +5284,21 @@ angular.module("risevision.common.gapi", [])
 
       messages.clear = function () {
         messages.length = 0;
+        $log.debug("System message cleared.");
+      };
+
+      messages.registerRetriever = function (func) {
+        //the retriever must return a promise that resolves to an array
+        // of messages
+        _retrievers.push(func);
+      };
+
+      messages.resetAndGetMessages = function () {
+        messages.clear();
+        var promises = _retrievers.map(function (func) {return func.call(); });
+        return $q.all(promises).then(function (messageArrays) {
+          messageArrays.forEach(messages.addMessages);
+        });
       };
 
       return messages;

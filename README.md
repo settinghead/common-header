@@ -1,4 +1,4 @@
-Rise Vision Common Header [![Build Status](http://devtools1.risevision.com:8080/job/Common-Header-PR/badge/icon)](http://devtools1.risevision.com:8080/job/Common-Header-PR/)
+Rise Vision Common Header [![Build Status](http://devtools1.risevision.com:8080/job/Common-Header-Master/badge/icon)](http://devtools1.risevision.com:8080/job/Common-Header-Master/)
 ==============
 ![](screenshots/header.png)
 
