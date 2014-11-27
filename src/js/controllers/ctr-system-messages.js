@@ -12,12 +12,16 @@ angular.module("risevision.common.header")
     $scope.renderHtml = function(html_code)
     { return $sce.trustAsHtml(html_code); };
 
+    //register core message retriever
+    systemMessages.registerRetriever(function () {
+      return getCoreSystemMessages(userState.getSelectedCompanyId());
+    });
+
     $scope.$watch(
       function () { return userState.getSelectedCompanyId(); },
       function (newCompanyId) {
         if(newCompanyId !== null) {
-          systemMessages.clear();
-          getCoreSystemMessages(newCompanyId).then(systemMessages.addMessages);
+          systemMessages.resetAndGetMessages().then($scope.apply);
         }
         else {
           systemMessages.clear();

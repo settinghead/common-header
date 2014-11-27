@@ -4,12 +4,14 @@
 
   angular.module("risevision.common.systemmessages", [])
 
-    .factory("systemMessages", [function () {
+    .factory("systemMessages", ["$log", "$q", function ($log, $q) {
 
       var messages = [];
+      var _retrievers = [];
 
       function pushMessage (m, list) {
         //TODO add more sophisticated, sorting-based logic here
+        $log.debug("pushing message", m);
         list.push(m);
       }
 
@@ -42,6 +44,21 @@
 
       messages.clear = function () {
         messages.length = 0;
+        $log.debug("System message cleared.");
+      };
+
+      messages.registerRetriever = function (func) {
+        //the retriever must return a promise that resolves to an array
+        // of messages
+        _retrievers.push(func);
+      };
+
+      messages.resetAndGetMessages = function () {
+        messages.clear();
+        var promises = _retrievers.map(function (func) {return func.call(); });
+        return $q.all(promises).then(function (messageArrays) {
+          messageArrays.forEach(messages.addMessages);
+        });
       };
 
       return messages;
