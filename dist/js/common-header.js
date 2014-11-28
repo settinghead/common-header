@@ -4280,8 +4280,8 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
         "email", "firstName", "lastName", "telephone", "roles", "status");
       $log.debug("updateUser called", username, profile);
       coreAPILoader().then(function (coreApi) {
-        var request = coreApi.user.update({
-          username: username, data: JSON.stringify(profile)});
+        var request = coreApi.user.patch({
+          username: username, data: profile});
         request.execute(function (resp) {
             $log.debug("updateUser resp", resp);
             if(resp.error) {
@@ -4310,7 +4310,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
         var request = coreApi.user.add({
           username: username,
           companyId: companyId,
-          data: JSON.stringify(profile)});
+          data: profile});
         request.execute(function (resp) {
           $log.debug("addUser resp", resp);
           if(resp.result) {
@@ -4395,7 +4395,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
           var fields = pick.apply(this, [company].concat(COMPANY_WRITABLE_FIELDS));
           var request = coreApi.company.add({
             parentId: parentCompanyId,
-            data: JSON.stringify(fields)
+            data: fields
           });
           request.execute(function (resp) {
             if(resp.result) {
@@ -4485,7 +4485,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
           $log.debug("updateCompany called", companyId, fields);
           // fields.validate = validationRequired || false;
           coreAPILoader().then(function (coreApi) {
-            var request = coreApi.company.update({id: companyId, data: JSON.stringify(fields)});
+            var request = coreApi.company.patch({id: companyId, data: fields});
             request.execute(function (resp) {
               $log.debug("updateCompany resp", resp);
               if(resp.result) {
@@ -5191,7 +5191,7 @@ angular.module("risevision.common.gapi", [])
     "$location",
     function (CORE_URL, gapiClientLoaderGenerator, $location) {
       var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
-      return gapiClientLoaderGenerator("core", "v0", baseUrl);
+      return gapiClientLoaderGenerator("core", "v1", baseUrl);
   }])
 
   .factory("riseAPILoader", ["CORE_URL", "gapiClientLoaderGenerator", "$location",
