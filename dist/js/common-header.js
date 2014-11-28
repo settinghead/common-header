@@ -4740,16 +4740,18 @@ function ($q, $http, $document, $timeout, GSFP_URL, $log) {
   return function (username, email) {
     var deferred = $q.defer();
     $log.debug("loadFastpass called", username, email);
+    var rejected = function (rej) {
+      $log.error("loadFastpass rejected", rej);
+      deferred.reject("loadFastpass rejected " + rej);
+    };
+
     $http.get(GSFP_URL +
       "/geturl?userEmail=" + email +
       "&userName=" + username).then(function (res){
         loadScript(res.data).then(function (result) {
           $log.debug("loadFastpass result", result);
           deferred.resolve(true);
-        }).catch(function (rej) {
-          $log.error("loadFastpass rejected", rej);
-          deferred.reject("loadFastpass rejected " + rej);
-        });
+        },rejected).catch(rejected);
       }, deferred.reject);
 
       return deferred.promise;
@@ -5091,7 +5093,7 @@ catch(err) { angular.module("risevision.common.config", []); }
   angular.module("risevision.common.config")
     .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
     .value("STORE_URL", "https://store.risevision.com")
-    .value("GSFP_URL", "gsfp-dot-rvaserver2.appspot.com/fp")
+    .value("GSFP_URL", "https://gsfp-dot-rvaserver2.appspot.com/fp")
   ;
 })(angular);
 

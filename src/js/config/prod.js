@@ -16,6 +16,6 @@ catch(err) { angular.module("risevision.common.config", []); }
   angular.module("risevision.common.config")
     .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
     .value("STORE_URL", "https://store.risevision.com")
-    .value("GSFP_URL", "gsfp-dot-rvaserver2.appspot.com/fp")
+    .value("GSFP_URL", "https://gsfp-dot-rvaserver2.appspot.com/fp")
   ;
 })(angular);
