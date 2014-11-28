@@ -24,8 +24,8 @@ angular.module("risevision.common.header")
     };
 
     function loadCompanies() {
-      $scope.loading = true;
       if (!$scope.companies.endOfList) {
+        $scope.loading = true;
         companyService.getCompanies(
           companyId, $scope.search.searchString,
           $scope.companies.cursor, DB_MAX_COUNT, null).then(function (result) {
