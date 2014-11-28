@@ -33,7 +33,7 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 
 ## Development
 - [Development FAQ](http://rise-vision.github.io/dev-hub-prod/#/documentation/common-header/faq.html)
-- [Developer's Guide](http://rise-vision.github.io/dev-hub-prod/#/documentation/common-header/index.html)
+- [Developer's Guide](http://help.risevision.com/#/developer/common-header/common-header)
 
 ### Prerequisites
 - [NPM (node package manager)](https://www.npmjs.org/)
