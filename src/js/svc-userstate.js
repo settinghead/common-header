@@ -55,15 +55,15 @@
     }])
 
   .factory("userState", [
-    "$injector", "$q", "$log", "oauth2APILoader", "$location", "CLIENT_ID",
-    "gapiLoader", "pick", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
+    "$q", "$log", "$location", "CLIENT_ID",
+    "gapiLoader", "cookieStore", "OAUTH2_SCOPES", "userInfoCache",
     "getOAuthUserInfo", "getUserProfile", "getCompany", "$rootScope",
-    "$interval", "$loading", "rvStorage", "$window", "GOOGLE_OAUTH2_URL",
+    "$interval", "$loading", "$window", "GOOGLE_OAUTH2_URL",
     "localStorageService", "$document", "uiFlowManager",
-    function ($injector, $q, $log, oauth2APILoader, $location, CLIENT_ID,
-    gapiLoader, pick, cookieStore, OAUTH2_SCOPES, userInfoCache,
+    function ($q, $log, $location, CLIENT_ID,
+    gapiLoader, cookieStore, OAUTH2_SCOPES, userInfoCache,
     getOAuthUserInfo, getUserProfile, getCompany, $rootScope,
-    $interval, $loading, rvStorage, $window, GOOGLE_OAUTH2_URL,
+    $interval, $loading, $window, GOOGLE_OAUTH2_URL,
     localStorageService, $document, uiFlowManager) {
     //singleton factory that represents userState throughout application
 

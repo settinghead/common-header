@@ -22,10 +22,104 @@ var env = process.env.NODE_ENV || "dev",
     usemin = require("gulp-usemin"),
     es = require("event-stream"),
     uglify = require("gulp-uglify"),
-    minifyCss = require("gulp-minify-css");
+    minifyCss = require("gulp-minify-css"),
+    gulpInject = require("gulp-inject");
 
+    var unitTestFiles = [
+    "components/jquery/dist/jquery.js",
+    "components/angular/angular.js",
+    "components/q/q.js",
+    "components/ngstorage/ngStorage.js",
+    "components/angular-bootstrap/ui-bootstrap-tpls.js",
+    "components/angular-ui-flow-manager/src/js/*.js",
+    "components/angular-mocks/angular-mocks.js",
+    "components/angular-spinner/angular-spinner.js",
+    "components/ng-biscuit/dist/ng-biscuit.js",
+    "components/angular-local-storage/dist/angular-local-storage.js",
+    "components/rv-loading/loading.js",
+    "components/ng-gapi-loader/src/js/*.js",
+    "components/ng-core-api-client/src/js/*.js",
+    "src/js/config/config.js",
+    "test/unit/fixtures/*.js",
+    "src/js/*.js",
+    "test/unit/*spec.js"
+    ],
+    commonHeaderSrcFiles = ["./src/templates.js", "./src/js/dtv-common-header.js",
+    "./src/js/controllers/ctr-global-alerts.js",
+    "./src/js/controllers/ctr-auth-buttons.js",
+    "./src/js/controllers/ctr-company-buttons.js",
+    "./src/js/controllers/ctr-shoppingcart.js",
+    "./src/js/controllers/ctr-close-frame.js",
+    "./src/js/controllers/ctr-system-messages.js",
+    "./src/js/controllers/ctr-modals.js",
+    "./src/js/controllers/ctr-registration-modal.js",
+    "./src/js/controllers/ctr-move-company-modal.js",
+    "./src/js/controllers/ctr-company-settings-modal.js",
+    "./src/js/controllers/ctr-subcompany-modal.js",
+    "./src/js/controllers/ctr-subcompany-selector-modal.js",
+    "./src/js/controllers/ctr-subcompany-banner.js",
+    "./src/js/controllers/ctr-company-users-modal.js",
+    "./src/js/controllers/ctr-user-settings-modal.js",
+    "./src/js/controllers/ctr-signout-modal.js",
+    "./src/js/ui-components/off-canvas-nav.js",
+    "./src/js/ui-components/action-sheet.js",
+    "./src/js/angular-scrollevents.js",
+    "./src/js/svc-util.js",
+    "./src/js/svc-geodata.js",
+    "./src/js/svc-popup-detector.js",
+    "./src/js/svc-userstate.js",
+    "./components/angular-ui-flow-manager/src/js/svc-ui-flow.js",
+    "./src/js/svc-account.js",
+    "./src/js/svc-registration.js",
+    "./components/ng-core-api-client/src/js/svc-cache.js",
+    "./components/ng-core-api-client/src/js/svc-core-util.js",
+    "./components/ng-core-api-client/src/js/svc-user.js",
+    "./components/ng-core-api-client/src/js/svc-company.js",
+    "./components/ng-core-api-client/src/js/svc-oauth2.js",
+    "./components/ng-core-api-client/src/js/svc-system-messages.js",
+    "./components/ng-core-api-client/src/js/svc-fastpass.js",
+    "./src/js/directives/dtv-fastpass.js",
+    "./src/js/svc-selected-company-url-handler.js",
+    "./src/js/svc-shoppingcart.js",
+    "./src/js/config/config.js",
+    "./src/js/svc-config.js",
+    "./components/ng-gapi-loader/src/js/svc-gapi.js",
+    "./src/js/svc-localstorage.js",
+    "./src/js/svc-system-messages.js",
+    "./src/js/svc-data-gadgets.js"
+    ],
+    dependencySrcFiles = ["./components/jquery/dist/jquery.js",
+    "./components/angular/angular.js",
+    "./components/angular-route/angular-route.js",
+    "./components/angular-sanitize/angular-sanitize.js",
+    "./components/angular-animate/angular-animate.js",
+    "./components/angular-touch/angular-touch.js",
+    "./components/bootstrap/dist/js/bootstrap.js",
+    "./components/angular-bootstrap/ui-bootstrap.js",
+    "./components/angular-bootstrap/ui-bootstrap-tpls.js",
+    "./components/checklist-model/checklist-model.js",
+    "./components/ngstorage/ngStorage.js",
+    "./components/angular-spinner/angular-spinner.js",
+    "./components/spin.js/spin.js",
+    "./components/rv-loading/loading.js",
+    "./components/ng-biscuit/dist/ng-biscuit.js",
+    "./components/lodash/dist/lodash.js",
+    "./components/jquery-ui/ui/jquery-ui.js",
+    "./components/ng-csv/build/ng-csv.js",
+    "./components/angular-ui-sortable/sortable.js",
+    "./components/angular-local-storage/dist/angular-local-storage.js"],
+    injectorGenerator = function (srcFiles, id) {
+      return gulpInject(
+        gulp.src(srcFiles,
+          {read: false}),
+          {starttag: "<!-- inject:" + id + ":{{ext}} -->", relative: true});
+      };
 
-gulp.task("html", ["lint"], function () {
+gulp.task("coerce-prod-env", function () {
+  env = "prod";
+});
+
+gulp.task("html", ["coerce-prod-env", "html-inject", "html2js", "lint"], function () {
   return es.concat(
     gulp.src("test/e2e/index.html")
     .pipe(usemin({
@@ -35,8 +129,7 @@ gulp.task("html", ["lint"], function () {
     //minified
     gulp.src("test/e2e/index.html")
     .pipe(usemin({
-      js: [uglify()],
-      css: [minifyCss()]
+      js: [uglify()], css: [minifyCss()]
     }))
     .pipe(rename({suffix: ".min"}))
     .pipe(gulp.dest("dist/"))
@@ -44,7 +137,7 @@ gulp.task("html", ["lint"], function () {
 });
 
 
-gulp.task("build", ["html", "html2js"]);
+gulp.task("build", ["html"]);
 
 gulp.task("fonts-copy", function () {
   //TODO This is a temporary solution. Dulpicate files. Not recommended
@@ -69,6 +162,14 @@ gulp.task("lint", ["config", "fonts-copy"], function() {
     .on("error", function () {
       process.exit(1);
     });
+});
+
+gulp.task("html-inject", function () {
+  return gulp.src("test/e2e/index_raw.html")
+    .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
+    .pipe(injectorGenerator(dependencySrcFiles, "deps"))
+    .pipe(rename("index.html"))
+    .pipe(gulp.dest("test/e2e"));
 });
 
 gulp.task("html2js", function() {
@@ -96,7 +197,7 @@ gulp.task("html2js-watch", function() {
 
 gulp.task("build-watch", function() {
   watch({glob: ["src/js/**/*", "src/templates/**/*"]}, function () {
-    return runSequence("html", "html2js");
+    return runSequence("html");
   });
 });
 
@@ -111,31 +212,11 @@ gulp.task("config", function() {
     .pipe(gulp.dest("./src/js/config"));
 });
 
-var unitTestFiles = [
-  "components/jquery/dist/jquery.js",
-  "components/angular/angular.js",
-  "components/q/q.js",
-  "components/ngstorage/ngStorage.js",
-  "components/angular-bootstrap/ui-bootstrap-tpls.js",
-  "components/angular-ui-flow-manager/src/js/*.js",
-  "components/angular-mocks/angular-mocks.js",
-  "components/angular-spinner/angular-spinner.js",
-  "components/ng-biscuit/dist/ng-biscuit.js",
-  "components/angular-local-storage/dist/angular-local-storage.js",
-  "components/rv-loading/loading.js",
-  "components/ng-gapi-loader/src/js/*.js",
-  "components/ng-core-api-client/src/js/*.js",
-  "src/js/config/config.js",
-  "test/unit/fixtures/*.js",
-  "src/js/*.js",
-  "test/unit/*spec.js"
-  ];
-
 gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: unitTestFiles}));
 gulp.task("test:unit-watch", ["config"], factory.testUnitAngular({testFiles: unitTestFiles, watch: true}));
 
-gulp.task("server", ["html2js", "config", "fonts-copy"], factory.testServer({https: false}));
-gulp.task("server-watch", ["html2js-watch", "config", "fonts-copy"], factory.testServer({https: false}));
+gulp.task("server", ["html-inject", "html2js", "config", "fonts-copy"], factory.testServer({https: false}));
+gulp.task("server-watch", ["html-inject", "html2js-watch", "config", "fonts-copy"], factory.testServer({https: false}));
 gulp.task("server-close", factory.testServerClose());
 gulp.task("test:webdrive_update", factory.webdriveUpdate());
 gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular({
