@@ -90,6 +90,9 @@
     <h1>Store!</h1>
 
     <div>
+
+    <button class="btn btn-secondary ps-open-popup-login" ng-click="loginPopup()">Login Popup</button>
+
     <button
       ng-hide="isSuperman"
       class="btn btn-primary"
@@ -145,7 +148,7 @@
 
       .config(["uiStatusDependencies", function (uiStatusDependencies) {
         uiStatusDependencies.addDependencies({
-          "canBecomeSuperman": "registerdAsRiseVisionUser"
+          "canBecomeSuperman": "registeredAsRiseVisionUser"
         });
       }])
 
@@ -158,7 +161,7 @@
           otherwise({redirectTo: '/shopping-cart'});
       }])
 
-      .controller("MainController", function($rootScope, $scope) {
+      .controller("MainController", function($rootScope, $scope, $window) {
 
         $rootScope.navOptions = [{
           title: 'Accounts & Users',
@@ -280,10 +283,17 @@
         }
       })
 
-      .controller("FakeStoreController", function ($scope, shoppingCart, uiFlowManager) {
+      .controller("FakeStoreController", function ($scope, shoppingCart, uiFlowManager, $window) {
 
         $scope.buyProduct = function (id, uiFlowManager) {
           shoppingCart.addItem({productId: id, orderedPricing: [200]}, 1, 0);
+        };
+
+        $scope.loginPopup = function () {
+          var w = 900, h = 700;
+          var left = (screen.width/2)-(w/2);
+          var top = (screen.height/2)-(h/2);
+          $window.open("../../src/html/popup-auth.html" ,'Login To Rise Vision','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
         };
 
         $scope.becomeSuperman = function () {

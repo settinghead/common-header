@@ -8,7 +8,8 @@
   .config(["uiStatusDependencies", function (uiStatusDependencies) {
     uiStatusDependencies.addDependencies({
       "registerdAsRiseVisionUser" : "signedInWithGoogle",
-      "registrationComplete": ["notLoggedIn", "registerdAsRiseVisionUser"]
+      "registeredAsRiseVisionUser" : "signedInWithGoogle",
+      "registrationComplete": ["notLoggedIn", "registeredAsRiseVisionUser"]
     });
   }])
 
@@ -39,7 +40,7 @@
     };
   }])
 
-  .factory("registerdAsRiseVisionUser", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
+  .factory("registeredAsRiseVisionUser", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
   function ($q, getUserProfile, cookieStore, $log, userState) {
     return function () {
       var deferred = $q.defer();
@@ -53,15 +54,15 @@
           deferred.resolve({});
         }
         else {
-          deferred.reject("registerdAsRiseVisionUser");
+          deferred.reject("registeredAsRiseVisionUser");
         }
       }, function (err) {
         if (cookieStore.get("surpressRegistration")){
           deferred.resolve({});
         }
         else {
-          $log.debug("registerdAsRiseVisionUser rejected", err);
-          deferred.reject("registerdAsRiseVisionUser");
+          $log.debug("registeredAsRiseVisionUser rejected", err);
+          deferred.reject("registeredAsRiseVisionUser");
         }
       });
 

@@ -1568,7 +1568,7 @@ angular.module("risevision.common.header")
         $log.debug("status changed from", oldStatus, "to", newStatus);
 
         //render a dialog based on the status current UI is in
-        if(newStatus === "registerdAsRiseVisionUser") {
+        if(newStatus === "registeredAsRiseVisionUser") {
           if(!userState.registrationModalInstance && userState.isLoggedIn()) { // avoid duplicate registration modals
             userState.registrationModalInstance = $modal.open({
               template: $templateCache.get("registration-modal.html"),
@@ -1582,6 +1582,9 @@ angular.module("risevision.common.header")
             userState.registrationModalInstance = null;
             uiFlowManager.invalidateStatus();
           });
+        }
+        else if(newStatus === "signedInWithGoogle") {
+          $scope.login();
         }
       }
     });
@@ -1601,18 +1604,6 @@ angular.module("risevision.common.header")
         if(username) {
           $scope.profile = userState.getCopyOfProfile();
         }});
-
-    //render dialogs based on status the UI is stuck on
-    $scope.$watch(function () { return uiFlowManager.getStatus(); },
-
-      function (newStatus){
-        if(newStatus) {
-        //render a dialog based on the status current UI is in
-        if(newStatus === "signedInWithGoogle") {
-          $scope.login();
-        }
-      }
-    });
 
     // Login Modal
     $scope.login = function (endStatus) {
@@ -3292,6 +3283,8 @@ angular.module("risevision.common.geodata", [])
     return params;
   };
 
+  var _userStateReady;
+
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.core.cache",
@@ -3306,17 +3299,24 @@ angular.module("risevision.common.geodata", [])
   .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
   .value("GOOGLE_OAUTH2_URL", "https://accounts.google.com/o/oauth2/auth")
 
-    .run(["$location", "userState", "$log", "gapiLoader",
+  .factory("userStateReady", [function (){
+     return _userStateReady.promise; }])
+
+   .run(["$q", function ($q) {  _userStateReady = $q.defer(); }])
+
+  .run(["$location", "userState", "$log", "gapiLoader",
       function ($location, userState, $log, gapiLoader) {
       var path = $location.path();
       var params = parseParams(stripLeadingSlash(path));
+      var resolveHandled = false;
       $log.debug("URL params", params);
       if(params.access_token) {
+        resolveHandled = true;
         gapiLoader().then(function (gApi) {
           $log.debug("Setting token", params.access_token);
           gApi.auth.setToken( {access_token: params.access_token});
           userState._setUserToken(params.access_token);
-          userState.authenticate();
+          userState.authenticate().then().finally(_userStateReady.resolve);
         });
       }
       userState._restoreState();
@@ -3326,6 +3326,10 @@ angular.module("risevision.common.geodata", [])
           $location.path(state.u);
         }
       }
+      if (!resolveHandled) {
+        _userStateReady.resolve();
+      }
+
     }])
 
   .factory("userState", [
@@ -4071,7 +4075,8 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
   .config(["uiStatusDependencies", function (uiStatusDependencies) {
     uiStatusDependencies.addDependencies({
       "registerdAsRiseVisionUser" : "signedInWithGoogle",
-      "registrationComplete": ["notLoggedIn", "registerdAsRiseVisionUser"]
+      "registeredAsRiseVisionUser" : "signedInWithGoogle",
+      "registrationComplete": ["notLoggedIn", "registeredAsRiseVisionUser"]
     });
   }])
 
@@ -4102,7 +4107,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
     };
   }])
 
-  .factory("registerdAsRiseVisionUser", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
+  .factory("registeredAsRiseVisionUser", ["$q", "getUserProfile", "cookieStore", "$log", "userState",
   function ($q, getUserProfile, cookieStore, $log, userState) {
     return function () {
       var deferred = $q.defer();
@@ -4116,15 +4121,15 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
           deferred.resolve({});
         }
         else {
-          deferred.reject("registerdAsRiseVisionUser");
+          deferred.reject("registeredAsRiseVisionUser");
         }
       }, function (err) {
         if (cookieStore.get("surpressRegistration")){
           deferred.resolve({});
         }
         else {
-          $log.debug("registerdAsRiseVisionUser rejected", err);
-          deferred.reject("registerdAsRiseVisionUser");
+          $log.debug("registeredAsRiseVisionUser rejected", err);
+          deferred.reject("registeredAsRiseVisionUser");
         }
       });
 
