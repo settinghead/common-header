@@ -33,9 +33,10 @@ angular.module("risevision.common.header", [
   ["$modal", "$rootScope", "$q", "$loading",
    "$interval", "oauth2APILoader", "$log",
     "$templateCache", "userState", "$location", "bindToScopeWithWatch",
+    "$document",
   function($modal, $rootScope, $q, $loading, $interval,
     oauth2APILoader, $log, $templateCache, userState, $location,
-    bindToScopeWithWatch) {
+    bindToScopeWithWatch, $document) {
     return {
       restrict: "E",
       template: $templateCache.get("common-header.html"),
@@ -78,6 +79,14 @@ angular.module("risevision.common.header", [
             $location.search("inRVA", $scope.inRVAFrame);
           }
         });
+
+        //insert meta tag to page to prevent zooming in in mobile mode
+        var viewPortTag = $document[0].createElement("meta");
+        viewPortTag.id="viewport";
+        viewPortTag.name = "viewport";
+        viewPortTag.content = "width=device-width, initial-scale=1, user-scalable=no";
+        $document[0].getElementsByTagName("head")[0].appendChild(viewPortTag);
+
       }
     };
   }
