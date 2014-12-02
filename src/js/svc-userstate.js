@@ -18,6 +18,8 @@
     return params;
   };
 
+  var _userStateReady;
+
   angular.module("risevision.common.userstate",
     ["risevision.common.gapi", "risevision.common.localstorage",
     "risevision.common.config", "risevision.core.cache",
@@ -32,17 +34,24 @@
   .value("OAUTH2_SCOPES", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
   .value("GOOGLE_OAUTH2_URL", "https://accounts.google.com/o/oauth2/auth")
 
-    .run(["$location", "userState", "$log", "gapiLoader",
+  .factory("userStateReady", [function (){
+     return _userStateReady.promise; }])
+
+   .run(["$q", function ($q) {  _userStateReady = $q.defer(); }])
+
+  .run(["$location", "userState", "$log", "gapiLoader",
       function ($location, userState, $log, gapiLoader) {
       var path = $location.path();
       var params = parseParams(stripLeadingSlash(path));
+      var resolveHandled = false;
       $log.debug("URL params", params);
       if(params.access_token) {
+        resolveHandled = true;
         gapiLoader().then(function (gApi) {
           $log.debug("Setting token", params.access_token);
           gApi.auth.setToken( {access_token: params.access_token});
           userState._setUserToken(params.access_token);
-          userState.authenticate();
+          userState.authenticate().then().finally(_userStateReady.resolve);
         });
       }
       userState._restoreState();
@@ -52,6 +61,10 @@
           $location.path(state.u);
         }
       }
+      if (!resolveHandled) {
+        _userStateReady.resolve();
+      }
+
     }])
 
   .factory("userState", [

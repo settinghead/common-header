@@ -122,9 +122,7 @@ gulp.task("coerce-prod-env", function () {
 gulp.task("html", ["coerce-prod-env", "html-inject", "html2js", "lint"], function () {
   return es.concat(
     gulp.src("test/e2e/index.html")
-    .pipe(usemin({
-      js: [],
-      css: []}))
+    .pipe(usemin({ js: [], css: [] }))
     .pipe(gulp.dest("dist/")),
     //minified
     gulp.src("test/e2e/index.html")
@@ -165,11 +163,34 @@ gulp.task("lint", ["config", "fonts-copy"], function() {
 });
 
 gulp.task("html-inject", function () {
-  return gulp.src("test/e2e/index_raw.html")
+  return es.concat(
+    gulp.src("src/html/popup-auth_raw.html")
+    .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
+    .pipe(injectorGenerator(dependencySrcFiles, "deps"))
+    .pipe(rename("popup-auth.html"))
+    .pipe(gulp.dest("src/html")),
+    gulp.src("test/e2e/index_raw.html")
     .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
     .pipe(injectorGenerator(dependencySrcFiles, "deps"))
     .pipe(rename("index.html"))
-    .pipe(gulp.dest("test/e2e"));
+    .pipe(gulp.dest("test/e2e"))
+  );
+});
+
+gulp.task("html-inject-watch", function () {
+  watch({glob: "src/**/*"}, function () {
+    return es.concat(gulp.src("src/html/popup-auth_raw.html")
+    .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
+    .pipe(injectorGenerator(dependencySrcFiles, "deps"))
+    .pipe(rename("popup-auth.html"))
+    .pipe(gulp.dest("src/html")),
+    gulp.src("test/e2e/index_raw.html")
+    .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
+    .pipe(injectorGenerator(dependencySrcFiles, "deps"))
+    .pipe(rename("index.html"))
+    .pipe(gulp.dest("test/e2e")));
+  });
+
 });
 
 gulp.task("html2js", function() {
@@ -216,7 +237,7 @@ gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: unitTestF
 gulp.task("test:unit-watch", ["config"], factory.testUnitAngular({testFiles: unitTestFiles, watch: true}));
 
 gulp.task("server", ["html-inject", "html2js", "config", "fonts-copy"], factory.testServer({https: false}));
-gulp.task("server-watch", ["html-inject", "html2js-watch", "config", "fonts-copy"], factory.testServer({https: false}));
+gulp.task("server-watch", ["html-inject-watch", "html2js-watch", "config", "fonts-copy"], factory.testServer({https: false}));
 gulp.task("server-close", factory.testServerClose());
 gulp.task("test:webdrive_update", factory.webdriveUpdate());
 gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular({

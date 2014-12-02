@@ -39,7 +39,7 @@ angular.module("risevision.common.header")
         $log.debug("status changed from", oldStatus, "to", newStatus);
 
         //render a dialog based on the status current UI is in
-        if(newStatus === "registerdAsRiseVisionUser") {
+        if(newStatus === "registeredAsRiseVisionUser") {
           if(!userState.registrationModalInstance && userState.isLoggedIn()) { // avoid duplicate registration modals
             userState.registrationModalInstance = $modal.open({
               template: $templateCache.get("registration-modal.html"),
@@ -53,6 +53,9 @@ angular.module("risevision.common.header")
             userState.registrationModalInstance = null;
             uiFlowManager.invalidateStatus();
           });
+        }
+        else if(newStatus === "signedInWithGoogle") {
+          $scope.login();
         }
       }
     });
@@ -72,18 +75,6 @@ angular.module("risevision.common.header")
         if(username) {
           $scope.profile = userState.getCopyOfProfile();
         }});
-
-    //render dialogs based on status the UI is stuck on
-    $scope.$watch(function () { return uiFlowManager.getStatus(); },
-
-      function (newStatus){
-        if(newStatus) {
-        //render a dialog based on the status current UI is in
-        if(newStatus === "signedInWithGoogle") {
-          $scope.login();
-        }
-      }
-    });
 
     // Login Modal
     $scope.login = function (endStatus) {

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html ng-app="ch-popup-auth-app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <!-- build:css css/style.css -->
+  <link href="../../components/rv-common-style/dist/css/rise.min.css" rel="stylesheet" type="text/css" />
+  <!-- endbuild -->
+</head>
+<body ng-controller="AuthMainController">
+
+<!-- build:js js/dependencies.js -->
+<!-- inject:deps:js -->
+<!-- endinject -->
+<!-- endbuild -->
+
+<!-- build:js js/common-header.js -->
+<!-- inject:ch:js -->
+<!-- endinject -->
+<!-- endbuild -->
+
+<div ng-controller="AuthButtonsCtr"></div>
+
+<script type="text/javascript">
+  angular.module("ch-popup-auth-app", ["ngRoute",
+  "risevision.common.config", "risevision.common.header"])
+
+  .config(["uiStatusDependencies", function (uiStatusDependencies) {
+    uiStatusDependencies.addDependencies({
+      "loggedInAsRiseVisionUser" : "registeredAsRiseVisionUser"
+    });
+  }])
+
+  .controller("AuthMainController", ["uiFlowManager", "userStateReady", "$window", "loadFastpass",
+    function(uiFlowManager, userStateReady, $window, loadFastpass) {
+      userStateReady.then(function () {
+        uiFlowManager.cancelValidation();
+        uiFlowManager.invalidateStatus("loggedInAsRiseVisionUser").then(function (){
+          loadFastpass(userState.getUsername(), userState.getUserEmail()).then().finally($window.close);
+        });
+      });
+  }]);
+
+</script>
+
+</body>
+</html>
