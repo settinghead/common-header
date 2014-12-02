@@ -38,7 +38,6 @@
     "rv-loading": "https://github.com/Rise-Vision/rv-loading.git",
     "q": "1.0.1",
     "ng-biscuit": "~0.2.1",
-    "mustache": "~0.8.2",
     "ng-csv": "~0.2.3",
     "angular-touch": "1.2.24",
     "angular-local-storage": "~0.1.4"

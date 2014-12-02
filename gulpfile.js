@@ -108,6 +108,16 @@ var env = process.env.NODE_ENV || "dev",
     "./components/ng-csv/build/ng-csv.js",
     "./components/angular-ui-sortable/sortable.js",
     "./components/angular-local-storage/dist/angular-local-storage.js"],
+    gapiMockSrcFiles = [
+    "./components/rv-gapi-mock/observed-browser.js",
+    "./components/rv-gapi-mock/_mock-data.js",
+    "./components/rv-gapi-mock/gapi-mock-data/users.js",
+    "./components/rv-gapi-mock/gapi-mock-data/companies.js",
+    "./components/rv-gapi-mock/gapi-mock-data/accounts.js",
+    "./components/rv-gapi-mock/gapi-mock-data/systemmessages.js",
+    "./components/mustache/mustache.js",
+    "./components/rv-gapi-mock/gapi-mock.js",
+    ],
     injectorGenerator = function (srcFiles, id) {
       return gulpInject(
         gulp.src(srcFiles,
@@ -169,9 +179,16 @@ gulp.task("html-inject", function () {
     .pipe(injectorGenerator(dependencySrcFiles, "deps"))
     .pipe(rename("popup-auth.html"))
     .pipe(gulp.dest("src/html")),
+    gulp.src("src/html/popup-auth_raw.html")
+    .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
+    .pipe(injectorGenerator(dependencySrcFiles, "deps"))
+    .pipe(injectorGenerator(gapiMockSrcFiles, "gapimock"))
+    .pipe(rename("popup-auth_e2e.html"))
+    .pipe(gulp.dest("src/html")),
     gulp.src("test/e2e/index_raw.html")
     .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
     .pipe(injectorGenerator(dependencySrcFiles, "deps"))
+    .pipe(injectorGenerator(gapiMockSrcFiles, "gapimock"))
     .pipe(rename("index.html"))
     .pipe(gulp.dest("test/e2e"))
   );
@@ -180,14 +197,21 @@ gulp.task("html-inject", function () {
 gulp.task("html-inject-watch", function () {
   watch({glob: "src/**/*"}, function () {
     return es.concat(gulp.src("src/html/popup-auth_raw.html")
+    .pipe(rename("popup-auth.html"))
     .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
     .pipe(injectorGenerator(dependencySrcFiles, "deps"))
-    .pipe(rename("popup-auth.html"))
+    .pipe(gulp.dest("src/html")),
+    gulp.src("src/html/popup-auth_raw.html")
+    .pipe(rename("popup-auth_e2e.html"))
+    .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
+    .pipe(injectorGenerator(dependencySrcFiles, "deps"))
+    .pipe(injectorGenerator(gapiMockSrcFiles, "gapimock"))
     .pipe(gulp.dest("src/html")),
     gulp.src("test/e2e/index_raw.html")
+    .pipe(rename("index.html"))
     .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
     .pipe(injectorGenerator(dependencySrcFiles, "deps"))
-    .pipe(rename("index.html"))
+    .pipe(injectorGenerator(gapiMockSrcFiles, "gapimock"))
     .pipe(gulp.dest("test/e2e")));
   });
 

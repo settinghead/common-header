@@ -19,29 +19,45 @@
 <!-- endinject -->
 <!-- endbuild -->
 
+<!-- build:js js/gapi-mock.js -->
+<!-- inject:gapimock:js -->
+<!-- endinject -->
+<!-- endbuild -->
+
 <div ng-controller="AuthButtonsCtr"></div>
 
 <script type="text/javascript">
-  angular.module("ch-popup-auth-app", ["ngRoute",
-  "risevision.common.config", "risevision.common.header"])
 
-  .config(["uiStatusDependencies", function (uiStatusDependencies) {
+  var theApp = angular.module("ch-popup-auth-app", ["ngRoute",
+  "risevision.common.config", "risevision.common.header"]);
+
+  theApp.config(["uiStatusDependencies", function (uiStatusDependencies) {
     uiStatusDependencies.addDependencies({
       "loggedInAsRiseVisionUser" : "registeredAsRiseVisionUser"
     });
   }])
 
-  .controller("AuthMainController", ["uiFlowManager", "userStateReady", "$window", "loadFastpass",
-    function(uiFlowManager, userStateReady, $window, loadFastpass) {
+  .controller("AuthMainController", ["uiFlowManager", "userStateReady", "$window", "loadFastpass", "$scope",
+    function(uiFlowManager, userStateReady, $window, loadFastpass, $scope) {
       userStateReady.then(function () {
         uiFlowManager.cancelValidation();
-        uiFlowManager.invalidateStatus("loggedInAsRiseVisionUser").then(function (){
-          loadFastpass(userState.getUsername(), userState.getUserEmail()).then().finally($window.close);
-        });
+        uiFlowManager.invalidateStatus("loggedInAsRiseVisionUser");
+      });
+
+      $scope.$watch(function () { return uiFlowManager.getStatus(); }, function (status) {
+        if(status === "loggedInAsRiseVisionUser") {
+          loadFastpass(userState.getUsername(), userState.getUserEmail()).then();
+            .finally($window.close);
+        }
       });
   }]);
 
+  if(window.gapi.isFake) {
+    theApp.value("GOOGLE_OAUTH2_URL", "/components/rv-gapi-mock/google-oauth2.html");
+  }
+
 </script>
+
 
 </body>
 </html>
