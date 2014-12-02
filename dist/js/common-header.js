@@ -3976,7 +3976,6 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
     cancelValidation: function () {
       _status = "";
       _goalStatus = "";
-      final = true;
       $rootScope.$broadcast("risevision.uiStatus.validationCancelled");
       $log.debug("UI status validation cancelled.");
     },
@@ -4024,19 +4023,16 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
   }])
 
   .factory("registerAccount", ["$q", "$log",
-  "createCompany", "addAccount", "updateUser", "agreeToTerms",
-  function ($q, $log, createCompany, addAccount, updateUser,
-    agreeToTerms) {
+  "createCompany", "addAccount", "updateUser",
+  function ($q, $log, createCompany, addAccount, updateUser) {
     return function (username, basicProfile) {
       $log.debug("registerAccount called.", username, basicProfile);
       var deferred = $q.defer();
       addAccount().then().finally(function () {
-        agreeToTerms().then().finally(function () {
-          updateUser(username, basicProfile).then(function (resp) {
-            if(resp.result) { deferred.resolve(); }
-            else { deferred.reject(); }
-          }, deferred.reject).finally("registerAccount ended");
-        });
+        updateUser(username, basicProfile).then(function (resp) {
+          if(resp.result) { deferred.resolve(); }
+          else { deferred.reject(); }
+        }, deferred.reject).finally("registerAccount ended");
       });
       return deferred.promise;
     };
