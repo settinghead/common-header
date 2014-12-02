@@ -1247,7 +1247,7 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  class=\"system-messages\"\n" +
     "  ng-show=\"isRiseVisionUser  && messages.length > 0\"\n" +
-    "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
+    "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser && messages.length > 0}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
@@ -3972,6 +3972,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
     cancelValidation: function () {
       _status = "";
       _goalStatus = "";
+      final = true;
       $rootScope.$broadcast("risevision.uiStatus.validationCancelled");
       $log.debug("UI status validation cancelled.");
     },

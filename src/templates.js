@@ -1247,7 +1247,7 @@ app.run(["$templateCache", function($templateCache) {
     "<li\n" +
     "  class=\"system-messages\"\n" +
     "  ng-show=\"isRiseVisionUser  && messages.length > 0\"\n" +
-    "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser}\">\n" +
+    "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser && messages.length > 0}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
     "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
