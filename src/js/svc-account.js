@@ -29,19 +29,16 @@
   }])
 
   .factory("registerAccount", ["$q", "$log",
-  "createCompany", "addAccount", "updateUser", "agreeToTerms",
-  function ($q, $log, createCompany, addAccount, updateUser,
-    agreeToTerms) {
+  "createCompany", "addAccount", "updateUser",
+  function ($q, $log, createCompany, addAccount, updateUser) {
     return function (username, basicProfile) {
       $log.debug("registerAccount called.", username, basicProfile);
       var deferred = $q.defer();
       addAccount().then().finally(function () {
-        agreeToTerms().then().finally(function () {
-          updateUser(username, basicProfile).then(function (resp) {
-            if(resp.result) { deferred.resolve(); }
-            else { deferred.reject(); }
-          }, deferred.reject).finally("registerAccount ended");
-        });
+        updateUser(username, basicProfile).then(function (resp) {
+          if(resp.result) { deferred.resolve(); }
+          else { deferred.reject(); }
+        }, deferred.reject).finally("registerAccount ended");
       });
       return deferred.promise;
     };
