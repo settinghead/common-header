@@ -46,14 +46,22 @@
 
       $scope.$watch(function () { return uiFlowManager.getStatus(); }, function (status) {
         if(status === "loggedInAsRiseVisionUser") {
-          loadFastpass(userState.getUsername(), userState.getUserEmail()).then();
+          loadFastpass(userState.getUsername(), userState.getUserEmail()).then()
             .finally($window.close);
         }
       });
   }]);
 
   if(window.gapi.isFake) {
-    theApp.value("GOOGLE_OAUTH2_URL", "/components/rv-gapi-mock/google-oauth2.html");
+    theApp.value("GOOGLE_OAUTH2_URL", "/components/rv-gapi-mock/google-oauth2.html")
+      .factory("loadFastpass", ["$q", "$log", function ($q, $log) {
+        return function (username, email) {
+          var deferred = $q.defer();
+          $log.debug("Fake loadFastpass called", username, email);
+          deferred.resolve();
+          return deferred.promise;
+        }
+      }]);
   }
 
 </script>
