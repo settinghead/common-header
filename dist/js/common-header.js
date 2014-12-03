@@ -293,7 +293,6 @@ app.run(["$templateCache", function($templateCache) {
     "		</li>\n" +
     "  </ul>\n" +
     "</nav>\n" +
-    "<fastpass></fastpass>\n" +
     "<iframe name=\"logoutFrame\" id=\"logoutFrame\" style='display:none'></iframe>\n" +
     "");
 }]);
@@ -1426,7 +1425,6 @@ angular.module("risevision.common.header", [
   "risevision.core.userprofile",
   "risevision.common.registration",
   "risevision.common.shoppingcart",
-  "risevision.common.fastpass",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
