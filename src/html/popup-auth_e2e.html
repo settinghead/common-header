@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html ng-app="ch-popup-auth-app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <!-- build:css css/style.css -->
+  <link href="../../components/rv-common-style/dist/css/rise.min.css" rel="stylesheet" type="text/css" />
+  <!-- endbuild -->
+</head>
+<body ng-controller="AuthMainController">
+
+<!-- build:js js/dependencies.js -->
+<!-- inject:deps:js -->
+<script src="../../components/jquery/dist/jquery.js"></script>
+<script src="../../components/angular/angular.js"></script>
+<script src="../../components/angular-route/angular-route.js"></script>
+<script src="../../components/angular-sanitize/angular-sanitize.js"></script>
+<script src="../../components/angular-animate/angular-animate.js"></script>
+<script src="../../components/angular-touch/angular-touch.js"></script>
+<script src="../../components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="../../components/angular-bootstrap/ui-bootstrap.js"></script>
+<script src="../../components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="../../components/checklist-model/checklist-model.js"></script>
+<script src="../../components/ngstorage/ngStorage.js"></script>
+<script src="../../components/angular-spinner/angular-spinner.js"></script>
+<script src="../../components/spin.js/spin.js"></script>
+<script src="../../components/rv-loading/loading.js"></script>
+<script src="../../components/ng-biscuit/dist/ng-biscuit.js"></script>
+<script src="../../components/lodash/dist/lodash.js"></script>
+<script src="../../components/jquery-ui/ui/jquery-ui.js"></script>
+<script src="../../components/ng-csv/build/ng-csv.js"></script>
+<script src="../../components/angular-ui-sortable/sortable.js"></script>
+<script src="../../components/angular-local-storage/dist/angular-local-storage.js"></script>
+<!-- endinject -->
+<!-- endbuild -->
+
+<!-- build:js js/common-header.js -->
+<!-- inject:ch:js -->
+<script src="../templates.js"></script>
+<script src="../js/dtv-common-header.js"></script>
+<script src="../js/controllers/ctr-global-alerts.js"></script>
+<script src="../js/controllers/ctr-auth-buttons.js"></script>
+<script src="../js/controllers/ctr-company-buttons.js"></script>
+<script src="../js/controllers/ctr-shoppingcart.js"></script>
+<script src="../js/controllers/ctr-close-frame.js"></script>
+<script src="../js/controllers/ctr-system-messages.js"></script>
+<script src="../js/controllers/ctr-modals.js"></script>
+<script src="../js/controllers/ctr-registration-modal.js"></script>
+<script src="../js/controllers/ctr-move-company-modal.js"></script>
+<script src="../js/controllers/ctr-company-settings-modal.js"></script>
+<script src="../js/controllers/ctr-subcompany-modal.js"></script>
+<script src="../js/controllers/ctr-subcompany-selector-modal.js"></script>
+<script src="../js/controllers/ctr-subcompany-banner.js"></script>
+<script src="../js/controllers/ctr-company-users-modal.js"></script>
+<script src="../js/controllers/ctr-user-settings-modal.js"></script>
+<script src="../js/controllers/ctr-signout-modal.js"></script>
+<script src="../js/ui-components/off-canvas-nav.js"></script>
+<script src="../js/ui-components/action-sheet.js"></script>
+<script src="../js/angular-scrollevents.js"></script>
+<script src="../js/svc-util.js"></script>
+<script src="../js/svc-geodata.js"></script>
+<script src="../js/svc-popup-detector.js"></script>
+<script src="../js/svc-userstate.js"></script>
+<script src="../../components/angular-ui-flow-manager/src/js/svc-ui-flow.js"></script>
+<script src="../js/svc-account.js"></script>
+<script src="../js/svc-registration.js"></script>
+<script src="../../components/ng-core-api-client/src/js/svc-cache.js"></script>
+<script src="../../components/ng-core-api-client/src/js/svc-core-util.js"></script>
+<script src="../../components/ng-core-api-client/src/js/svc-user.js"></script>
+<script src="../../components/ng-core-api-client/src/js/svc-company.js"></script>
+<script src="../../components/ng-core-api-client/src/js/svc-oauth2.js"></script>
+<script src="../../components/ng-core-api-client/src/js/svc-system-messages.js"></script>
+<script src="../../components/ng-core-api-client/src/js/svc-fastpass.js"></script>
+<script src="../js/directives/dtv-fastpass.js"></script>
+<script src="../js/svc-selected-company-url-handler.js"></script>
+<script src="../js/svc-shoppingcart.js"></script>
+<script src="../js/config/config.js"></script>
+<script src="../js/svc-config.js"></script>
+<script src="../../components/ng-gapi-loader/src/js/svc-gapi.js"></script>
+<script src="../js/svc-localstorage.js"></script>
+<script src="../js/svc-system-messages.js"></script>
+<script src="../js/svc-data-gadgets.js"></script>
+<!-- endinject -->
+<!-- endbuild -->
+
+<!-- build:js js/gapi-mock.js -->
+<!-- inject:gapimock:js -->
+<script src="../../components/rv-gapi-mock/observed-browser.js"></script>
+<script src="../../components/rv-gapi-mock/_mock-data.js"></script>
+<script src="../../components/rv-gapi-mock/gapi-mock-data/users.js"></script>
+<script src="../../components/rv-gapi-mock/gapi-mock-data/companies.js"></script>
+<script src="../../components/rv-gapi-mock/gapi-mock-data/accounts.js"></script>
+<script src="../../components/rv-gapi-mock/gapi-mock-data/systemmessages.js"></script>
+<script src="../../components/mustache/mustache.js"></script>
+<script src="../../components/rv-gapi-mock/gapi-mock.js"></script>
+<!-- endinject -->
+<!-- endbuild -->
+
+<div ng-controller="AuthButtonsCtr"></div>
+
+<script type="text/javascript">
+
+  var theApp = angular.module("ch-popup-auth-app", ["ngRoute",
+  "risevision.common.config", "risevision.common.header"]);
+
+  theApp.config(["uiStatusDependencies", function (uiStatusDependencies) {
+    uiStatusDependencies.addDependencies({
+      "loggedInAsRiseVisionUser" : "registeredAsRiseVisionUser"
+    });
+  }])
+
+  .controller("AuthMainController", ["uiFlowManager", "userStateReady", "$window", "loadFastpass", "$scope",
+    function(uiFlowManager, userStateReady, $window, loadFastpass, $scope) {
+      userStateReady.then(function () {
+        uiFlowManager.cancelValidation();
+        uiFlowManager.invalidateStatus("loggedInAsRiseVisionUser");
+      });
+
+      $scope.$watch(function () { return uiFlowManager.getStatus(); }, function (status) {
+        if(status === "loggedInAsRiseVisionUser") {
+          loadFastpass(userState.getUsername(), userState.getUserEmail()).then();
+            .finally($window.close);
+        }
+      });
+  }]);
+
+  if(window.gapi.isFake) {
+    theApp.value("GOOGLE_OAUTH2_URL", "/components/rv-gapi-mock/google-oauth2.html");
+  }
+
+</script>
+
+
+</body>
+</html>

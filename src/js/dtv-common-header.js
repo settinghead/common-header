@@ -17,7 +17,6 @@ angular.module("risevision.common.header", [
   "risevision.core.userprofile",
   "risevision.common.registration",
   "risevision.common.shoppingcart",
-  "risevision.common.fastpass",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
