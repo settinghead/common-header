@@ -263,12 +263,11 @@ app.run(["$templateCache", function($templateCache) {
     "			<!-- END Nav Links -->\n" +
     "		</div>\n" +
     "\n" +
-    "	</div>\n" +
-    "\n" +
-    "	<ng-include\n" +
+    "		<ng-include\n" +
     "		replace-include\n" +
     "		ng-controller=\"SubcompanyBannerCtrl\"\n" +
     "		src=\"'subcompany-banner.html'\"></ng-include>\n" +
+    "	</div>\n" +
     "</nav>\n" +
     "\n" +
     "<ng-include\n" +
