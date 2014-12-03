@@ -23,7 +23,7 @@
               var endDate = new Date(msg.endDate || "2199-12-31"),
                   startDate = new Date(msg.startDate || 0),
                   currentDate = new Date();
-              if(currentDate > startDate && currentDate < endDate ) {
+              if(currentDate >= startDate && currentDate <= endDate ) {
                 _newItems.push(msg);
               }
             });
