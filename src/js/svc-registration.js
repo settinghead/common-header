@@ -11,6 +11,8 @@
       "registeredAsRiseVisionUser" : "signedInWithGoogle",
       "registrationComplete": ["notLoggedIn", "registeredAsRiseVisionUser"]
     });
+
+    uiStatusDependencies.setMaximumRetryCount("signedInWithGoogle", 1);
   }])
 
   .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "userState",

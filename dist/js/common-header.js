@@ -3819,8 +3819,17 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
 
 .constant("uiStatusDependencies", {
   _dependencies: {},
+  _retries: {},
   addDependencies: function (deps) {
     angular.extend(this._dependencies, deps);
+  },
+  setMaximumRetryCount: function (status, num) {
+    if(num < 1) {
+      throw "Retry count for " + status + " must be equal to or greater than 1.";
+    }
+    if(this._retries[status] === undefined) {
+      this._retries[status] = num;
+    }
   }
 })
 
@@ -3829,7 +3838,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
   function ($log, $q, $injector, uiStatusDependencies, $rootScope,
   localStorageService) {
 
-  var _status, _goalStatus;
+  var _status, _goalStatus, _retriesLeft = null;
   var _dependencyMap = uiStatusDependencies._dependencies;
 
   //generate a status that always resolves to true
@@ -3889,7 +3898,8 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
             );
           }, function (lastRej) {
             if(_dependencyMap[dep]) {
-              $log.debug("Failed to reach status", dep, " because its dependencies are not satisfied. Last rejected dep: ", lastRej);
+              $log.debug("Failed to reach status", dep,
+                " because its dependencies are not satisfied. Last rejected dep: ", lastRej);
               currentD.reject(lastRej);
             }
             else {
@@ -3931,10 +3941,13 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
     }
     if(!_goalStatus && final) {
       _goalStatus = desiredStatus;
+      //start afresh
+      _retriesLeft = angular.copy(uiStatusDependencies._retries);
       deferred = $q.defer();
       final = false;
     }
     if(_goalStatus) {
+      deferred = $q.defer();
       _attemptStatus(_goalStatus).then(
         function (s) {
           if(_goalStatus) {
@@ -3948,8 +3961,17 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
           // if rejected at any given step,
           // show the dialog of that relevant step
           _status = status;
-          deferred.reject(status);
+          if(_retriesLeft[status] !== undefined) {
+            if(_retriesLeft[status] === 0) {
+              $log.debug("Maximum allowed retries for status", status, "reached. Validation will cancel.");
+              cancelValidation();
+            }
+            else {
+              _retriesLeft[status] --;
+            }
+          }
           final = true;
+          deferred.reject(status);
         });
     }
     return deferred && deferred.promise;
@@ -3963,15 +3985,25 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
 
   var persist = function () {
     localStorageService.set("risevision.ui-flow.state",
-      {goalStatus: _goalStatus});
+      {goalStatus: _goalStatus, retriesLeft: _retriesLeft});
+  };
+
+  var cancelValidation = function () {
+    _status = "";
+    _goalStatus = "";
+    _retriesLeft = null;
+    final = true;
+    $rootScope.$broadcast("risevision.uiStatus.validationCancelled");
+    $log.debug("UI status validation cancelled.");
   };
 
   //restore
   if(localStorageService.get("risevision.ui-flow.state")) {
     var state = localStorageService.get("risevision.ui-flow.state");
     if(state && state.goalStatus) {
-      $log.debug("uiFlowManager.goalStatus restored to", state.goalStatus);
       _goalStatus = state.goalStatus;
+      $log.debug("uiFlowManager.goalStatus restored to", state.goalStatus, state.retriesLeft);
+      _retriesLeft = state.retriesLeft;
       deferred = $q.defer(); final = false;
     }
     localStorageService.remove("risevision.ui-flow.state");
@@ -3979,13 +4011,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
 
   var manager = {
     invalidateStatus: invalidateStatus,
-    cancelValidation: function () {
-      _status = "";
-      _goalStatus = "";
-      final = true;
-      $rootScope.$broadcast("risevision.uiStatus.validationCancelled");
-      $log.debug("UI status validation cancelled.");
-    },
+    cancelValidation: cancelValidation,
     getStatus: function () { return _status; },
     isStatusUndetermined: function () { return _status === "pendingCheck"; },
     persist: persist
@@ -4081,6 +4107,8 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
       "registeredAsRiseVisionUser" : "signedInWithGoogle",
       "registrationComplete": ["notLoggedIn", "registeredAsRiseVisionUser"]
     });
+
+    uiStatusDependencies.setMaximumRetryCount("signedInWithGoogle", 1);
   }])
 
   .factory("signedInWithGoogle", ["$q", "getOAuthUserInfo", "userState",
