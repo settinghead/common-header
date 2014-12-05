@@ -1210,7 +1210,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("system-messages-button-menu.html",
     "<li class=\"dropdown-header dropdown-title system-message\">\n" +
-    "  System Message\n" +
+    "  Notifications\n" +
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li class=\"system-message\"\n" +
@@ -1234,7 +1234,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <i class=\"fa fa-bell\"></i>\n" +
     "    <span class=\"label label-danger system-messages-badge\">{{messages.length | surpressZero}}</span>\n" +
     "  </a>\n" +
-    "  <ul class=\"dropdown-menu system-messages\">\n" +
+    "  <ul class=\"dropdown-menu system-messages system-message-list\">\n" +
     "    <ng-include\n" +
     "      src=\"'system-messages-button-menu.html'\"\n" +
     "    ></ng-include>\n" +
@@ -1248,7 +1248,8 @@ app.run(["$templateCache", function($templateCache) {
     "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser && messages.length > 0}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
-    "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
+    "      action-sheet=\"'system-messages-button-menu.html'\"\n" +
+    "      action-sheet-class=\"system-message-list\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
     "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
     "    </a>\n" +
@@ -2725,7 +2726,7 @@ angular.module("risevision.common.header")
         var toggle = function () {
           isVisible = !isVisible;
           //fix for #298 - BEGIN
-          //need to completly hide element 
+          //need to completly hide element
           if (isVisible) {
             //make element visible first, then apply transformation
             actionSheetDomEl.toggleClass("is-action-sheet-closed");
@@ -2751,6 +2752,14 @@ angular.module("risevision.common.header")
             backdropDomEl.unbind("click");
           }
         };
+
+        //add classes
+
+        if(iAttrs.actionSheetClass) {
+          iAttrs.actionSheetClass.split(" ").forEach(function (cls) {
+            actionSheetDomEl.addClass(cls);
+          });
+        }
 
         iElement.bind("tap", toggle);
         iElement.bind("click", toggle);
@@ -4593,6 +4602,11 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
 
       this.getCompanies = function (companyId, search, cursor, count, sort) {
         var deferred = $q.defer();
+
+        //rebuild search string
+        //See discussion here: https://github.com/Rise-Vision/common-header/issues/389#issuecomment-65513425
+
+
         var obj = {
           "companyId": companyId,
           "search": search,
@@ -5229,10 +5243,12 @@ angular.module("risevision.common.gapi", [])
         if(newMessages && newMessages instanceof Array) {
           newMessages = (function filterNewMessages(items) {
             var _newItems = [];
+
+            var currentTime = new Date();
+
             angular.forEach(items, function (msg) {
-              var endTime = new Date(msg.endDate || "2199-12-31"),
-                  startTime = new Date(msg.startDate || 0),
-                  currentTime = new Date();
+              var endTime = new Date(msg.endDate || "2199-12-31");
+              var startTime = new Date(msg.startDate || 0);
               endTime.setDate(endTime.getDate() + 1);
               if(currentTime > startTime && currentTime < endTime ) {
                 _newItems.push(msg);
@@ -5249,6 +5265,12 @@ angular.module("risevision.common.gapi", [])
             if(!duplicate) {
               pushMessage(m, messages);
             }
+          });
+
+          messages.sort(function (a, b) {
+            if (!a.startDate || a.startDate > b.startDate) {return 1; }
+            else if (a.startDate && a.startDate === b.startDate) {return 0; }
+            else { return -1; }
           });
         }
       };

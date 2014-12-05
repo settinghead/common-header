@@ -29,7 +29,7 @@ angular.module("risevision.common.header")
         var toggle = function () {
           isVisible = !isVisible;
           //fix for #298 - BEGIN
-          //need to completly hide element 
+          //need to completly hide element
           if (isVisible) {
             //make element visible first, then apply transformation
             actionSheetDomEl.toggleClass("is-action-sheet-closed");
@@ -55,6 +55,14 @@ angular.module("risevision.common.header")
             backdropDomEl.unbind("click");
           }
         };
+
+        //add classes
+
+        if(iAttrs.actionSheetClass) {
+          iAttrs.actionSheetClass.split(" ").forEach(function (cls) {
+            actionSheetDomEl.addClass(cls);
+          });
+        }
 
         iElement.bind("tap", toggle);
         iElement.bind("click", toggle);
