@@ -1210,7 +1210,7 @@ app.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("system-messages-button-menu.html",
     "<li class=\"dropdown-header dropdown-title system-message\">\n" +
-    "  System Message\n" +
+    "  Notifications\n" +
     "</li>\n" +
     "<li class=\"divider\"></li>\n" +
     "<li class=\"system-message\"\n" +
@@ -1234,7 +1234,7 @@ app.run(["$templateCache", function($templateCache) {
     "    <i class=\"fa fa-bell\"></i>\n" +
     "    <span class=\"label label-danger system-messages-badge\">{{messages.length | surpressZero}}</span>\n" +
     "  </a>\n" +
-    "  <ul class=\"dropdown-menu system-messages\">\n" +
+    "  <ul class=\"dropdown-menu system-messages system-message-list\">\n" +
     "    <ng-include\n" +
     "      src=\"'system-messages-button-menu.html'\"\n" +
     "    ></ng-include>\n" +
@@ -1248,7 +1248,8 @@ app.run(["$templateCache", function($templateCache) {
     "  ng-class=\"{'visible-xs-inline-block': isRiseVisionUser && messages.length > 0}\">\n" +
     "    <a href=\"\"\n" +
     "      class=\"system-messages-button\"\n" +
-    "      action-sheet=\"'system-messages-button-menu.html'\">\n" +
+    "      action-sheet=\"'system-messages-button-menu.html'\"\n" +
+    "      action-sheet-class=\"system-message-list\">\n" +
     "        <i class=\"fa fa-bell\"></i>\n" +
     "        <span class=\"label label-danger system-messages-badge\">{{messages.length}}</span>\n" +
     "    </a>\n" +

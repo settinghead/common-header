@@ -19,10 +19,12 @@
         if(newMessages && newMessages instanceof Array) {
           newMessages = (function filterNewMessages(items) {
             var _newItems = [];
+
+            var currentTime = new Date();
+
             angular.forEach(items, function (msg) {
-              var endTime = new Date(msg.endDate || "2199-12-31"),
-                  startTime = new Date(msg.startDate || 0),
-                  currentTime = new Date();
+              var endTime = new Date(msg.endDate || "2199-12-31");
+              var startTime = new Date(msg.startDate || 0);
               endTime.setDate(endTime.getDate() + 1);
               if(currentTime > startTime && currentTime < endTime ) {
                 _newItems.push(msg);
@@ -39,6 +41,12 @@
             if(!duplicate) {
               pushMessage(m, messages);
             }
+          });
+
+          messages.sort(function (a, b) {
+            if (!a.startDate || a.startDate > b.startDate) {return 1; }
+            else if (a.startDate && a.startDate === b.startDate) {return 0; }
+            else { return -1; }
           });
         }
       };

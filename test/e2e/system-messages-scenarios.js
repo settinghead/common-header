@@ -40,7 +40,7 @@
         element(by.css("button.sign-in")).click();
 
         assert.eventually.isTrue(element(by.css(".system-messages-button")).isDisplayed(), "Should show system messages icon");
-        assert.eventually.strictEqual(element(by.css(".system-messages-badge")).getText(), "2", "Badge should show correct number of system messages");
+        assert.eventually.strictEqual(element(by.css(".system-messages-badge")).getText(), "14", "Badge should show correct number of system messages");
       });
 
       it("should hide system messages icon when there are no messages", function() {
