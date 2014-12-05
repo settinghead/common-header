@@ -47,7 +47,7 @@
             if (!a.startDate || a.startDate > b.startDate) {return 1; }
             else if (a.startDate && a.startDate === b.startDate) {return 0; }
             else { return -1; }
-          });
+          }).reverse();
         }
       };
 
