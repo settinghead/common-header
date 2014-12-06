@@ -1427,7 +1427,9 @@ angular.module("risevision.common.header", [
   "risevision.common.shoppingcart",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
-])
+], function ($compileProvider) {
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file):/);
+})
 
 .factory("bindToScopeWithWatch", [function () {
   return function (fnToWatch, scopeVar, scope) {
@@ -4602,11 +4604,6 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
 
       this.getCompanies = function (companyId, search, cursor, count, sort) {
         var deferred = $q.defer();
-
-        //rebuild search string
-        //See discussion here: https://github.com/Rise-Vision/common-header/issues/389#issuecomment-65513425
-
-
         var obj = {
           "companyId": companyId,
           "search": search,
