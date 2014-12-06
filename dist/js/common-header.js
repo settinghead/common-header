@@ -1429,15 +1429,6 @@ angular.module("risevision.common.header", [
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
 ])
 
-.config( [
-  "$compileProvider",
-  function( $compileProvider )
-  {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
-    // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
-  }
-  ])
-
 .factory("bindToScopeWithWatch", [function () {
   return function (fnToWatch, scopeVar, scope) {
     scope.$watch(function () { return fnToWatch.call(); },
