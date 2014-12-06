@@ -1427,9 +1427,16 @@ angular.module("risevision.common.header", [
   "risevision.common.shoppingcart",
   "checklist-model",
   "ui.bootstrap", "ngSanitize", "rvScrollEvent", "ngCsv", "ngTouch"
-], ["$compileProvider", function ($compileProvider) {
-  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file):/);
-}])
+])
+
+.config( [
+  "$compileProvider",
+  function( $compileProvider )
+  {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+    // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
+  }
+  ])
 
 .factory("bindToScopeWithWatch", [function () {
   return function (fnToWatch, scopeVar, scope) {
