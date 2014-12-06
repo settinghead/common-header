@@ -3193,7 +3193,7 @@ gapiMockData.companies = [
   else {
 
     window.gapiLoadingStatus = "loaded"; //surpress the loading of real gapi
-    window.gapi = {isFake: true};
+    window.gapi = {};
 
     var delayed = function () {
       if(arguments) {
@@ -4077,9 +4077,6 @@ gapiMockData.companies = [
     setToken: function (token) {
       if(token) {
         localStorage.setItem("gapi-mock-auth-token", JSON.stringify(token));
-      }
-      else {
-        localStorage.removeItem("gapi-mock-auth-token");
       }
     },
     getToken: function () {
