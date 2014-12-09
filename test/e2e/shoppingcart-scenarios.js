@@ -16,15 +16,12 @@
   browser.driver.manage().window().setSize(1124, 850);
 
   describe("Shopping Cart", function() {
-  var ptor;
-
       before(function() {
-        ptor = protractor.getInstance();
-        ptor.manage().deleteAllCookies();
+        browser.driver.manage().deleteAllCookies();
         browser.get("/test/e2e/index.html#/shopping-cart");
         //clear local storage
         browser.executeScript("localStorage.clear();");
-        ptor.driver.navigate().refresh();
+        browser.refresh();
       });
 
       it("should not function when user is not signed in", function() {
@@ -72,7 +69,7 @@
       });
 
       it("should persist cart on refresh", function() {
-        ptor.driver.navigate().refresh();
+        browser.refresh();
         assert.eventually.isTrue(element(by.css(".shopping-cart-button")).isDisplayed(), "Cart button should show");
         assert.eventually.strictEqual(element(by.id("cartBadge")).getText(), "3", "Cart badge should display 3");
       });

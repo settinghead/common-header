@@ -16,18 +16,16 @@
   browser.driver.manage().window().setSize(1280, 768);
 
   describe("Authentication", function() {
-  var ptor;
 
     before(function() {
-      ptor = protractor.getInstance();
-      ptor.manage().deleteAllCookies();
+      browser.driver.manage().deleteAllCookies();
       browser.get("/test/e2e/index.html");
 
       //clear local storage
       browser.executeScript("localStorage.clear();");
       element(by.id("server-delay")).clear();
       element(by.id("server-delay")).sendKeys("0");
-      ptor.driver.navigate().refresh();
+      browser.refresh();
 
       element(by.id("reset-db")).click();
     });
@@ -40,7 +38,7 @@
     });
 
     it("should retain auth status upon refresh", function () {
-      ptor.driver.navigate().refresh();
+      browser.refresh();
       assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
       assert.eventually.isTrue(element(by.css(".desktop-menu-item img.profile-pic")).isDisplayed(), "profile pic should show");
       assert.eventually.isFalse((element(by.css(".sign-out-button")).isDisplayed()), "sign out button should not show");
