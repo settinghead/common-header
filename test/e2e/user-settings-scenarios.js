@@ -16,16 +16,13 @@
   browser.driver.manage().window().setSize(1280, 768);
 
   describe("User Settings", function() {
-  var ptor;
-
       before(function() {
-        ptor = protractor.getInstance();
-        ptor.manage().deleteAllCookies();
+        browser.driver.manage().deleteAllCookies();
         browser.get("/test/e2e/index.html#/");
 
         //clear local storage
         browser.executeScript("localStorage.clear();");
-        ptor.driver.navigate().refresh();
+        browser.refresh();
         element(by.id("reset-db")).click();
       });
 

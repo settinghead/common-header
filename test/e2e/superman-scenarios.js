@@ -16,15 +16,12 @@
   browser.driver.manage().window().setSize(1124, 850);
 
   describe("Superman (uiFlowManager tester)", function() {
-  var ptor;
-
       before(function() {
-        ptor = protractor.getInstance();
-        ptor.manage().deleteAllCookies();
+        browser.driver.manage().deleteAllCookies();
         browser.get("/test/e2e/index.html#/shopping-cart");
         //clear local storage
         browser.executeScript("localStorage.clear();");
-        ptor.driver.navigate().refresh();
+        browser.refresh();
       });
 
       it("should show become superman button when not logged in", function() {

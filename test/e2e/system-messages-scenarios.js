@@ -16,15 +16,12 @@
   browser.driver.manage().window().setSize(1124, 850);
 
   describe("System Messages", function() {
-  var ptor;
-
       before(function() {
-        ptor = protractor.getInstance();
-        ptor.manage().deleteAllCookies();
+        browser.driver.manage().deleteAllCookies();
         browser.get("/test/e2e/index.html#/system-messages");
         //clear local storage
         browser.executeScript("localStorage.clear();");
-        ptor.driver.navigate().refresh();
+        browser.refresh();
         element(by.id("reset-db")).click();
       });
 
@@ -45,7 +42,7 @@
 
       it("should hide system messages icon when there are no messages", function() {
         element(by.id("clear-system-messages-button")).click();
-        ptor.driver.navigate().refresh();
+        browser.refresh();
 
         assert.eventually.isFalse(element(by.css(".system-messages-button")).isDisplayed(), "Should hide system messages icon");
       });

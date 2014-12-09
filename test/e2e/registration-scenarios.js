@@ -16,16 +16,13 @@
   browser.driver.manage().window().setSize(1280, 768);
 
   describe("Registration", function() {
-  var ptor;
-
       before(function() {
-        ptor = protractor.getInstance();
-        ptor.manage().deleteAllCookies();
+        browser.driver.manage().deleteAllCookies();
         browser.get("/test/e2e/#/shopping-cart");
 
         //clear local storage
         browser.executeScript("localStorage.clear();");
-        ptor.driver.navigate().refresh();
+        browser.refresh();
       });
 
       it("should show T&C Dialog on new Google Account", function() {
@@ -45,7 +42,7 @@
 
       it("should not bug me again when I click 'cancel', even after a refresh (limbo state)", function() {
         element(by.css(".registration-cancel-button")).click();
-        ptor.driver.navigate().refresh();
+        browser.refresh();
         assert.eventually.isFalse(element(by.css("button.sign-in")).isDisplayed(), "sign in button should not show");
         assert.eventually.isFalse(element(by.css(".registration-modal")).isPresent(), "registration dialog should hide");
       });
@@ -57,7 +54,7 @@
       });
 
       it("should show validation errors if i have not agreed to terms and entered an email", function () {
-        ptor.sleep(500);
+        browser.sleep(500);
         element(by.css(".registration-save-button")).click();
         assert.eventually.isTrue(element(by.css(".validation-error-message-accepted")).isPresent(), "t&c validation error should show");
         assert.eventually.isTrue(element(by.css(".validation-error-message-first-name")).isPresent(), "first name validation error should show");

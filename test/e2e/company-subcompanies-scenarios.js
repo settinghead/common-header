@@ -16,17 +16,14 @@
   browser.driver.manage().window().setSize(1280, 768);
 
   describe("Companies", function() {
-  var ptor;
-
       before(function() {
-        ptor = protractor.getInstance();
-        ptor.manage().deleteAllCookies();
+        browser.driver.manage().deleteAllCookies();
         browser.get("/test/e2e/index.html#/shopping-cart");
 
         //clear local storage
         browser.executeScript("localStorage.clear();");
 
-        ptor.driver.navigate().refresh();
+        browser.refresh();
         element(by.id("reset-db")).click();
       });
 
@@ -62,7 +59,7 @@
           assert.eventually.isTrue(element(by.css(".sub-company-alert")).isDisplayed(),
             "subcompany alert should show");
           browser.get("/test/e2e/index.html#/shopping-cart");
-          protractor.getInstance().driver.navigate().refresh();
+          browser.refresh();
           assert.eventually.isFalse(element(by.css(".sub-company-alert")).isPresent() &&
             element(by.css(".sub-company-alert")).isDisplayed(),
             "subcompany alert should hide");
@@ -77,7 +74,7 @@
           element(by.css(".add-subcompany-menu-button")).click();
           assert.eventually.isTrue(element(by.css(".pt-add-subcompany-modal")).isDisplayed(),
             "Add subcompany dialog should show");
-            ptor.sleep(500);
+            browser.sleep(500);
         });
 
         it("Opens Move Company Dialog", function() {

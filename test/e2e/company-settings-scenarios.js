@@ -16,17 +16,14 @@
   browser.driver.manage().window().setSize(1280, 768);
 
   describe("Companies Settings", function() {
-  var ptor;
-
       before(function() {
-        ptor = protractor.getInstance();
-        ptor.manage().deleteAllCookies();
+        browser.driver.manage().deleteAllCookies();
         browser.get("/test/e2e/index.html#/shopping-cart");
 
         //clear local storage
         browser.executeScript("localStorage.clear();");
 
-        ptor.driver.navigate().refresh();
+        browser.refresh();
         element(by.id("reset-db")).click();
       });
 
