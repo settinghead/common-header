@@ -1,4 +1,4 @@
-Rise Vision Common Header [![Build Status](http://devtools1.risevision.com:8080/job/Common-Header-Master/badge/icon)](http://devtools1.risevision.com:8080/job/Common-Header-Master/)
+Rise Vision Common Header [![Circle CI](https://circleci.com/gh/Rise-Vision/common-header.svg?style=svg)](https://circleci.com/gh/Rise-Vision/common-header)
 ==============
 ![](screenshots/header.png)
 
