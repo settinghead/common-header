@@ -46,7 +46,7 @@ angular.module("risevision.common.header")
               controller: "RegistrationModalCtrl",
               backdrop: "static",
               resolve: {
-                account: function (getUserProfile, getAccount) {
+                account: ["getUserProfile", "getAccount", function (getUserProfile, getAccount) {
                   return getUserProfile(userState.getUsername())
                   .then(null, function(resp) {
                     if (resp && resp.message === "User has not yet accepted the Terms of Service") {
@@ -58,7 +58,7 @@ angular.module("risevision.common.header")
                   .catch(function() { return null; } );
                   // console.log(userState);
                   // return getAccount().catch(function(data){return data;}, function(){return null;});
-                }
+                }]
               }
             });
           }
