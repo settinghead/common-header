@@ -44,6 +44,18 @@
             "Company settings dialog should show");
         });
 
+        xit("Resets auth key", function() {
+          element(by.css(".ps-reset-auth-key")).click();
+          browser.switchTo().alert().then(function (prompt){ prompt.accept(); }); //confirm reset
+          browser.switchTo().alert().then(function (prompt){ prompt.accept(); }); //acknowledge reset message
+        });
+
+        xit("Resets claim id", function() {
+          element(by.css(".ps-reset-claim-id")).click();
+          browser.switchTo().alert().then(function (prompt){ prompt.accept(); }); //confirm reset
+          browser.switchTo().alert().then(function (prompt){ prompt.accept(); }); //acknowledge reset message
+        });
+
         it("Company Settings Dialog Should Close", function () {
           element(by.css("button.close-company-settings-button")).click();
           assert.eventually.isFalse(element(by.css(".company-settings-modal")).isPresent(),
