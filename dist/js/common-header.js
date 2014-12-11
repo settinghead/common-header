@@ -537,8 +537,8 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Authentication Key\n" +
     "      </label>\n" +
-    "      <a class=\"action-link\" href=\"\" ng-click=\"resetAuthKey()\">Reset</a>\n" +
-    "      <div>\n" +
+    "      <a class=\"action-link ps-reset-auth-key\" href=\"\" ng-click=\"resetAuthKey()\">Reset</a>\n" +
+    "      <div clss=\"ps-auth-key\">\n" +
     "        {{company.authKey}}\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -546,8 +546,8 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Claim ID\n" +
     "      </label>\n" +
-    "      <a class=\"action-link\" href=\"\" ng-click=\"resetClaimId()\">Reset</a>\n" +
-    "      <div>\n" +
+    "      <a class=\"action-link ps-reset-claim-id\" href=\"\" ng-click=\"resetClaimId()\">Reset</a>\n" +
+    "      <div class=\"ps-claim-id\">\n" +
     "        {{company.claimId}}\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -2129,6 +2129,7 @@ angular.module("risevision.common.header")
         regenerateCompanyField($scope.company.id, "authKey").then(
           function(resp) {
             $scope.company.authKey = resp.item;
+            alert("Successfully changed authentication key.");
           },
           function (error) {
             alert("Error: " + humanReadableError(error));
@@ -2144,6 +2145,7 @@ angular.module("risevision.common.header")
         regenerateCompanyField($scope.company.id, "claimId").then(
           function(resp) {
             $scope.company.claimId = resp.item;
+            alert("Successfully changed Claim ID.");
           },
           function (error) {
             alert("Error: " + humanReadableError(error));
@@ -4245,7 +4247,7 @@ angular.module("risevision.ui-flow", ["LocalStorageModule"])
       return deferred.promise;
     };
   }]);
-
+  
 })(angular);
 
 (function (angular){

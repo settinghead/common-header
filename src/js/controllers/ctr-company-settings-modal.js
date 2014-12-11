@@ -81,6 +81,7 @@ angular.module("risevision.common.header")
         regenerateCompanyField($scope.company.id, "authKey").then(
           function(resp) {
             $scope.company.authKey = resp.item;
+            alert("Successfully changed authentication key.");
           },
           function (error) {
             alert("Error: " + humanReadableError(error));
@@ -96,6 +97,7 @@ angular.module("risevision.common.header")
         regenerateCompanyField($scope.company.id, "claimId").then(
           function(resp) {
             $scope.company.claimId = resp.item;
+            alert("Successfully changed Claim ID.");
           },
           function (error) {
             alert("Error: " + humanReadableError(error));

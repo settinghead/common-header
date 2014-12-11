@@ -537,8 +537,8 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Authentication Key\n" +
     "      </label>\n" +
-    "      <a class=\"action-link\" href=\"\" ng-click=\"resetAuthKey()\">Reset</a>\n" +
-    "      <div>\n" +
+    "      <a class=\"action-link ps-reset-auth-key\" href=\"\" ng-click=\"resetAuthKey()\">Reset</a>\n" +
+    "      <div clss=\"ps-auth-key\">\n" +
     "        {{company.authKey}}\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -546,8 +546,8 @@ app.run(["$templateCache", function($templateCache) {
     "      <label>\n" +
     "        Claim ID\n" +
     "      </label>\n" +
-    "      <a class=\"action-link\" href=\"\" ng-click=\"resetClaimId()\">Reset</a>\n" +
-    "      <div>\n" +
+    "      <a class=\"action-link ps-reset-claim-id\" href=\"\" ng-click=\"resetClaimId()\">Reset</a>\n" +
+    "      <div class=\"ps-claim-id\">\n" +
     "        {{company.claimId}}\n" +
     "      </div>\n" +
     "    </div>\n" +
