@@ -34,9 +34,6 @@
             $location.search("cid", null);
           }
           that.updateSelectedCompanyFromUrl();
-          if(!userState.getSelectedCompanyId()) {
-            userState.resetCompany();
-          }
         };
 
         this.updateUrl = function () {
@@ -56,7 +53,8 @@
         };
         this.updateSelectedCompanyFromUrl = function () {
           var newCompanyId = $location.search().cid;
-          if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+          if(userState.getSelectedCompanyId() &&
+            newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
             getCompany(newCompanyId).then(function (company) {
               userState.switchCompany(company);
             });

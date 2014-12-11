@@ -195,10 +195,8 @@ gulp.task("html-inject", function () {
   );
 });
 
-var htmlInjectWatch;
-
 gulp.task("html-inject-watch", function () {
-  htmlInjectWatch = watch({glob: "src/**/*"}, function () {
+  watch({glob: "src/**/*"}, function () {
     return es.concat(gulp.src("src/html/popup-auth_raw.html")
     .pipe(rename("popup-auth.html"))
     .pipe(injectorGenerator(commonHeaderSrcFiles, "ch"))
@@ -231,9 +229,8 @@ gulp.task("html2js", function() {
     .pipe(gulp.dest("./src/"));
 });
 
-var html2JsWatch;
 gulp.task("html2js-watch", function() {
-  html2JsWatch = watch({glob: "src/templates/**/*.html"}, function(){
+  watch({glob: "src/templates/**/*.html"}, function(){
     return gulp.src("src/templates/**/*.html").pipe(html2js({
       outputModuleName: "risevision.common.header.templates",
       useStrict: true,
@@ -244,10 +241,8 @@ gulp.task("html2js-watch", function() {
   });
 });
 
-var buildWatch;
-
 gulp.task("build-watch", function() {
-  buildWatch = watch({glob: ["src/js/**/*", "src/templates/**/*"]}, function () {
+  watch({glob: ["src/js/**/*", "src/templates/**/*"]}, function () {
     return runSequence("html");
   });
 });
@@ -266,22 +261,15 @@ gulp.task("config", function() {
 gulp.task("test:unit", ["config"], factory.testUnitAngular({testFiles: unitTestFiles}));
 gulp.task("test:unit-watch", ["config"], factory.testUnitAngular({testFiles: unitTestFiles, watch: true}));
 
-gulp.task("server", ["html-inject-watch", "html2js-watch", "config", "fonts-copy"], factory.testServer({https: false}));
+gulp.task("server", ["html-inject", "html2js", "config", "fonts-copy"], factory.testServer({https: false}));
+gulp.task("server-watch", ["html-inject-watch", "html2js-watch", "config", "fonts-copy"], factory.testServer({https: false}));
 gulp.task("server-close", factory.testServerClose());
-gulp.task("watch-close", function () {
-  if(buildWatch) {buildWatch.close(); }
-  if(html2JsWatch) {html2JsWatch.close(); }
-  if(htmlInjectWatch) {htmlInjectWatch.close(); }
-});
-
-gulp.task("close-all", function (cb) { return runSequence("server-close", "watch-close" , cb); });
-
 gulp.task("test:webdrive_update", factory.webdriveUpdate());
 gulp.task("test:e2e:core", ["test:webdrive_update"], factory.testE2EAngular({
   browser: "chrome"
 }));
 gulp.task("test:e2e", function (cb) {
-  runSequence("server", "test:e2e:core", "close-all", cb);
+  runSequence("server", "test:e2e:core", "server-close", cb);
 });
 
 
