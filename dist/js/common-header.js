@@ -5138,6 +5138,7 @@ catch(err) { angular.module("risevision.common.config", []); }
   angular.module("risevision.common.config")
     .value("CORE_URL", "https://rvaserver2.appspot.com/_ah/api")
     .value("STORE_URL", "https://store.risevision.com")
+    .value("STORE_ENDPOINT_URL", "https://store-dot-rvaserver2.appspot.com/_ah/api")
     .value("GSFP_URL", "https://gsfp-dot-rvaserver2.appspot.com/fp")
   ;
 })(angular);
@@ -5243,6 +5244,12 @@ angular.module("risevision.common.gapi", [])
     function (CORE_URL, gapiClientLoaderGenerator, $location) {
     var baseUrl = $location.search().core_api_base_url ? $location.search().core_api_base_url + "/_ah/api": CORE_URL;
     return gapiClientLoaderGenerator("rise", "v0", baseUrl);
+  }])
+
+  .factory("storeAPILoader", ["STORE_ENDPOINT_URL", "gapiClientLoaderGenerator", "$location",
+    function (STORE_ENDPOINT_URL, gapiClientLoaderGenerator, $location) {
+    var baseUrl = $location.search().store_api_base_url ? $location.search().store_api_base_url + "/_ah/api": STORE_ENDPOINT_URL;
+    return gapiClientLoaderGenerator("store", "v0.01", baseUrl);
   }])
 
   .factory("discoveryAPILoader", ["CORE_URL", "gapiClientLoaderGenerator", "$location",
