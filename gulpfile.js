@@ -247,6 +247,12 @@ gulp.task("build-watch", function() {
   });
 });
 
+// Update bower, component, npm at once:
+gulp.task("bump", function(){
+  gulp.src(["./bower.json", "./package.json"])
+  .pipe(require("gulp-bump")({type: "patch"}))
+  .pipe(gulp.dest("./"));
+});
 
 /* Task: config
  * Copies configuration file in place based on the current
