@@ -3615,6 +3615,8 @@ angular.module("risevision.common.geodata", [])
                        //populate userCompany
                        return getCompany().then(function(company) {
                          _clearAndCopy(company, _state.userCompany);
+                         _clearAndCopy(company, _state.selectedCompany);
+
                        }, function () { _clearObj(_state.userCompany);
                        }).finally(function () {
                         authorizeDeferred.resolve(authResult);
@@ -4921,9 +4923,6 @@ function (loadFastpass, userState) {
             $location.search("cid", null);
           }
           that.updateSelectedCompanyFromUrl();
-          if(!userState.getSelectedCompanyId()) {
-            userState.resetCompany();
-          }
         };
 
         this.updateUrl = function () {
@@ -4943,7 +4942,8 @@ function (loadFastpass, userState) {
         };
         this.updateSelectedCompanyFromUrl = function () {
           var newCompanyId = $location.search().cid;
-          if(newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
+          if(userState.getSelectedCompanyId() &&
+            newCompanyId && newCompanyId !== userState.getSelectedCompanyId()) {
             getCompany(newCompanyId).then(function (company) {
               userState.switchCompany(company);
             });
